@@ -16,19 +16,22 @@ class AuthMethods {
     return model.User.fromSnap(snap);
   }
 
+  Future<String> getUserType() async {
+      User currentUser = _auth.currentUser!;
+      DocumentSnapshot snap = await _firestore.collection('users').doc(currentUser.uid).get();
+      return (snap.data() as Map<String, dynamic>)['userType'];
+  }
+
   Future<String> signUpUser(
       {required String email,
       required String password,
       required String username,
       required String userType,
       model.Profile? profile}) async {
-    String res = "Some error occured";
+    String res = "Enter valid credentials";
 
     try {
-      if (email.isNotEmpty ||
-          password.isNotEmpty ||
-          username.isNotEmpty || 
-          userType.isNotEmpty) {
+      if (email.isNotEmpty && password.isNotEmpty && username.isNotEmpty && userType.isNotEmpty) {
         UserCredential credential = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
 
@@ -37,6 +40,7 @@ class AuthMethods {
         }
 
         model.User user = model.User(
+          uid: credential.user!.uid,
           email: email,
           username: username,
           userType: userType,
@@ -66,7 +70,7 @@ class AuthMethods {
 
   Future<String> loginUser(
       {required String email, required String password}) async {
-    String res = "Some error occurred";
+    String res = "Enter valid credentials";
 
     try {
       if (email.isNotEmpty || password.isNotEmpty) {

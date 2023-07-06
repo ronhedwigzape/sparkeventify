@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/screens/client_signup_screen.dart';
+import 'package:student_event_calendar/screens/officer_screen.dart';
+import 'package:student_event_calendar/screens/staff_screen.dart';
 import 'package:student_event_calendar/screens/student_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
@@ -34,23 +36,32 @@ class _ClientLoginScreenState extends State<ClientLoginScreen> {
         password: _passwordController.text.trim());
 
     if (res == 'Success') {
-      onLoginSuccess();
+      onLoginSuccess(res);
     } else {
       onLoginFailure(res);
     }
   }
 
-  void onLoginSuccess() {
-    setState(() {
-      _isLoading = false;
-    });
-    Navigator.of(context)
-    .push(MaterialPageRoute(
-      builder: (context) => 
-      const StudentScreen()
-      )
-    );
+void onLoginSuccess(String message) async {
+  setState(() {
+    _isLoading = false;
+  });
+
+  String userType = await AuthMethods().getUserType();
+  if(userType == "Student") {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const StudentScreen()));
+  } else if(userType == "Officer") {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const OfficerScreen()));
+  } else if(userType == "Staff") {
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const StaffScreen()));
+  } else {
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      content: Text('Invalid user type'),
+      duration: Duration(seconds: 2),
+    ));
   }
+}
+
 
   void onLoginFailure(String message) {
     setState(() {
@@ -85,19 +96,35 @@ class _ClientLoginScreenState extends State<ClientLoginScreen> {
               child: Container(),
             ),
             // cspc logo
-            const Image(image: AssetImage('assets/cspc_logo.png'), height: 200.0),
-            const SizedBox(height: 64.0),
+            const Image(image: AssetImage('assets/cspc_logo.png'), height: 150.0),
+            const SizedBox(height: 30.0),
             // text field input for email
+            const Text(
+              'Email',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+              ),
+            ),
+            const SizedBox(height: 12.0),
             TextFieldInput(
               textEditingController: _emailController,
               hintText: 'Enter your email',
               textInputType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 24.0),
+            const Text(
+              'Password',
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16.0,
+              ),
+            ),
+            const SizedBox(height: 12.0),
             // text field input for password
             TextFieldInput(
               textEditingController: _passwordController,
-              hintText: 'Enter you password',
+              hintText: 'Enter your password',
               textInputType: TextInputType.visiblePassword,
               isPass: true,
             ),

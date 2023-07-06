@@ -28,7 +28,7 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // CSPC Logo
-            const Image(image: AssetImage('assets/cspc_logo.png'), height: 200.0),
+            const Image(image: AssetImage('assets/cspc_logo.png'), height: 150.0),
             // CSPC Address
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
