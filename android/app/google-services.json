@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "777878936021",
+    "project_id": "student-event-calendar-dce10",
+    "storage_bucket": "student-event-calendar-dce10.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:777878936021:android:980072560145bcc0df855c",
+        "android_client_info": {
+          "package_name": "com.cspc.student_event_calendar"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "777878936021-3o1bhdnob8nddsi8qhkvnndpnc0v75d4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDDGkg8ZG26GT2j_wTlOR5Xj2JjLZh8AY0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "777878936021-3o1bhdnob8nddsi8qhkvnndpnc0v75d4.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "777878936021-iesd3n4tsnidfd23o2f4ni0lb06nn34r.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.cspc.studentEventCalendar"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

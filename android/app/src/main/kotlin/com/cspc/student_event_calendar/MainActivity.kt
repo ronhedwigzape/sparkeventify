@@ -1,4 +1,4 @@
-package com.example.student_event_calendar
+package com.cspc.student_event_calendar
 
 import io.flutter.embedding.android.FlutterActivity
 
