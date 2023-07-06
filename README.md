@@ -1,16 +1,22 @@
 # student_event_calendar
 
-A new Flutter project.
+## Project Setup
 
-## Getting Started
+Before starting the project setup, you should have Flutter SDK installed and Git installed. 
 
-This project is a starting point for a Flutter application.
+1. Clone this repository to your project directory using Github Desktop, or you can use this git command to clone:
+```
+git clone https://github.com/ronhedwigzape/student_event_calendar.git
+```
 
-A few resources to get you started if this is your first Flutter project:
+2. Navigate to the project directory:
+```
+cd student_event_calendar
+```
+3. Start Android/IOS emulators and wait for it to finish loading. 
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+4. Run this command to install the dependencies and start the development:
+```
+flutter run
+```
