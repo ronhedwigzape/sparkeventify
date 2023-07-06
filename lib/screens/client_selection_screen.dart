@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_event_calendar/screens/client_login_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 
 class ClientSelectionScreen extends StatefulWidget {
@@ -9,6 +10,16 @@ class ClientSelectionScreen extends StatefulWidget {
 }
 
 class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
+
+  void onClientTap() {
+    Navigator.of(context)
+    .push(MaterialPageRoute(
+      builder: (context) => 
+      const ClientLoginScreen()
+      )
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -16,67 +27,78 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Image(
-              image: AssetImage('assets/cspc_logo.png'), 
-              height: 200.0
-            ),
+            // CSPC Logo
+            const Image(image: AssetImage('assets/cspc_logo.png'), height: 200.0),
+            // CSPC Address
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8,),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                  ),
                   child: const Text(
                     'Camarines Sur Polytechnic Colleges',
                     style: TextStyle(
-                        fontWeight: FontWeight.bold,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16.0
                     ),
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(vertical: 8,),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                  ),
                   child: const Text('Nabua, Camarines Sur'),
                 ),
               ],
             ),
             const SizedBox(height: 40.0),
-            Container(
-              width: double.infinity,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(vertical: 15.0),
-              margin: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
-              decoration: const ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
-                color: blueColor,
-              ),
-              child: Text('Student'.toUpperCase())
+            // Client Selection Buttons
+            InkWell(
+              onTap: onClientTap,
+              child: Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(vertical: 15.0),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 50.0, vertical: 10.0),
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    border: Border.all(color: Colors.black),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text('Student'.toUpperCase())),
             ),
-            Container(
-              width: double.infinity,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(vertical: 15.0),
-              margin: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
-              decoration: const ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
-                color: blueColor,
-              ),
-              child: Text('Organization Officer'.toUpperCase())
+            InkWell(
+              onTap: onClientTap,
+              child: Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(vertical: 15.0),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 50.0, vertical: 10.0),
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    border: Border.all(color: Colors.black),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text('Organization Officer'.toUpperCase())),
             ),
-            Container(
-              width: double.infinity,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(vertical: 15.0),
-              margin: const EdgeInsets.symmetric(horizontal: 50.0, vertical: 10.0),
-              decoration: const ShapeDecoration(
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                ),
-                color: blueColor,
-              ),
-              child: Text('SASO Staff'.toUpperCase())
+            InkWell(
+              onTap: onClientTap,
+              child: Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(vertical: 15.0),
+                  margin: const EdgeInsets.symmetric(
+                      horizontal: 50.0, vertical: 10.0),
+                  decoration: BoxDecoration(
+                    color: primaryColor,
+                    border: Border.all(color: Colors.black),
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: Text('SASO Staff'.toUpperCase())),
             ),
           ],
         ),
