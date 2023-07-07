@@ -1,6 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application
-        android:label="student_event_calendar"
+        android:label="CSPC Events"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity
