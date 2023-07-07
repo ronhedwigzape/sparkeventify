@@ -53,7 +53,7 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
     }
 
     // Prepend '+63' to the phone number
-    phoneNumber = '+63$phoneNumber';
+    phoneNumber = '63$phoneNumber';
 
     model.Profile profile = model.Profile(
       fullName: _fullNameController.text.trim(),
@@ -197,29 +197,37 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                 const SizedBox(height: 10.0),
                 Row(
                   children: [
-                    const Text(
-                      '+63',
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
+                    Flexible(
+                      child: Row(
+                        children: [
+                          const Text(
+                            '+63',
+                            style: TextStyle(
+                              fontSize: 16.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          const SizedBox(width:5.0), 
+                          Expanded(
+                            child: TextFieldInput(
+                              textEditingController: _phoneNumberController,
+                              hintText: '9123456789',
+                              textInputType: TextInputType.phone,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(width:5.0), 
-                    Expanded(
+                    const SizedBox(width: 10.0),
+                    Flexible(
                       child: TextFieldInput(
-                        textEditingController: _phoneNumberController,
-                        hintText: '9123456789',
-                        textInputType: TextInputType.phone,
+                        textEditingController: _departmentController,
+                        hintText: 'Department',
+                        textInputType: TextInputType.text,
+                        enabled: !_isStaffSelected,
                       ),
-                    ),
+                    )
                   ],
-                ),
-                const SizedBox(height: 10.0),
-                TextFieldInput(
-                  textEditingController: _departmentController,
-                  hintText: 'Department',
-                  textInputType: TextInputType.text,
-                  enabled: !_isStaffSelected,
                 ),
                 const SizedBox(height: 10.0),
                 Row(
