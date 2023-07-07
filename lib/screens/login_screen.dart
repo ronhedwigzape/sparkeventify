@@ -114,6 +114,27 @@ class _LoginScreenState extends State<LoginScreen> {
             const CspcLogo(
               height: 150.0,
             ),
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                  ),
+                  child: const Text(
+                    'Camarines Sur Polytechnic Colleges',
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 8,
+                  ),
+                  child: const Text('Nabua, Camarines Sur'),
+                ),
+              ],
+            ),
             const SizedBox(height: 20.0),
             // text field input for email
             const Text('Log in',
