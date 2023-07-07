@@ -135,7 +135,7 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                 ),
                 // svg image
                 const Image(
-                    image: AssetImage('assets/cspc_logo.png'), height: 140.0),
+                    image: AssetImage('assets/cspc_logo.png'), height: 80.0),
                 const SizedBox(height: 20.0),
                 const Text(
                   'Register',
