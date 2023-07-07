@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
 
 class ClientSelectionScreen extends StatefulWidget {
@@ -34,7 +35,7 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                     vertical: 8,
                   ),
                   child: const Text(
-                    'Camarines Sur Polytechnic Colleges',
+                    schoolName,
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
@@ -43,7 +44,7 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                   padding: const EdgeInsets.symmetric(
                     vertical: 8,
                   ),
-                  child: const Text('Nabua, Camarines Sur'),
+                  child: const Text(schoolAddress),
                 ),
               ],
             ),

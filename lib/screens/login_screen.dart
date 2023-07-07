@@ -122,7 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     vertical: 8,
                   ),
                   child: const Text(
-                    'Camarines Sur Polytechnic Colleges',
+                    schoolName,
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   padding: const EdgeInsets.symmetric(
                     vertical: 8,
                   ),
-                  child: const Text('Nabua, Camarines Sur'),
+                  child: const Text(schoolAddress),
                 ),
               ],
             ),
@@ -176,7 +176,13 @@ class _LoginScreenState extends State<LoginScreen> {
                           valueColor:
                               AlwaysStoppedAnimation<Color>(primaryColor),
                         ))
-                      : const Text('Log in')),
+                      : const Text(
+                        'Log in',
+                        style: TextStyle(
+                          color: primaryColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      )),
             ),
             const SizedBox(height: 12.0),
             Flexible(
