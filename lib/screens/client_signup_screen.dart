@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/models/profile.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
-import 'package:student_event_calendar/screens/client_login_screen.dart';
+import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/screens/officer_screen.dart';
 import 'package:student_event_calendar/screens/staff_screen.dart';
 import 'package:student_event_calendar/screens/student_screen.dart';
@@ -44,15 +44,15 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
       _isLoading = true;
     });
 
-      // Validate the phone number
-  String phoneNumber = _phoneNumberController.text.trim();
-  if (!RegExp(r'^9[0-9]{9}$').hasMatch(phoneNumber)) {
-    onSignupFailure('Please enter a valid phone number.');
-    return;
-  }
+    // Validate the phone number
+    String phoneNumber = _phoneNumberController.text.trim();
+    if (!RegExp(r'^9[0-9]{9}$').hasMatch(phoneNumber)) {
+      onSignupFailure('Please enter a valid phone number.');
+      return;
+    }
 
-  // Prepend '+63' to the phone number
-  phoneNumber = '+63$phoneNumber';
+    // Prepend '+63' to the phone number
+    phoneNumber = '+63$phoneNumber';
 
     model.Profile profile = model.Profile(
       fullName: _fullNameController.text.trim(),
@@ -63,11 +63,10 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
     );
 
     String res = await AuthMethods().signUpUser(
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
-      userType: _userTypeController.text.trim(),
-      profile: profile
-    );
+        email: _emailController.text.trim(),
+        password: _passwordController.text.trim(),
+        userType: _userTypeController.text.trim(),
+        profile: profile);
 
     if (res == 'Success') {
       onSignupSuccess();
@@ -109,8 +108,8 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
   }
 
   void navigateToLogin() {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const ClientLoginScreen()));
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const LoginScreen()));
   }
 
   @override
@@ -205,7 +204,7 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    const SizedBox(width: 5.0), // Add some space between the '+63' and the input field
+                    const SizedBox(width:5.0), 
                     Expanded(
                       child: TextFieldInput(
                         textEditingController: _phoneNumberController,
@@ -217,11 +216,11 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                 ),
                 const SizedBox(height: 10.0),
                 TextFieldInput(
-                        textEditingController: _departmentController,
-                        hintText: 'Department',
-                        textInputType: TextInputType.text,
-                        enabled: !_isStaffSelected,
-                      ),
+                  textEditingController: _departmentController,
+                  hintText: 'Department',
+                  textInputType: TextInputType.text,
+                  enabled: !_isStaffSelected,
+                ),
                 const SizedBox(height: 10.0),
                 Row(
                   children: [
@@ -233,7 +232,7 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                         enabled: !_isStaffSelected,
                       ),
                     ),
-                    const SizedBox(width: 10.0), 
+                    const SizedBox(width: 10.0),
                     Flexible(
                       child: TextFieldInput(
                         textEditingController: _sectionController,
@@ -242,7 +241,7 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                         enabled: !_isStaffSelected,
                       ),
                     ),
-                  ],   
+                  ],
                 ),
                 const SizedBox(height: 10.0),
                 // text field input for password

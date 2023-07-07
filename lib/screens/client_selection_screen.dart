@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_event_calendar/screens/client_login_screen.dart';
+import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 
 class ClientSelectionScreen extends StatefulWidget {
@@ -10,14 +10,9 @@ class ClientSelectionScreen extends StatefulWidget {
 }
 
 class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
-
   void onClientTap() {
     Navigator.of(context)
-    .push(MaterialPageRoute(
-      builder: (context) => 
-      const ClientLoginScreen()
-      )
-    );
+        .push(MaterialPageRoute(builder: (context) => const LoginScreen()));
   }
 
   @override
@@ -28,7 +23,8 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // CSPC Logo
-            const Image(image: AssetImage('assets/cspc_logo.png'), height: 150.0),
+            const Image(
+                image: AssetImage('assets/cspc_logo.png'), height: 150.0),
             // CSPC Address
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -39,10 +35,8 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                   ),
                   child: const Text(
                     'Camarines Sur Polytechnic Colleges',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 16.0
-                    ),
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
                 ),
                 Container(

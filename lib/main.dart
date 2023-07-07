@@ -7,9 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/firebase_options.dart';
 import 'package:student_event_calendar/providers/user_provider.dart';
-import 'package:student_event_calendar/screens/admin_login_screen.dart';
 import 'package:student_event_calendar/screens/admin_screen.dart';
-import 'package:student_event_calendar/screens/client_login_screen.dart';
+import 'package:student_event_calendar/screens/client_selection_screen.dart';
+import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/screens/officer_screen.dart';
 import 'package:student_event_calendar/screens/staff_screen.dart';
 import 'package:student_event_calendar/screens/student_screen.dart';
@@ -59,15 +59,18 @@ class AuthScreen extends StatelessWidget {
                   child: CircularProgressIndicator(),
                 );
               }
-              
+
               final String userType = snapshot.data?.get('userType');
-              if(userType == 'Admin' && kIsWeb){
-                  return const AdminScreen();
-              } else if (userType == 'Student' && (Platform.isAndroid || Platform.isIOS)) {
+              if (userType == 'Admin' && kIsWeb) {
+                return const AdminScreen();
+              } else if (userType == 'Student' &&
+                  (Platform.isAndroid || Platform.isIOS)) {
                 return const StudentScreen();
-              } else if (userType == 'Staff' && (Platform.isAndroid || Platform.isIOS)) {
+              } else if (userType == 'Staff' &&
+                  (Platform.isAndroid || Platform.isIOS)) {
                 return const StaffScreen();
-              } else if (userType == 'Officer' && (Platform.isAndroid || Platform.isIOS)) {
+              } else if (userType == 'Officer' &&
+                  (Platform.isAndroid || Platform.isIOS)) {
                 return const OfficerScreen();
               } else {
                 return const Center(
@@ -78,10 +81,10 @@ class AuthScreen extends StatelessWidget {
           );
         }
         if (Platform.isAndroid || Platform.isIOS) {
-          return const ClientLoginScreen();
+          return const ClientSelectionScreen();
         } else {
-          return const AdminLoginScreen(); 
-        } 
+          return const LoginScreen();
+        }
       },
     );
   }
