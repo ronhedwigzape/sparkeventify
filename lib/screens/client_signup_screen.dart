@@ -24,8 +24,10 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
   final TextEditingController _departmentController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
   final TextEditingController _sectionController = TextEditingController();
-
-
+  bool _isStaffSelected = false;
+  String _previousDepartment = '';
+  String _previousYear = '';
+  String _previousSection = '';
   bool _isLoading = false;
 
   @override
@@ -135,8 +137,52 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                 // svg image
                 const Image(
                     image: AssetImage('assets/cspc_logo.png'), height: 140.0),
-                const SizedBox(height: 25.0),
-                // text field input for username
+                const SizedBox(height: 20.0),
+                const Text(
+                  'Register',
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(height: 10.0),
+                DropdownButton<String>(
+                  hint: const Text('Select user type*'),
+                  isExpanded: true,
+                  value: _userTypeController.text.isEmpty
+                      ? null
+                      : _userTypeController.text,
+                  items: <String>['Student', 'Officer', 'Staff']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _userTypeController.text = newValue!;
+                      _isStaffSelected = newValue == 'Staff';
+                      if (_isStaffSelected) {
+                        // Store the previous values
+                        _previousYear = _yearController.text;
+                        _previousSection = _sectionController.text;
+                        _previousDepartment = _departmentController.text;
+                        // Clear the values
+                        _yearController.clear();
+                        _sectionController.clear();
+                        _departmentController.clear();
+                      } else {
+                        // Restore the previous values
+                        _yearController.text = _previousYear;
+                        _sectionController.text = _previousSection;
+                        _departmentController.text = _previousDepartment;
+                      }
+                    });
+                  },
+                ),
+                const SizedBox(height: 10.0),
+                // text field input for fullname
                 TextFieldInput(
                   textEditingController: _fullNameController,
                   hintText: 'Enter your full name*',
@@ -172,8 +218,9 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                 const SizedBox(height: 10.0),
                 TextFieldInput(
                         textEditingController: _departmentController,
-                        hintText: 'Department (Students)',
+                        hintText: 'Department',
                         textInputType: TextInputType.text,
+                        enabled: !_isStaffSelected,
                       ),
                 const SizedBox(height: 10.0),
                 Row(
@@ -183,6 +230,7 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                         textEditingController: _yearController,
                         hintText: 'Year (Students)',
                         textInputType: TextInputType.text,
+                        enabled: !_isStaffSelected,
                       ),
                     ),
                     const SizedBox(width: 10.0), 
@@ -191,6 +239,7 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                         textEditingController: _sectionController,
                         hintText: 'Section (Students)',
                         textInputType: TextInputType.text,
+                        enabled: !_isStaffSelected,
                       ),
                     ),
                   ],   
@@ -202,26 +251,6 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                   hintText: 'Enter your password*',
                   textInputType: TextInputType.visiblePassword,
                   isPass: true,
-                ),
-                
-                const SizedBox(height: 10.0),
-                DropdownButton<String>(
-                  isExpanded: true,
-                  value: _userTypeController.text.isEmpty
-                      ? null
-                      : _userTypeController.text,
-                  items: <String>['Student', 'Officer', 'Staff']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _userTypeController.text = newValue!;
-                    });
-                  },
                 ),
                 const SizedBox(height: 12.0),
                 // button login

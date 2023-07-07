@@ -97,8 +97,16 @@ void onLoginSuccess(String message) async {
             ),
             // cspc logo
             const Image(image: AssetImage('assets/cspc_logo.png'), height: 150.0),
-            const SizedBox(height: 30.0),
+            const SizedBox(height: 20.0),
             // text field input for email
+            const Text(
+              'Log in', 
+              style: TextStyle(
+                fontSize: 24.0,
+                fontWeight: FontWeight.bold,
+              )
+            ),
+            const SizedBox(height: 24.0),
             TextFieldInput(
               textEditingController: _emailController,
               hintText: 'Enter your email',

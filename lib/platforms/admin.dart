@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:student_event_calendar/screens/admin_login_screen.dart';
 
 class Admin extends StatelessWidget {
   const Admin({Key? key}) : super(key: key);
@@ -10,7 +11,7 @@ class Admin extends StatelessWidget {
       theme: ThemeData(
           // Theme configuration for the web platform
           ),
-      home: const Text('Admin Page'),
+      home: const AdminLoginScreen(),
     );
   }
 }
