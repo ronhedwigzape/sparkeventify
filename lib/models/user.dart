@@ -11,6 +11,7 @@ class User {
   const User({
     required this.uid,
     required this.userType,
+    // todo: remove username from user model
     this.username,
     required this.email,
     this.profile,
