@@ -16,7 +16,7 @@ Before starting the project setup, you should have Flutter SDK installed and Git
 
 5. Update your path. See the [documentation](https://docs.flutter.dev/get-started/install/windows#get-the-flutter-sdk) for instructions.
 
-6. After updating the path, run **flutter doctor** in your terminal:
+6. After updating the path, run **`flutter doctor`** in your terminal:
 
 ```shell
 flutter doctor
@@ -40,9 +40,9 @@ cd student_event_calendar
 
 3. If you don't have a device, start Android/IOS emulators and wait for them to finish loading. If you don't have emulators, install Android Studio and create an emulator.
 
-4. If you have a device, ensure that your device is connected. You can enable developer options on your phone and turn on USB debugging mode.
+4. If you have a device, ensure that your device is connected. You can enable `Developer Options` on your phone and turn on `USB debugging mode`.
 
-5. Run the following command to install the dependencies and start the development on both Android and iOS:
+5. Run the following command to install the dependencies and start the development on both **`Android`** and **`iOS`**:
 
 ```
 flutter run
