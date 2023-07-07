@@ -1,11 +1,14 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/screens/admin_screen.dart';
+import 'package:student_event_calendar/screens/admin_signup_screen.dart';
 import 'package:student_event_calendar/screens/client_signup_screen.dart';
 import 'package:student_event_calendar/screens/officer_screen.dart';
 import 'package:student_event_calendar/screens/staff_screen.dart';
 import 'package:student_event_calendar/screens/student_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
 
@@ -81,8 +84,9 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void navigateToSignup() {
-    Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const ClientSignupScreen()));
+    Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
+      !kIsWeb ? const ClientSignupScreen() : const AdminSignupScreen()
+    ));
   }
 
   @override
@@ -90,7 +94,14 @@ class _LoginScreenState extends State<LoginScreen> {
     return Scaffold(
       body: SafeArea(
           child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 32.0),
+        padding: MediaQuery.of(context).size.width > webScreenSize
+            ?
+            // Web screen
+            EdgeInsets.symmetric(
+                horizontal: MediaQuery.of(context).size.width / 3)
+            :
+            // Mobile screen
+            const EdgeInsets.symmetric(horizontal: 32.0),
         width: double.infinity,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -100,7 +111,9 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Container(),
             ),
             // cspc logo
-            const CspcLogo( height: 150.0,),
+            const CspcLogo(
+              height: 150.0,
+            ),
             const SizedBox(height: 20.0),
             // text field input for email
             const Text('Log in',
