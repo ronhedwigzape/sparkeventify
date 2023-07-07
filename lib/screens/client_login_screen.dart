@@ -99,28 +99,12 @@ void onLoginSuccess(String message) async {
             const Image(image: AssetImage('assets/cspc_logo.png'), height: 150.0),
             const SizedBox(height: 30.0),
             // text field input for email
-            const Text(
-              'Email',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
-              ),
-            ),
-            const SizedBox(height: 12.0),
             TextFieldInput(
               textEditingController: _emailController,
               hintText: 'Enter your email',
               textInputType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 24.0),
-            const Text(
-              'Password',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
-              ),
-            ),
-            const SizedBox(height: 12.0),
             // text field input for password
             TextFieldInput(
               textEditingController: _passwordController,

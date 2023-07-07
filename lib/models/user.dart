@@ -4,14 +4,14 @@ import 'package:student_event_calendar/models/profile.dart';
 class User {
   final String uid;
   final String userType;
-  final String username;
+  final String? username;
   final String email;
   final Profile? profile;
 
   const User({
     required this.uid,
     required this.userType,
-    required this.username,
+    this.username,
     required this.email,
     this.profile,
   });

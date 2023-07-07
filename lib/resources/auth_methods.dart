@@ -25,13 +25,18 @@ class AuthMethods {
   Future<String> signUpUser(
       {required String email,
       required String password,
-      required String username,
+      String? username,
       required String userType,
       model.Profile? profile}) async {
     String res = "Enter valid credentials";
 
     try {
-      if (email.isNotEmpty && password.isNotEmpty && username.isNotEmpty && userType.isNotEmpty) {
+      if (email.isNotEmpty && 
+          password.isNotEmpty && 
+          userType.isNotEmpty &&
+          profile != null &&
+          profile.fullName!.isNotEmpty &&
+          profile.phoneNumber!.isNotEmpty) {
         UserCredential credential = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
 
@@ -53,6 +58,8 @@ class AuthMethods {
             .set(user.toJson());
 
         res = "Success";
+      } else {
+        res = "Please complete all required* fields";
       }
     } on FirebaseAuthException catch (err) {
       if (err.code == 'invalid-email') {
