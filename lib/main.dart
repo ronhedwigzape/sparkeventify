@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -42,6 +41,10 @@ class App extends StatelessWidget {
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
 
+  static bool runningOnMobile() {
+    return !kIsWeb;
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -64,13 +67,13 @@ class AuthScreen extends StatelessWidget {
               if (userType == 'Admin' && kIsWeb) {
                 return const AdminScreen();
               } else if (userType == 'Student' &&
-                  (Platform.isAndroid || Platform.isIOS)) {
+                  runningOnMobile()) {
                 return const StudentScreen();
               } else if (userType == 'Staff' &&
-                  (Platform.isAndroid || Platform.isIOS)) {
+                  runningOnMobile()) {
                 return const StaffScreen();
               } else if (userType == 'Officer' &&
-                  (Platform.isAndroid || Platform.isIOS)) {
+                  runningOnMobile()) {
                 return const OfficerScreen();
               } else {
                 return const Center(
@@ -80,10 +83,14 @@ class AuthScreen extends StatelessWidget {
             },
           );
         }
-        if (Platform.isAndroid || Platform.isIOS) {
+        if (runningOnMobile()) {
           return const ClientSelectionScreen();
-        } else {
+        } else if (kIsWeb) {
           return const LoginScreen();
+        } else {
+          return const Center(
+            child: Text('Unsupported Platform'),
+          );
         }
       },
     );
