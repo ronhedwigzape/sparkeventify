@@ -16,10 +16,7 @@ import 'package:student_event_calendar/screens/student_screen.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(MultiProvider(
-    providers: [ChangeNotifierProvider(create: (_) => UserProvider())],
-    child: const App(),
-  ));
+  runApp(const App());
 }
 
 class App extends StatelessWidget {
@@ -27,14 +24,13 @@ class App extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return MultiProvider(
+    providers: [ChangeNotifierProvider(create: (_) => UserProvider())], 
+    child: const MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Student Event Calendar',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: const AuthScreen(),
-    );
+      home: AuthScreen(),
+    ));
   }
 }
 

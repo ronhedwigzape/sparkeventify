@@ -6,6 +6,7 @@ import 'package:student_event_calendar/screens/officer_screen.dart';
 import 'package:student_event_calendar/screens/staff_screen.dart';
 import 'package:student_event_calendar/screens/student_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/widgets/cspc_logo.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -99,8 +100,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Container(),
             ),
             // cspc logo
-            const Image(
-                image: AssetImage('assets/cspc_logo.png'), height: 150.0),
+            const CspcLogo( height: 150.0,),
             const SizedBox(height: 20.0),
             // text field input for email
             const Text('Log in',

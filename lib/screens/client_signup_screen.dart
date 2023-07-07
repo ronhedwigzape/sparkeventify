@@ -6,6 +6,7 @@ import 'package:student_event_calendar/screens/officer_screen.dart';
 import 'package:student_event_calendar/screens/staff_screen.dart';
 import 'package:student_event_calendar/screens/student_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/widgets/cspc_logo.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
 
 class ClientSignupScreen extends StatefulWidget {
@@ -134,8 +135,7 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                   child: Container(),
                 ),
                 // svg image
-                const Image(
-                    image: AssetImage('assets/cspc_logo.png'), height: 80.0),
+                const CspcLogo( height: 80.0,),
                 const SizedBox(height: 20.0),
                 const Text(
                   'Register',

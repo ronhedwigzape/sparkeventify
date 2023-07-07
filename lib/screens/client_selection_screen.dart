@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/widgets/cspc_logo.dart';
 
 class ClientSelectionScreen extends StatefulWidget {
   const ClientSelectionScreen({Key? key}) : super(key: key);
@@ -23,8 +24,7 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // CSPC Logo
-            const Image(
-                image: AssetImage('assets/cspc_logo.png'), height: 150.0),
+            const CspcLogo( height: 150.0,),
             // CSPC Address
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
