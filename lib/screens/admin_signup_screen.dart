@@ -16,33 +16,47 @@ class AdminSignupScreen extends StatefulWidget {
 }
 
 class AdminSignupScreenState extends State<AdminSignupScreen> {
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _phoneNumberController = TextEditingController();
   bool _isLoading = false;
 
   @override
   void dispose() {
     super.dispose();
-    _emailController.dispose();
+    _usernameController.dispose();
     _passwordController.dispose();
     _fullNameController.dispose();
+    _phoneNumberController.dispose();
   }
 
-  Future<void> signUpUser() async {
+  Future<void> signUpAsAdmin() async {
     setState(() {
       _isLoading = true;
     });
 
+    // Validate the phone number
+    String phoneNumber = _phoneNumberController.text.trim();
+    if (!RegExp(r'^9[0-9]{9}$').hasMatch(phoneNumber)) {
+      onSignupFailure('Please enter a valid phone number.');
+      return;
+    }
+
+    // Prepend '+63' to the phone number
+    phoneNumber = '63$phoneNumber';
+
     model.Profile profile = model.Profile(
       fullName: _fullNameController.text.trim(),
+      phoneNumber: phoneNumber,
     );
 
-    String res = await AuthMethods().signUpUser(
-        email: _emailController.text.trim(),
+    String res = await AuthMethods().signUpAsAdmin(
+        username: _usernameController.text.trim(),
         password: _passwordController.text.trim(),
         userType: 'Admin',
-        profile: profile);
+        profile: profile, 
+      );
 
     if (res == 'Success') {
       onSignupSuccess();
@@ -127,21 +141,35 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
                 )),
-            const SizedBox(height: 24.0),
-            // text field input for full name
+            const SizedBox(height: 20.0),
+            // text field input for username
             TextFieldInput(
-              textEditingController: _fullNameController,
-              hintText: 'Enter your full name',
-              textInputType: TextInputType.name,
+              textEditingController: _usernameController,
+              hintText: 'Enter your username',
+              textInputType: TextInputType.text,
             ),
-            const SizedBox(height: 24.0),
-            // text field input for email
-            TextFieldInput(
-              textEditingController: _emailController,
-              hintText: 'Enter your email',
-              textInputType: TextInputType.emailAddress,
+            // text field input for phone number
+            const SizedBox(height: 20.0),
+            Row(
+              children: [
+                const Text(
+                  '+63',
+                  style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(width:5.0), 
+                Expanded(
+                  child: TextFieldInput(
+                    textEditingController: _phoneNumberController,
+                    hintText: '9123456789',
+                    textInputType: TextInputType.phone,
+                  ),
+                ),
+              ],
             ),
-            const SizedBox(height: 24.0),
+            const SizedBox(height: 20.0),
             // text field input for password
             TextFieldInput(
               textEditingController: _passwordController,
@@ -152,7 +180,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
             const SizedBox(height: 24.0),
             // button login
             InkWell(
-              onTap: signUpUser,
+              onTap: signUpAsAdmin,
               child: Container(
                   width: double.infinity,
                   alignment: Alignment.center,

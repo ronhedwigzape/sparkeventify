@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
@@ -20,6 +22,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
@@ -27,17 +30,34 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     super.dispose();
+    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
   }
 
-  Future<void> loginUser() async {
+  Future<void> loginAsClient() async {
     setState(() {
       _isLoading = true;
     });
 
-    String res = await AuthMethods().loginUser(
+    String res = await AuthMethods().loginAsClient(
         email: _emailController.text.trim(),
+        password: _passwordController.text.trim());
+
+    if (res == 'Success') {
+      onLoginSuccess(res);
+    } else {
+      onLoginFailure(res);
+    }
+  }
+
+  Future<void> loginAsAdmin() async {
+    setState(() {
+      _isLoading = true;
+    });
+
+    String res = await AuthMethods().loginAsAdmin(
+        username: _usernameController.text.trim(),
         password: _passwordController.text.trim());
 
     if (res == 'Success') {
@@ -143,10 +163,14 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontWeight: FontWeight.bold,
                 )),
             const SizedBox(height: 24.0),
-            TextFieldInput(
+            !kIsWeb ? TextFieldInput(
               textEditingController: _emailController,
               hintText: 'Enter your email',
               textInputType: TextInputType.emailAddress,
+            ) : TextFieldInput(
+              textEditingController: _usernameController,
+              hintText: 'Enter your username',
+              textInputType: TextInputType.text,
             ),
             const SizedBox(height: 24.0),
             // text field input for password
@@ -159,7 +183,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 24.0),
             // button login
             InkWell(
-              onTap: loginUser,
+              onTap: !kIsWeb ? loginAsClient : loginAsAdmin,
               child: Container(
                   width: double.infinity,
                   alignment: Alignment.center,

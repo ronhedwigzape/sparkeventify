@@ -5,14 +5,15 @@ class User {
   final String uid;
   final String userType;
   final String? username;
+  final String password;
   final String email;
   final Profile? profile;
 
   const User({
     required this.uid,
     required this.userType,
-    // todo: remove username from user model
     this.username,
+    required this.password,
     required this.email,
     this.profile,
   });
@@ -21,6 +22,7 @@ class User {
         'uid': uid,
         'userType': userType,
         'username': username,
+        'password': password,
         'email': email,
         'profile': profile?.toJson(),
       };
@@ -33,6 +35,7 @@ class User {
       uid: snapshot['uid'],
       userType: snapshot['userType'],
       username: snapshot['username'],
+      password: snapshot['password'],
       email: snapshot['email'],
       profile: Profile.fromMap(profileSnap),
     );

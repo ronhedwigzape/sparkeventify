@@ -40,7 +40,7 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
     _fullNameController.dispose();
   }
 
-  Future<void> signUpUser() async {
+  Future<void> signUpAsClient() async {
     setState(() {
       _isLoading = true;
     });
@@ -63,7 +63,7 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
       section: _sectionController.text.trim(),
     );
 
-    String res = await AuthMethods().signUpUser(
+    String res = await AuthMethods().signUpAsClient(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
         userType: _userTypeController.text.trim(),
@@ -262,7 +262,7 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                 const SizedBox(height: 12.0),
                 // button login
                 InkWell(
-                    onTap: signUpUser,
+                    onTap: signUpAsClient,
                     child: Container(
                         width: double.infinity,
                         alignment: Alignment.center,
@@ -280,7 +280,13 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                                 valueColor:
                                     AlwaysStoppedAnimation<Color>(primaryColor),
                               ))
-                            : const Text('Sign up'))),
+                            : const Text(
+                              'Sign up',
+                              style: TextStyle(
+                                color: primaryColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ))),
                 const SizedBox(height: 12.0),
                 Flexible(
                   flex: 2,
