@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/screens/admin_screen.dart';
 import 'package:student_event_calendar/screens/admin_signup_screen.dart';
-import 'package:student_event_calendar/screens/client_signup_screen.dart';
+import 'package:student_event_calendar/screens/client_selection_screen.dart';
 import 'package:student_event_calendar/screens/officer_screen.dart';
 import 'package:student_event_calendar/screens/staff_screen.dart';
 import 'package:student_event_calendar/screens/student_screen.dart';
@@ -105,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   void navigateToSignup() {
     Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-      !kIsWeb ? const ClientSignupScreen() : const AdminSignupScreen()
+      !kIsWeb ? const ClientSelectionScreen() : const AdminSignupScreen()
     ));
   }
 

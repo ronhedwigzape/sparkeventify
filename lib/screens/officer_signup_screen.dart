@@ -3,32 +3,25 @@ import 'package:student_event_calendar/models/profile.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/screens/officer_screen.dart';
-import 'package:student_event_calendar/screens/staff_screen.dart';
-import 'package:student_event_calendar/screens/student_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
 
-class ClientSignupScreen extends StatefulWidget {
-  const ClientSignupScreen({super.key});
+class OfficerSignupScreen extends StatefulWidget {
+  const OfficerSignupScreen({super.key});
 
   @override
-  State<ClientSignupScreen> createState() => _ClientSignupScreenState();
+  State<OfficerSignupScreen> createState() => _OfficerSignupScreenState();
 }
 
-class _ClientSignupScreenState extends State<ClientSignupScreen> {
+class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _userTypeController = TextEditingController();
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _departmentController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
   final TextEditingController _sectionController = TextEditingController();
-  bool _isStaffSelected = false;
-  String _previousDepartment = '';
-  String _previousYear = '';
-  String _previousSection = '';
   bool _isLoading = false;
 
   @override
@@ -36,8 +29,11 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _userTypeController.dispose();
     _fullNameController.dispose();
+    _phoneNumberController.dispose();
+    _departmentController.dispose();
+    _yearController.dispose();
+    _sectionController.dispose();
   }
 
   Future<void> signUpAsClient() async {
@@ -48,7 +44,7 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
     // Validate the phone number
     String phoneNumber = _phoneNumberController.text.trim();
     if (!RegExp(r'^9[0-9]{9}$').hasMatch(phoneNumber)) {
-      onSignupFailure('Please enter a valid phone number.');
+      onSignupFailure('Please enter your last 10 digits of the phone number');
       return;
     }
 
@@ -66,8 +62,8 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
     String res = await AuthMethods().signUpAsClient(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
-        userType: _userTypeController.text.trim(),
-        profile: profile);
+        profile: profile, 
+        userType: 'Officer');
 
     if (res == 'Success') {
       onSignupSuccess();
@@ -80,22 +76,8 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
     setState(() {
       _isLoading = false;
     });
-    switch (_userTypeController.text) {
-      case 'Student':
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const StudentScreen()));
-        break;
-      case 'Officer':
-        Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const OfficerScreen()));
-        break;
-      case 'Staff':
-        Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => const StaffScreen()));
-        break;
-      default:
-        break;
-    }
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const OfficerScreen()));
   }
 
   void onSignupFailure(String message) {
@@ -135,65 +117,37 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                   child: Container(),
                 ),
                 // svg image
-                const CspcLogo( height: 80.0,),
+                const CspcLogo( height: 90.0,),
                 const SizedBox(height: 20.0),
                 const Text(
-                  'Register',
+                  'Register as Officer',
                   style: TextStyle(
                     fontSize: 24.0,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(height: 10.0),
-                DropdownButton<String>(
-                  hint: const Text('Select user type*'),
-                  isExpanded: true,
-                  value: _userTypeController.text.isEmpty
-                      ? null
-                      : _userTypeController.text,
-                  items: <String>['Student', 'Officer', 'Staff']
-                      .map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _userTypeController.text = newValue!;
-                      _isStaffSelected = newValue == 'Staff';
-                      if (_isStaffSelected) {
-                        // Store the previous values
-                        _previousYear = _yearController.text;
-                        _previousSection = _sectionController.text;
-                        _previousDepartment = _departmentController.text;
-                        // Clear the values
-                        _yearController.clear();
-                        _sectionController.clear();
-                        _departmentController.clear();
-                      } else {
-                        // Restore the previous values
-                        _yearController.text = _previousYear;
-                        _sectionController.text = _previousSection;
-                        _departmentController.text = _previousDepartment;
-                      }
-                    });
-                  },
-                ),
-                const SizedBox(height: 10.0),
-                // text field input for fullname
-                TextFieldInput(
-                  textEditingController: _fullNameController,
-                  hintText: 'Enter your full name*',
-                  textInputType: TextInputType.text,
-                ),
-                const SizedBox(height: 10.0),
-                // text field input for email
-                TextFieldInput(
-                  textEditingController: _emailController,
-                  hintText: 'Enter your email*',
-                  textInputType: TextInputType.emailAddress,
-                ),
+                const SizedBox(height: 30.0),
+                Row(
+                  children: [
+                    // text field input for fullname
+                    Flexible(
+                      child: TextFieldInput(
+                        textEditingController: _fullNameController,
+                        hintText: 'Enter your full name*',
+                        textInputType: TextInputType.text,
+                      ), 
+                    ),
+                    const SizedBox(width: 10.0),
+                    // text field input for email
+                    Flexible(
+                      child: TextFieldInput(
+                        textEditingController: _emailController,
+                        hintText: 'Enter your email*',
+                        textInputType: TextInputType.emailAddress,
+                      ),
+                    )
+                  ],
+                ),       
                 const SizedBox(height: 10.0),
                 Row(
                   children: [
@@ -211,7 +165,7 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                           Expanded(
                             child: TextFieldInput(
                               textEditingController: _phoneNumberController,
-                              hintText: '9123456789',
+                              hintText: '9123456789*',
                               textInputType: TextInputType.phone,
                             ),
                           ),
@@ -224,7 +178,6 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                         textEditingController: _departmentController,
                         hintText: 'Department',
                         textInputType: TextInputType.text,
-                        enabled: !_isStaffSelected,
                       ),
                     )
                   ],
@@ -237,7 +190,6 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                         textEditingController: _yearController,
                         hintText: 'Year (Students)',
                         textInputType: TextInputType.text,
-                        enabled: !_isStaffSelected,
                       ),
                     ),
                     const SizedBox(width: 10.0),
@@ -246,7 +198,6 @@ class _ClientSignupScreenState extends State<ClientSignupScreen> {
                         textEditingController: _sectionController,
                         hintText: 'Section (Students)',
                         textInputType: TextInputType.text,
-                        enabled: !_isStaffSelected,
                       ),
                     ),
                   ],
