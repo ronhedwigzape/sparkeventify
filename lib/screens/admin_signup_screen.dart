@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
 import 'package:student_event_calendar/models/profile.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
-import 'package:student_event_calendar/screens/admin_screen.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
@@ -52,11 +52,11 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
     );
 
     String res = await AuthMethods().signUpAsAdmin(
-        username: _usernameController.text.trim(),
-        password: _passwordController.text.trim(),
-        userType: 'Admin',
-        profile: profile, 
-      );
+      username: _usernameController.text.trim(),
+      password: _passwordController.text.trim(),
+      userType: 'Admin',
+      profile: profile,
+    );
 
     if (res == 'Success') {
       onSignupSuccess();
@@ -70,7 +70,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
       _isLoading = false;
     });
     Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const AdminScreen()));
+        MaterialPageRoute(builder: (context) => const AdminScreenLayout()));
   }
 
   void onSignupFailure(String message) {
@@ -159,7 +159,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
                     fontWeight: FontWeight.bold,
                   ),
                 ),
-                const SizedBox(width:5.0), 
+                const SizedBox(width: 5.0),
                 Expanded(
                   child: TextFieldInput(
                     textEditingController: _phoneNumberController,
@@ -194,16 +194,15 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
                   child: _isLoading
                       ? const Center(
                           child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(primaryColor),
+                          valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
                         ))
                       : const Text(
-                        'Sign up',
-                        style: TextStyle(
-                          color: primaryColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )),
+                          'Sign up',
+                          style: TextStyle(
+                            color: whiteColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )),
             ),
             const SizedBox(height: 12.0),
             Flexible(

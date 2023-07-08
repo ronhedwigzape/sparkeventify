@@ -15,18 +15,18 @@ class ClientSelectionScreen extends StatefulWidget {
 
 class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
   void onStudentTap() {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const StudentSignupScreen()));
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const StudentSignupScreen()));
   }
 
   void onOfficerTap() {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const OfficerSignupScreen()));
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const OfficerSignupScreen()));
   }
 
   void onStaffTap() {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (context) => const StaffSignupScreen()));
+    Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const StaffSignupScreen()));
   }
 
   @override
@@ -37,7 +37,9 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // CSPC Logo
-            const CspcLogo( height: 150.0,),
+            const CspcLogo(
+              height: 150.0,
+            ),
             // CSPC Address
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
@@ -71,7 +73,7 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                   margin: const EdgeInsets.symmetric(
                       horizontal: 50.0, vertical: 10.0),
                   decoration: BoxDecoration(
-                    color: primaryColor,
+                    color: whiteColor,
                     border: Border.all(color: Colors.black),
                     borderRadius: BorderRadius.circular(5),
                   ),
@@ -86,7 +88,7 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                   margin: const EdgeInsets.symmetric(
                       horizontal: 50.0, vertical: 10.0),
                   decoration: BoxDecoration(
-                    color: primaryColor,
+                    color: whiteColor,
                     border: Border.all(color: Colors.black),
                     borderRadius: BorderRadius.circular(5),
                   ),
@@ -101,7 +103,7 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                   margin: const EdgeInsets.symmetric(
                       horizontal: 50.0, vertical: 10.0),
                   decoration: BoxDecoration(
-                    color: primaryColor,
+                    color: whiteColor,
                     border: Border.all(color: Colors.black),
                     borderRadius: BorderRadius.circular(5),
                   ),

@@ -2,13 +2,11 @@
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
+import 'package:student_event_calendar/layouts/client_screen_layout.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
-import 'package:student_event_calendar/screens/admin_screen.dart';
 import 'package:student_event_calendar/screens/admin_signup_screen.dart';
 import 'package:student_event_calendar/screens/client_selection_screen.dart';
-import 'package:student_event_calendar/screens/officer_screen.dart';
-import 'package:student_event_calendar/screens/staff_screen.dart';
-import 'package:student_event_calendar/screens/student_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
@@ -72,24 +70,12 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = false;
     });
 
-    String userType = await AuthMethods().getUserType();
-    if (userType == "Student") {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const StudentScreen()));
-    } else if (userType == "Officer") {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const OfficerScreen()));
-    } else if (userType == "Staff") {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const StaffScreen()));
-    } else if (userType == "Admin") {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const AdminScreen()));
+    if (!kIsWeb) {
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const ClientScreenLayout()));
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Invalid user type'),
-        duration: Duration(seconds: 2),
-      ));
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const AdminScreenLayout()));
     }
   }
 
@@ -104,9 +90,10 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void navigateToSignup() {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) =>
-      !kIsWeb ? const ClientSelectionScreen() : const AdminSignupScreen()
-    ));
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (context) => !kIsWeb
+            ? const ClientSelectionScreen()
+            : const AdminSignupScreen()));
   }
 
   @override
@@ -163,15 +150,17 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontWeight: FontWeight.bold,
                 )),
             const SizedBox(height: 24.0),
-            !kIsWeb ? TextFieldInput(
-              textEditingController: _emailController,
-              hintText: 'Enter your email',
-              textInputType: TextInputType.emailAddress,
-            ) : TextFieldInput(
-              textEditingController: _usernameController,
-              hintText: 'Enter your username',
-              textInputType: TextInputType.text,
-            ),
+            !kIsWeb
+                ? TextFieldInput(
+                    textEditingController: _emailController,
+                    hintText: 'Enter your email',
+                    textInputType: TextInputType.emailAddress,
+                  )
+                : TextFieldInput(
+                    textEditingController: _usernameController,
+                    hintText: 'Enter your username',
+                    textInputType: TextInputType.text,
+                  ),
             const SizedBox(height: 24.0),
             // text field input for password
             TextFieldInput(
@@ -197,16 +186,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: _isLoading
                       ? const Center(
                           child: CircularProgressIndicator(
-                          valueColor:
-                              AlwaysStoppedAnimation<Color>(primaryColor),
+                          valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
                         ))
                       : const Text(
-                        'Log in',
-                        style: TextStyle(
-                          color: primaryColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      )),
+                          'Log in',
+                          style: TextStyle(
+                            color: whiteColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )),
             ),
             const SizedBox(height: 12.0),
             Flexible(

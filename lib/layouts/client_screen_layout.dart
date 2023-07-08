@@ -45,7 +45,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: primaryCOlor,
+        backgroundColor: primaryColor,
         actions: [
           IconButton(
             onPressed: () {},
@@ -70,35 +70,35 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.home,
-                  color: _page == 0 ? primaryCOlor : secondaryColor,
+                  color: _page == 0 ? primaryColor : secondaryColor,
                 ),
                 label: '',
                 backgroundColor: whiteColor),
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.calendar_month,
-                  color: _page == 1 ? primaryCOlor : secondaryColor,
+                  color: _page == 1 ? primaryColor : secondaryColor,
                 ),
                 label: '',
                 backgroundColor: whiteColor),
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.sticky_note_2_outlined,
-                  color: _page == 2 ? primaryCOlor : secondaryColor,
+                  color: _page == 2 ? primaryColor : secondaryColor,
                 ),
                 label: '',
                 backgroundColor: whiteColor),
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.favorite,
-                  color: _page == 3 ? primaryCOlor : secondaryColor,
+                  color: _page == 3 ? primaryColor : secondaryColor,
                 ),
                 label: '',
                 backgroundColor: whiteColor),
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.person,
-                  color: _page == 4 ? primaryCOlor : secondaryColor,
+                  color: _page == 4 ? primaryColor : secondaryColor,
                 ),
                 label: '',
                 backgroundColor: whiteColor),

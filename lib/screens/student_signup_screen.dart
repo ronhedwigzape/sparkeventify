@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:student_event_calendar/layouts/client_screen_layout.dart';
 import 'package:student_event_calendar/models/profile.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
-import 'package:student_event_calendar/screens/student_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
@@ -62,7 +62,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
     String res = await AuthMethods().signUpAsClient(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
-        profile: profile, 
+        profile: profile,
         userType: 'Student');
 
     if (res == 'Success') {
@@ -77,7 +77,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
       _isLoading = false;
     });
     Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const StudentScreen()));
+        MaterialPageRoute(builder: (context) => const ClientScreenLayout()));
   }
 
   void onSignupFailure(String message) {
@@ -117,7 +117,9 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                   child: Container(),
                 ),
                 // svg image
-                const CspcLogo( height: 90.0,),
+                const CspcLogo(
+                  height: 90.0,
+                ),
                 const SizedBox(height: 20.0),
                 const Text(
                   'Register as Student',
@@ -135,7 +137,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                         textEditingController: _fullNameController,
                         hintText: 'Enter your full name*',
                         textInputType: TextInputType.text,
-                      ), 
+                      ),
                     ),
                     const SizedBox(width: 10.0),
                     // text field input for email
@@ -147,7 +149,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                       ),
                     )
                   ],
-                ),       
+                ),
                 const SizedBox(height: 10.0),
                 Row(
                   children: [
@@ -161,7 +163,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                               fontWeight: FontWeight.bold,
                             ),
                           ),
-                          const SizedBox(width:5.0), 
+                          const SizedBox(width: 5.0),
                           Expanded(
                             child: TextFieldInput(
                               textEditingController: _phoneNumberController,
@@ -229,15 +231,15 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                             ? const Center(
                                 child: CircularProgressIndicator(
                                 valueColor:
-                                    AlwaysStoppedAnimation<Color>(primaryColor),
+                                    AlwaysStoppedAnimation<Color>(whiteColor),
                               ))
                             : const Text(
-                              'Sign up',
-                              style: TextStyle(
-                                color: primaryColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ))),
+                                'Sign up',
+                                style: TextStyle(
+                                  color: whiteColor,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ))),
                 const SizedBox(height: 12.0),
                 Flexible(
                   flex: 2,

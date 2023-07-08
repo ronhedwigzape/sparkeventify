@@ -5,13 +5,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/firebase_options.dart';
+import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
+import 'package:student_event_calendar/layouts/client_screen_layout.dart';
 import 'package:student_event_calendar/providers/user_provider.dart';
-import 'package:student_event_calendar/screens/admin_screen.dart';
 import 'package:student_event_calendar/screens/client_selection_screen.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
-import 'package:student_event_calendar/screens/officer_screen.dart';
-import 'package:student_event_calendar/screens/staff_screen.dart';
-import 'package:student_event_calendar/screens/student_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -60,17 +58,10 @@ class AuthScreen extends StatelessWidget {
               }
 
               final String userType = snapshot.data?.get('userType');
-              if (userType == 'Admin' && kIsWeb) {
-                return const AdminScreen();
-              } else if (userType == 'Student' &&
-                  runningOnMobile()) {
-                return const StudentScreen();
-              } else if (userType == 'Staff' &&
-                  runningOnMobile()) {
-                return const StaffScreen();
-              } else if (userType == 'Officer' &&
-                  runningOnMobile()) {
-                return const OfficerScreen();
+              if (userType == 'Admin' && !runningOnMobile()) {
+                return const AdminScreenLayout();
+              } else if (runningOnMobile()) {
+                return const ClientScreenLayout();
               } else {
                 return const Center(
                   child: Text('Unknown user'),
