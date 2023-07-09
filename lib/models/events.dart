@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:student_event_calendar/models/feedbacks.dart';
 
 class Event {
   final String eventName;
@@ -10,6 +11,7 @@ class Event {
   final List<dynamic>? attendees;
   final String eventType;
   final String status;
+  final Feedbacks? feedbacks;
 
   const Event({
     required this.eventName,
@@ -21,6 +23,7 @@ class Event {
     this.attendees,
     required this.eventType,
     required this.status,
+    this.feedbacks,
   });
 
   Map<String, dynamic> toJson() => {
@@ -33,11 +36,12 @@ class Event {
         'attendees': attendees,
         'eventType': eventType,
         'status': status,
+        'feedbacks': feedbacks?.toJson(),
       };
 
-  static Event fromSnap(DocumentSnapshot snap) {
+  static Future<Event> fromSnap(DocumentSnapshot snap) async {
     var snapshot = snap.data() as Map<String, dynamic>;
-
+    var feedbacksSnap = snapshot['feedbacks'] as Map<String, dynamic>;
     return Event(
       eventName: snapshot['eventName'],
       eventDate: (snapshot['eventDate'] as Timestamp).toDate(),
@@ -48,6 +52,7 @@ class Event {
       attendees: snapshot['attendees'],
       eventType: snapshot['eventType'],
       status: snapshot['status'],
+      feedbacks: Feedbacks.fromMap(feedbacksSnap),
     );
   }
 }
