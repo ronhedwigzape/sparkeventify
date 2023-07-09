@@ -3,17 +3,17 @@ import 'package:student_event_calendar/models/evaluators.dart';
 class Feedbacks {
   final String? feedbackDocument;
   final String? feedbackLink;
-  final List<Evaluators> evaluators;
+  final List<Evaluators>? evaluators;
 
   Feedbacks({
     this.feedbackDocument,
     this.feedbackLink,
-    required this.evaluators,
+    this.evaluators,
   });
     Map<String, dynamic> toJson() => {
         'feedbackDocument': feedbackDocument,
         'feedbackLink': feedbackLink,
-        'evaluators': evaluators.map((e) => e.toJson()).toList(),
+        'evaluators': evaluators?.map((e) => e.toJson()).toList(),
   };
 
   static Feedbacks fromMap(Map<String, dynamic> map) {

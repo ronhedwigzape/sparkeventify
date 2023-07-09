@@ -1,12 +1,12 @@
 class Evaluators {
-  final String userId;
-  final String feedbackMessage;
+  final String? userId;
+  final String? feedbackMessage;
 
   Evaluators({
-    required this.userId,
-    required this.feedbackMessage,
+    this.userId,
+    this.feedbackMessage,
   });
-  
+
     Map<String, dynamic> toJson() => {
         'userId': userId,
         'feedbackMessage': feedbackMessage,
