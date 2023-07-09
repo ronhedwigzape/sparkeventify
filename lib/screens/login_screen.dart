@@ -20,7 +20,6 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
@@ -28,7 +27,6 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     super.dispose();
-    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
   }
@@ -55,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
     });
 
     String res = await AuthMethods().loginAsAdmin(
-        username: _usernameController.text.trim(),
+        username: _emailController.text.trim(),
         password: _passwordController.text.trim());
 
     if (res == 'Success') {
@@ -150,17 +148,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   fontWeight: FontWeight.bold,
                 )),
             const SizedBox(height: 24.0),
-            !kIsWeb
-                ? TextFieldInput(
-                    textEditingController: _emailController,
-                    hintText: 'Enter your email',
-                    textInputType: TextInputType.emailAddress,
-                  )
-                : TextFieldInput(
-                    textEditingController: _usernameController,
-                    hintText: 'Enter your username',
-                    textInputType: TextInputType.text,
-                  ),
+            TextFieldInput(
+              textEditingController: _emailController,
+              hintText: 'Enter your ${!kIsWeb ? 'email' : 'username'}',
+              textInputType: TextInputType.emailAddress,
+            ),
             const SizedBox(height: 24.0),
             // text field input for password
             TextFieldInput(
