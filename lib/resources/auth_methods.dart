@@ -9,14 +9,21 @@ class AuthMethods {
 
   Future<model.User> getUserDetails() async {
     User currentUser = _auth.currentUser!;
-    DocumentSnapshot snap = await _firestore.collection('users').doc(currentUser.uid).get();
+    DocumentSnapshot snap =
+        await _firestore.collection('users').doc(currentUser.uid).get();
     return model.User.fromSnap(snap);
   }
 
+  Future<String> getCurrentUserUid() async {
+    User currentUser = _auth.currentUser!;
+    return currentUser.uid;
+  }
+
   Future<String> getCurrentUserType() async {
-      final User currentUser = _auth.currentUser!;
-      final DocumentSnapshot snap = await _firestore.collection('users').doc(currentUser.uid).get();
-      return (snap.data() as Map<String, dynamic>)['userType'];
+    final User currentUser = _auth.currentUser!;
+    final DocumentSnapshot snap =
+        await _firestore.collection('users').doc(currentUser.uid).get();
+    return (snap.data() as Map<String, dynamic>)['userType'];
   }
 
   Future<String> signUpAsClient(
@@ -28,8 +35,8 @@ class AuthMethods {
     String res = "Enter valid credentials";
 
     try {
-      if (email.isNotEmpty && 
-          password.isNotEmpty && 
+      if (email.isNotEmpty &&
+          password.isNotEmpty &&
           userType.isNotEmpty &&
           profile != null &&
           profile.fullName!.isNotEmpty &&
@@ -38,13 +45,12 @@ class AuthMethods {
             email: email, password: password);
 
         model.User user = model.User(
-          uid: credential.user!.uid,
-          email: email,
-          username: username,
-          userType: userType,
-          profile: profile,
-          password: password
-        );
+            uid: credential.user!.uid,
+            email: email,
+            username: username,
+            userType: userType,
+            profile: profile,
+            password: password);
 
         await _firestore
             .collection('users')
@@ -69,18 +75,17 @@ class AuthMethods {
     return res;
   }
 
-  Future<String> signUpAsAdmin({
-    required String username,
-    required String password,
-    String? email,
-    required String userType,
-    model.Profile? profile
-  }) async {
+  Future<String> signUpAsAdmin(
+      {required String username,
+      required String password,
+      String? email,
+      required String userType,
+      model.Profile? profile}) async {
     String res = "Enter valid credentials";
 
     try {
-      if (username.isNotEmpty && 
-          password.isNotEmpty && 
+      if (username.isNotEmpty &&
+          password.isNotEmpty &&
           userType.isNotEmpty &&
           profile != null &&
           profile.phoneNumber!.isNotEmpty) {
@@ -120,16 +125,15 @@ class AuthMethods {
     return res;
   }
 
-  Future<String> loginAsAdmin({
-    required String username, 
-    required String password
-  }) async {
+  Future<String> loginAsAdmin(
+      {required String username, required String password}) async {
     String res = "Enter valid credentials";
 
     try {
       if (username.isNotEmpty || password.isNotEmpty) {
         String email = '$username@gmail.com'; // generate email from username
-        await _auth.signInWithEmailAndPassword(email: email, password: password);
+        await _auth.signInWithEmailAndPassword(
+            email: email, password: password);
         res = "Success";
       } else {
         res = "Please enter username and password";
@@ -152,7 +156,8 @@ class AuthMethods {
 
     try {
       if (email.isNotEmpty || password.isNotEmpty) {
-         await _auth.signInWithEmailAndPassword(email: email, password: password);
+        await _auth.signInWithEmailAndPassword(
+            email: email, password: password);
         res = "Success";
       } else {
         res = "Please enter email and password";
