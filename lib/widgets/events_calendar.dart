@@ -2,22 +2,22 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class Calendar extends StatefulWidget {
-  const Calendar({super.key});
+class EventsCalendar extends StatefulWidget {
+  const EventsCalendar({super.key});
 
   @override
-  _CalendarState createState() => _CalendarState();
+  State<EventsCalendar> createState() => EventsCalendarState();
 }
 
-class _CalendarState extends State<Calendar> {
+class EventsCalendarState extends State<EventsCalendar> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
-  late DateTime _selectedDay;
+  DateTime? _selectedDay;
 
   @override
   Widget build(BuildContext context) {
     return TableCalendar(
-      firstDay: DateTime.utc(2010, 10, 16),
+      firstDay: DateTime.utc(2015, 01, 01),
       lastDay: DateTime.utc(2030, 3, 14),
       focusedDay: _focusedDay,
       calendarFormat: _calendarFormat,
