@@ -228,38 +228,48 @@ class _PostScreenState extends State<PostScreen> {
                           ),
                         ),
                         const SizedBox(height: 10.0),
-                       Row(
-                         children: [
-                           Expanded(
-                             child: DropdownButton<String>(
-                                hint: const Text('Select event/announcement type'),
-                                value: _eventTypeController.text.isEmpty ? null : _eventTypeController.text,
-                                items: <String>['Academic', 'Non-academic']
+                        Row(
+                          children: [
+                              Expanded(
+                                child: DropdownButtonFormField<String>(
+                                  decoration: const InputDecoration(
+                                    prefixIcon: Icon(Icons.event),
+                                    filled: true,
+                                    hintText: 'Select event/announcement type',
+                                  ),
+                                  value: _eventTypeController.text.isEmpty ? null : _eventTypeController.text,
+                                  items: <String>['Academic', 'Non-academic']
                                     .map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),  
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _eventTypeController.text = newValue!;
-                                  });
-                                }
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    }).toList(),  
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _eventTypeController.text = newValue!;
+                                    });
+                                  },
+                                ),
                               ),
-                           ),
-                            IconButton(
-                              onPressed: () => _selectImage(context),
-                              icon: const Icon(Icons.add_a_photo),
-                              tooltip: 'Add a photo',
-                            ),
-                            IconButton(
-                              onPressed: () => _selectDocument(context),
-                              icon: const Icon(Icons.file_present_rounded),
-                              tooltip: 'Add a document',
-                            ),
-                         ],
-                       ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                child: IconButton(
+                                  onPressed: () => _selectImage(context),
+                                  icon: const Icon(Icons.add_a_photo),
+                                  tooltip: 'Add a photo',
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                child: IconButton(
+                                  onPressed: () => _selectDocument(context),
+                                  icon: const Icon(Icons.file_present_rounded),
+                                  tooltip: 'Add a document',
+                                ),
+                              ),
+                          ],
+                        ),
                         const SizedBox(height: 10.0),
                         TextFieldInput(
                           textEditingController: _eventNameController,
