@@ -62,4 +62,10 @@ class FireStoreEventMethods {
   Future<void> removeEvent(String eventId) async {
     await _eventsCollection.doc(eventId).delete();
   }
+
+  // Get all events
+  Stream<QuerySnapshot> getAllEvents() {
+    return _eventsCollection.snapshots();
+  }
+
 }

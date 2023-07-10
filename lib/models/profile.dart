@@ -17,13 +17,13 @@ class Profile {
   });
 
   Map<String, dynamic> toJson() => {
-        'fullName': fullName,
-        'phoneNumber': phoneNumber,
-        'department': department,
-        'year': year,
-        'section': section,
-        'profileImage': profileImage,
-      };
+    'fullName': fullName,
+    'phoneNumber': phoneNumber,
+    'department': department,
+    'year': year,
+    'section': section,
+    'profileImage': profileImage,
+  };
 
   static Profile fromMap(Map<String, dynamic> map) {
     return Profile(

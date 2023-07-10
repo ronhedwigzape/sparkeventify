@@ -117,7 +117,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                   child: Container(),
                 ),
                 // svg image
-                const CspcLogo(
+                const CSPCLogo(
                   height: 90.0,
                 ),
                 const SizedBox(height: 20.0),

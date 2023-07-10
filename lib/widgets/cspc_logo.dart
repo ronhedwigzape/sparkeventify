@@ -2,8 +2,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-class CspcLogo extends StatelessWidget {
-  const CspcLogo({super.key, required this.height, });
+class CSPCLogo extends StatelessWidget {
+  const CSPCLogo({
+    super.key,
+    required this.height,
+  });
   final double height;
 
   @override
@@ -36,7 +39,7 @@ class CspcLogo extends StatelessWidget {
         print('Error loading image: $e');
         print('Stacktrace: $stacktrace');
       }
-      return Uint8List(0); 
+      return Uint8List(0);
     }
   }
 }

@@ -19,13 +19,13 @@ class User {
   });
 
   Map<String, dynamic> toJson() => {
-        'uid': uid,
-        'userType': userType,
-        'username': username,
-        'password': password,
-        'email': email,
-        'profile': profile?.toJson(),
-      };
+    'uid': uid,
+    'userType': userType,
+    'username': username,
+    'password': password,
+    'email': email,
+    'profile': profile?.toJson(),
+  };
 
   static User fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;

@@ -117,7 +117,7 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
                   child: Container(),
                 ),
                 // svg image
-                const CspcLogo(
+                const CSPCLogo(
                   height: 90.0,
                 ),
                 const SizedBox(height: 20.0),

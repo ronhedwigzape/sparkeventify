@@ -7,9 +7,9 @@ class Evaluators {
     this.feedbackMessage,
   });
 
-    Map<String, dynamic> toJson() => {
-        'uid': uid,
-        'feedbackMessage': feedbackMessage,
+  Map<String, dynamic> toJson() => {
+    'uid': uid,
+    'feedbackMessage': feedbackMessage,
   };
 
   static Evaluators fromMap(Map<String, dynamic> map) {

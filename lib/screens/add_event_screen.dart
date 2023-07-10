@@ -6,14 +6,14 @@ import 'package:student_event_calendar/utils/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class AddEventScreen extends StatefulWidget {
+  const AddEventScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<AddEventScreen> createState() => _AddEventScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _AddEventScreenState extends State<AddEventScreen> {
   Future<String> currentUser = AuthMethods().getCurrentUserType();
   Uint8List? documentFile;
   Uint8List? _imageFile;
@@ -132,7 +132,9 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _isLoading = false;
         });
-        mounted ? showSnackBar('Please upload an image and a document.', context) : '';
+        mounted
+            ? showSnackBar('Please upload an image and a document.', context)
+            : '';
       }
     } catch (err) {
       if (kDebugMode) {

@@ -116,7 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Container(),
             ),
             // cspc logo
-            const CspcLogo(
+            const CSPCLogo(
               height: 150.0,
             ),
             Column(

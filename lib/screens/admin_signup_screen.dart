@@ -110,7 +110,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
               child: Container(),
             ),
             // cspc logo
-            const CspcLogo(
+            const CSPCLogo(
               height: 150.0,
             ),
             Column(
