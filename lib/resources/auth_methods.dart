@@ -4,21 +4,24 @@ import 'package:student_event_calendar/models/profile.dart' as model;
 import 'package:student_event_calendar/models/user.dart' as model;
 
 class AuthMethods {
+  // Initialize Firebase Auth and Firebase Firestore instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  // Get current user details
   Future<model.User> getUserDetails() async {
     User currentUser = _auth.currentUser!;
-    DocumentSnapshot snap =
-        await _firestore.collection('users').doc(currentUser.uid).get();
+    DocumentSnapshot snap = await _firestore.collection('users').doc(currentUser.uid).get();
     return model.User.fromSnap(snap);
   }
 
+  // Get current user uid
   Future<String> getCurrentUserUid() async {
     User currentUser = _auth.currentUser!;
     return currentUser.uid;
   }
 
+  // Get current user type
   Future<String> getCurrentUserType() async {
     final User currentUser = _auth.currentUser!;
     final DocumentSnapshot snap =
@@ -26,6 +29,7 @@ class AuthMethods {
     return (snap.data() as Map<String, dynamic>)['userType'];
   }
 
+  // Sign up as client (Student, SASO Staff, Organization Officer)
   Future<String> signUpAsClient(
       {required String email,
       required String password,
@@ -41,9 +45,12 @@ class AuthMethods {
           profile != null &&
           profile.fullName!.isNotEmpty &&
           profile.phoneNumber!.isNotEmpty) {
+
+        // Create user in Firebase Auth
         UserCredential credential = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
 
+        // Create user object for storing credentials in Firebase Firestore
         model.User user = model.User(
             uid: credential.user!.uid,
             email: email,
@@ -52,11 +59,13 @@ class AuthMethods {
             profile: profile,
             password: password);
 
+        // Set user details in Firebase Firestore
         await _firestore
             .collection('users')
             .doc(credential.user!.uid)
             .set(user.toJson());
 
+        // Return success response if the user is successfully created in the database
         res = "Success";
       } else {
         res = "Please complete all required* fields";
@@ -69,19 +78,23 @@ class AuthMethods {
       } else if (err.code == 'email-already-in-use') {
         res = 'The account already exists for that email.';
       } else {
+        // Return error response if the fields are empty
         res = err.message!;
       }
     }
     return res;
   }
 
-  Future<String> signUpAsAdmin(
-      {required String username,
-      required String password,
+  // Sign up as admin (School Administrator)
+  Future<String> signUpAsAdmin({
+      required String username, 
+      required String password, 
       String? email,
       required String userType,
       model.Profile? profile}) async {
-    String res = "Enter valid credentials";
+
+    // Initialize response 
+    String response = "Enter valid credentials";
 
     try {
       if (username.isNotEmpty &&
@@ -89,10 +102,18 @@ class AuthMethods {
           userType.isNotEmpty &&
           profile != null &&
           profile.phoneNumber!.isNotEmpty) {
-        email = '$username@gmail.com'; // generate email from username
+
+        /* Generate email to fill up for username
+        *  The purpose of this is to use the generated email as username
+        *  for the admin account
+        */
+        email = '$username@gmail.com'; 
+
+        // Create user in Firebase Auth
         UserCredential credential = await _auth.createUserWithEmailAndPassword(
             email: email, password: password);
 
+        // Create user object for storing credentials in Firebase Firestore  
         model.User user = model.User(
           uid: credential.user!.uid,
           email: email,
@@ -102,78 +123,102 @@ class AuthMethods {
           profile: profile,
         );
 
+        // Set user details in Firebase Firestore
         await _firestore
             .collection('users')
             .doc(credential.user!.uid)
             .set(user.toJson());
 
-        res = "Success";
+        // Return success response if the user is successfully created in the database
+        response = "Success";
       } else {
-        res = "Please complete all required* fields";
+        response = "Please complete all required* fields";
       }
     } on FirebaseAuthException catch (err) {
       if (err.code == 'invalid-email') {
-        res = 'The email is badly formatted.';
+        response = 'The email is badly formatted.';
       } else if (err.code == 'weak-password') {
-        res = 'The password must be 6 characters long or more.';
+        response = 'The password must be 6 characters long or more.';
       } else if (err.code == 'email-already-in-use') {
-        res = 'The account already exists for that username.';
+        response = 'The account already exists for that username.';
       } else {
-        res = err.message!;
+        // Return error response if the fields are empty
+        response = err.message!;
       }
     }
-    return res;
+    return response;
   }
 
+  // Sign in as a admin using username and password
   Future<String> loginAsAdmin(
       {required String username, required String password}) async {
-    String res = "Enter valid credentials";
+
+    // Initialize response
+    String response = "Enter valid credentials";
 
     try {
       if (username.isNotEmpty || password.isNotEmpty) {
-        String email = '$username@gmail.com'; // generate email from username
+
+        // Generate email to fill up for username 
+        String email = '$username@gmail.com'; 
+
+        // Sign in with Firebase Authentication
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
-        res = "Success";
+
+        // Return success response if the user is successfully signed in
+        response = "Success";
       } else {
-        res = "Please enter username and password";
+
+        // Return error response if the username and password is empty
+        response = "Please enter username and password";
       }
     } on FirebaseAuthException catch (err) {
       if (err.code == 'user-not-found') {
-        res = 'No user found for that username.';
+        response = 'No user found for that username.';
       } else if (err.code == 'wrong-password') {
-        res = 'Wrong password provided for that user.';
+        response = 'Wrong password provided for that user.';
       } else {
-        res = err.message!;
+        // Return error response if the username and password is empty
+        response = err.message!;
       }
     }
-    return res;
+    return response;
   }
 
+  // Sign in as a client using email and password
   Future<String> loginAsClient(
       {required String email, required String password}) async {
-    String res = "Enter valid credentials";
+    String response = "Enter valid credentials";
 
     try {
       if (email.isNotEmpty || password.isNotEmpty) {
+
+        // Sign in with Firebase Authentication
         await _auth.signInWithEmailAndPassword(
             email: email, password: password);
-        res = "Success";
+
+        // Return success response if the user is successfully signed in
+        response = "Success";
       } else {
-        res = "Please enter email and password";
+
+        // Return error response if the fields are empty
+        response = "Please enter email and password";
       }
     } on FirebaseAuthException catch (err) {
       if (err.code == 'user-not-found') {
-        res = 'No user found for that email.';
+        response = 'No user found for that email.';
       } else if (err.code == 'wrong-password') {
-        res = 'Wrong password provided for that user.';
+        response = 'Wrong password provided for that user.';
       } else {
-        res = err.message!;
+        // Return error response if the email and password is empty
+        response = err.message!;
       }
     }
-    return res;
+    return response;
   }
 
+  // Sign out user
   Future<void> signOut() async {
     await _auth.signOut();
   }
