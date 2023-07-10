@@ -97,6 +97,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
           return currentUser?.userType == 'Admin' ?
            Scaffold(
             appBar: AppBar(
+              automaticallyImplyLeading: false,
               title: buildAppBarTitle(),
               elevation: 0.0,
               backgroundColor: tertiaryColor,
