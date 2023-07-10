@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:student_event_calendar/models/user.dart';
+import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
@@ -11,6 +13,7 @@ class AdminScreenLayout extends StatefulWidget {
 }
 
 class _AdminScreenLayoutState extends State<AdminScreenLayout> {
+  Future<User> currentUser = AuthMethods().getUserDetails();
   int _page = 0;
   PageController pageController = PageController();
 
@@ -39,21 +42,94 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: buildAppBar(),
-      body: buildBody(),
-    );
+  _signOut() async {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text(
+              'Sign Out Confirmation',
+              style: TextStyle(
+                color: Colors.red[900],
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                child: Text('Are you sure you want to sign out?'),
+              ),
+              SimpleDialogOption(
+                padding: const EdgeInsets.all(20),
+                onPressed: () async {
+                  await AuthMethods().signOut();
+                  if (mounted) {
+                    Navigator.of(context).pop();
+                  }
+                },
+                child: const Text('Yes'),
+                ),
+              SimpleDialogOption(
+                padding: const EdgeInsets.all(20),
+                child: const Text('Go Back'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
   }
 
-  AppBar buildAppBar() {
-    return AppBar(
-      title: buildAppBarTitle(),
-      elevation: 0.0,
-      backgroundColor: tertiaryColor,
-      actions: buildAppBarActions(),
-    );
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: currentUser,
+      builder: (context, AsyncSnapshot<User> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          User? currentUser = snapshot.data;
+          return currentUser?.userType == 'Admin' ?
+           Scaffold(
+            appBar: AppBar(
+              title: buildAppBarTitle(),
+              elevation: 0.0,
+              backgroundColor: tertiaryColor,
+              actions: [
+                buildIconButton(Icons.dashboard, 0, 'Dashboard'),
+                buildIconButton(Icons.add_circle_sharp, 1, 'Post'),
+                buildIconButton(Icons.event_note, 2, 'Manage'),
+                buildIconButton(Icons.supervised_user_circle_sharp, 3, 'Users'),
+                buildIconButton(Icons.settings, 4, 'Settings'),
+                IconButton(
+                  onPressed: _signOut, 
+                  icon: Icon(
+                    Icons.logout,
+                    color: Colors.red[900]
+                  ),
+                  tooltip: 'Log out',
+                ),                  
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 15.0),
+                  child: Text(
+                    currentUser?.profile?.fullName ?? '',
+                    style: const TextStyle(
+                      color: secondaryColor,
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                )
+              ],
+            ),
+            body: buildBody(),
+          )
+        : const Center(child: CircularProgressIndicator());
+        }
+      });
   }
 
   Row buildAppBarTitle() {
@@ -75,27 +151,6 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
         ),
       ],
     );
-  }
-
-  List<Widget> buildAppBarActions() {
-    return [
-      buildIconButton(Icons.dashboard, 0, 'Dashboard'),
-      buildIconButton(Icons.add_circle_sharp, 1, 'Add Event'),
-      buildIconButton(Icons.event_note, 2, 'Manage Events'),
-      buildIconButton(Icons.supervised_user_circle_sharp, 3, 'Manage Users'),
-      buildIconButton(Icons.settings, 4, 'Settings'),
-      const Padding(
-        padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 15.0),
-        child: Text(
-          'AdminName',
-          style: TextStyle(
-            color: secondaryColor,
-            fontSize: 16.0,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-      )
-    ];
   }
 
   IconButton buildIconButton(IconData iconData, int pageIndex, String tooltip) {
