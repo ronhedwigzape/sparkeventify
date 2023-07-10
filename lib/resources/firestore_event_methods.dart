@@ -15,8 +15,8 @@ class FireStoreEventMethods {
     String description,
     String createdBy,
     Uint8List document,
-    String date,
-    List attendees,
+    String dateTime,
+    List participants,
     String venue,
     String type,
     String status,
@@ -38,11 +38,12 @@ class FireStoreEventMethods {
         description: description,
         createdBy: createdBy,
         document: documentUrl,
-        attendees: attendees,
+        participants: participants,
         venue: venue,
-        date: DateTime.parse(date),
+        dateTime: DateTime.parse(dateTime),
         type: type,
         status: status,
+        updatedAt: DateTime.now(),
       );
 
       _eventsCollection.doc(eventId).set(event.toJson());

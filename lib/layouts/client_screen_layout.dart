@@ -66,7 +66,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
           width: 10.0,
         ),
         Text(
-          clientAppName,
+          appName,
           style: TextStyle(
             color: whiteColor,
             fontSize: 20.0,

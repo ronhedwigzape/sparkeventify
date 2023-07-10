@@ -9,8 +9,7 @@ const webScreenSize = 600;
 const schoolName = 'Camarines Sur Polytechnic Colleges';
 const schoolAddress = 'Nabua, Camarines Sur';
 const schoolLogo = 'assets/images/cspc_logo.png';
-const clientAppName = 'Announce';
-const adminAppName = 'Events Announcement Administrator';
+const appName = 'Announce';
 
 List<Widget> homeScreenItems = [
   // Test for current user

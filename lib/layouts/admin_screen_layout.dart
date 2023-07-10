@@ -144,7 +144,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
           width: 10.0,
         ),
         Text(
-          adminAppName,
+          appName,
           style: TextStyle(
             color: secondaryColor,
             fontSize: 20.0,
