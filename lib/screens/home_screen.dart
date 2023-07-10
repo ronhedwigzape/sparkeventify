@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
@@ -17,7 +15,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   Future<String> currentUser = AuthMethods().getCurrentUserType();
-  File? documentFile;
+  Uint8List? documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
 
@@ -74,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: const Text('Choose Files'),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  File? file = await pickDocument();
+                  Uint8List? file = await pickDocument();
                   setState(() {
                     documentFile = file;
                   });
@@ -111,7 +109,7 @@ class _HomeScreenState extends State<HomeScreen> {
             'Test Event Description',
             currentUser,
             documentFile!,
-            '2021-10-10 10:10:10',
+            DateTime.now().toString(),
             'Test Event Type',
             'Pending');
 
@@ -134,11 +132,11 @@ class _HomeScreenState extends State<HomeScreen> {
         setState(() {
           _isLoading = false;
         });
-        return 'imageFile or documentFile is null';
+        mounted ? showSnackBar('Please upload an image and a document.', context) : '';
       }
     } catch (err) {
       if (kDebugMode) {
-        print('error caught: $err');
+        print('Error caught: $err');
       }
       setState(() {
         _isLoading = false;

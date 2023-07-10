@@ -19,20 +19,28 @@ pickImage(ImageSource source) async {
   }
 }
 
-pickDocument() async {
+Future<Uint8List?> pickDocument() async {
   FilePickerResult? result = await FilePicker.platform.pickFiles(
     type: FileType.custom,
     allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg'],
   );
 
   if (result != null) {
-    PlatformFile platformFile = result.files.first;
-    File file = File(platformFile.path!);
-    return file;
-  } else {
+    PlatformFile file = result.files.first;
+
+    if (kIsWeb) {
+      // In Flutter web the path is always null
+      return file.bytes;
+    }
+    else {
+      // While in android or ios you can access the path
+      return File(file.path!).readAsBytes();
+    }
+  }
+  else {
     if (kDebugMode) {
       print('No Document Selected');
     }
-    return null;
+    return null;  // No file selected
   }
 }

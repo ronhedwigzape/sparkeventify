@@ -1,6 +1,4 @@
-import 'dart:io';
 import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_event_calendar/models/events.dart';
 import 'package:student_event_calendar/resources/storage_methods.dart';
@@ -16,7 +14,7 @@ class FireStoreEventMethods {
     Uint8List eventImage,
     String eventDescription,
     String createdBy,
-    File eventDocument,
+    Uint8List eventDocument,
     String eventDate,
     String eventType,
     String status,
