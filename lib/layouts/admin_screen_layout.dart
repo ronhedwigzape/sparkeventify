@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/models/user.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
+import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
@@ -48,7 +49,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
         builder: (context) {
           return SimpleDialog(
             title: Text(
-              'Sign Out Confirmation',
+              'Log Out Confirmation',
               style: TextStyle(
                 color: Colors.red[900],
                 fontWeight: FontWeight.bold,
@@ -65,6 +66,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                   await AuthMethods().signOut();
                   if (mounted) {
                     Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
                   }
                 },
                 child: const Text('Yes'),

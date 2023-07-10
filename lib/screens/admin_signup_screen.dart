@@ -148,6 +148,13 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
               hintText: 'Enter your username',
               textInputType: TextInputType.text,
             ),
+            const SizedBox(height: 20.0),
+            // text field input for full name
+            TextFieldInput(
+              textEditingController: _fullNameController,
+              hintText: 'Enter your full name',
+              textInputType: TextInputType.text,
+            ),
             // text field input for phone number
             const SizedBox(height: 20.0),
             Row(
