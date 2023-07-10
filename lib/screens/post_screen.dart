@@ -25,6 +25,7 @@ class _PostScreenState extends State<PostScreen> {
   final TextEditingController _eventTimeController = TextEditingController();
   final TextEditingController _eventParticipantsController =
       TextEditingController();
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
   Future<User> currentUser = AuthMethods().getUserDetails();
   Uint8List? _documentFile;
   Uint8List? _imageFile;
@@ -42,7 +43,7 @@ class _PostScreenState extends State<PostScreen> {
     _eventParticipantsController.dispose();
   }
 
-  _selectImage(BuildContext context) async {
+  void _selectImage(BuildContext context) async {
     return showDialog(
         context: context,
         builder: (context) {
@@ -60,10 +61,12 @@ class _PostScreenState extends State<PostScreen> {
                 ),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  Uint8List file = await pickImage(ImageSource.camera);
-                  setState(() {
+                  Uint8List? file = await pickImage(ImageSource.camera);
+                  if (file != null) {
                     _imageFile = file;
-                  });
+                    final SnackBar snackBar = SnackBar(content: Text('Image is uploaded!'));
+                    ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!).showSnackBar(snackBar);
+                  }
                 },
               ),
               SimpleDialogOption(
@@ -77,10 +80,12 @@ class _PostScreenState extends State<PostScreen> {
                 ),
                 onPressed: () async {
                   Navigator.of(context).pop();
-                  Uint8List file = await pickImage(ImageSource.gallery);
-                  setState(() {
+                  Uint8List? file = await pickImage(ImageSource.gallery);
+                  if (file != null) {
                     _imageFile = file;
-                  });
+                    final SnackBar snackBar = SnackBar(content: Text('Image is uploaded!'));
+                    ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!).showSnackBar(snackBar);
+                  }
                 },
               ),
               SimpleDialogOption(
@@ -101,8 +106,8 @@ class _PostScreenState extends State<PostScreen> {
         });
   }
 
-  _selectDocument(BuildContext context) async {
-    return showDialog(
+ void _selectDocument(BuildContext context) async {
+    showDialog(
         context: context,
         builder: (context) {
           return SimpleDialog(
@@ -119,10 +124,14 @@ class _PostScreenState extends State<PostScreen> {
                 ),
                 onPressed: () async {
                   Navigator.of(context).pop();
+
                   Uint8List? file = await pickDocument();
-                  setState(() {
+                  if (file != null) {
                     _documentFile = file;
-                  });
+
+                    final SnackBar snackBar = SnackBar(content: Text('Document is uploaded!'));
+                    ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!).showSnackBar(snackBar);
+                  }
                 },
               ),
               SimpleDialogOption(
@@ -142,6 +151,7 @@ class _PostScreenState extends State<PostScreen> {
           );
         });
   }
+
 
   _post() async {
     if (kDebugMode) {
@@ -248,147 +258,150 @@ class _PostScreenState extends State<PostScreen> {
         } else {
           User? currentUser = snapshot.data;
           return currentUser?.userType == 'Admin'
-              ? Scaffold(
-                  body: Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Padding(
-                          padding: EdgeInsets.symmetric(vertical: 16.0),
-                          child: Text(
-                            'Post an Event/Announcement',
-                            style: TextStyle(
-                              fontSize: 24.0,
-                              fontWeight: FontWeight.bold,
+              ? ScaffoldMessenger(
+                key: _scaffoldMessengerKey,
+                child: Scaffold(
+                    body: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 16.0),
+                            child: Text(
+                              'Post an Event/Announcement',
+                              style: TextStyle(
+                                fontSize: 24.0,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
-                        ),
-                        const SizedBox(height: 10.0),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: DropdownButtonFormField<String>(
-                                decoration: const InputDecoration(
-                                  prefixIcon: Icon(Icons.event),
-                                  filled: true,
-                                  hintText: 'Select event/announcement type',
-                                ),
-                                value: _eventTypeController.text.isEmpty
-                                    ? null
-                                    : _eventTypeController.text,
-                                items: <String>['Academic', 'Non-academic']
-                                    .map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Row(
-                                      children: <Widget>[
-                                        const Icon(Icons.check),
-                                        const SizedBox(width: 10),
-                                        Text(value),
-                                      ],
-                                    ),
-                                  );
-                                }).toList(),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _eventTypeController.text = newValue!;
-                                  });
-                                },
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: IconButton(
-                                onPressed: () => _selectImage(context),
-                                icon: const Icon(Icons.add_a_photo),
-                                tooltip: 'Add a photo',
-                              ),
-                            ),
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20.0),
-                              child: IconButton(
-                                onPressed: () => _selectDocument(context),
-                                icon: const Icon(Icons.file_present_rounded),
-                                tooltip: 'Add a document',
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 10.0),
-                        TextFieldInput(
-                          textEditingController: _eventTitleController,
-                          hintText: 'Title',
-                          textInputType: TextInputType.text,
-                        ),
-                        const SizedBox(height: 10.0),
-                        TextFieldInput(
-                          textEditingController: _eventDescriptionsController,
-                          hintText: 'Description',
-                          textInputType: TextInputType.text,
-                        ),
-                        const SizedBox(height: 10.0),
-                        TextFieldInput(
-                          textEditingController: _eventVenueController,
-                          hintText: 'Venue',
-                          textInputType: TextInputType.text,
-                        ),
-                        const SizedBox(height: 10.0),
-                        TextFieldInput(
-                          textEditingController: _eventDateController,
-                          hintText: 'Date',
-                          textInputType: TextInputType.datetime,
-                        ),
-                        const SizedBox(height: 10.0),
-                        TextFieldInput(
-                          textEditingController: _eventTimeController,
-                          hintText: 'Time',
-                          textInputType: TextInputType.datetime,
-                        ),
-                        const SizedBox(height: 10.0),
-                        TextFieldInput(
-                          textEditingController: _eventParticipantsController,
-                          hintText: 'Participants',
-                          textInputType: TextInputType.text,
-                        ),
-                        const SizedBox(height: 10.0),
-                        // participants (Checkbox that adds to a local array of participants)
-                        Center(
-                          child: InkWell(
-                            onTap: _post,
-                            child: Container(
-                                width: double.infinity,
-                                alignment: Alignment.center,
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 16.0),
-                                decoration: const ShapeDecoration(
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius:
-                                        BorderRadius.all(Radius.circular(5.0)),
+                          const SizedBox(height: 10.0),
+                          Row(
+                            children: [
+                              Expanded(
+                                child: DropdownButtonFormField<String>(
+                                  decoration: const InputDecoration(
+                                    prefixIcon: Icon(Icons.event),
+                                    filled: true,
+                                    hintText: 'Select event/announcement type',
                                   ),
-                                  color: blueColor,
+                                  value: _eventTypeController.text.isEmpty
+                                      ? null
+                                      : _eventTypeController.text,
+                                  items: <String>['Academic', 'Non-academic']
+                                      .map((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Row(
+                                        children: <Widget>[
+                                          const Icon(Icons.check),
+                                          const SizedBox(width: 10),
+                                          Text(value),
+                                        ],
+                                      ),
+                                    );
+                                  }).toList(),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      _eventTypeController.text = newValue!;
+                                    });
+                                  },
                                 ),
-                                child: _isLoading
-                                    ? const Center(
-                                        child: CircularProgressIndicator(
-                                        valueColor:
-                                            AlwaysStoppedAnimation<Color>(
-                                                whiteColor),
-                                      ))
-                                    : const Text(
-                                        'Create a New Announcement',
-                                        style: TextStyle(
-                                          color: whiteColor,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      )),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20.0),
+                                child: IconButton(
+                                  onPressed: () => _selectImage(context),
+                                  icon: const Icon(Icons.add_a_photo),
+                                  tooltip: 'Add a photo',
+                                ),
+                              ),
+                              Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 20.0),
+                                child: IconButton(
+                                  onPressed: () => _selectDocument(context),
+                                  icon: const Icon(Icons.file_present_rounded),
+                                  tooltip: 'Add a document',
+                                ),
+                              ),
+                            ],
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 10.0),
+                          TextFieldInput(
+                            textEditingController: _eventTitleController,
+                            hintText: 'Title',
+                            textInputType: TextInputType.text,
+                          ),
+                          const SizedBox(height: 10.0),
+                          TextFieldInput(
+                            textEditingController: _eventDescriptionsController,
+                            hintText: 'Description',
+                            textInputType: TextInputType.text,
+                          ),
+                          const SizedBox(height: 10.0),
+                          TextFieldInput(
+                            textEditingController: _eventVenueController,
+                            hintText: 'Venue',
+                            textInputType: TextInputType.text,
+                          ),
+                          const SizedBox(height: 10.0),
+                          TextFieldInput(
+                            textEditingController: _eventDateController,
+                            hintText: 'Date',
+                            textInputType: TextInputType.datetime,
+                          ),
+                          const SizedBox(height: 10.0),
+                          TextFieldInput(
+                            textEditingController: _eventTimeController,
+                            hintText: 'Time',
+                            textInputType: TextInputType.datetime,
+                          ),
+                          const SizedBox(height: 10.0),
+                          TextFieldInput(
+                            textEditingController: _eventParticipantsController,
+                            hintText: 'Participants',
+                            textInputType: TextInputType.text,
+                          ),
+                          const SizedBox(height: 10.0),
+                          // participants (Checkbox that adds to a local array of participants)
+                          Center(
+                            child: InkWell(
+                              onTap: _post,
+                              child: Container(
+                                  width: double.infinity,
+                                  alignment: Alignment.center,
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 16.0),
+                                  decoration: const ShapeDecoration(
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius:
+                                          BorderRadius.all(Radius.circular(5.0)),
+                                    ),
+                                    color: blueColor,
+                                  ),
+                                  child: _isLoading
+                                      ? const Center(
+                                          child: CircularProgressIndicator(
+                                          valueColor:
+                                              AlwaysStoppedAnimation<Color>(
+                                                  whiteColor),
+                                        ))
+                                      : const Text(
+                                          'Create a New Announcement',
+                                          style: TextStyle(
+                                            color: whiteColor,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        )),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
-                )
+              )
               : const SizedBox();
         }
       },
