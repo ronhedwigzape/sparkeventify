@@ -118,7 +118,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
           print('addEvent response: $response');
         }
 
-        // Check if the widget is still in the widget tree
+        // Check if the response is a success or a failure
         if (response == 'Success') {
           onPostSuccess();
         } else {
@@ -133,6 +133,8 @@ class _AddEventScreenState extends State<AddEventScreen> {
         setState(() {
           _isLoading = false;
         });
+
+        // Show a snackbar if the image and document are not loaded
         mounted
             ? showSnackBar('Please upload an image and a document.', context)
             : '';

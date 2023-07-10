@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:student_event_calendar/utils/global.dart';
 
 class CSPCLogo extends StatelessWidget {
   const CSPCLogo({
@@ -32,7 +33,7 @@ class CSPCLogo extends StatelessWidget {
 
   Future<Uint8List> loadImage() async {
     try {
-      final byteData = await rootBundle.load('assets/images/cspc_logo.png');
+      final byteData = await rootBundle.load(schoolLogo);
       return byteData.buffer.asUint8List();
     } catch (e, stacktrace) {
       if (kDebugMode) {
