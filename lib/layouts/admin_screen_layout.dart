@@ -69,21 +69,21 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                     Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
                   }
                 },
-                child: Row(
+                child: const Row(
                   children: <Widget>[
-                    Icon(Icons.check_circle, color: Colors.green[900]), 
-                    const SizedBox(width: 10),
-                    const Text('Yes'),
+                    Icon(Icons.check_circle, color: grassColor), 
+                    SizedBox(width: 10),
+                    Text('Yes'),
                   ],
                 ),
                 ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: Row(
+                child: const Row(
                   children: <Widget>[
-                    Icon(Icons.cancel, color: Colors.red[900]), 
-                    const SizedBox(width: 10),
-                    const Text('Go Back'),
+                    Icon(Icons.cancel, color: maroonColor), 
+                    SizedBox(width: 10),
+                    Text('Go Back'),
                   ],
                 ),
                 onPressed: () {
