@@ -31,18 +31,6 @@ class _PostScreenState extends State<PostScreen> {
   Uint8List? _imageFile;
   bool _isLoading = false;
 
-  @override
-  void dispose() {
-    super.dispose();
-    _eventTypeController.dispose();
-    _eventTitleController.dispose();
-    _eventDescriptionsController.dispose();
-    _eventVenueController.dispose();
-    _eventDateController.dispose();
-    _eventTimeController.dispose();
-    _eventParticipantsController.dispose();
-  }
-
   void _selectImage(BuildContext context) async {
     return showDialog(
         context: context,
@@ -64,7 +52,7 @@ class _PostScreenState extends State<PostScreen> {
                   Uint8List? file = await pickImage(ImageSource.camera);
                   if (file != null) {
                     _imageFile = file;
-                    final SnackBar snackBar = SnackBar(content: Text('Image is uploaded!'));
+                    const SnackBar snackBar = SnackBar(content: Text('Image is uploaded!'));
                     ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!).showSnackBar(snackBar);
                   }
                 },
@@ -83,7 +71,7 @@ class _PostScreenState extends State<PostScreen> {
                   Uint8List? file = await pickImage(ImageSource.gallery);
                   if (file != null) {
                     _imageFile = file;
-                    final SnackBar snackBar = SnackBar(content: Text('Image is uploaded!'));
+                    const SnackBar snackBar = SnackBar(content: Text('Image is uploaded!'));
                     ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!).showSnackBar(snackBar);
                   }
                 },
@@ -166,16 +154,33 @@ class _PostScreenState extends State<PostScreen> {
       }
       String currentUser = await AuthMethods().getCurrentUserUid();
       if (_imageFile != null && _documentFile != null) {
+
+        // Get the date and time from the text controllers
+        String pickedDate = _eventDateController.text;
+        String pickedTime = _eventTimeController.text;
+
+        // Split the date into their respective parts
+        int year = int.parse(pickedDate.split('-')[0]);
+        int month = int.parse(pickedDate.split('-')[1]);
+        int day = int.parse(pickedDate.split('-')[2]);
+
+        // Split the time into their respective parts
+        int hour = int.parse(pickedTime.split(':')[0]);
+        int minute = int.parse(pickedTime.split(':')[1]);
+
+        // Create a DateTime object from the date and time
+        DateTime dateTime = DateTime(year, month, day, hour, minute);
+
         String response = await FireStoreEventMethods().addEvent(
-            'Test Event',
+            _eventTitleController.text,
             _imageFile!,
-            'Test Event Description',
+            _eventDescriptionsController.text,
             currentUser,
             _documentFile!,
-            DateTime.now().toString(),
+            dateTime,
             ['Test Attendee 1', 'Test Attendee 2'],
-            'Test Location',
-            'Test Event Type',
+            _eventVenueController.text,
+            _eventTypeController.text,
             'Pending');
 
         if (kDebugMode) {
@@ -244,6 +249,18 @@ class _PostScreenState extends State<PostScreen> {
     setState(() {
       _documentFile = null;
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _eventTypeController.dispose();
+    _eventTitleController.dispose();
+    _eventDescriptionsController.dispose();
+    _eventVenueController.dispose();
+    _eventDateController.dispose();
+    _eventTimeController.dispose();
+    _eventParticipantsController.dispose();
   }
 
   @override
@@ -347,16 +364,26 @@ class _PostScreenState extends State<PostScreen> {
                             textInputType: TextInputType.text,
                           ),
                           const SizedBox(height: 10.0),
-                          TextFieldInput(
-                            textEditingController: _eventDateController,
-                            hintText: 'Date',
-                            textInputType: TextInputType.datetime,
-                          ),
-                          const SizedBox(height: 10.0),
-                          TextFieldInput(
-                            textEditingController: _eventTimeController,
-                            hintText: 'Time',
-                            textInputType: TextInputType.datetime,
+                          Row(
+                            children: [
+                              Flexible(
+                                child: TextFieldInput(
+                                  textEditingController: _eventDateController,
+                                  hintText: 'Date',
+                                  textInputType: TextInputType.datetime,
+                                  isDate: true,
+                                ),
+                              ),
+                              const SizedBox(width: 10.0),
+                              Flexible(
+                                child: TextFieldInput(
+                                  textEditingController: _eventTimeController,
+                                  hintText: 'Time',
+                                  textInputType: TextInputType.datetime,
+                                  isTime: true,
+                                ),
+                              )
+                            ] 
                           ),
                           const SizedBox(height: 10.0),
                           TextFieldInput(
