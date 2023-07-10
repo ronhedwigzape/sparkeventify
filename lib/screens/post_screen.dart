@@ -16,18 +16,30 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
-  final TextEditingController _nameController = TextEditingController();
-
-
+  final TextEditingController _eventTypeController = TextEditingController();
+  final TextEditingController _eventNameController = TextEditingController();
+  final TextEditingController _eventDescriptionsController = TextEditingController();
+  final TextEditingController _eventVenueController = TextEditingController();
+  final TextEditingController _eventDateController = TextEditingController();
+  final TextEditingController _eventTimeController = TextEditingController();
+  final TextEditingController _eventParticipantsController = TextEditingController();
+  final TextEditingController _eventStatusController = TextEditingController();
   Future<User> currentUser = AuthMethods().getUserDetails();
-  Uint8List? documentFile;
+  Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
 
   @override
   void dispose() {
     super.dispose();
-    _nameController.dispose();
+    _eventTypeController.dispose();
+    _eventNameController.dispose();
+    _eventDescriptionsController.dispose();
+    _eventVenueController.dispose();
+    _eventDateController.dispose();
+    _eventTimeController.dispose();
+    _eventParticipantsController.dispose();
+    _eventStatusController.dispose(); 
   }
   
   _selectImage(BuildContext context) async {
@@ -85,7 +97,7 @@ class _PostScreenState extends State<PostScreen> {
                   Navigator.of(context).pop();
                   Uint8List? file = await pickDocument();
                   setState(() {
-                    documentFile = file;
+                    _documentFile = file;
                   });
                 },
               ),
@@ -113,13 +125,13 @@ class _PostScreenState extends State<PostScreen> {
         print('Trying to add event...');
       }
       String currentUser = await AuthMethods().getCurrentUserUid();
-      if (_imageFile != null && documentFile != null) {
+      if (_imageFile != null && _documentFile != null) {
         String response = await FireStoreEventMethods().addEvent(
             'Test Event',
             _imageFile!,
             'Test Event Description',
             currentUser,
-            documentFile!,
+            _documentFile!,
             DateTime.now().toString(),
             ['Test Attendee 1', 'Test Attendee 2'],
             'Test Location',
@@ -205,22 +217,93 @@ class _PostScreenState extends State<PostScreen> {
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 16.0),
+                          child: Text(
+                            'Post an Event/Announcement',
+                            style: TextStyle(
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 10.0),
+                       Row(
+                         children: [
+                           Expanded(
+                             child: DropdownButton<String>(
+                                hint: const Text('Select event/announcement type'),
+                                value: _eventTypeController.text.isEmpty ? null : _eventTypeController.text,
+                                items: <String>['Academic', 'Non-academic']
+                                    .map((String value) {
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Text(value),
+                                  );
+                                }).toList(),  
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    _eventTypeController.text = newValue!;
+                                  });
+                                }
+                              ),
+                           ),
+                            IconButton(
+                              onPressed: () => _selectImage(context),
+                              icon: const Icon(Icons.add_a_photo),
+                              tooltip: 'Add a photo',
+                            ),
+                            IconButton(
+                              onPressed: () => _selectDocument(context),
+                              icon: const Icon(Icons.file_present_rounded),
+                              tooltip: 'Add a document',
+                            ),
+                         ],
+                       ),
+                        const SizedBox(height: 10.0),
                         TextFieldInput(
-                          textEditingController: _nameController,
+                          textEditingController: _eventNameController,
                           hintText: 'Event Name',
                           textInputType: TextInputType.text,
                         ),
-                        IconButton(
-                          onPressed: () => _selectImage(context),
-                          icon: const Icon(Icons.upload),
+                        const SizedBox(height: 10.0),
+                        TextFieldInput(
+                          textEditingController: _eventDescriptionsController,
+                          hintText: 'Event Description',
+                          textInputType: TextInputType.text,
                         ),
-                        TextButton(
-                            onPressed: () => _selectDocument(context),
-                            style: TextButton.styleFrom(
-                              foregroundColor: whiteColor,
-                              backgroundColor: blueColor,
-                            ),
-                            child: const Text('Pick Document')),
+                        const SizedBox(height: 10.0),
+                        TextFieldInput(
+                          textEditingController: _eventVenueController,
+                          hintText: 'Event Venue',
+                          textInputType: TextInputType.text,
+                        ),
+                        const SizedBox(height: 10.0),
+                        TextFieldInput(
+                          textEditingController: _eventDateController,
+                          hintText: 'Event Date',
+                          textInputType: TextInputType.datetime,
+                        ),
+                        const SizedBox(height: 10.0),
+                        TextFieldInput(
+                          textEditingController: _eventTimeController,
+                          hintText: 'Event Time',
+                          textInputType: TextInputType.datetime,
+                        ),
+                        const SizedBox(height: 10.0),
+                        TextFieldInput(
+                          textEditingController: _eventParticipantsController,
+                          hintText: 'Event Participants',
+                          textInputType: TextInputType.text,
+                        ),
+                        const SizedBox(height: 10.0),
+                        TextFieldInput(
+                          textEditingController: _eventStatusController,
+                          hintText: 'Event Status',
+                          textInputType: TextInputType.text,
+                        ),
+                        const SizedBox(height: 10.0),
+                        // participants (Checkbox that adds to a local array of participants)
                         Center(
                           child: InkWell(
                             onTap: _post,
@@ -244,7 +327,7 @@ class _PostScreenState extends State<PostScreen> {
                                                 whiteColor),
                                       ))
                                     : const Text(
-                                        'Post',
+                                        'Create a New Announcement',
                                         style: TextStyle(
                                           color: whiteColor,
                                           fontWeight: FontWeight.bold,

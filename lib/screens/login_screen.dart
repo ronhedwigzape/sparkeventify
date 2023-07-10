@@ -128,8 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: const Text(
                     schoolName,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
                 ),
                 Container(
