@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:student_event_calendar/models/user.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
@@ -14,7 +15,7 @@ class AddEventScreen extends StatefulWidget {
 }
 
 class _AddEventScreenState extends State<AddEventScreen> {
-  Future<String> currentUser = AuthMethods().getCurrentUserType();
+  Future<User> currentUser = AuthMethods().getUserDetails();
   Uint8List? documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
@@ -175,16 +176,16 @@ class _AddEventScreenState extends State<AddEventScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String>(
+    return FutureBuilder<User>(
       future: currentUser,
-      builder: (context, AsyncSnapshot<String> snapshot) {
+      builder: (context, AsyncSnapshot<User> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
-          String? currentUserType = snapshot.data;
-          return currentUserType == 'Admin' || currentUserType == 'Student'
+          User? currentUser = snapshot.data;
+          return currentUser?.userType == 'Admin' || currentUser?.userType == 'Staff'
               ? Scaffold(
                   body: Center(
                     child: Column(
