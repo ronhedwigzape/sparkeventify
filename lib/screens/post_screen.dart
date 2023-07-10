@@ -17,13 +17,14 @@ class PostScreen extends StatefulWidget {
 
 class _PostScreenState extends State<PostScreen> {
   final TextEditingController _eventTypeController = TextEditingController();
-  final TextEditingController _eventNameController = TextEditingController();
-  final TextEditingController _eventDescriptionsController = TextEditingController();
+  final TextEditingController _eventTitleController = TextEditingController();
+  final TextEditingController _eventDescriptionsController =
+      TextEditingController();
   final TextEditingController _eventVenueController = TextEditingController();
   final TextEditingController _eventDateController = TextEditingController();
   final TextEditingController _eventTimeController = TextEditingController();
-  final TextEditingController _eventParticipantsController = TextEditingController();
-  final TextEditingController _eventStatusController = TextEditingController();
+  final TextEditingController _eventParticipantsController =
+      TextEditingController();
   Future<User> currentUser = AuthMethods().getUserDetails();
   Uint8List? _documentFile;
   Uint8List? _imageFile;
@@ -33,25 +34,30 @@ class _PostScreenState extends State<PostScreen> {
   void dispose() {
     super.dispose();
     _eventTypeController.dispose();
-    _eventNameController.dispose();
+    _eventTitleController.dispose();
     _eventDescriptionsController.dispose();
     _eventVenueController.dispose();
     _eventDateController.dispose();
     _eventTimeController.dispose();
     _eventParticipantsController.dispose();
-    _eventStatusController.dispose(); 
   }
-  
+
   _selectImage(BuildContext context) async {
     return showDialog(
         context: context,
         builder: (context) {
           return SimpleDialog(
-            title: const Text('Upload Image'),
+            title: const Text('Upload an Image'),
             children: [
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Text('Take a photo'),
+                child: const Row(
+                  children: <Widget>[
+                    Icon(Icons.camera),
+                    SizedBox(width: 10),
+                    Text('Take a photo'),
+                  ],
+                ),
                 onPressed: () async {
                   Navigator.of(context).pop();
                   Uint8List file = await pickImage(ImageSource.camera);
@@ -62,7 +68,13 @@ class _PostScreenState extends State<PostScreen> {
               ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Text('Choose from gallery'),
+                child: const Row(
+                  children: <Widget>[
+                    Icon(Icons.image_rounded),
+                    SizedBox(width: 10),
+                    Text('Choose from gallery'),
+                  ],
+                ),
                 onPressed: () async {
                   Navigator.of(context).pop();
                   Uint8List file = await pickImage(ImageSource.gallery);
@@ -73,7 +85,13 @@ class _PostScreenState extends State<PostScreen> {
               ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Text('Cancel'),
+                child: const Row(
+                  children: <Widget>[
+                    Icon(Icons.cancel),
+                    SizedBox(width: 10),
+                    Text('Cancel'),
+                  ],
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -88,11 +106,17 @@ class _PostScreenState extends State<PostScreen> {
         context: context,
         builder: (context) {
           return SimpleDialog(
-            title: const Text('Upload Document'),
+            title: const Text('Upload a Document'),
             children: [
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Text('Choose Files'),
+                child: const Row(
+                  children: <Widget>[
+                    Icon(Icons.file_present_rounded),
+                    SizedBox(width: 10),
+                    Text('Choose from files'),
+                  ],
+                ),
                 onPressed: () async {
                   Navigator.of(context).pop();
                   Uint8List? file = await pickDocument();
@@ -103,7 +127,13 @@ class _PostScreenState extends State<PostScreen> {
               ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Text('Cancel'),
+                child: const Row(
+                  children: <Widget>[
+                    Icon(Icons.cancel),
+                    SizedBox(width: 10),
+                    Text('Cancel'),
+                  ],
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -200,6 +230,12 @@ class _PostScreenState extends State<PostScreen> {
     });
   }
 
+  void clearDocument() {
+    setState(() {
+      _documentFile = null;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<User>(
@@ -230,86 +266,90 @@ class _PostScreenState extends State<PostScreen> {
                         const SizedBox(height: 10.0),
                         Row(
                           children: [
-                              Expanded(
-                                child: DropdownButtonFormField<String>(
-                                  decoration: const InputDecoration(
-                                    prefixIcon: Icon(Icons.event),
-                                    filled: true,
-                                    hintText: 'Select event/announcement type',
-                                  ),
-                                  value: _eventTypeController.text.isEmpty ? null : _eventTypeController.text,
-                                  items: <String>['Academic', 'Non-academic']
+                            Expanded(
+                              child: DropdownButtonFormField<String>(
+                                decoration: const InputDecoration(
+                                  prefixIcon: Icon(Icons.event),
+                                  filled: true,
+                                  hintText: 'Select event/announcement type',
+                                ),
+                                value: _eventTypeController.text.isEmpty
+                                    ? null
+                                    : _eventTypeController.text,
+                                items: <String>['Academic', 'Non-academic']
                                     .map((String value) {
-                                      return DropdownMenuItem<String>(
-                                        value: value,
-                                        child: Text(value),
-                                      );
-                                    }).toList(),  
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _eventTypeController.text = newValue!;
-                                    });
-                                  },
-                                ),
+                                  return DropdownMenuItem<String>(
+                                    value: value,
+                                    child: Row(
+                                      children: <Widget>[
+                                        const Icon(Icons.check),
+                                        const SizedBox(width: 10),
+                                        Text(value),
+                                      ],
+                                    ),
+                                  );
+                                }).toList(),
+                                onChanged: (String? newValue) {
+                                  setState(() {
+                                    _eventTypeController.text = newValue!;
+                                  });
+                                },
                               ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                                child: IconButton(
-                                  onPressed: () => _selectImage(context),
-                                  icon: const Icon(Icons.add_a_photo),
-                                  tooltip: 'Add a photo',
-                                ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: IconButton(
+                                onPressed: () => _selectImage(context),
+                                icon: const Icon(Icons.add_a_photo),
+                                tooltip: 'Add a photo',
                               ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                                child: IconButton(
-                                  onPressed: () => _selectDocument(context),
-                                  icon: const Icon(Icons.file_present_rounded),
-                                  tooltip: 'Add a document',
-                                ),
+                            ),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 20.0),
+                              child: IconButton(
+                                onPressed: () => _selectDocument(context),
+                                icon: const Icon(Icons.file_present_rounded),
+                                tooltip: 'Add a document',
                               ),
+                            ),
                           ],
                         ),
                         const SizedBox(height: 10.0),
                         TextFieldInput(
-                          textEditingController: _eventNameController,
-                          hintText: 'Event Name',
+                          textEditingController: _eventTitleController,
+                          hintText: 'Title',
                           textInputType: TextInputType.text,
                         ),
                         const SizedBox(height: 10.0),
                         TextFieldInput(
                           textEditingController: _eventDescriptionsController,
-                          hintText: 'Event Description',
+                          hintText: 'Description',
                           textInputType: TextInputType.text,
                         ),
                         const SizedBox(height: 10.0),
                         TextFieldInput(
                           textEditingController: _eventVenueController,
-                          hintText: 'Event Venue',
+                          hintText: 'Venue',
                           textInputType: TextInputType.text,
                         ),
                         const SizedBox(height: 10.0),
                         TextFieldInput(
                           textEditingController: _eventDateController,
-                          hintText: 'Event Date',
+                          hintText: 'Date',
                           textInputType: TextInputType.datetime,
                         ),
                         const SizedBox(height: 10.0),
                         TextFieldInput(
                           textEditingController: _eventTimeController,
-                          hintText: 'Event Time',
+                          hintText: 'Time',
                           textInputType: TextInputType.datetime,
                         ),
                         const SizedBox(height: 10.0),
                         TextFieldInput(
                           textEditingController: _eventParticipantsController,
-                          hintText: 'Event Participants',
-                          textInputType: TextInputType.text,
-                        ),
-                        const SizedBox(height: 10.0),
-                        TextFieldInput(
-                          textEditingController: _eventStatusController,
-                          hintText: 'Event Status',
+                          hintText: 'Participants',
                           textInputType: TextInputType.text,
                         ),
                         const SizedBox(height: 10.0),

@@ -69,11 +69,23 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                     Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
                   }
                 },
-                child: const Text('Yes'),
+                child: Row(
+                  children: <Widget>[
+                    Icon(Icons.check_circle, color: Colors.green[900]), 
+                    const SizedBox(width: 10),
+                    const Text('Yes'),
+                  ],
+                ),
                 ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Text('Go Back'),
+                child: Row(
+                  children: <Widget>[
+                    Icon(Icons.cancel, color: Colors.red[900]), 
+                    const SizedBox(width: 10),
+                    const Text('Go Back'),
+                  ],
+                ),
                 onPressed: () {
                   Navigator.of(context).pop();
                 },
@@ -115,16 +127,28 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                   ),
                   tooltip: 'Log out',
                 ),                  
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 15.0),
-                  child: Text(
-                    currentUser?.profile?.fullName ?? '',
-                    style: const TextStyle(
-                      color: secondaryColor,
-                      fontSize: 16.0,
-                      fontWeight: FontWeight.bold,
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(30.0, 7.5, 5.0, 7.5),
+                      child: CircleAvatar(
+                      radius: 13,
+                      backgroundImage: NetworkImage(currentUser?.profile?.profileImage ??
+                          'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
+                      ),
                     ),
-                  ),
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(5.0, 7.5, 30.0, 7.5),
+                      child: Text(
+                        currentUser?.profile?.fullName ?? '',
+                        style: const TextStyle(
+                          color: secondaryColor,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ],
                 )
               ],
             ),
@@ -135,24 +159,27 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
       });
   }
 
-  Row buildAppBarTitle() {
-    return const Row(
-      children: [
-        CSPCLogo(
-          height: 30.0,
-        ),
-        SizedBox(
-          width: 10.0,
-        ),
-        Text(
-          appName,
-          style: TextStyle(
-            color: secondaryColor,
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
+  Padding buildAppBarTitle() {
+    return const Padding(
+      padding: EdgeInsets.fromLTRB(30.0, 0, 0, 0),
+      child: Row(
+        children: [
+          CSPCLogo(
+            height: 30.0,
           ),
-        ),
-      ],
+          SizedBox(
+            width: 10.0,
+          ),
+          Text(
+            appName,
+            style: TextStyle(
+              color: secondaryColor,
+              fontSize: 20.0,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+        ],
+      ),
     );
   }
 
