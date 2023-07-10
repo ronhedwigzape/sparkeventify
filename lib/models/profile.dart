@@ -1,4 +1,3 @@
-
 class Profile {
   final String? fullName;
   final String? phoneNumber;
@@ -8,12 +7,12 @@ class Profile {
   final String? profileImage;
 
   const Profile({
-     this.fullName,
-     this.phoneNumber,
-     this.department,
-     this.year,
-     this.section,
-     this.profileImage,
+    this.fullName,
+    this.phoneNumber,
+    this.department,
+    this.year,
+    this.section,
+    this.profileImage,
   });
 
   Map<String, dynamic> toJson() => {
