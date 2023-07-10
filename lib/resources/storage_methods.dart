@@ -7,29 +7,27 @@ class StorageMethods {
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-Future<String> uploadFileToStorage(String childName, Uint8List file) async {
-  Reference ref = _storage
-    .ref()
-    .child(childName)
-    .child(_auth.currentUser!.uid)
-    .child(DateTime.now().millisecondsSinceEpoch.toString());
-
-  // Upload the Uint8List data with putData method
-  UploadTask uploadTask = ref.putData(file);
-
-  TaskSnapshot snap = await uploadTask.whenComplete(() => null);
-  String downloadUrl = await snap.ref.getDownloadURL();
-
-  return downloadUrl;
-}
-
-
-Future<String> uploadImageToStorage(
-  String childName, Uint8List file, bool isPost) async {
+  // Method to upload a file to storage and return the download URL
+  Future<String> uploadFileToStorage(String childName, Uint8List file) async {
     Reference ref = _storage
-      .ref()
-      .child(childName)
-      .child(_auth.currentUser!.uid);
+        .ref()
+        .child(childName)
+        .child(_auth.currentUser!.uid)
+        .child(DateTime.now().millisecondsSinceEpoch.toString());
+
+    // Upload the Uint8List data with putData method
+    UploadTask uploadTask = ref.putData(file);
+
+    TaskSnapshot snap = await uploadTask.whenComplete(() => null);
+    String downloadUrl = await snap.ref.getDownloadURL();
+
+    return downloadUrl;
+  }
+
+  // Method to upload an image to storage and return the download URL
+  Future<String> uploadImageToStorage(
+      String childName, Uint8List file, bool isPost) async {
+    Reference ref = _storage.ref().child(childName).child(_auth.currentUser!.uid);
 
     if (isPost) {
       String id = const Uuid().v1();

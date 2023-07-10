@@ -18,15 +18,17 @@ class User {
     this.profile,
   });
 
+  // Convert User object to JSON
   Map<String, dynamic> toJson() => {
-    'uid': uid,
-    'userType': userType,
-    'username': username,
-    'password': password,
-    'email': email,
-    'profile': profile?.toJson(),
-  };
+        'uid': uid,
+        'userType': userType,
+        'username': username,
+        'password': password,
+        'email': email,
+        'profile': profile?.toJson(),
+      };
 
+  // Create User object from DocumentSnapshot
   static User fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
     var profileSnap = snapshot['profile'] as Map<String, dynamic>;

@@ -121,9 +121,9 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                 buildIconButton(Icons.settings, 4, 'Settings'),
                 IconButton(
                   onPressed: _signOut, 
-                  icon: Icon(
+                  icon: const Icon(
                     Icons.logout,
-                    color: Colors.red[900]
+                    color: maroonColor
                   ),
                   tooltip: 'Log out',
                 ),                  

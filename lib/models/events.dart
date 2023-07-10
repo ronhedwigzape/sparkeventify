@@ -24,9 +24,10 @@ class Event {
     this.venue,
     required this.type,
     required this.status,
-    required this.updatedAt, 
+    required this.updatedAt,
   });
 
+  // Convert Event object to JSON
   Map<String, dynamic> toJson() => {
         'name': name,
         'dateTime': dateTime,
@@ -41,6 +42,7 @@ class Event {
         'updatedAt': updatedAt,
       };
 
+  // Create Event object from DocumentSnapshot
   static Future<Event> fromSnap(DocumentSnapshot snap) async {
     var snapshot = snap.data() as Map<String, dynamic>;
     return Event(
@@ -54,7 +56,7 @@ class Event {
       venue: snapshot['venue'],
       type: snapshot['type'],
       status: snapshot['status'],
-      updatedAt: (snapshot['updatedAt'] as Timestamp).toDate(), 
+      updatedAt: (snapshot['updatedAt'] as Timestamp).toDate(),
     );
   }
 }

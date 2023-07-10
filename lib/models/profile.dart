@@ -15,15 +15,17 @@ class Profile {
     this.profileImage,
   });
 
+  // Convert Profile object to JSON
   Map<String, dynamic> toJson() => {
-    'fullName': fullName,
-    'phoneNumber': phoneNumber,
-    'department': department,
-    'year': year,
-    'section': section,
-    'profileImage': profileImage,
-  };
+        'fullName': fullName,
+        'phoneNumber': phoneNumber,
+        'department': department,
+        'year': year,
+        'section': section,
+        'profileImage': profileImage,
+      };
 
+  // Create Profile object from a map
   static Profile fromMap(Map<String, dynamic> map) {
     return Profile(
       fullName: map['fullName'],
