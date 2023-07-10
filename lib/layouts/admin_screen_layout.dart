@@ -42,94 +42,82 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Row(
-          children: [
-            CSPCLogo(
-              height: 30.0,
-            ),
-            SizedBox(
-              width: 10.0,
-            ),
-            Text(
-              'CSPC Event Calendar Administrator',
-              style: TextStyle(
-                color: secondaryColor,
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+      appBar: buildAppBar(),
+      body: buildBody(),
+    );
+  }
+
+  AppBar buildAppBar() {
+    return AppBar(
+      title: buildAppBarTitle(),
+      elevation: 0.0,
+      backgroundColor: tertiaryColor,
+      actions: buildAppBarActions(),
+    );
+  }
+
+  Row buildAppBarTitle() {
+    return const Row(
+      children: [
+        CSPCLogo(
+          height: 30.0,
         ),
-        elevation: 0.0,
-        backgroundColor: tertiaryColor,
-        actions: [
-          IconButton(
-            onPressed: () => navigationTapped(0),
-            icon: Icon(
-              Icons.dashboard,
-              color: _page == 0 ? primaryColor : secondaryColor,
-            ),
-            tooltip: 'Dashboard',
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        SizedBox(
+          width: 10.0,
+        ),
+        Text(
+          adminAppName,
+          style: TextStyle(
+            color: secondaryColor,
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
           ),
-          IconButton(
-            onPressed: () => navigationTapped(1),
-            icon: Icon(
-              Icons.add_circle_sharp,
-              color: _page == 1 ? primaryColor : secondaryColor,
-            ),
-            tooltip: 'Add Event',
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
+        ),
+      ],
+    );
+  }
+
+  List<Widget> buildAppBarActions() {
+    return [
+      buildIconButton(Icons.dashboard, 0, 'Dashboard'),
+      buildIconButton(Icons.add_circle_sharp, 1, 'Add Event'),
+      buildIconButton(Icons.event_note, 2, 'Manage Events'),
+      buildIconButton(Icons.supervised_user_circle_sharp, 3, 'Manage Users'),
+      buildIconButton(Icons.settings, 4, 'Settings'),
+      const Padding(
+        padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 15.0),
+        child: Text(
+          'AdminName',
+          style: TextStyle(
+            color: secondaryColor,
+            fontSize: 16.0,
+            fontWeight: FontWeight.bold,
           ),
-          IconButton(
-            onPressed: () => navigationTapped(2),
-            icon: Icon(
-              Icons.event_note,
-              color: _page == 2 ? primaryColor : secondaryColor,
-            ),
-            tooltip: 'Manage Events',
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          ),
-          IconButton(
-            onPressed: () => navigationTapped(3),
-            icon: Icon(
-              Icons.supervised_user_circle_sharp,
-              color: _page == 3 ? primaryColor : secondaryColor,
-            ),
-            tooltip: 'Manage Users',
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          ),
-          IconButton(
-            onPressed: () => navigationTapped(4),
-            icon: Icon(
-              Icons.settings,
-              color: _page == 4 ? primaryColor : secondaryColor,
-            ),
-            tooltip: 'Settings',
-            padding: const EdgeInsets.symmetric(horizontal: 15.0),
-          ),
-          const Padding(
-            padding: EdgeInsets.symmetric(horizontal: 40.0, vertical: 15.0),
-            child: Text(
-              'AdminName',
-              style: TextStyle(
-                color: secondaryColor,
-                fontSize: 16.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          )
-        ],
+        ),
+      )
+    ];
+  }
+
+  IconButton buildIconButton(IconData iconData, int pageIndex, String tooltip) {
+    return IconButton(
+      onPressed: () => navigationTapped(pageIndex),
+      icon: Icon(
+        iconData,
+        color: _page == pageIndex ? primaryColor : secondaryColor,
       ),
-      body: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 30.0),
-        child: PageView(
-          controller: pageController,
-          onPageChanged: onPageChanged,
-          physics: const NeverScrollableScrollPhysics(),
-          children: homeScreenItems,
-        ),
+      tooltip: tooltip,
+      padding: const EdgeInsets.symmetric(horizontal: 15.0),
+    );
+  }
+
+  Container buildBody() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 30.0),
+      child: PageView(
+        controller: pageController,
+        onPageChanged: onPageChanged,
+        physics: const NeverScrollableScrollPhysics(),
+        children: homeScreenItems,
       ),
     );
   }

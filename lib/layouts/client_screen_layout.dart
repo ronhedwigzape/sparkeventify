@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
+import 'package:student_event_calendar/widgets/cspc_logo.dart';
 
 class ClientScreenLayout extends StatefulWidget {
   const ClientScreenLayout({Key? key}) : super(key: key);
@@ -41,68 +42,88 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
 
   @override
   Widget build(BuildContext context) {
-    // model.User? user = Provider.of<UserProvider>(context).getUser;
-
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: primaryColor,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.notifications),
+      appBar: buildAppBar(),
+      body: buildBody(),
+      bottomNavigationBar: buildBottomNavigationBar(),
+    );
+  }
+
+  AppBar buildAppBar() {
+    return AppBar(
+      backgroundColor: primaryColor,
+      elevation: 0.0,
+      title: buildAppBarTitle(),
+      actions: buildAppBarActions(),
+    );
+  }
+
+  Row buildAppBarTitle() {
+    return const Row(
+      children: [
+        CSPCLogo(height: 30.0),
+        SizedBox(
+          width: 10.0,
+        ),
+        Text(
+          clientAppName,
+          style: TextStyle(
+            color: whiteColor,
+            fontSize: 20.0,
+            fontWeight: FontWeight.bold,
           ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.settings),
-          ),
-        ],
+        ),
+      ],
+    );
+  }
+
+  List<Widget> buildAppBarActions() {
+    return [
+      IconButton(
+        onPressed: () {},
+        icon: const Icon(Icons.notifications),
+      )
+    ];
+  }
+
+  PageView buildBody() {
+    return PageView(
+      controller: pageController,
+      onPageChanged: onPageChanged,
+      physics: const NeverScrollableScrollPhysics(),
+      children: homeScreenItems,
+    );
+  }
+
+  CupertinoTabBar buildBottomNavigationBar() {
+    return CupertinoTabBar(
+      onTap: navigationTapped,
+      backgroundColor: backgroundColor,
+      items: buildBottomNavigationBarItems(),
+    );
+  }
+
+  List<BottomNavigationBarItem> buildBottomNavigationBarItems() {
+    return [
+      buildBottomNavigationBarItem(Icons.home, 0),
+      buildBottomNavigationBarItem(Icons.calendar_month, 1),
+      buildBottomNavigationBarItem(Icons.announcement, 2),
+      buildBottomNavigationBarItem(Icons.favorite, 3),
+      buildBottomNavigationBarItem(Icons.person, 4),
+    ];
+  }
+
+  BottomNavigationBarItem buildBottomNavigationBarItem(IconData iconData, int pageIndex) {
+    return BottomNavigationBarItem(
+      icon: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 10.0),
+        child: Icon(
+          iconData,
+          color: _page == pageIndex ? primaryColor : secondaryColor,
+        ),
       ),
-      body: PageView(
-        controller: pageController,
-        onPageChanged: onPageChanged,
-        physics: const NeverScrollableScrollPhysics(),
-        children: homeScreenItems,
-      ),
-      bottomNavigationBar: CupertinoTabBar(
-          onTap: navigationTapped,
-          backgroundColor: backgroundColor,
-          items: [
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.home,
-                  color: _page == 0 ? primaryColor : secondaryColor,
-                ),
-                label: '',
-                backgroundColor: whiteColor),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.calendar_month,
-                  color: _page == 1 ? primaryColor : secondaryColor,
-                ),
-                label: '',
-                backgroundColor: whiteColor),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.sticky_note_2_outlined,
-                  color: _page == 2 ? primaryColor : secondaryColor,
-                ),
-                label: '',
-                backgroundColor: whiteColor),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.favorite,
-                  color: _page == 3 ? primaryColor : secondaryColor,
-                ),
-                label: '',
-                backgroundColor: whiteColor),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  Icons.person,
-                  color: _page == 4 ? primaryColor : secondaryColor,
-                ),
-                label: '',
-                backgroundColor: whiteColor),
-          ]),
+      label: '',
+      backgroundColor: whiteColor,
     );
   }
 }
