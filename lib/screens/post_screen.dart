@@ -121,7 +121,7 @@ class _PostScreenState extends State<PostScreen> {
             currentUser,
             documentFile!,
             DateTime.now().toString(),
-            'Test Attendees',
+            ['Test Attendee 1', 'Test Attendee 2'],
             'Test Location',
             'Test Event Type',
             'Pending');

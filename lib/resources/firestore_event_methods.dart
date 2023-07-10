@@ -10,34 +10,38 @@ class FireStoreEventMethods {
 
   // Add a new event to the 'events' collection
   Future<String> addEvent(
-    String eventName,
-    Uint8List eventImage,
-    String eventDescription,
+    String name,
+    Uint8List image,
+    String description,
     String createdBy,
-    Uint8List eventDocument,
-    String eventDate,
-    String eventType,
+    Uint8List document,
+    String date,
+    List attendees,
+    String venue,
+    String type,
     String status,
   ) async {
     String response = 'Some error occurred';
 
     try {
       String imageUrl = await StorageMethods()
-          .uploadImageToStorage('images', eventImage, true);
+          .uploadImageToStorage('images', image, true);
 
       String documentUrl = await StorageMethods()
-      .uploadFileToStorage('documents', eventDocument);
+      .uploadFileToStorage('documents', document);
 
       String eventId = const Uuid().v4();
 
       Event event = Event(
-        eventName: eventName,
-        eventImage: imageUrl,
-        eventDescription: eventDescription,
+        name: name,
+        image: imageUrl,
+        description: description,
         createdBy: createdBy,
-        eventDocument: documentUrl,
-        eventDate: DateTime.parse(eventDate),
-        eventType: eventType,
+        document: documentUrl,
+        attendees: attendees,
+        venue: venue,
+        date: DateTime.parse(date),
+        type: type,
         status: status,
       );
 
