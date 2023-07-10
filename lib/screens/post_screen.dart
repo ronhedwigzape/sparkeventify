@@ -6,20 +6,30 @@ import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
+import 'package:student_event_calendar/widgets/text_field_input.dart';
 
-class AddEventScreen extends StatefulWidget {
-  const AddEventScreen({super.key});
+class PostScreen extends StatefulWidget {
+  const PostScreen({super.key});
 
   @override
-  State<AddEventScreen> createState() => _AddEventScreenState();
+  State<PostScreen> createState() => _PostScreenState();
 }
 
-class _AddEventScreenState extends State<AddEventScreen> {
+class _PostScreenState extends State<PostScreen> {
+  final TextEditingController _nameController = TextEditingController();
+
+
   Future<User> currentUser = AuthMethods().getUserDetails();
   Uint8List? documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
 
+  @override
+  void dispose() {
+    super.dispose();
+    _nameController.dispose();
+  }
+  
   _selectImage(BuildContext context) async {
     return showDialog(
         context: context,
@@ -91,16 +101,16 @@ class _AddEventScreenState extends State<AddEventScreen> {
         });
   }
 
-  post() async {
+  _post() async {
     if (kDebugMode) {
-      print('post function started');
+      print('Post function started!');
     }
     setState(() {
       _isLoading = true;
     });
     try {
       if (kDebugMode) {
-        print('trying to add event');
+        print('Trying to add event...');
       }
       String currentUser = await AuthMethods().getCurrentUserUid();
       if (_imageFile != null && documentFile != null) {
@@ -111,11 +121,13 @@ class _AddEventScreenState extends State<AddEventScreen> {
             currentUser,
             documentFile!,
             DateTime.now().toString(),
+            'Test Attendees',
+            'Test Location',
             'Test Event Type',
             'Pending');
 
         if (kDebugMode) {
-          print('addEvent response: $response');
+          print('Add Event Response: $response');
         }
 
         // Check if the response is a success or a failure
@@ -128,7 +140,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
         return response;
       } else {
         if (kDebugMode) {
-          print('imageFile or documentFile is null');
+          print('imageFile or documentFile is null!');
         }
         setState(() {
           _isLoading = false;
@@ -187,12 +199,17 @@ class _AddEventScreenState extends State<AddEventScreen> {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
           User? currentUser = snapshot.data;
-          return currentUser?.userType == 'Admin' || currentUser?.userType == 'Staff'
+          return currentUser?.userType == 'Admin'
               ? Scaffold(
                   body: Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
+                        TextFieldInput(
+                          textEditingController: _nameController,
+                          hintText: 'Event Name',
+                          textInputType: TextInputType.text,
+                        ),
                         IconButton(
                           onPressed: () => _selectImage(context),
                           icon: const Icon(Icons.upload),
@@ -206,7 +223,7 @@ class _AddEventScreenState extends State<AddEventScreen> {
                             child: const Text('Pick Document')),
                         Center(
                           child: InkWell(
-                            onTap: post,
+                            onTap: _post,
                             child: Container(
                                 width: double.infinity,
                                 alignment: Alignment.center,
