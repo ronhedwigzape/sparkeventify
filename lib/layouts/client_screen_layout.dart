@@ -51,6 +51,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
 
   AppBar buildAppBar() {
     return AppBar(
+      automaticallyImplyLeading: false,
       backgroundColor: primaryColor,
       elevation: 0.0,
       title: buildAppBarTitle(),
