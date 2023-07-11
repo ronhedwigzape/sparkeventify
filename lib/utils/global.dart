@@ -25,3 +25,8 @@ List<Widget> homeScreenItems = [
       ? const Center(child: Text('Settings'))
       : const Center(child: Text('Profile')),
 ];
+
+// Helper function to ignore time in DateTime comparison
+DateTime ignoreTime(DateTime dateTime) {
+  return DateTime(dateTime.year, dateTime.month, dateTime.day);
+}
