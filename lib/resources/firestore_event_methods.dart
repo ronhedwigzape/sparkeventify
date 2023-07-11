@@ -38,6 +38,7 @@ class FireStoreEventMethods {
 
       // Create a new Event object
       Event event = Event(
+        id: eventId,
         name: name,
         image: imageUrl,
         description: description,
@@ -65,18 +66,40 @@ class FireStoreEventMethods {
     return response;
   }
 
-  // Method to update a specific event with new data
-  Future<void> updateEvent(String eventId, Event event) async {
-    await _eventsCollection.doc(eventId).update(event.toJson());
+  Future<String> updateEvent(String eventId, Event event) async {
+    String response = 'Some error occurred';
+
+    try {
+      // Update the event in the 'events' collection in Firestore
+      await _eventsCollection.doc(eventId).update(event.toJson());
+
+      response = 'Success';
+    } on FirebaseException catch (err) {
+      // Handle any errors that occur
+      if (err.code == 'permission-denied') {
+        response = 'Permission denied';
+      }
+      response = err.toString();
+    }
+    return response;
   }
 
-  // Method to delete a specific event
-  Future<void> removeEvent(String eventId) async {
-    await _eventsCollection.doc(eventId).delete();
+  Future<String> removeEvent(String eventId) async {
+    String response = 'Some error occurred';
+
+    try {
+      // Remove the event from the 'events' collection in Firestore
+      await _eventsCollection.doc(eventId).delete();
+
+      response = 'Success';
+    } on FirebaseException catch (err) {
+      // Handle any errors that occur
+      if (err.code == 'permission-denied') {
+        response = 'Permission denied';
+      }
+      response = err.toString();
+    }
+    return response;
   }
 
-  // Method to get all events
-  Stream<QuerySnapshot> getAllEvents() {
-    return _eventsCollection.snapshots();
-  }
 }
