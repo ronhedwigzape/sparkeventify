@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:student_event_calendar/models/user.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
@@ -112,12 +113,10 @@ class _PostScreenState extends State<PostScreen> {
                 ),
                 onPressed: () async {
                   Navigator.of(context).pop();
-
                   Uint8List? file = await pickDocument();
                   if (file != null) {
                     _documentFile = file;
-
-                    final SnackBar snackBar = SnackBar(content: Text('Document is uploaded!'));
+                    const SnackBar snackBar = SnackBar(content: Text('Document is uploaded!'));
                     ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!).showSnackBar(snackBar);
                   }
                 },
@@ -164,12 +163,12 @@ class _PostScreenState extends State<PostScreen> {
         int month = int.parse(pickedDate.split('-')[1]);
         int day = int.parse(pickedDate.split('-')[2]);
 
-        // Split the time into their respective parts
-        int hour = int.parse(pickedTime.split(':')[0]);
-        int minute = int.parse(pickedTime.split(':')[1]);
+        // Parse the time string
+        DateFormat format = DateFormat("h:mm a");
+        DateTime parsedTime = format.parse(pickedTime);
 
         // Create a DateTime object from the date and time
-        DateTime dateTime = DateTime(year, month, day, hour, minute);
+        DateTime dateTime = DateTime(year, month, day, parsedTime.hour, parsedTime.minute);
 
         String response = await FireStoreEventMethods().addEvent(
             _eventTitleController.text,
