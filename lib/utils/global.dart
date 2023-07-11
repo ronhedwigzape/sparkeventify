@@ -1,7 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/screens/post_screen.dart';
-import 'package:student_event_calendar/screens/admin_dashboard.dart';
 import 'package:student_event_calendar/widgets/events_calendar.dart';
 
 // Constant variables for the app
@@ -14,7 +13,7 @@ const appName = 'Announce';
 // List of home screen items
 List<Widget> homeScreenItems = [
   // Test for current user
-  kIsWeb ? const AdminDashboard() : const Center(child: Text('Home Screen')),
+  kIsWeb ? const EventsCalendar() : const Center(child: Text('Home Screen')),
   kIsWeb ? const PostScreen() : const EventsCalendar(),
   kIsWeb
       ? const Center(child: Text('Manage Events'))
