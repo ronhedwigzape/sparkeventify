@@ -1,12 +1,12 @@
 class Profile {
-  final String? fullName;
-  final String? phoneNumber;
-  final String? department;
-  final String? year;
-  final String? section;
-  final String? profileImage;
+  String? fullName;
+  String? phoneNumber;
+  String? department;
+  String? year;
+  String? section;
+  String? profileImage;
 
-  const Profile({
+  Profile({
     this.fullName,
     this.phoneNumber,
     this.department,
@@ -17,13 +17,13 @@ class Profile {
 
   // Convert Profile object to JSON
   Map<String, dynamic> toJson() => {
-        'fullName': fullName,
-        'phoneNumber': phoneNumber,
-        'department': department,
-        'year': year,
-        'section': section,
-        'profileImage': profileImage,
-      };
+    'fullName': fullName,
+    'phoneNumber': phoneNumber,
+    'department': department,
+    'year': year,
+    'section': section,
+    'profileImage': profileImage,
+  };
 
   // Create Profile object from a map
   static Profile fromMap(Map<String, dynamic> map) {

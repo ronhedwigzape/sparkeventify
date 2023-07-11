@@ -1,19 +1,21 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Event {
-  final String name;
-  final DateTime dateTime;
-  final String description;
-  final String createdBy;
-  final String? image;
-  final String document;
-  final List<dynamic>? participants;
-  final String? venue;
-  final String type;
-  final String status;
+  String id;
+  String name;
+  DateTime dateTime;
+  String description;
+  String createdBy;
+  String? image;
+  String document;
+  List<dynamic>? participants;
+  String? venue;
+  String type;
+  String status;
   DateTime updatedAt;
 
   Event({
+    required this.id, 
     required this.name,
     required this.dateTime,
     required this.description,
@@ -29,6 +31,7 @@ class Event {
 
   // Convert Event object to JSON
   Map<String, dynamic> toJson() => {
+        'id': id,
         'name': name,
         'dateTime': dateTime,
         'description': description,
@@ -46,6 +49,7 @@ class Event {
   static Future<Event> fromSnap(DocumentSnapshot snap) async {
     var snapshot = snap.data() as Map<String, dynamic>;
     return Event(
+      id: snapshot['id'],
       name: snapshot['name'],
       dateTime: (snapshot['dateTime'] as Timestamp).toDate(),
       description: snapshot['description'],

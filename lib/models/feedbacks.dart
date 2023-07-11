@@ -1,6 +1,6 @@
 class Feedbacks {
-  final String? feedbackDocument;
-  final String? feedbackLink;
+  String? feedbackDocument;
+  String? feedbackLink;
 
   Feedbacks({
     this.feedbackDocument,

@@ -1,6 +1,6 @@
 class Evaluators {
-  final String? uid;
-  final String? feedbackMessage;
+  String? uid;
+  String? feedbackMessage;
 
   Evaluators({
     this.uid,
