@@ -91,7 +91,9 @@ class _TextFieldInputState extends State<TextFieldInput> {
                 );
                 if (time != null) {
                   // Format the selected time and set it to the TextField
-                  widget.textEditingController.text = time.format(context);
+                  if (mounted){
+                    widget.textEditingController.text = time.format(context);
+                  }
                 }
               }
             }
