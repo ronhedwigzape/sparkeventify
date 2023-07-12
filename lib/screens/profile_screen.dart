@@ -1,5 +1,3 @@
-import 'dart:typed_data';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -216,12 +214,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     const SizedBox(height: 20),
                     Text('Full name: $fullName', style: const TextStyle(fontSize: 16.0)),
                     const SizedBox(height: 20),
-                    Text('Department: $department', style: const TextStyle(fontSize: 16.0)),
+                    currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin' ? Text('Department: $department', style: const TextStyle(fontSize: 16.0)) : const SizedBox.shrink(),
                     const SizedBox(height: 20),
-                    Text('Year: $year', style: const TextStyle(fontSize: 16.0)),
+                    currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin' ? Text('Year: $year', style: const TextStyle(fontSize: 16.0)) : const SizedBox.shrink(),
                     const SizedBox(height: 20),
-                    Text('Section: $section', style: const TextStyle(fontSize: 16.0)),
-                  
+                    currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin' ? Text('Section: $section', style: const TextStyle(fontSize: 16.0)) : const SizedBox.shrink(),
                   !kIsWeb ? Padding(
                     padding: const EdgeInsets.all(15.0),
                     child: ElevatedButton(
