@@ -158,7 +158,15 @@ class _PostScreenState extends State<PostScreen> {
         print('Trying to add event...');
       }
       String currentUser = await AuthMethods().getCurrentUserUid();
-      if (_imageFile != null && _documentFile != null) {
+      if (_imageFile != null &&
+          _documentFile != null &&
+          _eventTypeController.text.isNotEmpty &&
+          _eventTitleController.text.isNotEmpty &&
+          _eventDescriptionsController.text.isNotEmpty &&
+          _eventDateController.text.isNotEmpty &&
+          _eventTimeController.text.isNotEmpty &&
+          _eventParticipantsController.text.isNotEmpty) {
+
         // Get the date and time from the text controllers
         String pickedDate = _eventDateController.text;
         String pickedTime = _eventTimeController.text;
@@ -177,6 +185,9 @@ class _PostScreenState extends State<PostScreen> {
         // Convert parsed datetime to 12 hour format time
         String formattedTime = DateFormat.jm().format(parsedTime24);
 
+        // Split the participants string into a list
+        List<dynamic> participants = _eventParticipantsController.text.split(', '); 
+
         String response = await FireStoreEventMethods().addEvent(
             _eventTitleController.text,
             _imageFile!,
@@ -185,10 +196,10 @@ class _PostScreenState extends State<PostScreen> {
             _documentFile!,
             formattedDate,
             formattedTime,
-            ['Test Attendee 1', 'Test Attendee 2'],
+            participants,
             _eventVenueController.text,
             _eventTypeController.text,
-            'Pending');
+            'Upcoming');
 
         if (kDebugMode) {
           print('Add Event Response: $response');
@@ -204,7 +215,7 @@ class _PostScreenState extends State<PostScreen> {
         return response;
       } else {
         if (kDebugMode) {
-          print('imageFile or documentFile is null!');
+          print('Complete all required parameters!');
         }
         setState(() {
           _isLoading = false;
@@ -212,7 +223,7 @@ class _PostScreenState extends State<PostScreen> {
 
         // Show a snackbar if the image and document are not loaded
         mounted
-            ? showSnackBar('Please upload an image and a document.', context)
+            ? showSnackBar('Please complete the required fields.*', context)
             : '';
       }
     } catch (err) {
@@ -309,7 +320,7 @@ class _PostScreenState extends State<PostScreen> {
                                   decoration: const InputDecoration(
                                     prefixIcon: Icon(Icons.event),
                                     filled: true,
-                                    hintText: 'Select event/announcement type',
+                                    hintText: 'Select event/announcement type*',
                                   ),
                                   value: _eventTypeController.text.isEmpty
                                       ? null
@@ -340,7 +351,7 @@ class _PostScreenState extends State<PostScreen> {
                                 child: IconButton(
                                   onPressed: () => _selectImage(context),
                                   icon: const Icon(Icons.add_a_photo),
-                                  tooltip: 'Add a photo',
+                                  tooltip: 'Add a photo*',
                                 ),
                               ),
                               Padding(
@@ -349,7 +360,7 @@ class _PostScreenState extends State<PostScreen> {
                                 child: IconButton(
                                   onPressed: () => _selectDocument(context),
                                   icon: const Icon(Icons.file_present_rounded),
-                                  tooltip: 'Add a document',
+                                  tooltip: 'Add a document*',
                                 ),
                               ),
                             ],
@@ -357,19 +368,19 @@ class _PostScreenState extends State<PostScreen> {
                           const SizedBox(height: 10.0),
                           TextFieldInput(
                             textEditingController: _eventTitleController,
-                            hintText: 'Title',
+                            hintText: 'Title*',
                             textInputType: TextInputType.text,
                           ),
                           const SizedBox(height: 10.0),
                           TextFieldInput(
                             textEditingController: _eventDescriptionsController,
-                            hintText: 'Description',
+                            hintText: 'Description*',
                             textInputType: TextInputType.text,
                           ),
                           const SizedBox(height: 10.0),
                           TextFieldInput(
                             textEditingController: _eventVenueController,
-                            hintText: 'Venue',
+                            hintText: 'Venue (Optional)',
                             textInputType: TextInputType.text,
                           ),
                           const SizedBox(height: 10.0),
@@ -377,7 +388,7 @@ class _PostScreenState extends State<PostScreen> {
                             Flexible(
                               child: TextFieldInput(
                                 textEditingController: _eventDateController,
-                                hintText: 'Date',
+                                hintText: 'Select Date',
                                 textInputType: TextInputType.datetime,
                                 isDate: true,
                               ),
@@ -386,7 +397,7 @@ class _PostScreenState extends State<PostScreen> {
                             Flexible(
                               child: TextFieldInput(
                                 textEditingController: _eventTimeController,
-                                hintText: 'Time',
+                                hintText: 'Select Time*',
                                 textInputType: TextInputType.datetime,
                                 isTime: true,
                               ),
@@ -395,7 +406,7 @@ class _PostScreenState extends State<PostScreen> {
                           const SizedBox(height: 10.0),
                           TextFieldInput(
                             textEditingController: _eventParticipantsController,
-                            hintText: 'Participants',
+                            hintText: 'Participants* (Students, Teacher, etc.) Separate Participants with a comma (,)',
                             textInputType: TextInputType.text,
                           ),
                           const SizedBox(height: 10.0),
