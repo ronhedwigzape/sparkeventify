@@ -3,7 +3,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:student_event_calendar/models/events.dart';
 import 'package:student_event_calendar/resources/storage_methods.dart';
-import 'package:student_event_calendar/utils/global.dart';
 import 'package:uuid/uuid.dart';
 
 class FireStoreEventMethods {
@@ -18,7 +17,8 @@ class FireStoreEventMethods {
     String description,
     String createdBy,
     Uint8List document,
-    DateTime dateTime,
+    String date,
+    String time,
     List participants,
     String venue,
     String type,
@@ -48,7 +48,8 @@ class FireStoreEventMethods {
         document: documentUrl,
         participants: participants,
         venue: venue,
-        dateTime: dateTime,
+        date: date,
+        time: time,
         type: type,
         status: status,
         updatedAt: DateTime.now(),
@@ -104,8 +105,8 @@ class FireStoreEventMethods {
     return response;
   }
 
-Future<Map<DateTime, List<Event>>> getEvents() async {
-  Map<DateTime, List<Event>> eventMap = {};
+Future<Map<String, List<Event>>> getEvents() async {
+  Map<String, List<Event>> eventMap = {};
   QuerySnapshot snapshot = await _eventsCollection.get();
   // if (kDebugMode) {
   //   print('Snapshot: $snapshot');
@@ -116,7 +117,7 @@ Future<Map<DateTime, List<Event>>> getEvents() async {
       // if (kDebugMode) {
       //   print('Event: $event');
       // }
-      DateTime eventDate = ignoreTime(event.dateTime);
+      String eventDate = event.date;
       if (eventMap[eventDate] == null) eventMap[eventDate] = [];
       eventMap[eventDate]!.add(event);
       // if (kDebugMode) {

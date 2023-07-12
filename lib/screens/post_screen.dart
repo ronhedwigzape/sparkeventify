@@ -163,18 +163,19 @@ class _PostScreenState extends State<PostScreen> {
         String pickedDate = _eventDateController.text;
         String pickedTime = _eventTimeController.text;
 
-        // Split the date into their respective parts
-        int year = int.parse(pickedDate.split('-')[0]);
-        int month = int.parse(pickedDate.split('-')[1]);
-        int day = int.parse(pickedDate.split('-')[2]);
+        // Convert picked date (yyyy-mm-dd) to DateTime
+        DateTime pickedDateTime = DateTime.parse(pickedDate);
+        
+        // Convert DateTime to the format 'Month dd, yyyy'
+        DateFormat dateFormat = DateFormat.yMMMMd('en_US');
+        String formattedDate = dateFormat.format(pickedDateTime);
+        
+        // Parse 24 hour format time string to DateTime
+        DateFormat time24Format = DateFormat.Hm(); 
+        DateTime parsedTime24 = time24Format.parse(pickedTime);
 
-        // Parse the time string
-        DateFormat format = DateFormat("h:mm a");
-        DateTime parsedTime = format.parse(pickedTime);
-
-        // Create a DateTime object from the date and time
-        DateTime dateTime =
-            DateTime(year, month, day, parsedTime.hour, parsedTime.minute);
+        // Convert parsed datetime to 12 hour format time
+        String formattedTime = DateFormat.jm().format(parsedTime24);
 
         String response = await FireStoreEventMethods().addEvent(
             _eventTitleController.text,
@@ -182,7 +183,8 @@ class _PostScreenState extends State<PostScreen> {
             _eventDescriptionsController.text,
             currentUser,
             _documentFile!,
-            dateTime,
+            formattedDate,
+            formattedTime,
             ['Test Attendee 1', 'Test Attendee 2'],
             _eventVenueController.text,
             _eventTypeController.text,

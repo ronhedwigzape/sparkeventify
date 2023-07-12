@@ -1,11 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:student_event_calendar/utils/global.dart';
-
 
 class Event {
   String id;
   String title;
-  DateTime dateTime;
+  String date; 
+  String time;
   String description;
   String createdBy;
   String? image;
@@ -19,7 +18,8 @@ class Event {
   Event({
     required this.id, 
     required this.title,
-    required this.dateTime,
+    required this.date,
+    required this.time,
     required this.description,
     required this.createdBy,
     this.image,
@@ -35,7 +35,8 @@ class Event {
   Map<String, dynamic> toJson() => {
         'id': id,
         'title': title,
-        'dateTime': dateTime,
+        'date': date,
+        'time': time,
         'description': description,
         'createdBy': createdBy,
         'image': image,
@@ -53,7 +54,8 @@ class Event {
     return Event(
       id: snapshot['id'],
       title: snapshot['title'],
-      dateTime: ignoreTime((snapshot['dateTime'] as Timestamp).toDate().toUtc()),
+      date: (snapshot['date'] as Timestamp).toDate().toUtc().toString(),
+      time: (snapshot['time'] as Timestamp).toDate().toUtc().toIso8601String().split("T")[1].split(".")[0],
       description: snapshot['description'],
       createdBy: snapshot['createdBy'],
       image: snapshot['image'],
@@ -62,7 +64,7 @@ class Event {
       venue: snapshot['venue'],
       type: snapshot['type'],
       status: snapshot['status'],
-      updatedAt: ignoreTime((snapshot['updatedAt'] as Timestamp).toDate().toUtc()),
+      updatedAt: (snapshot['updatedAt'] as Timestamp).toDate().toUtc()
     );
   }
 
