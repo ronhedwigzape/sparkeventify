@@ -7,10 +7,10 @@ class EventsCalendar extends StatefulWidget {
   const EventsCalendar({Key? key}) : super(key: key);
 
   @override
-  State<EventsCalendar> createState() => EventsCalendarState();
+  EventsCalendarState createState() => EventsCalendarState();
 }
 
-class EventsCalendarState extends State<EventsCalendar> {
+class EventsCalendarState extends State<EventsCalendar> with ChangeNotifier {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
@@ -18,14 +18,18 @@ class EventsCalendarState extends State<EventsCalendar> {
   final fireStoreEventMethods = FireStoreEventMethods();
   late Future<Map<String, List<Event>>> eventsFuture;
 
-  @override
-  void initState() {
-    super.initState();
+  EventsCalendarState() {
     refreshEvents();
   }
 
   void refreshEvents() {
     eventsFuture = fireStoreEventMethods.getEvents();
+    notifyListeners(); // Notify listeners when events are refreshed
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -55,27 +59,24 @@ class EventsCalendarState extends State<EventsCalendar> {
                 onDaySelected: (selectedDay, focusedDay) {
                   if (_events[selectedDay] != null &&
                       _events[selectedDay]!.isNotEmpty) {
-                    
-                    setState(() {
-                      _selectedDay = selectedDay;
-                      debugPrint('Day selected: $_selectedDay');
-                      _focusedDay = focusedDay;
-                      _calendarFormat = CalendarFormat.month;
-                    });
+                    _selectedDay = selectedDay;
+                    debugPrint('Day selected: $_selectedDay');
+                    _focusedDay = focusedDay;
+                    _calendarFormat = CalendarFormat.month;
+
+                    notifyListeners();
                   } else {
                     debugPrint('No events for this day');
-                    setState(() {
-                      _selectedDay = null;
-                      _focusedDay = focusedDay;
-                      _calendarFormat = CalendarFormat.month;
-                    });
+                    _selectedDay = null;
+                    _focusedDay = focusedDay;
+                    _calendarFormat = CalendarFormat.month;
+                    notifyListeners();
                   }
                 },
                 onFormatChanged: (format) {
                   if (_calendarFormat != format) {
-                    setState(() {
-                      _calendarFormat = format;
-                    });
+                    _calendarFormat = format;
+                    notifyListeners();
                   }
                 },
                 onPageChanged: (focusedDay) {

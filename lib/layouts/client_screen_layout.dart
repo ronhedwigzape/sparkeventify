@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,18 +14,19 @@ class ClientScreenLayout extends StatefulWidget {
   State<ClientScreenLayout> createState() => _ClientScreenLayoutState();
 }
 
-class _ClientScreenLayoutState extends State<ClientScreenLayout> {
+class _ClientScreenLayoutState extends State<ClientScreenLayout> with ChangeNotifier {
   int _page = 0;
   PageController pageController = PageController();
   Stream<QuerySnapshot>? homeScreenItemsStream;
+  final GlobalKey<EventsCalendarState> eventsCalendarKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
     pageController = PageController();
-    homeScreenItemsStream = FirebaseFirestore.instance.collection('events').snapshots();
+    homeScreenItemsStream =
+        FirebaseFirestore.instance.collection('events').snapshots();
   }
-
 
   @override
   void dispose() {
@@ -47,18 +47,15 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
     });
   }
 
-Future<void> _handleRefresh() async {
-  await Future.delayed(const Duration(seconds: 2)); // mimic delay
-  setState(() {
+  Future<void> _handleRefresh() async {
+    await Future.delayed(const Duration(seconds: 2)); // mimic delay
     for (var item in homeScreenItems) {
       if (item is EventsCalendar && item.key == eventsCalendarKey) {
         eventsCalendarKey.currentState!.refreshEvents();
       }
     }
-  });
-}
-
-
+    notifyListeners();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -107,23 +104,20 @@ Future<void> _handleRefresh() async {
     ];
   }
 
-RefreshIndicator buildBody() {
-  return RefreshIndicator(
-    onRefresh: _handleRefresh,
-    child: PageView.builder(
-      controller: pageController,
-      onPageChanged: onPageChanged,
-      physics: const AlwaysScrollableScrollPhysics(),
-      itemCount: homeScreenItems.length,
-      itemBuilder: (context, index){
-        return homeScreenItems[index];
-      },
-    ),
-  );
-}
-
-
-
+  RefreshIndicator buildBody() {
+    return RefreshIndicator(
+      onRefresh: _handleRefresh,
+      child: PageView.builder(
+        controller: pageController,
+        onPageChanged: onPageChanged,
+        physics: const AlwaysScrollableScrollPhysics(),
+        itemCount: homeScreenItems.length,
+        itemBuilder: (context, index) {
+          return homeScreenItems[index];
+        },
+      ),
+    );
+  }
 
   CupertinoTabBar buildBottomNavigationBar() {
     return CupertinoTabBar(
@@ -143,7 +137,8 @@ RefreshIndicator buildBody() {
     ];
   }
 
-  BottomNavigationBarItem buildBottomNavigationBarItem(IconData iconData, int pageIndex) {
+  BottomNavigationBarItem buildBottomNavigationBarItem(
+      IconData iconData, int pageIndex) {
     return BottomNavigationBarItem(
       icon: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0),

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:student_event_calendar/screens/post_screen.dart';
 import 'package:student_event_calendar/screens/profile_screen.dart';
 import 'package:student_event_calendar/widgets/events_calendar.dart';
@@ -12,14 +13,16 @@ const schoolLogo = 'assets/images/cspc_logo.png';
 const appName = 'Announce';
 
 // Global key for the events calendar
-final eventsCalendarKey = GlobalKey<EventsCalendarState>();
 
-
-// List of home screen items
 List<Widget> homeScreenItems = [
-  // Test for current user
-  kIsWeb ? EventsCalendar(key: eventsCalendarKey,) : const Center(child: Text('Home Screen')),
-  kIsWeb ? const PostScreen() : EventsCalendar(key: eventsCalendarKey,),
+  kIsWeb ? ChangeNotifierProvider(
+    create: (context) => EventsCalendarState(),
+    child: const EventsCalendar(),
+  ) : const Center(child: Text('Home Screen')),
+  kIsWeb ? const PostScreen() : ChangeNotifierProvider(
+    create: (context) => EventsCalendarState(),
+    child: const EventsCalendar(),
+  ),
   kIsWeb
       ? const Center(child: Text('Manage Events'))
       : const Center(child: Text('Announcements')),
