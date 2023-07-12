@@ -116,19 +116,28 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
                   flex: 1,
                   child: Container(),
                 ),
-                // svg image
-                const CSPCLogo(
-                  height: 90.0,
-                ),
-                const SizedBox(height: 20.0),
-                const Text(
-                  'Register as Staff',
-                  style: TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: CSPCLogo(height: 60.0,),
+                      ),
+                      SizedBox(width: 20.0),
+                      Text(
+                      'Register as Staff',
+                        style: TextStyle(
+                          fontSize: 24.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 30.0),
+                const Padding(
+                  padding:  EdgeInsets.symmetric(vertical: 10.0),
+                  child: Divider(thickness: 1.0),
+                ),
                 TextFieldInput(
                   textEditingController: _fullNameController,
                   hintText: 'Enter your full name*',
