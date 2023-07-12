@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:student_event_calendar/models/events.dart';
+import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:table_calendar/table_calendar.dart';
 
