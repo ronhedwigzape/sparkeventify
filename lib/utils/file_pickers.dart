@@ -24,7 +24,7 @@ pickImage(ImageSource source) async {
 Future<Uint8List?> pickDocument() async {
   FilePickerResult? result = await FilePicker.platform.pickFiles(
     type: FileType.custom,
-    allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'jpg'],
+    allowedExtensions: ['pdf', 'doc', 'docx', 'xls', 'xlsx', 'ppt', 'pptx', 'txt'],
   );
 
   if (result != null) {
