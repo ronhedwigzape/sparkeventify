@@ -26,7 +26,8 @@ class _PostScreenState extends State<PostScreen> {
   final TextEditingController _eventTimeController = TextEditingController();
   final TextEditingController _eventParticipantsController =
       TextEditingController();
-  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
+      GlobalKey<ScaffoldMessengerState>();
   Future<User> currentUser = AuthMethods().getUserDetails();
   Uint8List? _documentFile;
   Uint8List? _imageFile;
@@ -53,8 +54,10 @@ class _PostScreenState extends State<PostScreen> {
                   Uint8List? file = await pickImage(ImageSource.camera);
                   if (file != null) {
                     _imageFile = file;
-                    const SnackBar snackBar = SnackBar(content: Text('Image is uploaded!'));
-                    ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!).showSnackBar(snackBar);
+                    const SnackBar snackBar =
+                        SnackBar(content: Text('Image is uploaded!'));
+                    ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!)
+                        .showSnackBar(snackBar);
                   }
                 },
               ),
@@ -72,8 +75,10 @@ class _PostScreenState extends State<PostScreen> {
                   Uint8List? file = await pickImage(ImageSource.gallery);
                   if (file != null) {
                     _imageFile = file;
-                    const SnackBar snackBar = SnackBar(content: Text('Image is uploaded!'));
-                    ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!).showSnackBar(snackBar);
+                    const SnackBar snackBar =
+                        SnackBar(content: Text('Image is uploaded!'));
+                    ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!)
+                        .showSnackBar(snackBar);
                   }
                 },
               ),
@@ -95,7 +100,7 @@ class _PostScreenState extends State<PostScreen> {
         });
   }
 
- void _selectDocument(BuildContext context) async {
+  void _selectDocument(BuildContext context) async {
     showDialog(
         context: context,
         builder: (context) {
@@ -116,8 +121,10 @@ class _PostScreenState extends State<PostScreen> {
                   Uint8List? file = await pickDocument();
                   if (file != null) {
                     _documentFile = file;
-                    const SnackBar snackBar = SnackBar(content: Text('Document is uploaded!'));
-                    ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!).showSnackBar(snackBar);
+                    const SnackBar snackBar =
+                        SnackBar(content: Text('Document is uploaded!'));
+                    ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!)
+                        .showSnackBar(snackBar);
                   }
                 },
               ),
@@ -139,7 +146,6 @@ class _PostScreenState extends State<PostScreen> {
         });
   }
 
-
   _post() async {
     if (kDebugMode) {
       print('Post function started!');
@@ -153,7 +159,6 @@ class _PostScreenState extends State<PostScreen> {
       }
       String currentUser = await AuthMethods().getCurrentUserUid();
       if (_imageFile != null && _documentFile != null) {
-
         // Get the date and time from the text controllers
         String pickedDate = _eventDateController.text;
         String pickedTime = _eventTimeController.text;
@@ -168,7 +173,8 @@ class _PostScreenState extends State<PostScreen> {
         DateTime parsedTime = format.parse(pickedTime);
 
         // Create a DateTime object from the date and time
-        DateTime dateTime = DateTime(year, month, day, parsedTime.hour, parsedTime.minute);
+        DateTime dateTime =
+            DateTime(year, month, day, parsedTime.hour, parsedTime.minute);
 
         String response = await FireStoreEventMethods().addEvent(
             _eventTitleController.text,
@@ -223,7 +229,7 @@ class _PostScreenState extends State<PostScreen> {
       _isLoading = false;
     });
     showSnackBar('Post uploaded successfully', context);
-    clearImage();
+    clearInputs();
   }
 
   void onPostFailure(String message) {
@@ -238,15 +244,17 @@ class _PostScreenState extends State<PostScreen> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  void clearImage() {
+  void clearInputs() {
     setState(() {
       _imageFile = null;
-    });
-  }
-
-  void clearDocument() {
-    setState(() {
       _documentFile = null;
+      _eventTypeController.clear();
+      _eventTitleController.clear();
+      _eventDescriptionsController.clear();
+      _eventVenueController.clear();
+      _eventDateController.clear();
+      _eventTimeController.clear();
+      _eventParticipantsController.clear();
     });
   }
 
@@ -275,8 +283,8 @@ class _PostScreenState extends State<PostScreen> {
           User? currentUser = snapshot.data;
           return currentUser?.userType == 'Admin'
               ? ScaffoldMessenger(
-                key: _scaffoldMessengerKey,
-                child: Scaffold(
+                  key: _scaffoldMessengerKey,
+                  child: Scaffold(
                     body: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
@@ -325,8 +333,8 @@ class _PostScreenState extends State<PostScreen> {
                                 ),
                               ),
                               Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0),
                                 child: IconButton(
                                   onPressed: () => _selectImage(context),
                                   icon: const Icon(Icons.add_a_photo),
@@ -334,8 +342,8 @@ class _PostScreenState extends State<PostScreen> {
                                 ),
                               ),
                               Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(horizontal: 20.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0),
                                 child: IconButton(
                                   onPressed: () => _selectDocument(context),
                                   icon: const Icon(Icons.file_present_rounded),
@@ -363,27 +371,25 @@ class _PostScreenState extends State<PostScreen> {
                             textInputType: TextInputType.text,
                           ),
                           const SizedBox(height: 10.0),
-                          Row(
-                            children: [
-                              Flexible(
-                                child: TextFieldInput(
-                                  textEditingController: _eventDateController,
-                                  hintText: 'Date',
-                                  textInputType: TextInputType.datetime,
-                                  isDate: true,
-                                ),
+                          Row(children: [
+                            Flexible(
+                              child: TextFieldInput(
+                                textEditingController: _eventDateController,
+                                hintText: 'Date',
+                                textInputType: TextInputType.datetime,
+                                isDate: true,
                               ),
-                              const SizedBox(width: 10.0),
-                              Flexible(
-                                child: TextFieldInput(
-                                  textEditingController: _eventTimeController,
-                                  hintText: 'Time',
-                                  textInputType: TextInputType.datetime,
-                                  isTime: true,
-                                ),
-                              )
-                            ] 
-                          ),
+                            ),
+                            const SizedBox(width: 10.0),
+                            Flexible(
+                              child: TextFieldInput(
+                                textEditingController: _eventTimeController,
+                                hintText: 'Time',
+                                textInputType: TextInputType.datetime,
+                                isTime: true,
+                              ),
+                            )
+                          ]),
                           const SizedBox(height: 10.0),
                           TextFieldInput(
                             textEditingController: _eventParticipantsController,
@@ -398,12 +404,12 @@ class _PostScreenState extends State<PostScreen> {
                               child: Container(
                                   width: double.infinity,
                                   alignment: Alignment.center,
-                                  padding:
-                                      const EdgeInsets.symmetric(vertical: 16.0),
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 16.0),
                                   decoration: const ShapeDecoration(
                                     shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.all(Radius.circular(5.0)),
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(5.0)),
                                     ),
                                     color: blueColor,
                                   ),
@@ -427,7 +433,7 @@ class _PostScreenState extends State<PostScreen> {
                       ),
                     ),
                   ),
-              )
+                )
               : const SizedBox();
         }
       },
