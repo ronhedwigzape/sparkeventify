@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/screens/post_screen.dart';
+import 'package:student_event_calendar/screens/profile_screen.dart';
 import 'package:student_event_calendar/widgets/events_calendar.dart';
 
 // Constant variables for the app
@@ -27,5 +28,5 @@ List<Widget> homeScreenItems = [
       : const Center(child: Text('Personal Events')),
   kIsWeb
       ? const Center(child: Text('Settings'))
-      : const Center(child: Text('Profile')),
+      : const ProfileScreen(),
 ];
