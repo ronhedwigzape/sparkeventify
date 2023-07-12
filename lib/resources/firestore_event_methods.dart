@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:student_event_calendar/models/events.dart';
 import 'package:student_event_calendar/resources/storage_methods.dart';
+import 'package:student_event_calendar/utils/global.dart';
 import 'package:uuid/uuid.dart';
 
 class FireStoreEventMethods {
@@ -115,11 +116,7 @@ Future<Map<DateTime, List<Event>>> getEvents() async {
       // if (kDebugMode) {
       //   print('Event: $event');
       // }
-      DateTime eventDate = DateTime(
-        event.dateTime.year,
-        event.dateTime.month,
-        event.dateTime.day,
-      );
+      DateTime eventDate = ignoreTime(event.dateTime);
       if (eventMap[eventDate] == null) eventMap[eventDate] = [];
       eventMap[eventDate]!.add(event);
       // if (kDebugMode) {

@@ -1,4 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:student_event_calendar/utils/global.dart';
+
 
 class Event {
   String id;
@@ -51,7 +53,7 @@ class Event {
     return Event(
       id: snapshot['id'],
       title: snapshot['title'],
-      dateTime: (snapshot['dateTime'] as Timestamp).toDate(),
+      dateTime: ignoreTime((snapshot['dateTime'] as Timestamp).toDate().toUtc()),
       description: snapshot['description'],
       createdBy: snapshot['createdBy'],
       image: snapshot['image'],
@@ -60,7 +62,7 @@ class Event {
       venue: snapshot['venue'],
       type: snapshot['type'],
       status: snapshot['status'],
-      updatedAt: (snapshot['updatedAt'] as Timestamp).toDate(),
+      updatedAt: ignoreTime((snapshot['updatedAt'] as Timestamp).toDate().toUtc()),
     );
   }
 
