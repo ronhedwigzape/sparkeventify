@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:student_event_calendar/screens/post_screen.dart';
 import 'package:student_event_calendar/screens/profile_screen.dart';
 import 'package:student_event_calendar/widgets/events_calendar.dart';
@@ -15,14 +14,8 @@ const appName = 'Announce';
 // Global key for the events calendar
 
 List<Widget> homeScreenItems = [
-  kIsWeb ? ChangeNotifierProvider(
-    create: (context) => EventsCalendarState(),
-    child: const EventsCalendar(),
-  ) : const Center(child: Text('Home Screen')),
-  kIsWeb ? const PostScreen() : ChangeNotifierProvider(
-    create: (context) => EventsCalendarState(),
-    child: const EventsCalendar(),
-  ),
+  kIsWeb ?  const EventsCalendar() : const Center(child: Text('Home Screen')),
+  kIsWeb ? const PostScreen() : const EventsCalendar(),
   kIsWeb
       ? const Center(child: Text('Manage Events'))
       : const Center(child: Text('Announcements')),

@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
-import 'package:student_event_calendar/widgets/events_calendar.dart';
 
 class ClientScreenLayout extends StatefulWidget {
   const ClientScreenLayout({Key? key}) : super(key: key);
@@ -14,11 +13,10 @@ class ClientScreenLayout extends StatefulWidget {
   State<ClientScreenLayout> createState() => _ClientScreenLayoutState();
 }
 
-class _ClientScreenLayoutState extends State<ClientScreenLayout> with ChangeNotifier {
+class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   int _page = 0;
   PageController pageController = PageController();
   Stream<QuerySnapshot>? homeScreenItemsStream;
-  final GlobalKey<EventsCalendarState> eventsCalendarKey = GlobalKey();
 
   @override
   void initState() {
@@ -45,16 +43,6 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> with ChangeNoti
     setState(() {
       _page = page;
     });
-  }
-
-  Future<void> _handleRefresh() async {
-    await Future.delayed(const Duration(seconds: 2)); // mimic delay
-    for (var item in homeScreenItems) {
-      if (item is EventsCalendar && item.key == eventsCalendarKey) {
-        eventsCalendarKey.currentState!.refreshEvents();
-      }
-    }
-    notifyListeners();
   }
 
   @override
@@ -104,20 +92,15 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> with ChangeNoti
     ];
   }
 
-  RefreshIndicator buildBody() {
-    return RefreshIndicator(
-      onRefresh: _handleRefresh,
-      child: PageView.builder(
-        controller: pageController,
-        onPageChanged: onPageChanged,
-        physics: const AlwaysScrollableScrollPhysics(),
-        itemCount: homeScreenItems.length,
-        itemBuilder: (context, index) {
-          return homeScreenItems[index];
-        },
-      ),
+ PageView buildBody() {
+    return PageView(
+      controller: pageController,
+      onPageChanged: onPageChanged,
+      physics: const NeverScrollableScrollPhysics(),
+      children: homeScreenItems,
     );
   }
+
 
   CupertinoTabBar buildBottomNavigationBar() {
     return CupertinoTabBar(
