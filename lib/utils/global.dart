@@ -10,10 +10,14 @@ const schoolAddress = 'Nabua, Camarines Sur';
 const schoolLogo = 'assets/images/cspc_logo.png';
 const appName = 'Announce';
 
+// Global key for the events calendar
+final eventsCalendarKey = GlobalKey<EventsCalendarState>();
+
+
 // List of home screen items
 List<Widget> homeScreenItems = [
   // Test for current user
-  kIsWeb ? const EventsCalendar() : const Center(child: Text('Home Screen')),
+  kIsWeb ? EventsCalendar(key: eventsCalendarKey,) : const Center(child: Text('Home Screen')),
   kIsWeb ? const PostScreen() : const EventsCalendar(),
   kIsWeb
       ? const Center(child: Text('Manage Events'))
