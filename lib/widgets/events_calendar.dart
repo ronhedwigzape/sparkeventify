@@ -5,7 +5,7 @@ import 'package:student_event_calendar/utils/global.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class EventsCalendar extends StatefulWidget {
-  const EventsCalendar({super.key});
+  const EventsCalendar({Key? key}) : super(key: key);
 
   @override
   State<EventsCalendar> createState() => EventsCalendarState();
@@ -17,11 +17,22 @@ class EventsCalendarState extends State<EventsCalendar> {
   DateTime? _selectedDay;
   Map<DateTime, List<Event>> _events = {};
   final fireStoreEventMethods = FireStoreEventMethods();
+  late Future<Map<DateTime, List<Event>>> eventsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    refreshEvents();
+  }
+
+  void refreshEvents() {
+    eventsFuture = fireStoreEventMethods.getEvents();
+  }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<Map<DateTime, List<Event>>>(
-      future: fireStoreEventMethods.getEvents(), // Fetch events here
+      future: eventsFuture,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
@@ -45,9 +56,17 @@ class EventsCalendarState extends State<EventsCalendar> {
                 onDaySelected: (selectedDay, focusedDay) {
                   if (_events[ignoreTime(selectedDay.toUtc())] != null &&
                       _events[ignoreTime(selectedDay.toUtc())]!.isNotEmpty) {
-                    debugPrint('Day selected: $_events[ignoreTime(selectedDay.toUtc())]');
+                    
                     setState(() {
                       _selectedDay = selectedDay;
+                      debugPrint('Day selected: $_selectedDay');
+                      _focusedDay = focusedDay;
+                      _calendarFormat = CalendarFormat.month;
+                    });
+                  } else {
+                    debugPrint('No events for this day');
+                    setState(() {
+                      _selectedDay = null;
                       _focusedDay = focusedDay;
                       _calendarFormat = CalendarFormat.month;
                     });
@@ -66,12 +85,13 @@ class EventsCalendarState extends State<EventsCalendar> {
               ),
               Expanded(
                 child: _selectedDay == null
-                    ? const Center(child: Text('No Events Today'))
+                    ? const Center(child: Text('No Events For This Day'))
                     : _events[ignoreTime(_selectedDay!.toUtc())] != null
                         ? ListView.builder(
-                            itemCount: _events[_selectedDay]!.length,
+                            itemCount: _events[_selectedDay]?.length ?? 0,
                             itemBuilder: (context, index) {
                               final event = _events[_selectedDay]![index];
+                              debugPrint('Event: $event');
                               return ListTile(
                                 leading: Image.network(event.image!),
                                 title: Text(event.title),

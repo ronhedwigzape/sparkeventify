@@ -18,7 +18,7 @@ final eventsCalendarKey = GlobalKey<EventsCalendarState>();
 List<Widget> homeScreenItems = [
   // Test for current user
   kIsWeb ? EventsCalendar(key: eventsCalendarKey,) : const Center(child: Text('Home Screen')),
-  kIsWeb ? const PostScreen() : const EventsCalendar(),
+  kIsWeb ? const PostScreen() : EventsCalendar(key: eventsCalendarKey,),
   kIsWeb
       ? const Center(child: Text('Manage Events'))
       : const Center(child: Text('Announcements')),

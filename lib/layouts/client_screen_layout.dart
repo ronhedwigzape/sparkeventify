@@ -1,8 +1,12 @@
+import 'dart:async';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
+import 'package:student_event_calendar/widgets/events_calendar.dart';
 
 class ClientScreenLayout extends StatefulWidget {
   const ClientScreenLayout({Key? key}) : super(key: key);
@@ -14,12 +18,15 @@ class ClientScreenLayout extends StatefulWidget {
 class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   int _page = 0;
   PageController pageController = PageController();
+  Stream<QuerySnapshot>? homeScreenItemsStream;
 
   @override
   void initState() {
     super.initState();
     pageController = PageController();
+    homeScreenItemsStream = FirebaseFirestore.instance.collection('events').snapshots();
   }
+
 
   @override
   void dispose() {
@@ -39,6 +46,19 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
       _page = page;
     });
   }
+
+Future<void> _handleRefresh() async {
+  await Future.delayed(const Duration(seconds: 2)); // mimic delay
+  setState(() {
+    for (var item in homeScreenItems) {
+      if (item is EventsCalendar && item.key == eventsCalendarKey) {
+        eventsCalendarKey.currentState!.refreshEvents();
+      }
+    }
+  });
+}
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -87,14 +107,23 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
     ];
   }
 
-  PageView buildBody() {
-    return PageView(
+RefreshIndicator buildBody() {
+  return RefreshIndicator(
+    onRefresh: _handleRefresh,
+    child: PageView.builder(
       controller: pageController,
       onPageChanged: onPageChanged,
-      physics: const NeverScrollableScrollPhysics(),
-      children: homeScreenItems,
-    );
-  }
+      physics: const AlwaysScrollableScrollPhysics(),
+      itemCount: homeScreenItems.length,
+      itemBuilder: (context, index){
+        return homeScreenItems[index];
+      },
+    ),
+  );
+}
+
+
+
 
   CupertinoTabBar buildBottomNavigationBar() {
     return CupertinoTabBar(
