@@ -10,4 +10,4 @@ const primaryColor = Colors.indigo;
 const secondaryColor = Colors.grey;
 const tertiaryColor = Colors.black;
 const Color lightGreyColor = Color.fromARGB(255, 246, 246, 246);
-const Color lightIndigo = Color.fromARGB(255, 159, 168, 218);
+const Color lightIndigo = Color.fromARGB(255, 103, 120, 220);
