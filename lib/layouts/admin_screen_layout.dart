@@ -201,7 +201,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
       child: PageView(
         controller: pageController,
         onPageChanged: onPageChanged,
-        physics: const NeverScrollableScrollPhysics(),
+        physics: const AlwaysScrollableScrollPhysics(),
         children: homeScreenItems,
       ),
     );
