@@ -173,17 +173,13 @@ class _PostScreenState extends State<PostScreen> {
 
         // Convert picked date (yyyy-mm-dd) to DateTime
         DateTime pickedDateTime = DateTime.parse(pickedDate);
-        
-        // Convert DateTime to the format 'Month dd, yyyy'
-        DateFormat dateFormat = DateFormat.yMMMMd('en_US');
-        String formattedDate = dateFormat.format(pickedDateTime);
-        
-        // Parse 24 hour format time string to DateTime
-        DateFormat time24Format = DateFormat.Hm(); 
-        DateTime parsedTime24 = time24Format.parse(pickedTime);
 
-        // Convert parsed datetime to 12 hour format time
-        String formattedTime = DateFormat.jm().format(parsedTime24);
+        // Get only the date part as a DateTime object
+        DateTime datePart = DateTime(pickedDateTime.year, pickedDateTime.month, pickedDateTime.day);
+
+        // Parse 12-hour format time string to DateTime
+        DateFormat time12Format = DateFormat('h:mm a'); 
+        DateTime parsedTime12 = time12Format.parse(pickedTime);
 
         // Split the participants string into a list
         List<dynamic> participants = _eventParticipantsController.text.split(', '); 
@@ -194,8 +190,8 @@ class _PostScreenState extends State<PostScreen> {
             _eventDescriptionsController.text,
             currentUser,
             _documentFile!,
-            formattedDate,
-            formattedTime,
+            datePart,
+            parsedTime12,
             participants,
             _eventVenueController.text,
             _eventTypeController.text,

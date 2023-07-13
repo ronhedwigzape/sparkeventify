@@ -16,8 +16,8 @@ class FireStoreEventMethods {
     String description,
     String createdBy,
     Uint8List document,
-    String date,
-    String time,
+    DateTime date,
+    DateTime time,
     List participants,
     String venue,
     String type,
@@ -104,8 +104,9 @@ class FireStoreEventMethods {
     return response;
   }
 
-Future<Map<String, List<Event>>> getEvents() async {
-  Map<String, List<Event>> eventMap = {};
+// Method that has a key of type event's DateTime and a value of type List<Event>
+Future<Map<DateTime, List<Event>>> getEventsByDate() async {
+  Map<DateTime, List<Event>> eventMap = {};
   QuerySnapshot snapshot = await _eventsCollection.get();
   // if (kDebugMode) {
   //   print('Snapshot: $snapshot');
@@ -116,7 +117,12 @@ Future<Map<String, List<Event>>> getEvents() async {
       // if (kDebugMode) {
       //   print('Event: $event');
       // }
-      String eventDate = event.date;
+      DateTime eventDate = DateTime(
+        event.date.year,
+        event.date.month,
+        event.date.day,
+        0, 0, 0 
+      ).toLocal();
       if (eventMap[eventDate] == null) eventMap[eventDate] = [];
       eventMap[eventDate]!.add(event);
       // if (kDebugMode) {
@@ -124,9 +130,9 @@ Future<Map<String, List<Event>>> getEvents() async {
       // }
     }
   }
-  //  if (kDebugMode) {
-  //    print('Final event map: $eventMap');
-  //  }
+   if (kDebugMode) {
+     print(eventMap);
+   }
   return eventMap;
 }
 

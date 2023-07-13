@@ -3,8 +3,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Event {
   String id;
   String title;
-  String date; 
-  String time;
+  DateTime date; 
+  DateTime time;
   String description;
   String createdBy;
   String? image;
@@ -54,8 +54,8 @@ class Event {
     return Event(
       id: snapshot['id'],
       title: snapshot['title'],
-      date: (snapshot['date'] as Timestamp).toDate().toUtc().toString(),
-      time: (snapshot['time'] as Timestamp).toDate().toUtc().toIso8601String().split("T")[1].split(".")[0],
+      date: (snapshot['date'] as Timestamp).toDate().toLocal(),
+      time: (snapshot['time'] as Timestamp).toDate().toLocal(),
       description: snapshot['description'],
       createdBy: snapshot['createdBy'],
       image: snapshot['image'],
@@ -70,6 +70,6 @@ class Event {
 
   // @override
   // String toString() {
-  //   return 'Event{id: $id, title: $title, dateTime: $dateTime, description: $description, createdBy: $createdBy, image: $image, document: $document, participants: $participants, venue: $venue, type: $type, status: $status, updatedAt: $updatedAt}';
+  //   return 'Event{id: $id, title: $title, date: $date, time: $time, description: $description, createdBy: $createdBy, image: $image, document: $document, participants: $participants, venue: $venue, type: $type, status: $status, updatedAt: $updatedAt}';
   // }
 }
