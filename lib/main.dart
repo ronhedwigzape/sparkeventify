@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -17,20 +18,93 @@ void main() async {
   runApp(const App());
 }
 
-class App extends StatelessWidget {
+class App extends StatefulWidget {
   const App({super.key});
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    configureFirebaseMessaging();
+    initializeFirebaseMessaging();
+    getDeviceToken();
+  }
+
+  void initializeFirebaseMessaging() async {
+    await _firebaseMessaging.requestPermission();
+  }
+
+  void getDeviceToken() async {
+    String? deviceToken = await _firebaseMessaging.getToken();
+    if (kDebugMode) {
+      print('Device Token: $deviceToken');
+    }
+  }
+
+  void configureFirebaseMessaging() {
+    FirebaseMessaging.onMessage.listen(
+      (RemoteMessage message) {
+        // Handle the incoming message when the app is in the foreground
+         if (kDebugMode) {
+          if (message.notification != null) {
+            print('Notification Title: ${message.notification!.title}');
+            print('Notification Body: ${message.notification!.body}');
+          }
+          print('Data Payload(onMessage): ${message.data}');
+        }
+      },
+      onDone: () {
+        if (kDebugMode) {
+          print('Done listening');
+        }
+      },
+    );
+
+    FirebaseMessaging.onMessageOpenedApp.listen(
+      (RemoteMessage message) {
+        // Handle the incoming message when the app is launched from a terminated state
+        if (kDebugMode) {
+          if (message.notification != null) {
+            print('Notification Title: ${message.notification!.title}');
+            print('Notification Body: ${message.notification!.body}');
+          }
+          print('Data Payload(onMessageOpened): ${message.data}');
+        }
+      },
+      onDone: () {
+        if (kDebugMode) {
+          print('Done listening');
+        }
+      },
+    );
+
+    FirebaseMessaging.onBackgroundMessage(
+      (RemoteMessage message) async {
+        if (kDebugMode) {
+          print('onBackgroundMessage: $message');
+        }
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-    providers: [ChangeNotifierProvider(create: (_) => UserProvider())], 
-    child: const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Student Event Calendar',
-      home: AuthScreen(),
-    ));
+        providers: [ChangeNotifierProvider(create: (_) => UserProvider())],
+        child: const MaterialApp(
+          debugShowCheckedModeBanner: false,
+          title: 'Student Event Calendar',
+          home: AuthScreen(),
+        )
+      );
+    }
   }
-}
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
