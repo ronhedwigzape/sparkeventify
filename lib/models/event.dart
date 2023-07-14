@@ -8,12 +8,12 @@ class Event {
   String description;
   String createdBy;
   String? image;
-  String document;
+  String? document;
   List<dynamic>? participants;
   String? venue;
   String type;
   String status;
-  DateTime updatedAt;
+  DateTime? datePublished;
 
   Event({
     required this.id, 
@@ -23,12 +23,12 @@ class Event {
     required this.description,
     required this.createdBy,
     this.image,
-    required this.document,
+    this.document,
     this.participants,
     this.venue,
     required this.type,
     required this.status,
-    required this.updatedAt,
+    this.datePublished,
   });
 
   // Convert Event object to JSON
@@ -45,7 +45,7 @@ class Event {
         'venue': venue,
         'type': type,
         'status': status,
-        'updatedAt': updatedAt,
+        'datePublished': datePublished,
       };
 
   // Create Event object from DocumentSnapshot
@@ -64,7 +64,7 @@ class Event {
       venue: snapshot['venue'],
       type: snapshot['type'],
       status: snapshot['status'],
-      updatedAt: (snapshot['updatedAt'] as Timestamp).toDate().toUtc()
+      datePublished: (snapshot['datePublished'] as Timestamp).toDate().toUtc()
     );
   }
 
