@@ -51,7 +51,7 @@ class FireStoreEventMethods {
         time: time,
         type: type,
         status: status,
-        updatedAt: DateTime.now(),
+        datePublished: DateTime.now(),
       );
 
       // Add the event to the 'events' collection in Firestore
@@ -104,36 +104,49 @@ class FireStoreEventMethods {
     return response;
   }
 
-// Method that has a key of type event's DateTime and a value of type List<Event>
-Future<Map<DateTime, List<Event>>> getEventsByDate() async {
-  Map<DateTime, List<Event>> eventMap = {};
-  QuerySnapshot snapshot = await _eventsCollection.get();
-  // if (kDebugMode) {
-  //   print('Snapshot: $snapshot');
-  // }
-  if (snapshot.docs.isNotEmpty) {
-    for (var doc in snapshot.docs) {
-      Event event = await Event.fromSnap(doc);
-      // if (kDebugMode) {
-      //   print('Event: $event');
-      // }
-      DateTime eventDate = DateTime(
-        event.date.year,
-        event.date.month,
-        event.date.day,
-        0, 0, 0 
-      ).toLocal();
-      if (eventMap[eventDate] == null) eventMap[eventDate] = [];
-      eventMap[eventDate]!.add(event);
-      // if (kDebugMode) {
-      //   print('Event map: $eventMap');
-      // }
+  // Method that has a key of type event's DateTime and a value of type List<Event>
+  Future<Map<DateTime, List<Event>>> getEventsByDate() async {
+    Map<DateTime, List<Event>> eventMap = {};
+    QuerySnapshot snapshot = await _eventsCollection.get();
+    // if (kDebugMode) {
+    //   print('Snapshot: $snapshot');
+    // }
+    if (snapshot.docs.isNotEmpty) {
+      for (var doc in snapshot.docs) {
+        Event event = await Event.fromSnap(doc);
+        // if (kDebugMode) {
+        //   print('Event: $event');
+        // }
+        DateTime eventDate = DateTime(
+          event.date.year,
+          event.date.month,
+          event.date.day,
+          0, 0, 0 
+        ).toLocal();
+        if (eventMap[eventDate] == null) eventMap[eventDate] = [];
+        eventMap[eventDate]!.add(event);
+        // if (kDebugMode) {
+        //   print('Event map: $eventMap');
+        // }
+      }
     }
+    if (kDebugMode) {
+      print(eventMap);
+    }
+    return eventMap;
   }
-   if (kDebugMode) {
-     print(eventMap);
-   }
-  return eventMap;
-}
+
+  // Method that gets event by event id
+  Future<Event> getEventById(String eventId) async {
+    // Reference the document in the 'events' collection with the specified id
+    DocumentSnapshot doc = await _eventsCollection.doc(eventId).get();
+    // Check if the document exists
+    if (!doc.exists) {
+      throw Exception('Document does not exist');
+    }
+    // Convert the document snapshot to an Event object and return it
+    return Event.fromSnap(doc);
+  }
+
 
 }
