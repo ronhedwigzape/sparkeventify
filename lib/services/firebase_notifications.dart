@@ -3,7 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:overlay_support/overlay_support.dart';
-import 'package:student_event_calendar/widgets/message_notification.dart';
+import 'package:student_event_calendar/widgets/popup_notification.dart';
 
 class FirebaseNotifications {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
@@ -33,7 +33,7 @@ class FirebaseNotifications {
     }
   }
 
-   void configure() {
+  void configure() {
     FirebaseMessaging.onMessage.listen(
       (RemoteMessage message) {
         // Handle the incoming message when the app is in the foreground
@@ -44,8 +44,8 @@ class FirebaseNotifications {
         }
 
         showOverlayNotification((context) {
-          return MessageNotification(
-            message: message.notification?.body ?? '', 
+          return PopupNotification(
+            message: message.notification?.body ?? '',
             title: message.notification?.title ?? '',
           );
         }, duration: const Duration(milliseconds: 3000));
@@ -76,7 +76,7 @@ class FirebaseNotifications {
     FirebaseMessaging.onBackgroundMessage(
       (RemoteMessage message) async {
         // Handle the incoming message when the app is in the background
-          if (kDebugMode) {
+        if (kDebugMode) {
           print('Notification Title: ${message.notification!.title}');
           print('Notification Body: ${message.notification!.body}');
           print('Data Payload(onMessage): ${message.data}');
@@ -89,7 +89,8 @@ class FirebaseNotifications {
     await _firebaseMessaging.subscribeToTopic(topic);
   }
 
-  Future<String> sendPushNotification(String title, String body, String token) async {
+  Future<String> sendPushNotification(
+      String title, String body, String token) async {
     const postUrl = 'https://fcm.googleapis.com/fcm/send';
     String message = 'Some error occured while sending push notification.';
     final data = {

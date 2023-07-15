@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 
-class MessageNotification extends StatelessWidget {
+class PopupNotification extends StatelessWidget {
   final String message;
   final String title;
 
-  const MessageNotification({super.key, required this.message, required this.title});
+  const PopupNotification(
+      {super.key, required this.message, required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -16,7 +17,8 @@ class MessageNotification extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.fromLTRB(5, 0, 5, 10),
           child: ListTile(
-            leading: ClipOval(child: Image.asset('assets/images/cspc_logo.png')),
+            leading:
+                ClipOval(child: Image.asset('assets/images/cspc_logo.png')),
             title: Text(title),
             subtitle: Text(message),
             trailing: IconButton(
