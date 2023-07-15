@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 24.0),
             TextFieldInput(
               textEditingController: _emailController,
-              hintText: 'Enter your ${!kIsWeb ? 'email' : 'username'}',
+              hintText: 'Enter your email',
               textInputType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 24.0),
