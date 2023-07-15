@@ -1,4 +1,4 @@
-# CSPC Student Event Calendar
+# CSPC Announce
 
 Before starting the project setup, you should have Flutter SDK installed and Git installed. 
 
@@ -8,7 +8,7 @@ Before starting the project setup, you should have Flutter SDK installed and Git
 
 1. Go to [**`Flutter Documentation`**](https://docs.flutter.dev/get-started/install) to get started.
    
-2. Choose the appropriate OS for instaling Flutter.
+2. Choose the appropriate OS for installing Flutter.
 
 3. You must meet the system requirements to be able to run Git commands, or if you have [**`Git`**](https://git-scm.com/download/win) installed, proceed to the next step.
 
@@ -53,3 +53,33 @@ flutter run
 ```
 flutter run -d chrome --web-renderer html
 ``` 
+
+## Production Setup
+
+- Run this command for app release. This will create a release build.
+
+```
+flutter run --release
+```
+
+## Updating Dependencies
+
+- Run this command for updating dependencies.
+
+```
+flutter pub upgrade
+```
+
+## Cleaning Build
+
+- Run this command if built app is not working as expected:
+
+```
+flutter clean
+```
+
+- Run this to fetch all dependencies
+
+```
+flutter pub get
+```
