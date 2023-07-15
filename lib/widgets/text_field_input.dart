@@ -11,10 +11,14 @@ class TextFieldInput extends StatefulWidget {
   final bool enabled; // Determines if the TextField is enabled
   final bool isDate; // Determines if the TextField is a date picker
   final bool isTime; // Determines if the TextField is a time picker
+  final double height; // The height of the TextField
+  final double width;
 
   // Constructor for the widget
   const TextFieldInput({
     Key? key,
+    this.height = 50.0, 
+    this.width = double.infinity,
     required this.textEditingController,
     this.isPass = false,
     required this.hintText,
@@ -41,63 +45,67 @@ class _TextFieldInputState extends State<TextFieldInput> {
     );
 
     // Return a TextField widget
-    return TextField(
-      controller: widget.textEditingController, // Set the controller
-      decoration: InputDecoration( // Set the decoration for the TextField
-        hintText: widget.hintText, // Set the hint text
-        border: inputBorder, // Set the border
-        focusedBorder: inputBorder, // Set the border when the TextField is focused
-        enabledBorder: inputBorder, // Set the border when the TextField is enabled
-        filled: true, // Fill the TextField
-        contentPadding: const EdgeInsets.all(8), // Set the padding
-        suffixIcon: widget.isPass // Set the suffix icon
-            ? IconButton(
-                icon: Icon(
-                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                ),
-                onPressed: () {
-                  // Toggle the password visibility when the icon is clicked
-                  setState(() {
-                    _isPasswordVisible = !_isPasswordVisible;
-                  });
-                },
-              )
-            : null,
-      ),
-      keyboardType: widget.textInputType, // Set the input type
-      obscureText: widget.isPass && !_isPasswordVisible, // Set the obscure text
-      enabled: widget.enabled, // Set if the TextField is enabled
-      readOnly: widget.isDate || widget.isTime, // Set if the TextField is read only
-      onTap: widget.isDate || widget.isTime // Set the onTap function
-          ? () async {
-              if (widget.isDate) {
-                // Show a date picker when the TextField is tapped
-                DateTime? date = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime.now(),
-                  firstDate: DateTime(2000),
-                  lastDate: DateTime(2100),
-                );
-                if (date != null) {
-                  // Format the selected date and set it to the TextField
-                  widget.textEditingController.text =
-                      DateFormat('yyyy-MM-dd').format(date);
-                }
-              } else if (widget.isTime) {
-                // Show a time picker when the TextField is tapped
-                TimeOfDay? time = await showTimePicker(
-                  context: context,
-                  initialTime: TimeOfDay.now(),
-                );
-                if (time != null) {
-                  // Format the selected time and set it to the TextField
-                  if (mounted){
-                    widget.textEditingController.text = time.format(context);
+    return SizedBox(
+      height: widget.height,
+      width: widget.width,
+      child: TextField(
+        controller: widget.textEditingController, // Set the controller
+        decoration: InputDecoration( // Set the decoration for the TextField
+          hintText: widget.hintText, // Set the hint text
+          border: inputBorder, // Set the border
+          focusedBorder: inputBorder, // Set the border when the TextField is focused
+          enabledBorder: inputBorder, // Set the border when the TextField is enabled
+          filled: true, // Fill the TextField
+          contentPadding: const EdgeInsets.all(8), // Set the padding
+          suffixIcon: widget.isPass // Set the suffix icon
+              ? IconButton(
+                  icon: Icon(
+                    _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                  ),
+                  onPressed: () {
+                    // Toggle the password visibility when the icon is clicked
+                    setState(() {
+                      _isPasswordVisible = !_isPasswordVisible;
+                    });
+                  },
+                )
+              : null,
+        ),
+        keyboardType: widget.textInputType, // Set the input type
+        obscureText: widget.isPass && !_isPasswordVisible, // Set the obscure text
+        enabled: widget.enabled, // Set if the TextField is enabled
+        readOnly: widget.isDate || widget.isTime, // Set if the TextField is read only
+        onTap: widget.isDate || widget.isTime // Set the onTap function
+            ? () async {
+                if (widget.isDate) {
+                  // Show a date picker when the TextField is tapped
+                  DateTime? date = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime(2000),
+                    lastDate: DateTime(2100),
+                  );
+                  if (date != null) {
+                    // Format the selected date and set it to the TextField
+                    widget.textEditingController.text =
+                        DateFormat('yyyy-MM-dd').format(date);
+                  }
+                } else if (widget.isTime) {
+                  // Show a time picker when the TextField is tapped
+                  TimeOfDay? time = await showTimePicker(
+                    context: context,
+                    initialTime: TimeOfDay.now(),
+                  );
+                  if (time != null) {
+                    // Format the selected time and set it to the TextField
+                    if (mounted){
+                      widget.textEditingController.text = time.format(context);
+                    }
                   }
                 }
               }
-            }
-          : null,
+            : null,
+      ),
     );
   }
 }
