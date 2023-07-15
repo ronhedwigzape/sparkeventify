@@ -11,7 +11,7 @@ import 'package:student_event_calendar/layouts/client_screen_layout.dart';
 import 'package:student_event_calendar/providers/user_provider.dart';
 import 'package:student_event_calendar/screens/client_selection_screen.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
-import 'package:student_event_calendar/resources/firebase_notifications.dart';
+import 'package:student_event_calendar/services/firebase_notifications.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
