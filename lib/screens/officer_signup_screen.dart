@@ -59,7 +59,7 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
       section: _sectionController.text.trim(),
     );
 
-    String res = await AuthMethods().signUpAsClient(
+    String res = await AuthMethods().signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
         profile: profile,

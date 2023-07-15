@@ -59,7 +59,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
       section: _sectionController.text.trim(),
     );
 
-    String res = await AuthMethods().signUpAsClient(
+    String res = await AuthMethods().signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
         profile: profile,

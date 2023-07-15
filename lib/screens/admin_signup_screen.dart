@@ -16,7 +16,7 @@ class AdminSignupScreen extends StatefulWidget {
 }
 
 class AdminSignupScreenState extends State<AdminSignupScreen> {
-  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
@@ -25,7 +25,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
   @override
   void dispose() {
     super.dispose();
-    _usernameController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     _fullNameController.dispose();
     _phoneNumberController.dispose();
@@ -51,8 +51,8 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
       phoneNumber: phoneNumber,
     );
 
-    String res = await AuthMethods().signUpAsAdmin(
-      username: _usernameController.text.trim(),
+    String res = await AuthMethods().signUp(
+      email: _emailController.text.trim(),
       password: _passwordController.text.trim(),
       userType: 'Admin',
       profile: profile,
@@ -144,7 +144,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
             const SizedBox(height: 20.0),
             // text field input for username
             TextFieldInput(
-              textEditingController: _usernameController,
+              textEditingController: _emailController,
               hintText: 'Enter your username',
               textInputType: TextInputType.text,
             ),

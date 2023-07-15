@@ -29,39 +29,23 @@ class _LoginScreenState extends State<LoginScreen> {
     _passwordController.dispose();
   }
 
-  Future<void> loginAsClient() async {
+  Future<void> signIn() async {
     setState(() {
       _isLoading = true;
     });
 
-    String res = await AuthMethods().loginAsClient(
+    String res = await AuthMethods().signIn(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim());
 
     if (res == 'Success') {
-      onLoginSuccess(res);
+      onSignInSuccess(res);
     } else {
-      onLoginFailure(res);
+      onSignInFailure(res);
     }
   }
 
-  Future<void> loginAsAdmin() async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    String res = await AuthMethods().loginAsAdmin(
-        username: _emailController.text.trim(),
-        password: _passwordController.text.trim());
-
-    if (res == 'Success') {
-      onLoginSuccess(res);
-    } else {
-      onLoginFailure(res);
-    }
-  }
-
-  void onLoginSuccess(String message) async {
+  void onSignInSuccess(String message) async {
     setState(() {
       _isLoading = false;
     });
@@ -75,7 +59,7 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
-  void onLoginFailure(String message) {
+  void onSignInFailure(String message) {
     setState(() {
       _isLoading = false;
     });
@@ -161,7 +145,7 @@ class _LoginScreenState extends State<LoginScreen> {
             const SizedBox(height: 24.0),
             // button login
             InkWell(
-              onTap: !kIsWeb ? loginAsClient : loginAsAdmin,
+              onTap: signIn,
               child: Container(
                   width: double.infinity,
                   alignment: Alignment.center,

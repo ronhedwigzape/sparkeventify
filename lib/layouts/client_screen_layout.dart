@@ -83,9 +83,9 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
     return [
       IconButton(
         onPressed: () => navigationTapped(pageIndex),
-        icon: Icon(
+        icon: const Icon(
           Icons.notifications,
-          color: _page == pageIndex ? whiteColor : null,
+          color: whiteColor,
         ),
       )
     ];
