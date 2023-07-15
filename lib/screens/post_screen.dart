@@ -303,7 +303,7 @@ class _PostScreenState extends State<PostScreen> {
                             child: Text(
                               'Post an Event/Announcement',
                               style: TextStyle(
-                                fontSize: 24.0,
+                                fontSize: 20.0,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
@@ -342,8 +342,7 @@ class _PostScreenState extends State<PostScreen> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
                                 child: IconButton(
                                   onPressed: () => _selectImage(context),
                                   icon: const Icon(Icons.add_a_photo),
@@ -351,8 +350,7 @@ class _PostScreenState extends State<PostScreen> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20.0),
+                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
                                 child: IconButton(
                                   onPressed: () => _selectDocument(context),
                                   icon: const Icon(Icons.file_present_rounded),
@@ -362,10 +360,24 @@ class _PostScreenState extends State<PostScreen> {
                             ],
                           ),
                           const SizedBox(height: 10.0),
-                          TextFieldInput(
-                            textEditingController: _eventTitleController,
-                            hintText: 'Title*',
-                            textInputType: TextInputType.text,
+                          Row(
+                            children: [
+                              Flexible(
+                                child: TextFieldInput(
+                                  textEditingController: _eventTitleController,
+                                  hintText: 'Title*',
+                                  textInputType: TextInputType.text,
+                                ), 
+                              ),
+                              const SizedBox(width: 10.0),
+                              Flexible(
+                                child: TextFieldInput(
+                                  textEditingController: _eventVenueController,
+                                  hintText: 'Venue (Optional)',
+                                  textInputType: TextInputType.text,
+                                ),
+                              )
+                            ]
                           ),
                           const SizedBox(height: 10.0),
                           TextFieldInput(
@@ -374,17 +386,11 @@ class _PostScreenState extends State<PostScreen> {
                             textInputType: TextInputType.text,
                           ),
                           const SizedBox(height: 10.0),
-                          TextFieldInput(
-                            textEditingController: _eventVenueController,
-                            hintText: 'Venue (Optional)',
-                            textInputType: TextInputType.text,
-                          ),
-                          const SizedBox(height: 10.0),
                           Row(children: [
                             Flexible(
                               child: TextFieldInput(
                                 textEditingController: _eventDateController,
-                                hintText: 'Select Date',
+                                hintText: 'Select Date*',
                                 textInputType: TextInputType.datetime,
                                 isDate: true,
                               ),
