@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/firebase_options.dart';
 import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
@@ -38,10 +39,12 @@ class _AppState extends State<App> {
   Widget build(BuildContext context) {
     return MultiProvider(
         providers: [ChangeNotifierProvider(create: (_) => UserProvider())],
-        child: const MaterialApp(
-          debugShowCheckedModeBanner: false,
-          title: 'Student Event Calendar',
-          home: AuthScreen(),
+        child: const OverlaySupport(
+          child: MaterialApp(
+            debugShowCheckedModeBanner: false,
+            title: 'Student Event Calendar',
+            home: AuthScreen(),
+          ),
         )
       );
     }

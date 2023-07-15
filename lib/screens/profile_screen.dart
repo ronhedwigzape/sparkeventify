@@ -23,7 +23,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _pickedImage = null;
   }
@@ -169,7 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             String section = currentUser?.profile!.section ?? '';
 
             return Scaffold(
-                body: Center(
+              body: Center(
               child: Padding(
                 padding: const EdgeInsets.all(40.0),
                 child: Column(
@@ -205,8 +204,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     const SizedBox(height: 20),
                     kIsWeb ? Text('Username: $username',
-                        style: const TextStyle(
-                            fontSize: 20.0, fontWeight: FontWeight.bold)) : const SizedBox.shrink(),
+                        style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)) : const SizedBox.shrink(),
                     const SizedBox(height: 20),     
                     Text('Email: $email', style: const TextStyle(fontSize: 16.0)),
                     const SizedBox(height: 20),
@@ -234,8 +232,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   ],
                 ),
               ),
-            ));
-          }
-        });
+            )
+          );
+        }
+      }
+    );
   }
 }

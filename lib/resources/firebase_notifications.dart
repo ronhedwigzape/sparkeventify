@@ -2,12 +2,28 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:overlay_support/overlay_support.dart';
+import 'package:student_event_calendar/widgets/message_notification.dart';
 
 class FirebaseNotifications {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   void init() async {
-    await _firebaseMessaging.requestPermission();
+    await _firebaseMessaging.requestPermission(
+      alert: true,
+      announcement: false,
+      badge: true,
+      carPlay: false,
+      criticalAlert: false,
+      provisional: false,
+      sound: true,
+    );
+
+    await _firebaseMessaging.setForegroundNotificationPresentationOptions(
+      alert: true,
+      badge: true,
+      sound: true,
+    );
   }
 
   void getDeviceToken() async {
@@ -26,6 +42,13 @@ class FirebaseNotifications {
           print('Notification Body: ${message.notification!.body}');
           print('Data Payload(onMessage): ${message.data}');
         }
+
+        showOverlayNotification((context) {
+          return MessageNotification(
+            message: message.notification?.body ?? '', 
+            title: message.notification?.title ?? '',
+          );
+        }, duration: const Duration(milliseconds: 3000));
       },
       onDone: () {
         if (kDebugMode) {

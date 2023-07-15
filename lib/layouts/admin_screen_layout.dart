@@ -45,54 +45,55 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
 
   _signOut() async {
     return showDialog(
-        context: context,
-        builder: (context) {
-          return SimpleDialog(
-            title: Text(
-              'Log Out Confirmation',
-              style: TextStyle(
-                color: Colors.red[900],
-                fontWeight: FontWeight.bold,
-              ),
+      context: context,
+      builder: (context) {
+        return SimpleDialog(
+          title: Text(
+            'Log Out Confirmation',
+            style: TextStyle(
+              color: Colors.red[900],
+              fontWeight: FontWeight.bold,
             ),
-            children: [
-              const Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                child: Text('Are you sure you want to sign out?'),
-              ),
-              SimpleDialogOption(
-                padding: const EdgeInsets.all(20),
-                onPressed: () async {
-                  await AuthMethods().signOut();
-                  if (mounted) {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
-                  }
-                },
-                child: const Row(
-                  children: <Widget>[
-                    Icon(Icons.check_circle, color: grassColor), 
-                    SizedBox(width: 10),
-                    Text('Yes'),
-                  ],
-                ),
-                ),
-              SimpleDialogOption(
-                padding: const EdgeInsets.all(20),
-                child: const Row(
-                  children: <Widget>[
-                    Icon(Icons.cancel, color: maroonColor), 
-                    SizedBox(width: 10),
-                    Text('Go Back'),
-                  ],
-                ),
-                onPressed: () {
+          ),
+          children: [
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+              child: Text('Are you sure you want to sign out?'),
+            ),
+            SimpleDialogOption(
+              padding: const EdgeInsets.all(20),
+              onPressed: () async {
+                await AuthMethods().signOut();
+                if (mounted) {
                   Navigator.of(context).pop();
-                },
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
+                }
+              },
+              child: const Row(
+                children: <Widget>[
+                  Icon(Icons.check_circle, color: grassColor), 
+                  SizedBox(width: 10),
+                  Text('Yes'),
+                ],
               ),
-            ],
-          );
-        });
+              ),
+            SimpleDialogOption(
+              padding: const EdgeInsets.all(20),
+              child: const Row(
+                children: <Widget>[
+                  Icon(Icons.cancel, color: maroonColor), 
+                  SizedBox(width: 10),
+                  Text('Go Back'),
+                ],
+              ),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      }
+    );
   }
 
   @override
@@ -156,7 +157,8 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
           )
         : const Center(child: CircularProgressIndicator());
         }
-      });
+      }
+    );
   }
 
   Padding buildAppBarTitle() {
