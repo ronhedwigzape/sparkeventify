@@ -6,14 +6,14 @@ import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class EventsCalendar extends StatefulWidget {
-  const EventsCalendar({Key? key}) : super(key: key);
+class EventsCalendarScreen extends StatefulWidget {
+  const EventsCalendarScreen({Key? key}) : super(key: key);
 
   @override
-  EventsCalendarState createState() => EventsCalendarState();
+  EventsCalendarScreenState createState() => EventsCalendarScreenState();
 }
 
-class EventsCalendarState extends State<EventsCalendar> {
+class EventsCalendarScreenState extends State<EventsCalendarScreen> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
@@ -49,6 +49,12 @@ class EventsCalendarState extends State<EventsCalendar> {
           _events = snapshot.data!;
           return Column(
             children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 10.0),
+                child: Text('Calendar of Events and Announcements',
+                    style:
+                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+              ),
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Container(
@@ -146,7 +152,8 @@ class EventsCalendarState extends State<EventsCalendar> {
                                     fontSize: 18.0,
                                     fontWeight: FontWeight.bold),
                               )
-                            : Text('No Day Selected. Please select a day to view events!'))
+                            : Text(
+                                'No Day Selected. Please select a day to view events!'))
                     // Returns if there is an event on the selected day
                     : _events[_selectedDay!] != null && kIsWeb
                         ? Row(
@@ -166,32 +173,44 @@ class EventsCalendarState extends State<EventsCalendar> {
                                     Expanded(
                                       flex: 10,
                                       child: ListView.builder(
-                                        itemCount: _events[_selectedDay]?.length ?? 0,
+                                        itemCount:
+                                            _events[_selectedDay]?.length ?? 0,
                                         itemBuilder: (context, index) {
-                                          final event = _events[_selectedDay]![index];
-                                          final time = DateFormat('hh:mm a').format(event.time);
-                                          final date = DateFormat('MMMM dd, yyyy').format(event.date);
+                                          final event =
+                                              _events[_selectedDay]![index];
+                                          final time = DateFormat('hh:mm a')
+                                              .format(event.time);
+                                          final date =
+                                              DateFormat('MMMM dd, yyyy')
+                                                  .format(event.date);
                                           return event.type == 'Non-academic'
-                                        ? Card(
-                                            margin: const EdgeInsets.all(8.0),
-                                            child: Padding(
-                                              padding: const EdgeInsets.all(20.0),
-                                              child: ListTile(
-                                                leading: Image.network(event.image!, width: 70.0),
-                                                title: Text(event.title),
-                                                titleTextStyle: const TextStyle(
-                                                  fontSize: 20.0,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                                subtitle: Text(
-                                                  'Date: $date'
-                                                  '\nDescription: ${event.description}'
-                                                  '\nVenue: ${event.venue}'
-                                                  '\nTime: $time'),
-                                              ),
-                                            ),
-                                          )
-                                        : const SizedBox.shrink();
+                                              ? Card(
+                                                  margin:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            20.0),
+                                                    child: ListTile(
+                                                      leading: Image.network(
+                                                          event.image!,
+                                                          width: 70.0),
+                                                      title: Text(event.title),
+                                                      titleTextStyle:
+                                                          const TextStyle(
+                                                        fontSize: 20.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                      subtitle: Text(
+                                                          'Date: $date'
+                                                          '\nDescription: ${event.description}'
+                                                          '\nVenue: ${event.venue}'
+                                                          '\nTime: $time'),
+                                                    ),
+                                                  ),
+                                                )
+                                              : const SizedBox.shrink();
                                         },
                                       ),
                                     ),
@@ -206,41 +225,56 @@ class EventsCalendarState extends State<EventsCalendar> {
                                       child: Text(
                                         'Announcements for this day',
                                         style: TextStyle(
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold),
+                                            fontSize: 24,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
                                     Expanded(
                                       flex: 10,
                                       child: ListView.builder(
-                                        itemCount: _events[_selectedDay]?.length ?? 0,
-                                        itemBuilder: (context, index) {
-                                          final event = _events[_selectedDay]![index];
-                                          final time = DateFormat('hh:mm a').format(event.time);
-                                          final date = DateFormat('MMMM dd, yyyy').format(event.date);
-                                          return event.type == 'Academic'
-                                          ? Card(
-                                              margin: const EdgeInsets.all(8.0),
-                                              child: Padding(
-                                                padding: const EdgeInsets.all(20.0),
-                                                child: ListTile(
-                                                  leading: Image.network(event.image!,width: 70.0,),
-                                                  title: Text(event.title),
-                                                  titleTextStyle: const TextStyle(
-                                                    fontSize: 20.0,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                  subtitle: Text(
-                                                    'Date: $date'
-                                                    '\nDescription: ${event.description}'
-                                                    '\nVenue: ${event.venue}'
-                                                    '\nTime: $time'),
-                                                ),
-                                              ),
-                                            )
-                                          : const SizedBox.shrink();
-                                        }
-                                      ),
+                                          itemCount:
+                                              _events[_selectedDay]?.length ??
+                                                  0,
+                                          itemBuilder: (context, index) {
+                                            final event =
+                                                _events[_selectedDay]![index];
+                                            final time = DateFormat('hh:mm a')
+                                                .format(event.time);
+                                            final date =
+                                                DateFormat('MMMM dd, yyyy')
+                                                    .format(event.date);
+                                            return event.type == 'Academic'
+                                                ? Card(
+                                                    margin:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              20.0),
+                                                      child: ListTile(
+                                                        leading: Image.network(
+                                                          event.image!,
+                                                          width: 70.0,
+                                                        ),
+                                                        title:
+                                                            Text(event.title),
+                                                        titleTextStyle:
+                                                            const TextStyle(
+                                                          fontSize: 20.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                        subtitle: Text(
+                                                            'Date: $date'
+                                                            '\nDescription: ${event.description}'
+                                                            '\nVenue: ${event.venue}'
+                                                            '\nTime: $time'),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : const SizedBox.shrink();
+                                          }),
                                     ),
                                   ],
                                 ),
@@ -253,40 +287,49 @@ class EventsCalendarState extends State<EventsCalendar> {
                                 child: Column(
                                   children: [
                                     const Padding(
-                                      padding: EdgeInsets.symmetric(vertical: 7.0),
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 7.0),
                                       child: Center(
                                         child: Text(
                                           'Events/Announcements for this day',
                                           style: TextStyle(
-                                            fontSize: 24,
-                                            fontWeight: FontWeight.bold),
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold),
                                         ),
                                       ),
                                     ),
                                     Expanded(
                                       flex: 10,
                                       child: ListView.builder(
-                                        itemCount: _events[_selectedDay]?.length ?? 0,
+                                        itemCount:
+                                            _events[_selectedDay]?.length ?? 0,
                                         itemBuilder: (context, index) {
-                                          final event = _events[_selectedDay]![index];
-                                          final time = DateFormat('hh:mm a').format(event.time);
-                                          final date = DateFormat('MMMM dd, yyyy').format(event.date);
+                                          final event =
+                                              _events[_selectedDay]![index];
+                                          final time = DateFormat('hh:mm a')
+                                              .format(event.time);
+                                          final date =
+                                              DateFormat('MMMM dd, yyyy')
+                                                  .format(event.date);
                                           return Card(
                                             margin: const EdgeInsets.all(8.0),
                                             child: Padding(
-                                              padding: const EdgeInsets.all(20.0),
+                                              padding:
+                                                  const EdgeInsets.all(20.0),
                                               child: ListTile(
-                                                leading: Image.network(event.image!,width: 70.0,),
+                                                leading: Image.network(
+                                                  event.image!,
+                                                  width: 70.0,
+                                                ),
                                                 title: Text(event.title),
                                                 titleTextStyle: const TextStyle(
                                                   fontSize: 20.0,
                                                   fontWeight: FontWeight.bold,
                                                 ),
-                                                subtitle: Text(
-                                                  'Date: $date'
-                                                  '\nDescription: ${event.description}'
-                                                  '\nVenue: ${event.venue}'
-                                                  '\nTime: $time'),
+                                                subtitle: Text('Date: $date'
+                                                    '\nDescription: ${event.description}'
+                                                    '\nVenue: ${event.venue}'
+                                                    '\nTime: $time'),
                                               ),
                                             ),
                                           );
@@ -296,20 +339,20 @@ class EventsCalendarState extends State<EventsCalendar> {
                                   ],
                                 ),
                               ) // Returns if there is no event on the selected day
-                          : const Center(
-                            child: kIsWeb
-                            ? Text(
-                              'No Events/Announcements For This Day. Please update later for future events!',
-                              style: TextStyle(
-                                fontSize: 18.0,
-                                fontWeight: FontWeight.bold
-                              ),
-                            )
-                            : Padding(
-                              padding: EdgeInsets.symmetric(horizontal: 20.0),
-                              child: Text('No Events/Announcements For This Day. Please update later for future events!'),
-                            )
-                          ),
+                            : const Center(
+                                child: kIsWeb
+                                    ? Text(
+                                        'No Events/Announcements For This Day. Please update later for future events!',
+                                        style: TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    : Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 20.0),
+                                        child: Text(
+                                            'No Events/Announcements For This Day. Please update later for future events!'),
+                                      )),
               ),
             ],
           );
