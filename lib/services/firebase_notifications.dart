@@ -75,6 +75,7 @@ class FirebaseNotifications {
 
     FirebaseMessaging.onBackgroundMessage(
       (RemoteMessage message) async {
+        // Handle the incoming message when the app is in the background
           if (kDebugMode) {
           print('Notification Title: ${message.notification!.title}');
           print('Notification Body: ${message.notification!.body}');
@@ -88,8 +89,7 @@ class FirebaseNotifications {
     await _firebaseMessaging.subscribeToTopic(topic);
   }
 
-  Future<String> sendPushNotification(
-      String title, String body, String token) async {
+  Future<String> sendPushNotification(String title, String body, String token) async {
     const postUrl = 'https://fcm.googleapis.com/fcm/send';
     String message = 'Some error occured while sending push notification.';
     final data = {
@@ -105,7 +105,7 @@ class FirebaseNotifications {
 
     final headers = {
       'content-type': 'application/json',
-      'Authorization': 'key=YOUR_SERVER_KEY', // replace with your server key
+      'Authorization': 'key=YOUR_SERVER_KEY',
     };
 
     final response = await http.post(Uri.parse(postUrl),
