@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -11,6 +10,7 @@ import 'package:student_event_calendar/layouts/client_screen_layout.dart';
 import 'package:student_event_calendar/providers/user_provider.dart';
 import 'package:student_event_calendar/screens/client_selection_screen.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
+import 'package:student_event_calendar/resources/firebase_notifications.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,73 +26,14 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
-  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-
   @override
   void initState() {
     super.initState();
-    configureFirebaseMessaging();
-    initializeFirebaseMessaging();
-    getDeviceToken();
+    FirebaseNotifications().configure();
+    FirebaseNotifications().init();
+    FirebaseNotifications().getDeviceToken();
   }
-
-  void initializeFirebaseMessaging() async {
-    await _firebaseMessaging.requestPermission();
-  }
-
-  void getDeviceToken() async {
-    String? deviceToken = await _firebaseMessaging.getToken();
-    if (kDebugMode) {
-      print('Device Token: $deviceToken');
-    }
-  }
-
-  void configureFirebaseMessaging() {
-    FirebaseMessaging.onMessage.listen(
-      (RemoteMessage message) {
-        // Handle the incoming message when the app is in the foreground
-         if (kDebugMode) {
-          if (message.notification != null) {
-            print('Notification Title: ${message.notification!.title}');
-            print('Notification Body: ${message.notification!.body}');
-          }
-          print('Data Payload(onMessage): ${message.data}');
-        }
-      },
-      onDone: () {
-        if (kDebugMode) {
-          print('Done listening');
-        }
-      },
-    );
-
-    FirebaseMessaging.onMessageOpenedApp.listen(
-      (RemoteMessage message) {
-        // Handle the incoming message when the app is launched from a terminated state
-        if (kDebugMode) {
-          if (message.notification != null) {
-            print('Notification Title: ${message.notification!.title}');
-            print('Notification Body: ${message.notification!.body}');
-          }
-          print('Data Payload(onMessageOpened): ${message.data}');
-        }
-      },
-      onDone: () {
-        if (kDebugMode) {
-          print('Done listening');
-        }
-      },
-    );
-
-    FirebaseMessaging.onBackgroundMessage(
-      (RemoteMessage message) async {
-        if (kDebugMode) {
-          print('onBackgroundMessage: $message');
-        }
-      },
-    );
-  }
-
+ 
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
