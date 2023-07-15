@@ -1,5 +1,7 @@
 # CSPC Announce
 
+- ### A student event calendar app
+
 Before starting the project setup, you should have Flutter SDK installed and Git installed. 
 
 ## Installation
@@ -48,7 +50,19 @@ cd student_event_calendar
 flutter run
 ```
 
-6. To run on Chrome, use the following command:
+6. If your project has a error of current Dart SDK version not updated, you can run this command.
+
+```
+flutter channel beta
+```
+
+- then run this to upgrade Flutter to the latest version,
+
+```
+flutter upgrade
+```
+
+7. To run on Chrome, use the following command:
 
 ```
 flutter run -d chrome --web-renderer html
