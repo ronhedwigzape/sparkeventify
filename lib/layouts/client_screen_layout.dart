@@ -1,5 +1,3 @@
-import 'dart:async';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/utils/colors.dart';
@@ -16,14 +14,12 @@ class ClientScreenLayout extends StatefulWidget {
 class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   int _page = 0;
   PageController pageController = PageController();
-  Stream<QuerySnapshot>? homeScreenItemsStream;
 
   @override
   void initState() {
     super.initState();
     pageController = PageController();
-    homeScreenItemsStream =
-        FirebaseFirestore.instance.collection('events').snapshots();
+
   }
 
   @override
@@ -60,7 +56,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
       backgroundColor: primaryColor,
       elevation: 0.0,
       title: buildAppBarTitle(),
-      actions: buildAppBarActions(),
+      actions: buildAppBarActions(5),
     );
   }
 
@@ -83,11 +79,14 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
     );
   }
 
-  List<Widget> buildAppBarActions() {
+  List<Widget> buildAppBarActions(int pageIndex) {
     return [
       IconButton(
-        onPressed: () {},
-        icon: const Icon(Icons.notifications),
+        onPressed: () => navigationTapped(pageIndex),
+        icon: Icon(
+          Icons.notifications,
+          color: _page == pageIndex ? whiteColor : null,
+        ),
       )
     ];
   }
@@ -130,7 +129,6 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
           color: _page == pageIndex ? primaryColor : secondaryColor,
         ),
       ),
-      label: '',
       backgroundColor: whiteColor,
     );
   }
