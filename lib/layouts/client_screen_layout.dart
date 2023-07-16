@@ -52,9 +52,10 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   }
 
   AppBar buildAppBar() {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: lightModePrimaryColor,
+      backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
       elevation: 0.0,
       title: buildAppBarTitle(),
       actions: buildAppBarActions(5),
@@ -62,10 +63,11 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   }
 
   Row buildAppBarTitle() {
-    return const Row(
+    final darkModeOn = Provider.of<DarkModeProvider>(context, listen: false).darkMode;
+    return Row(
       children: [
-        CSPCLogo(height: 30.0),
-        SizedBox(
+        const CSPCLogo(height: 30.0),
+        const SizedBox(
           width: 10.0,
         ),
         Text(
@@ -74,11 +76,24 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
             color: lightColor,
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
+            shadows: darkModeOn ? <Shadow>[
+              const Shadow(
+                offset: Offset(2.0, 2.0),
+                blurRadius: 4.0,
+                color: Color.fromARGB(255, 0, 0, 0),
+              ),
+              const Shadow(
+                offset: Offset(2.0, 2.0),
+                blurRadius: 8.0,
+                color: lightModeBlueColor,
+              ),
+            ] : null,
           ),
         ),
       ],
     );
   }
+
 
   List<Widget> buildAppBarActions(int pageIndex) {
     return [

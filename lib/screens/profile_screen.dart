@@ -301,7 +301,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: TextButton(
                             onPressed: _signOut,
                             style: TextButton.styleFrom(
-                              backgroundColor: lightModePrimaryColor,
+                              backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
                             ),
                             child: const Text(
                               'Sign out',

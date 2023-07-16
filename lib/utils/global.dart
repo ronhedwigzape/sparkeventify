@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:student_event_calendar/screens/feed_screen.dart';
 import 'package:student_event_calendar/screens/post_screen.dart';
 import 'package:student_event_calendar/screens/profile_screen.dart';
 import 'package:student_event_calendar/screens/events_calendar_screen.dart';
@@ -16,7 +17,7 @@ const appName = 'Announce';
 List<Widget> homeScreenItems = [
   kIsWeb
       ? const EventsCalendarScreen()
-      : const Center(child: Text('Home Screen')),
+      : const FeedScreen(),
   kIsWeb ? const PostScreen() : const EventsCalendarScreen(),
   kIsWeb
       ? const Center(child: Text('Manage Events'))

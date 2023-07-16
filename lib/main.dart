@@ -32,8 +32,8 @@ class _AppState extends State<App> {
   @override
   void initState() {
     super.initState();
-    FirebaseNotifications().configure();
     FirebaseNotifications().init();
+    FirebaseNotifications().configure();
     FirebaseNotifications().getDeviceToken();
   }
 

@@ -5,6 +5,16 @@ import 'dart:convert';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:student_event_calendar/widgets/popup_notification.dart';
 
+// Place this on top to avoid Null Safety errors
+Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  // Handle the incoming message when the app is in the background
+  if (kDebugMode) {
+    print('Notification Title: ${message.notification!.title}');
+    print('Notification Body: ${message.notification!.body}');
+    print('Data Payload(onMessage): ${message.data}');
+  }
+}
+
 class FirebaseNotifications {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
@@ -60,10 +70,12 @@ class FirebaseNotifications {
     FirebaseMessaging.onMessageOpenedApp.listen(
       (RemoteMessage message) {
         // Handle the incoming message when the app is launched from a terminated state
-        if (kDebugMode) {
-          print('Notification Title: ${message.notification!.title}');
-          print('Notification Body: ${message.notification!.body}');
-          print('Data Payload(onMessage): ${message.data}');
+        if (message.notification != null) {
+          if (kDebugMode) {
+            print('Notification Title: ${message.notification!.title}');
+            print('Notification Body: ${message.notification!.body}');
+            print('Data Payload(onMessage): ${message.data}');
+          }
         }
       },
       onDone: () {
@@ -73,16 +85,7 @@ class FirebaseNotifications {
       },
     );
 
-    FirebaseMessaging.onBackgroundMessage(
-      (RemoteMessage message) async {
-        // Handle the incoming message when the app is in the background
-        if (kDebugMode) {
-          print('Notification Title: ${message.notification!.title}');
-          print('Notification Body: ${message.notification!.body}');
-          print('Data Payload(onMessage): ${message.data}');
-        }
-      },
-    );
+    FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   }
 
   Future<void> subscribeToTopic(String topic) async {
