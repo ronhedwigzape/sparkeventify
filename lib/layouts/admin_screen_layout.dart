@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/user.dart';
+import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
@@ -99,6 +101,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return FutureBuilder(
       future: currentUser,
       builder: (context, AsyncSnapshot<User> snapshot) {
@@ -116,6 +119,11 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                 elevation: 0.0,
                 backgroundColor: lightModeTertiaryColor,
                 actions: [
+                  IconButton(
+                    onPressed: () => Provider.of<DarkModeProvider>(context, listen: false).toggleTheme(),
+                    icon: Icon(darkModeOn ? Icons.dark_mode : Icons.light_mode, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),
+                    tooltip: 'Switch to ${darkModeOn ? 'Light' : 'Dark'} Mode',
+                  ),
                   buildIconButton(Icons.dashboard, 0, 'Dashboard'),
                   buildIconButton(Icons.add_circle_sharp, 1, 'Post'),
                   buildIconButton(
