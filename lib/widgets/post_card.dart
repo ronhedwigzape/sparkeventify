@@ -37,10 +37,11 @@ class _PostCardState extends State<PostCard> {
         future: userDetails,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Container(
-              height: 300, 
-              width: double.infinity,
-              color: Colors.grey[-1],
+            return const SizedBox(
+              height: 380.0,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
             );
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');

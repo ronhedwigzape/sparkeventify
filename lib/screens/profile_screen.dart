@@ -291,7 +291,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       )
                     ],
                   ) : const SizedBox.shrink(),
-                  !kIsWeb ? 
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
@@ -334,7 +333,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         )
                       )
                     ],
-                  ): const SizedBox.shrink(),
+                  )
                 ],
               ),
             ),

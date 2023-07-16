@@ -78,12 +78,12 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
             fontWeight: FontWeight.bold,
             shadows: darkModeOn ? <Shadow>[
               const Shadow(
-                offset: Offset(2.0, 2.0),
-                blurRadius: 4.0,
-                color: Color.fromARGB(255, 0, 0, 0),
+                offset: Offset(1.0, 1.0),
+                blurRadius: 1.0,
+                color: darkModePrimaryColor,
               ),
               const Shadow(
-                offset: Offset(2.0, 2.0),
+                offset: Offset(1.0, 1.0),
                 blurRadius: 8.0,
                 color: lightModeBlueColor,
               ),
