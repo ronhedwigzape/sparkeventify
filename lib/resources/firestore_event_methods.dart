@@ -6,16 +6,15 @@ import 'package:uuid/uuid.dart';
 
 class FireStoreEventMethods {
   // Reference to the 'events' collection in Firestore
-  final CollectionReference _eventsCollection =
-      FirebaseFirestore.instance.collection('events');
+  final CollectionReference _eventsCollection = FirebaseFirestore.instance.collection('events');
 
   // Method to add a new event to the 'events' collection
   Future<String> addEvent(
     String title,
-    Uint8List image,
+    Uint8List? image,
     String description,
     String createdBy,
-    Uint8List document,
+    Uint8List? document,
     DateTime date,
     DateTime time,
     List participants,
@@ -24,19 +23,19 @@ class FireStoreEventMethods {
     String status,
   ) async {
     String response = 'Some error occurred';
-
     try {
-      // Upload the image to storage and get the URL
-      String imageUrl = await StorageMethods()
-          .uploadImageToStorage('images', image, true);
-
-      // Upload the document to storage and get the URL
-      String documentUrl = await StorageMethods()
-      .uploadFileToStorage('documents', document);
-
+      // If the image is not null, upload it to storage and get the URL
+      String imageUrl = '';
+      if (image != null) {
+         imageUrl = await StorageMethods().uploadImageToStorage('images', image, false);
+      }
+      // If the document is not null, upload it to storage and get the URL
+      String documentUrl = '';
+      if (document != null) {
+         documentUrl = await StorageMethods().uploadFileToStorage('documents', document);
+      }
       // Generate a unique ID for the event
       String eventId = const Uuid().v4();
-
       // Create a new Event object
       Event event = Event(
         id: eventId,
@@ -53,10 +52,8 @@ class FireStoreEventMethods {
         status: status,
         datePublished: DateTime.now(),
       );
-
       // Add the event to the 'events' collection in Firestore
       _eventsCollection.doc(eventId).set(event.toJson());
-
       response = 'Success';
     } on FirebaseException catch (err) {
       // Handle any errors that occur
@@ -117,12 +114,9 @@ class FireStoreEventMethods {
         // if (kDebugMode) {
         //   print('Event: $event');
         // }
-        DateTime eventDate = DateTime(
-          event.date.year,
-          event.date.month,
-          event.date.day,
-          0, 0, 0 
-        ).toLocal();
+        DateTime eventDate =
+            DateTime(event.date.year, event.date.month, event.date.day, 0, 0, 0)
+                .toLocal();
         if (eventMap[eventDate] == null) eventMap[eventDate] = [];
         eventMap[eventDate]!.add(event);
         // if (kDebugMode) {
@@ -147,6 +141,4 @@ class FireStoreEventMethods {
     // Convert the document snapshot to an Event object and return it
     return Event.fromSnap(doc);
   }
-
-
 }

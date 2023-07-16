@@ -158,56 +158,47 @@ class _PostScreenState extends State<PostScreen> {
         print('Trying to add event...');
       }
       String currentUser = await AuthMethods().getCurrentUserUid();
-      if (_imageFile != null &&
-          _documentFile != null &&
-          _eventTypeController.text.isNotEmpty &&
+      // Check if all required parameters are not null
+      if (_eventTypeController.text.isNotEmpty &&
           _eventTitleController.text.isNotEmpty &&
           _eventDescriptionsController.text.isNotEmpty &&
           _eventDateController.text.isNotEmpty &&
           _eventTimeController.text.isNotEmpty &&
           _eventParticipantsController.text.isNotEmpty) {
-
         // Get the date and time from the text controllers
         String pickedDate = _eventDateController.text;
         String pickedTime = _eventTimeController.text;
-
         // Convert picked date (yyyy-mm-dd) to DateTime
         DateTime pickedDateTime = DateTime.parse(pickedDate);
-
         // Get only the date part as a DateTime object
         DateTime datePart = DateTime(pickedDateTime.year, pickedDateTime.month, pickedDateTime.day);
-
         // Parse 12-hour format time string to DateTime
         DateFormat time12Format = DateFormat('h:mm a'); 
         DateTime parsedTime12 = time12Format.parse(pickedTime);
-
         // Split the participants string into a list
         List<dynamic> participants = _eventParticipantsController.text.split(', '); 
-
+        // Add the event to the database
         String response = await FireStoreEventMethods().addEvent(
             _eventTitleController.text,
-            _imageFile!,
+            _imageFile,
             _eventDescriptionsController.text,
             currentUser,
-            _documentFile!,
+            _documentFile,
             datePart,
             parsedTime12,
             participants,
             _eventVenueController.text,
             _eventTypeController.text,
             'Upcoming');
-
         if (kDebugMode) {
           print('Add Event Response: $response');
         }
-
         // Check if the response is a success or a failure
         if (response == 'Success') {
           onPostSuccess();
         } else {
           onPostFailure(response);
         }
-
         return response;
       } else {
         if (kDebugMode) {
@@ -216,7 +207,6 @@ class _PostScreenState extends State<PostScreen> {
         setState(() {
           _isLoading = false;
         });
-
         // Show a snackbar if the image and document are not loaded
         mounted
             ? showSnackBar('Please complete the required fields.*', context)
@@ -346,7 +336,7 @@ class _PostScreenState extends State<PostScreen> {
                                 child: IconButton(
                                   onPressed: () => _selectImage(context),
                                   icon: const Icon(Icons.add_a_photo),
-                                  tooltip: 'Add a photo*',
+                                  tooltip: 'Add a photo',
                                 ),
                               ),
                               Padding(
@@ -354,7 +344,7 @@ class _PostScreenState extends State<PostScreen> {
                                 child: IconButton(
                                   onPressed: () => _selectDocument(context),
                                   icon: const Icon(Icons.file_present_rounded),
-                                  tooltip: 'Add a document*',
+                                  tooltip: 'Add a document',
                                 ),
                               ),
                             ],

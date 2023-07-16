@@ -65,7 +65,7 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                       return _getEventsForDay(adjustedDay);
                     },
                     firstDay: DateTime.utc(2015, 01, 01),
-                    lastDay: DateTime.utc(2030, 3, 14),
+                    lastDay: DateTime.utc(2030, 3, 14), // Can be adjusted on the future
                     focusedDay: _focusedDay,
                     calendarFormat: _calendarFormat,
                     selectedDayPredicate: (day) {
@@ -155,7 +155,7 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                                   child: Text(
                                     'Events for this day',
                                     style: TextStyle(
-                                        fontSize: 24,
+                                        fontSize: 20,
                                         fontWeight: FontWeight.bold),
                                   ),
                                 ),
@@ -173,9 +173,15 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                                           child: Padding(
                                             padding: const EdgeInsets.all(20.0),
                                             child: ListTile(
-                                              leading: Image.network(
-                                                event.image!,
-                                                width: 70.0),
+                                              leading: (event.image?.isEmpty ?? true)
+                                              ? Image.network(
+                                                  'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
+                                                  width: 70.0,
+                                                )
+                                              : Image.network(
+                                                  event.image!,
+                                                  width: 70.0,
+                                                ),
                                               title: Text(event.title),
                                               titleTextStyle:
                                                 const TextStyle(
@@ -205,7 +211,7 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                                   child: Text(
                                     'Announcements for this day',
                                     style: TextStyle(
-                                      fontSize: 24,
+                                      fontSize: 20,
                                       fontWeight: FontWeight.bold),
                                   ),
                                 ),
@@ -223,9 +229,14 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                                           child: Padding(
                                             padding: const EdgeInsets.all(20.0),
                                             child: ListTile(
-                                              leading: Image.network(
-                                                event.image!,
-                                                width: 70.0,
+                                              leading: (event.image?.isEmpty ?? true)
+                                              ? Image.network(
+                                                  'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
+                                                  width: 70.0,
+                                                )
+                                              : Image.network(
+                                                  event.image!,
+                                                  width: 70.0,
                                               ),
                                               title: Text(event.title),
                                               titleTextStyle: const TextStyle(fontSize: 20.0,fontWeight:FontWeight.bold,),
@@ -275,10 +286,15 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                                     child: Padding(
                                       padding: const EdgeInsets.all(20.0),
                                       child: ListTile(
-                                        leading: Image.network(
-                                          event.image!,
-                                          width: 70.0,
-                                        ),
+                                        leading: (event.image?.isEmpty ?? true)
+                                        ? Image.network(
+                                            'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
+                                            width: 70.0,
+                                          )
+                                        : Image.network(
+                                            event.image!,
+                                            width: 70.0,
+                                          ),
                                         title: Text(event.title),
                                         titleTextStyle: const TextStyle(
                                           fontSize: 20.0,
