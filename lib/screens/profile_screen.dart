@@ -177,85 +177,164 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return Scaffold(
               body: Center(
             child: Padding(
-              padding: const EdgeInsets.all(40.0),
+              padding: const EdgeInsets.fromLTRB(30, 20, 30, 0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Stack(
-                    children: [
-                      // if _pickedImage is not null, display the _pickedImage
-                      _pickedImage != null
-                      ? CircleAvatar(
-                        radius: 40,
-                        backgroundImage: MemoryImage(_pickedImage!))
-                      // else if _pickedImage is null, display the profileImage
-                      : profileImage.isNotEmpty
-                      ? CircleAvatar(
-                        radius: 40,
-                        backgroundImage: NetworkImage(profileImage))
-                      // else display the default profile image
-                      : const CircleAvatar(
-                        radius: 40,
-                        backgroundImage: NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png')),
-                      Positioned(
-                        bottom: -10,
-                        left: 42,
-                        child: IconButton(
-                          onPressed: () => _selectImage(context),
-                          icon: const Icon(
-                            Icons.add_a_photo,
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(fullName, style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                    child: Stack(
+                      children: [
+                        // if _pickedImage is not null, display the _pickedImage
+                        _pickedImage != null
+                        ? CircleAvatar(
+                          radius: 40,
+                          backgroundImage: MemoryImage(_pickedImage!))
+                        // else if _pickedImage is null, display the profileImage
+                        : profileImage.isNotEmpty
+                        ? CircleAvatar(
+                          radius: 40,
+                          backgroundImage: NetworkImage(profileImage))
+                        // else display the default profile image
+                        : const CircleAvatar(
+                          radius: 40,
+                          backgroundImage: NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png')),
+                        Positioned(
+                          bottom: -10,
+                          left: 42,
+                          child: IconButton(
+                            onPressed: () => _selectImage(context),
+                            icon: const Icon(
+                              Icons.add_a_photo,
+                            )
                           )
                         )
-                      )
-                    ],
+                      ],
+                    ),
                   ),
-                  const SizedBox(height: 20),
+                  kIsWeb ? const SizedBox(height: 20) : const SizedBox.shrink(),
                   kIsWeb
                   ? Text('Username: $username',style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold))
                   : const SizedBox.shrink(),
                   const SizedBox(height: 20),
-                  Text('Email: $email', style: const TextStyle(fontSize: 16.0)),
-                  const SizedBox(height: 20),
-                  Text('Phone Number: $phoneNumber', style: const TextStyle(fontSize: 16.0)),
-                  const SizedBox(height: 20),
-                  Text('Full name: $fullName', style: const TextStyle(fontSize: 16.0)),
-                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: <Widget>[
+                      Flexible(
+                        child:  Row(
+                          children: <Widget>[
+                            const Icon(Icons.email),
+                            const SizedBox(width: 20),
+                            Text(email, style: const TextStyle(fontSize: 16.0)), 
+                          ],
+                        ),
+                      ),
+                    ]  
+                  ),
+                  const Divider(height: 30, thickness: 2),
+                  Row(
+                    children: [
+                      const Icon(Icons.person),
+                      const SizedBox(width: 20),
+                      Text(fullName, style: const TextStyle(fontSize: 16.0)),
+                    ],
+                  ),
+                  const Divider(height: 30, thickness: 2),
+                  Row(
+                    children: <Widget>[
+                      const Icon(Icons.phone),
+                      const SizedBox(width: 20),
+                      Text(phoneNumber, style: const TextStyle(fontSize: 16.0)),
+                    ],
+                  ),
+                  const Divider(height: 30, thickness: 2),
                   currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin'
-                  ? Text('Department: $department',
-                      style: const TextStyle(fontSize: 16.0))
-                  : const SizedBox.shrink(),
-                  const SizedBox(height: 20),
+                  ? Row(
+                    children: [
+                      const Icon(Icons.school),
+                      const SizedBox(width: 20),
+                        Text('Department: $department', style: const TextStyle(fontSize: 16.0))
+                    ],
+                  ): const SizedBox.shrink(),
+                  const Divider(height: 30, thickness: 2),
                   currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin'
-                  ? Text('Year: $year',
-                      style: const TextStyle(fontSize: 16.0))
-                  : const SizedBox.shrink(),
-                  const SizedBox(height: 20),
-                  currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin'
-                  ? Text('Section: $section',
-                      style: const TextStyle(fontSize: 16.0))
-                  : const SizedBox.shrink(),
-                  !kIsWeb
-                    ? Padding(
-                      padding: const EdgeInsets.all(15.0),
-                      child: ElevatedButton(
-                          onPressed: _signOut,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:  darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                          ),
-                          child: const Text('Sign out')),
+                  ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Flexible(
+                        child: Row(
+                          children: [
+                            const Icon(Icons.school),
+                            const SizedBox(width: 20),
+                            Text('Year: $year', style: const TextStyle(fontSize: 16.0)),
+                          ],
+                        )
+                      ),
+                      Flexible(
+                        child: Row(
+                          children: [
+                            const Icon(Icons.school),
+                            const SizedBox(width: 20), 
+                            Text('Section: $section',
+                            style: const TextStyle(fontSize: 16.0))
+                          ]
+                        )
                       )
-                    : const SizedBox.shrink(),
-                  !kIsWeb
-                  ? Switch(
-                      value: darkModeOn,
-                      onChanged: (bool value) { 
-                        Provider.of<DarkModeProvider>(context,listen: false).toggleTheme();
-                      },
-                    )
-                  : const SizedBox.shrink(),
+                    ],
+                  ) : const SizedBox.shrink(),
+                  !kIsWeb ? 
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Flexible(
+                        child: Padding(
+                          padding: const EdgeInsets.all(15.0),
+                          child: TextButton(
+                            onPressed: _signOut,
+                            style: TextButton.styleFrom(
+                              backgroundColor: lightModePrimaryColor,
+                            ),
+                            child: const Text(
+                              'Sign out',
+                              style: TextStyle(
+                                color: lightColor,
+                                fontSize: 16.0,
+                              ),
+                            )
+                          ),
+                        ),
+                      ),
+                      Flexible(
+                        child: Row(
+                          children: [
+                            Text(
+                              darkModeOn ? 'Dark Mode' : 'Light Mode',
+                              style: TextStyle(
+                                color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                            IconButton(
+                              onPressed: () => Provider.of<DarkModeProvider>(context, listen: false).toggleTheme(),
+                              icon: Icon(
+                                darkModeOn ? Icons.dark_mode : Icons.light_mode,
+                                color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                              ) 
+                            )
+                          ],
+                        )
+                      )
+                    ],
+                  ): const SizedBox.shrink(),
                 ],
               ),
             ),
