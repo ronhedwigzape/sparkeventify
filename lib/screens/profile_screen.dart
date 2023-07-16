@@ -253,7 +253,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     children: <Widget>[
                       const Icon(Icons.phone),
                       const SizedBox(width: 20),
-                      Text(phoneNumber, style: const TextStyle(fontSize: 16.0)),
+                      Text('0$phoneNumber', style: const TextStyle(fontSize: 16.0)),
                     ],
                   ),
                   const Divider(height: 30, thickness: 2),
