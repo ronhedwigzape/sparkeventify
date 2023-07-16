@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
@@ -102,12 +104,15 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
 
 
   CupertinoTabBar buildBottomNavigationBar() {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return CupertinoTabBar(
       onTap: navigationTapped,
-      backgroundColor: backgroundColor,
+      backgroundColor: darkModeOn ? darkColor : whiteColor,
+      activeColor: darkModeOn ? whiteColor : darkColor,
       items: buildBottomNavigationBarItems(),
     );
   }
+
 
   List<BottomNavigationBarItem> buildBottomNavigationBarItems() {
     return [

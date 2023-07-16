@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/user.dart';
+import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
@@ -179,22 +181,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         // if _pickedImage is not null, display the _pickedImage
                         _pickedImage != null
                             ? CircleAvatar(
-                                radius: 64,
+                                radius: 40,
                                 backgroundImage: MemoryImage(_pickedImage!))
                             // else if _pickedImage is null, display the profileImage
                             : profileImage.isNotEmpty
                                 ? CircleAvatar(
-                                    radius: 64,
+                                    radius: 40,
                                     backgroundImage: NetworkImage(profileImage))
                                 // else display the default profile image
                                 : const CircleAvatar(
-                                    radius: 64,
+                                    radius: 40,
                                     backgroundImage: NetworkImage(
                                         'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
                                   ),
                         Positioned(
                             bottom: -10,
-                            left: 80,
+                            left: 42,
                             child: IconButton(
                                 onPressed: () => _selectImage(context),
                                 icon: const Icon(
@@ -228,6 +230,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         ),
                       ),
                       child: const Text('Sign out')),
+                  ) : const SizedBox.shrink(),
+                  !kIsWeb ? Switch(
+                    value: Provider.of<DarkModeProvider>(context).darkMode,
+                    onChanged: (bool value) {
+                      Provider.of<DarkModeProvider>(context, listen: false).toggleTheme();
+                    },
                   ) : const SizedBox.shrink(),
                   ],
                 ),

@@ -8,6 +8,7 @@ import 'package:provider/provider.dart';
 import 'package:student_event_calendar/firebase_options.dart';
 import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
 import 'package:student_event_calendar/layouts/client_screen_layout.dart';
+import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/providers/user_provider.dart';
 import 'package:student_event_calendar/screens/client_selection_screen.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
@@ -27,6 +28,7 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+
   @override
   void initState() {
     super.initState();
@@ -34,21 +36,30 @@ class _AppState extends State<App> {
     FirebaseNotifications().init();
     FirebaseNotifications().getDeviceToken();
   }
- 
+
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
-        providers: [ChangeNotifierProvider(create: (_) => UserProvider())],
-        child: const OverlaySupport(
+      providers: [
+        ChangeNotifierProvider(create: (_) => UserProvider()),
+        ChangeNotifierProvider(create: (_) => DarkModeProvider()),
+      ],
+      child: Builder(builder: (context) {
+        final darkMode = Provider.of<DarkModeProvider>(context).darkMode;
+        final theme = darkMode ? ThemeData.dark() : ThemeData.light();
+
+        return OverlaySupport(
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
+            theme: theme,
             title: 'Student Event Calendar',
-            home: AuthScreen(),
+            home: const AuthScreen(),
           ),
-        )
-      );
-    }
+        );
+      }),
+    );
   }
+}
 
 class AuthScreen extends StatelessWidget {
   const AuthScreen({super.key});
