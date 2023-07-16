@@ -171,12 +171,14 @@ class _PostScreenState extends State<PostScreen> {
         // Convert picked date (yyyy-mm-dd) to DateTime
         DateTime pickedDateTime = DateTime.parse(pickedDate);
         // Get only the date part as a DateTime object
-        DateTime datePart = DateTime(pickedDateTime.year, pickedDateTime.month, pickedDateTime.day);
+        DateTime datePart = DateTime(
+            pickedDateTime.year, pickedDateTime.month, pickedDateTime.day);
         // Parse 12-hour format time string to DateTime
-        DateFormat time12Format = DateFormat('h:mm a'); 
+        DateFormat time12Format = DateFormat('h:mm a');
         DateTime parsedTime12 = time12Format.parse(pickedTime);
         // Split the participants string into a list
-        List<dynamic> participants = _eventParticipantsController.text.split(', '); 
+        List<dynamic> participants =
+            _eventParticipantsController.text.split(', ');
         // Add the event to the database
         String response = await FireStoreEventMethods().addEvent(
             _eventTitleController.text,
@@ -332,7 +334,8 @@ class _PostScreenState extends State<PostScreen> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0),
                                 child: IconButton(
                                   onPressed: () => _selectImage(context),
                                   icon: const Icon(Icons.add_a_photo),
@@ -340,7 +343,8 @@ class _PostScreenState extends State<PostScreen> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 20.0),
                                 child: IconButton(
                                   onPressed: () => _selectDocument(context),
                                   icon: const Icon(Icons.file_present_rounded),
@@ -350,25 +354,23 @@ class _PostScreenState extends State<PostScreen> {
                             ],
                           ),
                           const SizedBox(height: 10.0),
-                          Row(
-                            children: [
-                              Flexible(
-                                child: TextFieldInput(
-                                  textEditingController: _eventTitleController,
-                                  hintText: 'Title*',
-                                  textInputType: TextInputType.text,
-                                ), 
+                          Row(children: [
+                            Flexible(
+                              child: TextFieldInput(
+                                textEditingController: _eventTitleController,
+                                hintText: 'Title*',
+                                textInputType: TextInputType.text,
                               ),
-                              const SizedBox(width: 10.0),
-                              Flexible(
-                                child: TextFieldInput(
-                                  textEditingController: _eventVenueController,
-                                  hintText: 'Venue (Optional)',
-                                  textInputType: TextInputType.text,
-                                ),
-                              )
-                            ]
-                          ),
+                            ),
+                            const SizedBox(width: 10.0),
+                            Flexible(
+                              child: TextFieldInput(
+                                textEditingController: _eventVenueController,
+                                hintText: 'Venue (Optional)',
+                                textInputType: TextInputType.text,
+                              ),
+                            )
+                          ]),
                           const SizedBox(height: 10.0),
                           TextFieldInput(
                             textEditingController: _eventDescriptionsController,
@@ -398,7 +400,8 @@ class _PostScreenState extends State<PostScreen> {
                           const SizedBox(height: 10.0),
                           TextFieldInput(
                             textEditingController: _eventParticipantsController,
-                            hintText: 'Participants* (Students, Teacher, etc.) Separate Participants with a comma (,)',
+                            hintText:
+                                'Participants* (Students, Teacher, etc.) Separate Participants with a comma (,)',
                             textInputType: TextInputType.text,
                           ),
                           const SizedBox(height: 10.0),
@@ -416,19 +419,19 @@ class _PostScreenState extends State<PostScreen> {
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(5.0)),
                                     ),
-                                    color: blueColor,
+                                    color: lightModeBlueColor,
                                   ),
                                   child: _isLoading
                                       ? const Center(
                                           child: CircularProgressIndicator(
                                           valueColor:
                                               AlwaysStoppedAnimation<Color>(
-                                                  whiteColor),
+                                                  lightColor),
                                         ))
                                       : const Text(
                                           'Create a New Announcement',
                                           style: TextStyle(
-                                            color: whiteColor,
+                                            color: lightColor,
                                             fontWeight: FontWeight.bold,
                                           ),
                                         )),

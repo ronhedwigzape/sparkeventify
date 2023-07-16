@@ -121,11 +121,13 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                   child: Row(
                     children: [
                       Flexible(
-                        child: CSPCLogo(height: 60.0,),
+                        child: CSPCLogo(
+                          height: 60.0,
+                        ),
                       ),
                       SizedBox(width: 20.0),
                       Text(
-                      'Register as Student',
+                        'Register as Student',
                         style: TextStyle(
                           fontSize: 24.0,
                           fontWeight: FontWeight.bold,
@@ -135,7 +137,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                   ),
                 ),
                 const Padding(
-                  padding:  EdgeInsets.symmetric(vertical: 10.0),
+                  padding: EdgeInsets.symmetric(vertical: 10.0),
                   child: Divider(thickness: 1.0),
                 ),
                 Row(
@@ -234,18 +236,18 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                             borderRadius:
                                 BorderRadius.all(Radius.circular(5.0)),
                           ),
-                          color: blueColor,
+                          color: lightModeBlueColor,
                         ),
                         child: _isLoading
                             ? const Center(
                                 child: CircularProgressIndicator(
                                 valueColor:
-                                    AlwaysStoppedAnimation<Color>(whiteColor),
+                                    AlwaysStoppedAnimation<Color>(lightColor),
                               ))
                             : const Text(
                                 'Sign up',
                                 style: TextStyle(
-                                  color: whiteColor,
+                                  color: lightColor,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ))),

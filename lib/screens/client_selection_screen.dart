@@ -73,8 +73,8 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                   margin: const EdgeInsets.symmetric(
                       horizontal: 50.0, vertical: 10.0),
                   decoration: BoxDecoration(
-                    color: whiteColor,
-                    border: Border.all(color: tertiaryColor),
+                    color: lightColor,
+                    border: Border.all(color: lightModeTertiaryColor),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text('Student'.toUpperCase())),
@@ -88,8 +88,8 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                   margin: const EdgeInsets.symmetric(
                       horizontal: 50.0, vertical: 10.0),
                   decoration: BoxDecoration(
-                    color: whiteColor,
-                    border: Border.all(color: tertiaryColor),
+                    color: lightColor,
+                    border: Border.all(color: lightModeTertiaryColor),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text('Organization Officer'.toUpperCase())),
@@ -103,8 +103,8 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                   margin: const EdgeInsets.symmetric(
                       horizontal: 50.0, vertical: 10.0),
                   decoration: BoxDecoration(
-                    color: whiteColor,
-                    border: Border.all(color: tertiaryColor),
+                    color: lightColor,
+                    border: Border.all(color: lightModeTertiaryColor),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text('SASO Staff'.toUpperCase())),

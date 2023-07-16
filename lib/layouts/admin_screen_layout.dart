@@ -45,120 +45,122 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
 
   _signOut() async {
     return showDialog(
-      context: context,
-      builder: (context) {
-        return SimpleDialog(
-          title: Text(
-            'Log Out Confirmation',
-            style: TextStyle(
-              color: Colors.red[900],
-              fontWeight: FontWeight.bold,
+        context: context,
+        builder: (context) {
+          return SimpleDialog(
+            title: Text(
+              'Log Out Confirmation',
+              style: TextStyle(
+                color: Colors.red[900],
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-              child: Text('Are you sure you want to sign out?'),
-            ),
-            SimpleDialogOption(
-              padding: const EdgeInsets.all(20),
-              onPressed: () async {
-                await AuthMethods().signOut();
-                if (mounted) {
+            children: [
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                child: Text('Are you sure you want to sign out?'),
+              ),
+              SimpleDialogOption(
+                padding: const EdgeInsets.all(20),
+                onPressed: () async {
+                  await AuthMethods().signOut();
+                  if (mounted) {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const LoginScreen()));
+                  }
+                },
+                child: const Row(
+                  children: <Widget>[
+                    Icon(Icons.check_circle, color: lightModeGrassColor),
+                    SizedBox(width: 10),
+                    Text('Yes'),
+                  ],
+                ),
+              ),
+              SimpleDialogOption(
+                padding: const EdgeInsets.all(20),
+                child: const Row(
+                  children: <Widget>[
+                    Icon(Icons.cancel, color: lightModeMaroonColor),
+                    SizedBox(width: 10),
+                    Text('Go Back'),
+                  ],
+                ),
+                onPressed: () {
                   Navigator.of(context).pop();
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
-                }
-              },
-              child: const Row(
-                children: <Widget>[
-                  Icon(Icons.check_circle, color: grassColor), 
-                  SizedBox(width: 10),
-                  Text('Yes'),
-                ],
+                },
               ),
-              ),
-            SimpleDialogOption(
-              padding: const EdgeInsets.all(20),
-              child: const Row(
-                children: <Widget>[
-                  Icon(Icons.cancel, color: maroonColor), 
-                  SizedBox(width: 10),
-                  Text('Go Back'),
-                ],
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      }
-    );
+            ],
+          );
+        });
   }
 
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: currentUser,
-      builder: (context, AsyncSnapshot<User> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          User? currentUser = snapshot.data;
-          return currentUser?.userType == 'Admin' ?
-           Scaffold(
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              title: buildAppBarTitle(),
-              elevation: 0.0,
-              backgroundColor: tertiaryColor,
-              actions: [
-                buildIconButton(Icons.dashboard, 0, 'Dashboard'),
-                buildIconButton(Icons.add_circle_sharp, 1, 'Post'),
-                buildIconButton(Icons.event_note, 2, 'Edit Events/Announcement'),
-                buildIconButton(Icons.supervised_user_circle_sharp, 3, 'Users'),
-                buildIconButton(Icons.settings, 4, 'Settings'),
-                IconButton(
-                  onPressed: _signOut, 
-                  icon: const Icon(
-                    Icons.logout,
-                    color: maroonColor
-                  ),
-                  tooltip: 'Log out',
-                ),                  
-                Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(30.0, 7.5, 5.0, 7.5),
-                      child: CircleAvatar(
-                      radius: 13,
-                      backgroundImage: NetworkImage(currentUser?.profile?.profileImage ??
-                          'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.fromLTRB(5.0, 7.5, 30.0, 7.5),
-                      child: Text(
-                        currentUser?.profile?.fullName ?? '',
-                        style: const TextStyle(
-                          color: secondaryColor,
-                          fontSize: 16.0,
-                          fontWeight: FontWeight.bold,
+        future: currentUser,
+        builder: (context, AsyncSnapshot<User> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          } else if (snapshot.hasError) {
+            return Center(child: Text('Error: ${snapshot.error}'));
+          } else {
+            User? currentUser = snapshot.data;
+            return currentUser?.userType == 'Admin'
+                ? Scaffold(
+                    appBar: AppBar(
+                      automaticallyImplyLeading: false,
+                      title: buildAppBarTitle(),
+                      elevation: 0.0,
+                      backgroundColor: lightModeTertiaryColor,
+                      actions: [
+                        buildIconButton(Icons.dashboard, 0, 'Dashboard'),
+                        buildIconButton(Icons.add_circle_sharp, 1, 'Post'),
+                        buildIconButton(
+                            Icons.event_note, 2, 'Edit Events/Announcement'),
+                        buildIconButton(
+                            Icons.supervised_user_circle_sharp, 3, 'Users'),
+                        buildIconButton(Icons.settings, 4, 'Settings'),
+                        IconButton(
+                          onPressed: _signOut,
+                          icon: const Icon(Icons.logout,
+                              color: lightModeMaroonColor),
+                          tooltip: 'Log out',
                         ),
-                      ),
+                        Row(
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                  30.0, 7.5, 5.0, 7.5),
+                              child: CircleAvatar(
+                                radius: 13,
+                                backgroundImage: NetworkImage(currentUser
+                                        ?.profile?.profileImage ??
+                                    'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(
+                                  5.0, 7.5, 30.0, 7.5),
+                              child: Text(
+                                currentUser?.profile?.fullName ?? '',
+                                style: const TextStyle(
+                                  color: lightModeSecondaryColor,
+                                  fontSize: 16.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                      ],
                     ),
-                  ],
-                )
-              ],
-            ),
-            body: buildBody(),
-          )
-        : const Center(child: CircularProgressIndicator());
-        }
-      }
-    );
+                    body: buildBody(),
+                  )
+                : const Center(child: CircularProgressIndicator());
+          }
+        });
   }
 
   Padding buildAppBarTitle() {
@@ -175,7 +177,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
           Text(
             appName,
             style: TextStyle(
-              color: secondaryColor,
+              color: lightModeSecondaryColor,
               fontSize: 20.0,
               fontWeight: FontWeight.bold,
             ),
@@ -190,7 +192,9 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
       onPressed: () => navigationTapped(pageIndex),
       icon: Icon(
         iconData,
-        color: _page == pageIndex ? primaryColor : secondaryColor,
+        color: _page == pageIndex
+            ? lightModePrimaryColor
+            : lightModeSecondaryColor,
       ),
       tooltip: tooltip,
       padding: const EdgeInsets.symmetric(horizontal: 15.0),

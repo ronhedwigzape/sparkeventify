@@ -52,7 +52,8 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
               const Padding(
                 padding: EdgeInsets.symmetric(vertical: 10.0),
                 child: Text('Calendar of Events and Announcements',
-                    style: TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+                    style:
+                        TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
               ),
               Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -61,31 +62,37 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                   child: TableCalendar(
                     eventLoader: (day) {
                       // Use `eventLoader` to return a list of events for the given day.
-                      DateTime adjustedDay = DateTime(day.year, day.month, day.day, 0, 0, 0).toLocal(); // Set the time by midnight
+                      DateTime adjustedDay =
+                          DateTime(day.year, day.month, day.day, 0, 0, 0)
+                              .toLocal(); // Set the time by midnight
                       return _getEventsForDay(adjustedDay);
                     },
                     firstDay: DateTime.utc(2015, 01, 01),
-                    lastDay: DateTime.utc(2030, 3, 14), // Can be adjusted on the future
+                    lastDay: DateTime.utc(
+                        2030, 3, 14), // Can be adjusted on the future
                     focusedDay: _focusedDay,
                     calendarFormat: _calendarFormat,
                     selectedDayPredicate: (day) {
                       // Use `selectedDayPredicate` to determine which day is currently selected.
-                      DateTime adjustedDay = DateTime(day.year, day.month, day.day, 0, 0, 0).toLocal(); // Set the time by midnight
+                      DateTime adjustedDay =
+                          DateTime(day.year, day.month, day.day, 0, 0, 0)
+                              .toLocal(); // Set the time by midnight
                       return isSameDay(_selectedDay, adjustedDay);
                     },
                     rowHeight: 35,
                     daysOfWeekHeight: 30.0,
                     daysOfWeekStyle: const DaysOfWeekStyle(
-                      decoration: BoxDecoration(
-                        color: blueColor,
-                      ),
-                      weekdayStyle: TextStyle(color: lightGreyColor),
-                      weekendStyle: TextStyle(color: secondaryColor)),
+                        decoration: BoxDecoration(
+                          color: lightModeBlueColor,
+                        ),
+                        weekdayStyle: TextStyle(color: lightModeGreyColor),
+                        weekendStyle:
+                            TextStyle(color: lightModeSecondaryColor)),
                     onDaySelected: (selectedDay, focusedDay) {
                       // Use `selectedDay` to retrieve the selected day.
-                      DateTime adjustedSelectedDay = DateTime(
-                              selectedDay.year, selectedDay.month, selectedDay.day, 0, 0, 0)
-                              .toLocal(); // Set the time by midnight
+                      DateTime adjustedSelectedDay = DateTime(selectedDay.year,
+                              selectedDay.month, selectedDay.day, 0, 0, 0)
+                          .toLocal(); // Set the time by midnight
                       setState(() {
                         _selectedDay = adjustedSelectedDay;
                         _focusedDay = focusedDay;
@@ -105,25 +112,27 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                     calendarBuilders: CalendarBuilders(
                       defaultBuilder: (context, dateTime, focusedDay) {
                         DateTime adjustedDay = DateTime(dateTime.year,
-                                dateTime.month, dateTime.day, 0, 0, 0).toLocal();
+                                dateTime.month, dateTime.day, 0, 0, 0)
+                            .toLocal();
                         if (_events.containsKey(adjustedDay)) {
                           return Container(
                             decoration: const BoxDecoration(
-                              color: lightIndigo,
+                              color: lightModeIndigo,
                               shape: BoxShape.circle,
                             ),
                             margin: const EdgeInsets.all(4.0),
                             alignment: Alignment.center,
                             child: Text(
                               dateTime.day.toString(),
-                              style: const TextStyle(color: whiteColor),
+                              style: const TextStyle(color: lightColor),
                             ),
                           );
                         }
                         return Container(
                           margin: const EdgeInsets.all(4.0),
                           alignment: Alignment.center,
-                          child: Text(dateTime.day.toString(),
+                          child: Text(
+                            dateTime.day.toString(),
                           ),
                         );
                       },
@@ -133,200 +142,238 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
               ),
               Expanded(
                 child: _selectedDay == null
-                // Returns none if no day is selected
-                ? const Center(
-                    child: kIsWeb
-                        ? Text(
-                          'No Day Selected. Please select a day to view events!',
-                          style: TextStyle(
-                            fontSize: 18.0,
-                            fontWeight: FontWeight.bold),
-                          )
-                        : Text('No Day Selected. Please select a day to view events!'))
-                // Returns if there is an event on the selected day
-                : _events[_selectedDay!] != null && kIsWeb
-                    ? Row(
-                        children: [
-                          Flexible(
-                            child: Column(
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Events for this day',
-                                    style: TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 10,
-                                  child: ListView.builder(
-                                    itemCount: _events[_selectedDay]?.length ?? 0,
-                                    itemBuilder: (context, index) {
-                                      final event =_events[_selectedDay]![index];
-                                      final time = DateFormat('hh:mm a').format(event.time);
-                                      final date = DateFormat('MMMM dd, yyyy').format(event.date);
-                                      return event.type == 'Non-academic'
-                                      ? Card(
-                                          margin: const EdgeInsets.all(8.0),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(20.0),
-                                            child: ListTile(
-                                              leading: (event.image?.isEmpty ?? true)
-                                              ? Image.network(
-                                                  'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
-                                                  width: 70.0,
-                                                )
-                                              : Image.network(
-                                                  event.image!,
-                                                  width: 70.0,
-                                                ),
-                                              title: Text(event.title),
-                                              titleTextStyle:
-                                                const TextStyle(
-                                                fontSize: 20.0,
-                                                fontWeight: FontWeight.bold,
-                                              ),
-                                              subtitle: Text(
-                                                'Date: $date'
-                                                '\nDescription: ${event.description}'
-                                                '\nVenue: ${event.venue}'
-                                                '\nTime: $time'),
-                                            ),
-                                          ),
-                                        )
-                                      : const SizedBox.shrink();
-                                    },
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                          Flexible(
-                            child: Column(
-                              children: [
-                                const Padding(
-                                  padding: EdgeInsets.all(8.0),
-                                  child: Text(
-                                    'Announcements for this day',
-                                    style: TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 10,
-                                  child: ListView.builder(
-                                      itemCount: _events[_selectedDay]?.length ?? 0,
-                                      itemBuilder: (context, index) {
-                                        final event = _events[_selectedDay]![index];
-                                        final time = DateFormat('hh:mm a').format(event.time);
-                                        final date = DateFormat('MMMM dd, yyyy').format(event.date);
-                                        return event.type == 'Academic'
-                                        ? Card(
-                                          margin: const EdgeInsets.all(8.0),
-                                          child: Padding(
-                                            padding: const EdgeInsets.all(20.0),
-                                            child: ListTile(
-                                              leading: (event.image?.isEmpty ?? true)
-                                              ? Image.network(
-                                                  'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
-                                                  width: 70.0,
-                                                )
-                                              : Image.network(
-                                                  event.image!,
-                                                  width: 70.0,
-                                              ),
-                                              title: Text(event.title),
-                                              titleTextStyle: const TextStyle(fontSize: 20.0,fontWeight:FontWeight.bold,),
-                                              subtitle: Text(
-                                                'Date: $date'
-                                                '\nDescription: ${event.description}'
-                                                '\nVenue: ${event.venue}'
-                                                '\nTime: $time'),
-                                              ),
-                                            ),
-                                          )
-                                        : const SizedBox.shrink();
-                                      }
-                                    ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      )
-                    : _events[_selectedDay!] != null && !kIsWeb
-                    ? Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          children: [
-                            const Padding(
-                              padding: EdgeInsets.symmetric(vertical: 7.0),
-                              child: Center(
-                                child: Text(
-                                  'Events/Announcements for this day',
-                                  style: TextStyle(
-                                    fontSize: 24,
+                    // Returns none if no day is selected
+                    ? const Center(
+                        child: kIsWeb
+                            ? Text(
+                                'No Day Selected. Please select a day to view events!',
+                                style: TextStyle(
+                                    fontSize: 18.0,
                                     fontWeight: FontWeight.bold),
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              flex: 10,
-                              child: ListView.builder(
-                                itemCount: _events[_selectedDay]?.length ?? 0,
-                                itemBuilder: (context, index) {
-                                  final event = _events[_selectedDay]![index];
-                                  final time = DateFormat('hh:mm a').format(event.time);
-                                  final date = DateFormat('MMMM dd, yyyy').format(event.date);
-                                  return Card(
-                                    margin: const EdgeInsets.all(8.0),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(20.0),
-                                      child: ListTile(
-                                        leading: (event.image?.isEmpty ?? true)
-                                        ? Image.network(
-                                            'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
-                                            width: 70.0,
-                                          )
-                                        : Image.network(
-                                            event.image!,
-                                            width: 70.0,
-                                          ),
-                                        title: Text(event.title),
-                                        titleTextStyle: const TextStyle(
-                                          fontSize: 20.0,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                        subtitle: Text(
-                                          'Date: $date'
-                                          '\nDescription: ${event.description}'
-                                          '\nVenue: ${event.venue}'
-                                          '\nTime: $time'),
+                              )
+                            : Text(
+                                'No Day Selected. Please select a day to view events!'))
+                    // Returns if there is an event on the selected day
+                    : _events[_selectedDay!] != null && kIsWeb
+                        ? Row(
+                            children: [
+                              Flexible(
+                                child: Column(
+                                  children: [
+                                    const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text(
+                                        'Events for this day',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
                                       ),
                                     ),
-                                  );
-                                },
+                                    Expanded(
+                                      flex: 10,
+                                      child: ListView.builder(
+                                        itemCount:
+                                            _events[_selectedDay]?.length ?? 0,
+                                        itemBuilder: (context, index) {
+                                          final event =
+                                              _events[_selectedDay]![index];
+                                          final time = DateFormat('hh:mm a')
+                                              .format(event.time);
+                                          final date =
+                                              DateFormat('MMMM dd, yyyy')
+                                                  .format(event.date);
+                                          return event.type == 'Non-academic'
+                                              ? Card(
+                                                  margin:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            20.0),
+                                                    child: ListTile(
+                                                      leading: (event.image
+                                                                  ?.isEmpty ??
+                                                              true)
+                                                          ? Image.network(
+                                                              'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
+                                                              width: 70.0,
+                                                            )
+                                                          : Image.network(
+                                                              event.image!,
+                                                              width: 70.0,
+                                                            ),
+                                                      title: Text(event.title),
+                                                      titleTextStyle:
+                                                          const TextStyle(
+                                                        fontSize: 20.0,
+                                                        fontWeight:
+                                                            FontWeight.bold,
+                                                      ),
+                                                      subtitle: Text(
+                                                          'Date: $date'
+                                                          '\nDescription: ${event.description}'
+                                                          '\nVenue: ${event.venue}'
+                                                          '\nTime: $time'),
+                                                    ),
+                                                  ),
+                                                )
+                                              : const SizedBox.shrink();
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
-                        ),
-                      ) // Returns if there is no event on the selected day
-                    : const Center(
-                    child: kIsWeb
-                    ? Text(
-                      'No Events/Announcements For This Day. Please update later for future events!',
-                      style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold),
-                      )
-                    : Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20.0),
-                      child: Text('No Events/Announcements For This Day. Please update later for future events!'),
-                      )
-                    ),
+                              Flexible(
+                                child: Column(
+                                  children: [
+                                    const Padding(
+                                      padding: EdgeInsets.all(8.0),
+                                      child: Text(
+                                        'Announcements for this day',
+                                        style: TextStyle(
+                                            fontSize: 20,
+                                            fontWeight: FontWeight.bold),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 10,
+                                      child: ListView.builder(
+                                          itemCount:
+                                              _events[_selectedDay]?.length ??
+                                                  0,
+                                          itemBuilder: (context, index) {
+                                            final event =
+                                                _events[_selectedDay]![index];
+                                            final time = DateFormat('hh:mm a')
+                                                .format(event.time);
+                                            final date =
+                                                DateFormat('MMMM dd, yyyy')
+                                                    .format(event.date);
+                                            return event.type == 'Academic'
+                                                ? Card(
+                                                    margin:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Padding(
+                                                      padding:
+                                                          const EdgeInsets.all(
+                                                              20.0),
+                                                      child: ListTile(
+                                                        leading: (event.image
+                                                                    ?.isEmpty ??
+                                                                true)
+                                                            ? Image.network(
+                                                                'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
+                                                                width: 70.0,
+                                                              )
+                                                            : Image.network(
+                                                                event.image!,
+                                                                width: 70.0,
+                                                              ),
+                                                        title:
+                                                            Text(event.title),
+                                                        titleTextStyle:
+                                                            const TextStyle(
+                                                          fontSize: 20.0,
+                                                          fontWeight:
+                                                              FontWeight.bold,
+                                                        ),
+                                                        subtitle: Text(
+                                                            'Date: $date'
+                                                            '\nDescription: ${event.description}'
+                                                            '\nVenue: ${event.venue}'
+                                                            '\nTime: $time'),
+                                                      ),
+                                                    ),
+                                                  )
+                                                : const SizedBox.shrink();
+                                          }),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )
+                        : _events[_selectedDay!] != null && !kIsWeb
+                            ? Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Column(
+                                  children: [
+                                    const Padding(
+                                      padding:
+                                          EdgeInsets.symmetric(vertical: 7.0),
+                                      child: Center(
+                                        child: Text(
+                                          'Events/Announcements for this day',
+                                          style: TextStyle(
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                    ),
+                                    Expanded(
+                                      flex: 10,
+                                      child: ListView.builder(
+                                        itemCount:
+                                            _events[_selectedDay]?.length ?? 0,
+                                        itemBuilder: (context, index) {
+                                          final event =
+                                              _events[_selectedDay]![index];
+                                          final time = DateFormat('hh:mm a')
+                                              .format(event.time);
+                                          final date =
+                                              DateFormat('MMMM dd, yyyy')
+                                                  .format(event.date);
+                                          return Card(
+                                            margin: const EdgeInsets.all(8.0),
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(20.0),
+                                              child: ListTile(
+                                                leading:
+                                                    (event.image?.isEmpty ??
+                                                            true)
+                                                        ? Image.network(
+                                                            'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
+                                                            width: 70.0,
+                                                          )
+                                                        : Image.network(
+                                                            event.image!,
+                                                            width: 70.0,
+                                                          ),
+                                                title: Text(event.title),
+                                                titleTextStyle: const TextStyle(
+                                                  fontSize: 20.0,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                                subtitle: Text('Date: $date'
+                                                    '\nDescription: ${event.description}'
+                                                    '\nVenue: ${event.venue}'
+                                                    '\nTime: $time'),
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ) // Returns if there is no event on the selected day
+                            : const Center(
+                                child: kIsWeb
+                                    ? Text(
+                                        'No Events/Announcements For This Day. Please update later for future events!',
+                                        style: TextStyle(
+                                            fontSize: 18.0,
+                                            fontWeight: FontWeight.bold),
+                                      )
+                                    : Padding(
+                                        padding: EdgeInsets.symmetric(
+                                            horizontal: 20.0),
+                                        child: Text(
+                                            'No Events/Announcements For This Day. Please update later for future events!'),
+                                      )),
               ),
             ],
           );

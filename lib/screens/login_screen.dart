@@ -110,7 +110,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: const Text(
                     schoolName,
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                    style:
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
                 ),
                 Container(
@@ -154,17 +155,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     ),
-                    color: blueColor,
+                    color: lightModeBlueColor,
                   ),
                   child: _isLoading
                       ? const Center(
                           child: CircularProgressIndicator(
-                          valueColor: AlwaysStoppedAnimation<Color>(whiteColor),
+                          valueColor: AlwaysStoppedAnimation<Color>(lightColor),
                         ))
                       : const Text(
                           'Log in',
                           style: TextStyle(
-                            color: whiteColor,
+                            color: lightColor,
                             fontWeight: FontWeight.bold,
                           ),
                         )),

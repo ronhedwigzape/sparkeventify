@@ -21,7 +21,6 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   void initState() {
     super.initState();
     pageController = PageController();
-
   }
 
   @override
@@ -55,7 +54,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   AppBar buildAppBar() {
     return AppBar(
       automaticallyImplyLeading: false,
-      backgroundColor: primaryColor,
+      backgroundColor: lightModePrimaryColor,
       elevation: 0.0,
       title: buildAppBarTitle(),
       actions: buildAppBarActions(5),
@@ -72,7 +71,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
         Text(
           appName,
           style: TextStyle(
-            color: whiteColor,
+            color: lightColor,
             fontSize: 20.0,
             fontWeight: FontWeight.bold,
           ),
@@ -87,13 +86,13 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
         onPressed: () => navigationTapped(pageIndex),
         icon: const Icon(
           Icons.notifications,
-          color: whiteColor,
+          color: lightColor,
         ),
       )
     ];
   }
 
- PageView buildBody() {
+  PageView buildBody() {
     return PageView(
       controller: pageController,
       onPageChanged: onPageChanged,
@@ -102,17 +101,15 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
     );
   }
 
-
   CupertinoTabBar buildBottomNavigationBar() {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return CupertinoTabBar(
       onTap: navigationTapped,
-      backgroundColor: darkModeOn ? darkColor : whiteColor,
-      activeColor: darkModeOn ? whiteColor : darkColor,
+      backgroundColor: darkModeOn ? darkColor : lightColor,
+      activeColor: darkModeOn ? lightColor : darkColor,
       items: buildBottomNavigationBarItems(),
     );
   }
-
 
   List<BottomNavigationBarItem> buildBottomNavigationBarItems() {
     return [
@@ -124,17 +121,19 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
     ];
   }
 
-  BottomNavigationBarItem buildBottomNavigationBarItem(
-      IconData iconData, int pageIndex) {
+  BottomNavigationBarItem buildBottomNavigationBarItem(IconData iconData, int pageIndex) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return BottomNavigationBarItem(
       icon: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         child: Icon(
           iconData,
-          color: _page == pageIndex ? primaryColor : secondaryColor,
+          color: _page == pageIndex ? 
+          (darkModeOn ? darkModePrimaryColor :  lightModePrimaryColor ) : 
+          (darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),
         ),
       ),
-      backgroundColor: whiteColor,
+      backgroundColor: lightColor,
     );
   }
 }
