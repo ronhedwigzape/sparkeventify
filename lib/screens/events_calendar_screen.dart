@@ -1,7 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart';
+import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -38,6 +40,7 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return FutureBuilder<Map<DateTime, List<Event>>>(
       future: eventsFuture,
       builder: (context, snapshot) {
@@ -58,7 +61,7 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
               Padding(
                 padding: const EdgeInsets.all(10.0),
                 child: Container(
-                  decoration: BoxDecoration(border: Border.all()),
+                  decoration: BoxDecoration(border: Border.all(color: darkModeOn ? lightColor : darkColor)),
                   child: TableCalendar(
                     eventLoader: (day) {
                       // Use `eventLoader` to return a list of events for the given day.
