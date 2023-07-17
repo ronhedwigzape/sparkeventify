@@ -145,8 +145,8 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
             // text field input for username
             TextFieldInput(
               textEditingController: _emailController,
-              hintText: 'Enter your username',
-              textInputType: TextInputType.text,
+              hintText: 'Enter your email address',
+              textInputType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 20.0),
             // text field input for full name
