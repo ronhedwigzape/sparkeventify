@@ -147,9 +147,8 @@ class FirebaseNotifications {
 
   Future<void> registerDevice(String userId, String token) async {
     var deviceId = await getDeviceId();
-    
     var userDocument = FirebaseFirestore.instance.collection('users').doc(userId);
-
+    // Set the device token in the user document
     await userDocument.set({
       'deviceTokens': {
         deviceId: token
@@ -157,24 +156,20 @@ class FirebaseNotifications {
     }, SetOptions(merge: true)); // The 'merge: true' option will ensure that the rest of the user document remains unaffected
   }
 
-  Future<void> unregisterDevice(String userId) async {
-    var deviceId = await getDeviceId();
+Future<void> unregisterDevice(String userId) async {
+    try {
+      var userDocument = FirebaseFirestore.instance.collection('users').doc(userId);
 
-    var userDocument = FirebaseFirestore.instance.collection('users').doc(userId);
-
-    var userSnap = await userDocument.get();
-    var userData = userSnap.data();
-    
-    if (userData != null) { // checking if userData is not null
-      var tokensMap = userData['deviceTokens'] as Map<String, dynamic>?;
-
-      if (tokensMap != null && tokensMap.containsKey(deviceId)) { // checking if the tokensMap contains the deviceId
-        await userDocument.update({
-          'deviceTokens.$deviceId': FieldValue.delete()
-        });
+      await userDocument.update({
+        'deviceTokens': FieldValue.delete()
+      });
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error unregistering device: $e');
       }
     }
-  }
+}
+
 
   Future<void> sendNotificationToUser(String userId, String title, String body, String message) async {
     var userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
