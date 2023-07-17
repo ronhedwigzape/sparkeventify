@@ -10,7 +10,6 @@ import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
 import 'package:student_event_calendar/layouts/client_screen_layout.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/providers/user_provider.dart';
-import 'package:student_event_calendar/screens/client_selection_screen.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/services/firebase_notifications.dart';
 
@@ -68,6 +67,10 @@ class AuthScreen extends StatelessWidget {
     return !kIsWeb;
   }
 
+  static bool runningOnWeb() {
+    return kIsWeb;
+  }
+
   @override
   Widget build(BuildContext context) {
     return StreamBuilder(
@@ -90,7 +93,7 @@ class AuthScreen extends StatelessWidget {
             if (snapshot.hasData && snapshot.data!.exists) {
               final String userType = snapshot.data!.get('userType');
               
-              if (userType == 'Admin' && !runningOnMobile()) {
+              if (userType == 'Admin' && runningOnWeb()) {
                 return const AdminScreenLayout();
               } else if (runningOnMobile()) {
                 return const ClientScreenLayout();
@@ -101,9 +104,7 @@ class AuthScreen extends StatelessWidget {
               }
             } else {
               // Handle case when the document does not exist
-              if (runningOnMobile()) {
-                return const ClientSelectionScreen();
-              } else if (kIsWeb) {
+              if (runningOnMobile() || runningOnWeb()) {
                 return const LoginScreen();
               } else {
                 return const Center(
@@ -113,11 +114,9 @@ class AuthScreen extends StatelessWidget {
             }
           },
         );
-        
+
         }
-        if (runningOnMobile()) {
-          return const ClientSelectionScreen();
-        } else if (kIsWeb) {
+        if (runningOnMobile() || runningOnWeb()) {
           return const LoginScreen();
         } else {
           return const Center(
