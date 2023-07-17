@@ -1,9 +1,15 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/widgets/popup_notification.dart';
+
 
 // Place this on top to avoid Null Safety errors
 Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -88,10 +94,12 @@ class FirebaseNotifications {
     FirebaseMessaging.onBackgroundMessage(firebaseMessagingBackgroundHandler);
   }
 
+  // Optional: Subscribe to a topic
   Future<void> subscribeToTopic(String topic) async {
     await _firebaseMessaging.subscribeToTopic(topic);
   }
 
+  // Send a push notification to a user
   Future<String> sendPushNotification(
       String title, String body, String token) async {
     const postUrl = 'https://fcm.googleapis.com/fcm/send';
@@ -124,4 +132,56 @@ class FirebaseNotifications {
     }
     return message;
   }
+
+  Future<String?> getDeviceId() async {
+    DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+    if (Platform.isAndroid) {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      return androidInfo.id;  // unique ID for Android
+    } else if (Platform.isIOS) {
+      IosDeviceInfo iosDeviceInfo = await deviceInfo.iosInfo;
+      return iosDeviceInfo.identifierForVendor;  // unique ID for iOS
+    }
+    return '';
+  }
+
+  Future<void> registerDevice(String userId, String token) async {
+    var deviceId = await getDeviceId();
+    
+    var userDocument = FirebaseFirestore.instance.collection('users').doc(userId);
+
+    await userDocument.set({
+      'deviceTokens': {
+        deviceId: token
+      }
+    }, SetOptions(merge: true)); // The 'merge: true' option will ensure that the rest of the user document remains unaffected
+  }
+
+  Future<void> unregisterDevice(String userId) async {
+    var deviceId = await getDeviceId();
+
+    var userDocument = FirebaseFirestore.instance.collection('users').doc(userId);
+
+    var userSnap = await userDocument.get();
+    var userData = userSnap.data();
+    
+    if (userData != null) { // checking if userData is not null
+      var tokensMap = userData['deviceTokens'] as Map<String, dynamic>?;
+
+      if (tokensMap != null && tokensMap.containsKey(deviceId)) { // checking if the tokensMap contains the deviceId
+        await userDocument.update({
+          'deviceTokens.$deviceId': FieldValue.delete()
+        });
+      }
+    }
+  }
+
+  Future<void> sendNotificationToUser(String userId, String title, String body, String message) async {
+    var userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    var user = model.User.fromSnap(userDoc);
+    for (var token in user.deviceTokens!.values) {
+      sendPushNotification(title, body, token);
+    }
+  }
+
 }

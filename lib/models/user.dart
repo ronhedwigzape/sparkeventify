@@ -2,20 +2,22 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_event_calendar/models/profile.dart';
 
 class User {
-  final String uid;
-  final String userType;
-  final String? username;
-  final String password;
-  final String email;
-  final Profile? profile;
+  String uid;
+  String userType;
+  String? username;
+  String password;
+  String email;
+  Map<String, String>? deviceTokens;
+  Profile? profile;
 
-  const User({
+  User({
     required this.uid,
     required this.userType,
     this.username,
     required this.password,
     required this.email,
-    this.profile,
+    this.deviceTokens,
+    this.profile, 
   });
 
   // Convert User object to JSON
@@ -25,6 +27,7 @@ class User {
         'username': username,
         'password': password,
         'email': email,
+        'deviceTokens': deviceTokens,
         'profile': profile?.toJson(),
       };
 
@@ -39,6 +42,7 @@ class User {
       username: snapshot['username'],
       password: snapshot['password'],
       email: snapshot['email'],
+      deviceTokens: Map<String, String>.from(snapshot['deviceTokens']),
       profile: Profile.fromMap(profileSnap),
     );
   }
