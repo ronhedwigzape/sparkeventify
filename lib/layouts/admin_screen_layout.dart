@@ -49,6 +49,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
     return showDialog(
       context: context,
       builder: (context) {
+        final darkModeOn = Provider.of<DarkModeProvider>(context, listen: false).darkMode;
         return SimpleDialog(
           title: Text(
             'Log Out Confirmation',
@@ -72,21 +73,21 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                       builder: (context) => const LoginScreen()));
                 }
               },
-              child: const Row(
+              child: Row(
                 children: <Widget>[
-                  Icon(Icons.check_circle, color: lightModeGrassColor),
-                  SizedBox(width: 10),
-                  Text('Yes'),
+                  Icon(Icons.check_circle, color: darkModeOn ? darkModeGrassColor : lightModeGrassColor),
+                  const SizedBox(width: 10),
+                  const Text('Yes'),
                 ],
               ),
             ),
             SimpleDialogOption(
               padding: const EdgeInsets.all(20),
-              child: const Row(
+              child: Row(
                 children: <Widget>[
-                  Icon(Icons.cancel, color: lightModeMaroonColor),
-                  SizedBox(width: 10),
-                  Text('Go Back'),
+                  Icon(Icons.cancel, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
+                  const SizedBox(width: 10),
+                  const Text('Go Back'),
                 ],
               ),
               onPressed: () {
