@@ -10,6 +10,7 @@ class AuthMethods {
   // Initialize Firebase Auth and Firebase Firestore instance
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   // Get current user details
   Future<model.User> getUserDetails() async {
@@ -41,6 +42,7 @@ class AuthMethods {
     model.Profile? profile
   }) async {
     String res = "Enter valid credentials";
+    Map<String, String>? deviceTokens = {};
     try {
       // Check if all necessary information provided
       if (email.isNotEmpty && password.isNotEmpty && userType.isNotEmpty && profile != null) {
@@ -53,18 +55,22 @@ class AuthMethods {
           username: username,
           userType: userType,
           profile: profile,
-          password: password
+          password: password,
+          deviceTokens: deviceTokens,
         );
         // Set user details in Firebase Firestore
         await _firestore.collection('users').doc(credential.user!.uid).set(user.toJson());
-        // ######### CODE FOR ADDING DEVICE REGISTRATION #########
-        // Get Firebase messaging token for this device
-        var token = await FirebaseMessaging.instance.getToken();
-        // Call the registerDevice method with user's uid and token in mobile device
-        if (token != null && !kIsWeb) {
-          await FirebaseNotifications().registerDevice(credential.user!.uid, token);
-        }
-        // ######################################################
+        // Set devicetoken in Firestore for mobile devices 
+        if (!kIsWeb) {
+          // ######### CODE FOR ADDING DEVICE REGISTRATION #########
+          // Get Firebase messaging token for this device
+          var token = await _firebaseMessaging.getToken();
+          // Call the registerDevice method with user's uid and token in mobile device
+          if (token != null) {
+            await FirebaseNotifications().registerDevice(credential.user!.uid, token);
+          }
+          // ######################################################
+        } 
         // Return success response
         res = "Success";
       } 
@@ -87,24 +93,28 @@ class AuthMethods {
 
 
   // Sign in user (Admin, Student, SASO Staff, Organization Officer)
-  Future<String> signIn({
-    required String email,
-    required String password
-  }) async {
+  Future<String> signIn({required String email, required String password}) async {
+    // Initialize values
     String response = "Enter valid credentials";
+    Map<String, String>? deviceTokens = {};
     try {
       // Check if email and password is not empty
       if (email.isNotEmpty || password.isNotEmpty) {
         // Sign in with Firebase Authentication
         UserCredential credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
-        // ######### CODE FOR ADDING DEVICE REGISTRATION #########
-        // Get Firebase messaging token for this device
-        var token = await FirebaseMessaging.instance.getToken();
-        // Call the registerDevice method with user's uid and token in mobile device
-        if (token != null && !kIsWeb) {
-          await FirebaseNotifications().registerDevice(credential.user!.uid, token);
+        // Initialize deviceToken with empty map
+        await _firestore.collection('users').doc(credential.user!.uid).update({'deviceTokens': deviceTokens});
+        // Set devicetoken in Firestore for mobile devices
+        if(!kIsWeb) {
+          // ######### CODE FOR ADDING DEVICE REGISTRATION #########
+          // Get Firebase messaging token for this device
+          var token = await _firebaseMessaging.getToken();
+          // Call the registerDevice method with user's uid and token in mobile device
+          if (token != null && !kIsWeb) {
+            await FirebaseNotifications().registerDevice(credential.user!.uid, token);
+          }
+          // ########################################################    
         }
-        // ########################################################    
         // Return success response
         response = "Success";
       } 
@@ -126,8 +136,6 @@ class AuthMethods {
   // Sign out user
   Future<void> signOut() async {
     await _auth.signOut();
-    if (!kIsWeb) {
-      await FirebaseNotifications().unregisterDevice(_auth.currentUser!.uid);
-    }
+    await FirebaseNotifications().unregisterDevice(FirebaseAuth.instance.currentUser!.uid);
   }
 }
