@@ -133,8 +133,8 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                   buildIconButton(Icons.settings, 4, 'Settings'),
                   IconButton(
                     onPressed: _signOut,
-                    icon: const Icon(Icons.logout,
-                        color: lightModeMaroonColor),
+                    icon: Icon(Icons.logout,
+                        color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
                     tooltip: 'Log out',
                   ),
                   Row(
@@ -198,13 +198,14 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
   }
 
   IconButton buildIconButton(IconData iconData, int pageIndex, String tooltip) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return IconButton(
       onPressed: () => navigationTapped(pageIndex),
       icon: Icon(
         iconData,
-        color: _page == pageIndex
-            ? lightModePrimaryColor
-            : lightModeSecondaryColor,
+        color: _page == pageIndex ?
+           (darkModeOn ? darkModePrimaryColor :  lightModePrimaryColor ) : 
+          (darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),
       ),
       tooltip: tooltip,
       padding: const EdgeInsets.symmetric(horizontal: 15.0),
