@@ -164,7 +164,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
           User? currentUser = snapshot.data;
-          String profileImage = currentUser?.profile!.profileImage ?? '';
+          String? profileImage = currentUser?.profile?.profileImage ?? '';
           String username = currentUser?.username ?? '';
           String email = currentUser?.email ?? '';
           // String password = currentUser?.password ?? '';
