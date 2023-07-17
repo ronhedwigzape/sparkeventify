@@ -53,7 +53,7 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
 
     model.Profile profile = model.Profile(
       fullName: _fullNameController.text.trim(),
-      phoneNumber: _phoneNumberController.text.trim(),
+      phoneNumber: phoneNumber,
       department: _departmentController.text.trim(),
       year: _yearController.text.trim(),
       section: _sectionController.text.trim(),
