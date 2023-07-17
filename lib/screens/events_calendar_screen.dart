@@ -205,7 +205,7 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                                                               event.image!,
                                                               width: 70.0,
                                                             ),
-                                                      title: Text(event.title),
+                                                      title: Text(event.title, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                                                       titleTextStyle:
                                                           const TextStyle(
                                                         fontSize: 20.0,
@@ -275,7 +275,7 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                                                                 width: 70.0,
                                                               ),
                                                         title:
-                                                            Text(event.title),
+                                                            Text(event.title, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                                                         titleTextStyle:
                                                             const TextStyle(
                                                           fontSize: 20.0,
