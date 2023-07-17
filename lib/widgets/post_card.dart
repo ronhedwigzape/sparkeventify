@@ -160,7 +160,7 @@ class _PostCardState extends State<PostCard> {
                           ),
                         );
                       },
-                      icon: Icon(Icons.view_agenda, size: 18),
+                      icon: const Icon(Icons.view_agenda, size: 18),
                       label: Text('View this ${widget.snap['type'] == 'Academic' ? 'announcement' : 'event'}'),
                     ),
                   ],
