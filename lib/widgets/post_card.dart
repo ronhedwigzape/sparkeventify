@@ -77,52 +77,113 @@ class _PostCardState extends State<PostCard> {
                                   fontSize: 16
                                 ),
                               ),
-                              Text(
-                                DateFormat.yMMMd().format(
-                                  widget.snap['datePublished']?.toDate() ?? DateTime.now()
+                              RichText(
+                                text: TextSpan(
+                                  children: [
+                                    TextSpan(
+                                      text: DateFormat.yMMMd().format(
+                                        widget.snap['datePublished']?.toDate() ?? DateTime.now()
+                                      ),
+                                      style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(
+                                          color: darkModeOn
+                                            ? darkModeSecondaryColor
+                                            : lightModeSecondaryColor,
+                                          fontSize: 12,
+                                        ),
+                                    ),
+                                    const TextSpan( text: " "),
+                                    TextSpan(
+                                      text: DateFormat.jm().format(
+                                        widget.snap['datePublished']?.toDate() ?? DateTime.now()
+                                      ),
+                                      style: Theme.of(context)
+                                        .textTheme
+                                        .bodyMedium!
+                                        .copyWith(
+                                          color: darkModeOn
+                                            ? darkModeSecondaryColor
+                                            : lightModeSecondaryColor,
+                                          fontSize: 12
+                                        ),
+                                    ),              
+                                  ],
                                 ),
-                                style: Theme.of(context)
-                                  .textTheme
-                                  .bodyMedium!
-                                  .copyWith(
-                                    color: darkModeOn
-                                      ? darkModeSecondaryColor
-                                      : lightModeSecondaryColor,
-                                    fontSize: 12,
-                                  ),
                               ),
                             ],
                           ),
                         ),
                       ),
-                      kIsWeb
-                    ? IconButton(
+                      kIsWeb ? 
+                      IconButton(
                         onPressed: () {
-                        showDialog<dynamic>(
+                         showDialog<dynamic>(
                           context: context,
                           builder: (context) => Dialog(
-                            child: ListView(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                              shrinkWrap: true,
-                              children: 
-                              ['Delete',].map((e) => InkWell(
-                                onTap: () async {
-                                  FireStoreEventMethods()
-                                    .removeEvent(widget
-                                    .snap['id']);
-                                    Navigator.of(context)
-                                    .pop();
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                    child: Text(e)),
-                                  )
-                                ).toList(),
-                              ),
+                            child: SizedBox(
+                              width: 600,
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  AppBar(
+                                     title: Text.rich(
+                                      TextSpan(
+                                        children: <TextSpan>[
+                                          TextSpan(
+                                            text: 'Are you sure you want to delete this ${widget.snap['type'] == 'Academic' ? 'announcement' : 'event'} forever?'
+                                          ),
+                                          const TextSpan(
+                                            text: '\nThis action cannot be undone.',
+                                            style: TextStyle(fontSize: 14),
+                                          ),
+                                        ]
+                                      ),
+                                    ),
+                                    titleTextStyle: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold,
+                                      color: darkModeOn ? lightColor : darkColor),
+                                    backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                                    automaticallyImplyLeading: false,
+                                    actions: [
+                                      IconButton(
+                                        onPressed: () => Navigator.of(context).pop(),
+                                        icon: Icon(Icons.close, color: darkModeOn ? lightColor : darkColor),
+                                      )
+                                    ],
+                                  ),
+                                  ListView(
+                                    padding: const EdgeInsets.symmetric(vertical: 16),
+                                    shrinkWrap: true,
+                                    children: ['Delete Forever',].map((e) => InkWell(
+                                      onTap: () async {
+                                        FireStoreEventMethods().removeEvent(widget.snap['id']);
+                                        Navigator.of(context).pop();
+                                      },
+                                      child: Container(
+                                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                                        child: Row(
+                                          children: [
+                                             Icon(Icons.delete_forever, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
+                                            const SizedBox(width: 16),
+                                            Text(e, style: TextStyle(
+                                              color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,
+                                              fontWeight: FontWeight.bold,
+                                            )),
+                                          ]
+                                        ),
+                                      )
+                                      )).toList(),
+                                    ),
+                                  ]
+                                ),
                             )
+                            ),
                           );
                         },
-                        icon: const Icon(Icons.more_vert))
+                        icon: const Icon(Icons.delete_forever, color: darkModeMaroonColor,))
                     : const SizedBox.shrink(),
                     ]),
                   ),
