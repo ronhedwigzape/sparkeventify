@@ -75,18 +75,21 @@ class AuthScreen extends StatelessWidget {
       builder: (ctx, userSnapshot) {
         if (userSnapshot.hasData) {
           return FutureBuilder(
-            future: FirebaseFirestore.instance
-                .collection('users')
-                .doc(FirebaseAuth.instance.currentUser?.uid)
-                .get(),
-            builder: (ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
+          future: FirebaseFirestore.instance
+              .collection('users')
+              .doc(FirebaseAuth.instance.currentUser?.uid)
+              .get(),
+          builder: (ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+            }
 
-              final String userType = snapshot.data?.get('userType');
+            // Check if document exists
+            if (snapshot.hasData && snapshot.data!.exists) {
+              final String userType = snapshot.data!.get('userType');
+              
               if (userType == 'Admin' && !runningOnMobile()) {
                 return const AdminScreenLayout();
               } else if (runningOnMobile()) {
@@ -96,8 +99,21 @@ class AuthScreen extends StatelessWidget {
                   child: Text('Unknown user'),
                 );
               }
-            },
-          );
+            } else {
+              // Handle case when the document does not exist
+              if (runningOnMobile()) {
+                return const ClientSelectionScreen();
+              } else if (kIsWeb) {
+                return const LoginScreen();
+              } else {
+                return const Center(
+                  child: Text('Unsupported Platform'),
+                );
+              }
+            }
+          },
+        );
+        
         }
         if (runningOnMobile()) {
           return const ClientSelectionScreen();
