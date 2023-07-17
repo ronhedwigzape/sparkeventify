@@ -20,7 +20,7 @@ List<Widget> homeScreenItems = [
       : const FeedScreen(),
   kIsWeb ? const PostScreen() : const EventsCalendarScreen(),
   kIsWeb
-      ? const Center(child: Text('Manage Events'))
+      ? const FeedScreen()
       : const Center(child: Text('Announcements')),
   kIsWeb
       ? const Center(child: Text('Manage Users'))
