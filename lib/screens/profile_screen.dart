@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:student_event_calendar/models/user.dart';
+import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
@@ -18,7 +18,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  Future<User?> currentUser = FireStoreUserMethods().getCurrentUserData();
+  Future<model.User?> currentUser = FireStoreUserMethods().getCurrentUserData();
   Uint8List? _pickedImage;
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
@@ -155,15 +155,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-    return FutureBuilder<User?>(
+    return FutureBuilder<model.User?>(
       future: currentUser,
-      builder: (context, AsyncSnapshot<User?> snapshot) {
+      builder: (context, AsyncSnapshot<model.User?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
-          User? currentUser = snapshot.data;
+          model.User? currentUser = snapshot.data;
           String? profileImage = currentUser?.profile?.profileImage ?? '';
           String username = currentUser?.username ?? '';
           String email = currentUser?.email ?? '';
@@ -196,18 +196,31 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       children: [
                         // if _pickedImage is not null, display the _pickedImage
                         _pickedImage != null
-                        ? CircleAvatar(
-                          radius: 40,
-                          backgroundImage: MemoryImage(_pickedImage!))
-                        // else if _pickedImage is null, display the profileImage
-                        : profileImage.isNotEmpty
-                        ? CircleAvatar(
-                          radius: 40,
-                          backgroundImage: NetworkImage(profileImage))
-                        // else display the default profile image
-                        : const CircleAvatar(
-                          radius: 40,
-                          backgroundImage: NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png')),
+                          ? CircleAvatar(
+                              radius: 40,
+                              backgroundImage: MemoryImage(_pickedImage!))
+                          // else if _pickedImage is null, display the profileImage
+                          : profileImage.isNotEmpty
+                          ? CircleAvatar(
+                              radius: 40,
+                              backgroundImage: NetworkImage(profileImage),
+                              child: Image.network(
+                                profileImage,
+                                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+                                  if (loadingProgress == null) return child;
+                                  return CircularProgressIndicator(
+                                    value: loadingProgress.expectedTotalBytes != null
+                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                      : null,
+                                  );
+                                },
+                              ),
+                            )
+                          // else display the default profile image
+                          : CircleAvatar(
+                              radius: 40,
+                              backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                              backgroundImage: const NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png')),
                         Positioned(
                           bottom: -10,
                           left: 42,
