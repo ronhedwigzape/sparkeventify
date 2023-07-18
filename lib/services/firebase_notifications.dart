@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -100,8 +99,7 @@ class FirebaseNotifications {
   }
 
   // Send a push notification to a user
-  Future<String> sendPushNotification(
-      String title, String body, String token) async {
+  Future<String> sendPushNotification(String title, String body, String token) async {
     const postUrl = 'https://fcm.googleapis.com/fcm/send';
     String message = 'Some error occured while sending push notification.';
     final data = {
@@ -156,7 +154,7 @@ class FirebaseNotifications {
     }, SetOptions(merge: true)); // The 'merge: true' option will ensure that the rest of the user document remains unaffected
   }
 
-Future<void> unregisterDevice(String userId) async {
+  Future<void> unregisterDevice(String userId) async {
     try {
       var userDocument = FirebaseFirestore.instance.collection('users').doc(userId);
 
@@ -168,15 +166,38 @@ Future<void> unregisterDevice(String userId) async {
         print('Error unregistering device: $e');
       }
     }
-}
+  }
 
 
-  Future<void> sendNotificationToUser(String userId, String title, String body, String message) async {
+Future<void> sendNotificationToUser(String userId, String title, String body, String message) async {
+  try {
     var userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    if (!userDoc.exists) {
+      if (kDebugMode) {
+        print('User not found');
+      }
+      return;
+    }
+    
     var user = model.User.fromSnap(userDoc);
-    for (var token in user.deviceTokens!.values) {
-      sendPushNotification(title, body, token);
+    
+    if (user.deviceTokens != null) {
+      for (var token in user.deviceTokens!.values) {
+        try {
+          await sendPushNotification(title, body, token);
+        } catch (e) {
+          if (kDebugMode) {
+            print('Failed to send notification: $e');
+          }
+        }
+      }
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      print('Failed to get user: $e');
     }
   }
+}
+
 
 }
