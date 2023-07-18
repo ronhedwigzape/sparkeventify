@@ -9,7 +9,7 @@ class FireStoreEventMethods {
   final CollectionReference _eventsCollection = FirebaseFirestore.instance.collection('events');
 
   // Method to add a new event to the 'events' collection
-  Future<String> addEvent(
+  Future<String> postEvent(
     String title,
     Uint8List? image,
     String description,

@@ -180,7 +180,7 @@ class _PostScreenState extends State<PostScreen> {
         List<dynamic> participants =
             _eventParticipantsController.text.split(', ');
         // Add the event to the database
-        String response = await FireStoreEventMethods().addEvent(
+        String response = await FireStoreEventMethods().postEvent(
             _eventTitleController.text,
             _imageFile,
             _eventDescriptionsController.text,
