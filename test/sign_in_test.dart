@@ -10,17 +10,17 @@ void main() {
   });
 
   test('signIn success', () async {
-    when(mockAuthRepository.signIn(email: 'student@email.com', password: 'password123'))
+    when(mockAuthRepository.signIn(email: 'person@email.com', password: 'password123'))
         .thenAnswer((_) async => 'Success');
 
-    var result = await mockAuthRepository.signIn(email: 'student@email.com', password: 'password123');
+    var result = await mockAuthRepository.signIn(email: 'person@email.com', password: 'password123');
     expect(result, 'Success');
   });
 
   test('signIn failure', () async {
-    when(mockAuthRepository.signIn(email: 'student@email.com', password: 'password123'))
+    when(mockAuthRepository.signIn(email: 'person@email.com', password: 'password123'))
         .thenThrow(Exception());
 
-    expect(() async => await mockAuthRepository.signIn(email: 'student@email.com', password: 'password123'), throwsException);
+    expect(() async => await mockAuthRepository.signIn(email: 'person@email.com', password: 'password123'), throwsException);
   });
 }
