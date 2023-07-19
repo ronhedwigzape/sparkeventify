@@ -136,6 +136,5 @@ class AuthMethods {
   // Sign out user
   Future<void> signOut() async {
     await _auth.signOut();
-    await FirebaseNotifications().unregisterDevice(FirebaseAuth.instance.currentUser!.uid);
   }
 }

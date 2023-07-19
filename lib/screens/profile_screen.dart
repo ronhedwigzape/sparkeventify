@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -9,6 +10,7 @@ import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
+import '../services/firebase_notifications.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -117,6 +119,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SimpleDialogOption(
               padding: const EdgeInsets.all(20),
               onPressed: () async {
+                await FirebaseNotifications().unregisterDevice(FirebaseAuth.instance.currentUser!.uid);
                 await AuthMethods().signOut();
                 if (mounted) {
                   Navigator.of(context).pop();
