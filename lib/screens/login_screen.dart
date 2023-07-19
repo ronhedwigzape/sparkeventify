@@ -10,6 +10,8 @@ import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
 
+import '../data/auth_repository.dart';
+
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -21,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
+  final _authRepository = AuthRepository();
 
   @override
   void dispose() {
@@ -34,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
       _isLoading = true;
     });
 
-    String res = await AuthMethods().signIn(
+    String res = await _authRepository.signIn(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim());
 
