@@ -87,13 +87,12 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                     },
                     rowHeight: 50,
                     daysOfWeekHeight: 40.0,
-                    daysOfWeekStyle: const DaysOfWeekStyle(
+                    daysOfWeekStyle: DaysOfWeekStyle(
                         decoration: BoxDecoration(
-                          color: lightModeBlueColor,
+                          color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
                         ),
-                        weekdayStyle: TextStyle(color: lightModeGreyColor),
-                        weekendStyle:
-                            TextStyle(color: lightModeSecondaryColor)),
+                        weekdayStyle: const TextStyle(color: lightModeGreyColor),
+                        weekendStyle: const TextStyle(color: darkBlueColor)),
                     onDaySelected: (selectedDay, focusedDay) {
                       // Use `selectedDay` to retrieve the selected day.
                       DateTime adjustedSelectedDay = DateTime(selectedDay.year,

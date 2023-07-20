@@ -13,6 +13,7 @@ const lightModeIndigo = Color.fromARGB(255, 130, 144, 224);
 
 // Dark mode colors
 const darkColor = Color.fromRGBO(38, 38, 38, 1);
+const darkBlueColor = Color.fromARGB(255, 6, 8, 38);
 const darkModeBackgroundColor = Color.fromRGBO(38, 38, 38, 1);
 const darkModeMaroonColor = Color.fromARGB(255, 163, 0, 0);
 const darkModeGrassColor = Color.fromARGB(255, 0, 144, 0);

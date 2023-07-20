@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/post_card.dart';
+
 import '../models/event.dart';
 
 class FeedScreen extends StatefulWidget {
@@ -55,24 +56,35 @@ class _FeedScreenState extends State<FeedScreen> {
                 }).toList();
 
                 return Column(children: [
-                  DropdownButton<String>(
-                    value: dropdownEventType,
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        dropdownEventType = newValue!;
-                      });
-                    },
-                    items: <String>['All', 'Non-academic', 'Academic']
-                        .map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        const Flexible(child: Text('Feeds', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),)),
+                        Flexible(
+                          child: DropdownButton<String>(
+                            value: dropdownEventType,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                dropdownEventType = newValue!;
+                              });
+                            },
+                            items: <String>['All', 'Non-academic', 'Academic']
+                                .map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value),
+                              );
+                            }).toList(),
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                   Expanded(
                     child: ListView.builder(
-                      shrinkWrap: true,
+                        shrinkWrap: true,
                         itemCount: filteredEvents.length,
                         itemBuilder: (context, index) => Container(
                             margin: EdgeInsets.symmetric(
