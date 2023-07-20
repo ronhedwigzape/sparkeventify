@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:student_event_calendar/screens/officer_signup_screen.dart';
 import 'package:student_event_calendar/screens/staff_signup_screen.dart';
 import 'package:student_event_calendar/screens/student_signup_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
+
+import '../providers/darkmode_provider.dart';
 
 class ClientSelectionScreen extends StatefulWidget {
   const ClientSelectionScreen({Key? key}) : super(key: key);
@@ -31,6 +34,8 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context, listen: false).darkMode;
+
     return Scaffold(
       body: Center(
         child: Column(
@@ -73,7 +78,7 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                   margin: const EdgeInsets.symmetric(
                       horizontal: 50.0, vertical: 10.0),
                   decoration: BoxDecoration(
-                    color: lightColor,
+                    color: darkModeOn ? darkColor : lightColor,
                     border: Border.all(color: lightModeTertiaryColor),
                     borderRadius: BorderRadius.circular(5),
                   ),
@@ -88,7 +93,7 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                   margin: const EdgeInsets.symmetric(
                       horizontal: 50.0, vertical: 10.0),
                   decoration: BoxDecoration(
-                    color: lightColor,
+                    color: darkModeOn ? darkColor : lightColor,
                     border: Border.all(color: lightModeTertiaryColor),
                     borderRadius: BorderRadius.circular(5),
                   ),
@@ -103,7 +108,7 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                   margin: const EdgeInsets.symmetric(
                       horizontal: 50.0, vertical: 10.0),
                   decoration: BoxDecoration(
-                    color: lightColor,
+                    color: darkModeOn ? darkColor : lightColor,
                     border: Border.all(color: lightModeTertiaryColor),
                     borderRadius: BorderRadius.circular(5),
                   ),
