@@ -159,7 +159,7 @@ class FirebaseNotifications {
       var userDocument = FirebaseFirestore.instance.collection('users').doc(userId);
 
       await userDocument.update({
-        'deviceTokens': FieldValue.delete()
+        'deviceTokens': {}
       });
     } catch (e) {
       if (kDebugMode) {
@@ -169,35 +169,35 @@ class FirebaseNotifications {
   }
 
 
-Future<void> sendNotificationToUser(String userId, String title, String body, String message) async {
-  try {
-    var userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
-    if (!userDoc.exists) {
-      if (kDebugMode) {
-        print('User not found');
+  Future<void> sendNotificationToUser(String userId, String title, String body, String message) async {
+    try {
+      var userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      if (!userDoc.exists) {
+        if (kDebugMode) {
+          print('User not found');
+        }
+        return;
       }
-      return;
-    }
-    
-    var user = model.User.fromSnap(userDoc);
-    
-    if (user.deviceTokens != null) {
-      for (var token in user.deviceTokens!.values) {
-        try {
-          await sendPushNotification(title, body, token);
-        } catch (e) {
-          if (kDebugMode) {
-            print('Failed to send notification: $e');
+
+      var user = model.User.fromSnap(userDoc);
+
+      if (user.deviceTokens != null) {
+        for (var token in user.deviceTokens!.values) {
+          try {
+            await sendPushNotification(title, body, token);
+          } catch (e) {
+            if (kDebugMode) {
+              print('Failed to send notification: $e');
+            }
           }
         }
       }
-    }
-  } catch (e) {
-    if (kDebugMode) {
-      print('Failed to get user: $e');
+    } catch (e) {
+      if (kDebugMode) {
+        print('Failed to get user: $e');
+      }
     }
   }
-}
 
 
 }
