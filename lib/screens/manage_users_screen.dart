@@ -57,12 +57,10 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
       stream: _usersStream,
       builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
         if (snapshot.hasError) {
-          return const Text('Something went wrong');
+          return const Center(child: Text('Something went wrong'));
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const Center(child: CircularProgressIndicator());
         }
 
         List<model.User> allUsers = snapshot.data!.docs.map((doc) => model.User.fromSnap(doc)).toList();

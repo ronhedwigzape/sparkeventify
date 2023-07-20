@@ -22,7 +22,7 @@ class _PostCardState extends State<PostCard> {
   @override
   void initState() {
     super.initState();
-    userDetails = FireStoreUserMethods().getUserDetailsByEventsCreatedBy(widget.snap['createdBy']);
+    userDetails = FireStoreUserMethods().getUserDetailsByEventsCreatedBy(widget.snap.createdBy);
   }
 
   void showSnackBar(String message, BuildContext context) {
@@ -82,7 +82,7 @@ class _PostCardState extends State<PostCard> {
                                   children: [
                                     TextSpan(
                                       text: DateFormat.yMMMd().format(
-                                        widget.snap['datePublished']?.toDate() ?? DateTime.now()
+                                        widget.snap.datePublished ?? DateTime.now()
                                       ),
                                       style: Theme.of(context)
                                         .textTheme
@@ -97,7 +97,7 @@ class _PostCardState extends State<PostCard> {
                                     const TextSpan( text: " "),
                                     TextSpan(
                                       text: DateFormat.jm().format(
-                                        widget.snap['datePublished']?.toDate() ?? DateTime.now()
+                                        widget.snap.datePublished ?? DateTime.now()
                                       ),
                                       style: Theme.of(context)
                                         .textTheme
@@ -132,7 +132,7 @@ class _PostCardState extends State<PostCard> {
                                       TextSpan(
                                         children: <TextSpan>[
                                           TextSpan(
-                                            text: 'Are you sure you want to delete this ${widget.snap['type'] == 'Academic' ? 'announcement' : 'event'} forever?'
+                                            text: 'Are you sure you want to delete this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'} forever?'
                                           ),
                                           const TextSpan(
                                             text: '\nThis action cannot be undone.',
@@ -159,7 +159,7 @@ class _PostCardState extends State<PostCard> {
                                     shrinkWrap: true,
                                     children: ['Delete Forever',].map((e) => InkWell(
                                       onTap: () async {
-                                        FireStoreEventMethods().removeEvent(widget.snap['id']);
+                                        FireStoreEventMethods().removeEvent(widget.snap.id);
                                         Navigator.of(context).pop();
                                       },
                                       child: Container(
@@ -194,14 +194,14 @@ class _PostCardState extends State<PostCard> {
                     SizedBox(
                       height: MediaQuery.of(context).size.height * 0.35,
                       width: double.infinity,
-                      child: (widget.snap['image'] == null ||
-                              widget.snap['image'] == '')
+                      child: (widget.snap.image == null ||
+                              widget.snap.image == '')
                           ? Image.network(
                               'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
                               fit: BoxFit.cover,
                             )
                           : Image.network(
-                              widget.snap['image'] ??
+                              widget.snap.image ??
                                   'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
                               fit: BoxFit.cover,
                             ),
@@ -222,7 +222,7 @@ class _PostCardState extends State<PostCard> {
                         );
                       },
                       icon: const Icon(Icons.view_agenda, size: 18),
-                      label: Text('View this ${widget.snap['type'] == 'Academic' ? 'announcement' : 'event'}'),
+                      label: Text('View this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'}'),
                     ),
                   ],
                 ),
@@ -246,7 +246,7 @@ class _PostCardState extends State<PostCard> {
                             ),
                             TextSpan(
                               text:
-                                  '${widget.snap['description'] ?? 'default_description'}',
+                                  '${widget.snap.description ?? 'default_description'}',
                             ),
                           ])),
                         ),
