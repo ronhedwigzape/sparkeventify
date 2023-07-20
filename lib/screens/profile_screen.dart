@@ -189,7 +189,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(fullName, style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold)),
+                        Text(fullName, style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
                       ],
                     ),
                   ),

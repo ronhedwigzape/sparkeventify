@@ -30,14 +30,14 @@ class _EventScreenState extends State<EventScreen> {
         iconTheme: darkModeOn ? const IconThemeData(color: darkColor) : const IconThemeData(color: lightColor),
         backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
         elevation: 0.0,
-        title: Text('${widget.snap['type'] == 'Academic' ? 'Announcement' : 'Event'} Details',
+        title: Text('${widget.snap.type == 'Academic' ? 'Announcement' : 'Event'} Details',
           style: TextStyle(color: darkModeOn ? darkColor : lightColor),
         ),
       ),
       body: StreamBuilder(
         stream: FirebaseFirestore.instance
             .collection('events')
-            .doc(widget.snap['id'])
+            .doc(widget.snap.id)
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

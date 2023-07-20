@@ -22,7 +22,7 @@ class _PostCardState extends State<PostCard> {
   @override
   void initState() {
     super.initState();
-    userDetails = FireStoreUserMethods().getUserDetailsByEventsCreatedBy(widget.snap.createdBy);
+    userDetails = FireStoreUserMethods().getUserByEventsCreatedBy(widget.snap.createdBy);
   }
 
   void showSnackBar(String message, BuildContext context) {

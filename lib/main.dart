@@ -89,7 +89,6 @@ class AuthScreen extends StatelessWidget {
                 child: CircularProgressIndicator(),
               );
             }
-
             // Check if document exists
             if (snapshot.hasData && snapshot.data!.exists) {
               final String userType = snapshot.data!.get('userType');
