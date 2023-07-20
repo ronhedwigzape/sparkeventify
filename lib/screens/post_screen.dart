@@ -293,7 +293,7 @@ class _PostScreenState extends State<PostScreen> {
                           const Padding(
                             padding: EdgeInsets.symmetric(vertical: 16.0),
                             child: Text(
-                              'Post an Event/Announcement',
+                              'Post an Announcement',
                               style: TextStyle(
                                 fontSize: 20.0,
                                 fontWeight: FontWeight.bold,
@@ -308,7 +308,7 @@ class _PostScreenState extends State<PostScreen> {
                                   decoration: const InputDecoration(
                                     prefixIcon: Icon(Icons.event),
                                     filled: true,
-                                    hintText: 'Select event/announcement type*',
+                                    hintText: 'Select announcement type*',
                                   ),
                                   value: _eventTypeController.text.isEmpty
                                       ? null
