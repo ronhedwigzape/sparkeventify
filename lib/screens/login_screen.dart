@@ -100,11 +100,14 @@ class _LoginScreenState extends State<LoginScreen> {
               flex: 2,
               child: Container(),
             ),
-            // cspc logo
-            const CSPCLogo(
-              height: 150.0,
-            ),
-            Column(
+            // Logo
+            MediaQuery.of(context).viewInsets.bottom > 100
+                ? const SizedBox.shrink()
+                : const CSPCLogo(height: 150.0),
+// School name and address
+            MediaQuery.of(context).viewInsets.bottom > 100
+                ? const SizedBox.shrink()
+                : Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Container(
@@ -113,8 +116,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   child: const Text(
                     schoolName,
-                    style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
                 ),
                 Container(
@@ -138,7 +140,7 @@ class _LoginScreenState extends State<LoginScreen> {
               hintText: 'Enter your email',
               textInputType: TextInputType.emailAddress,
             ),
-            const SizedBox(height: 24.0),
+            const SizedBox(height: 16.0),
             // text field input for password
             TextFieldInput(
               textEditingController: _passwordController,
@@ -146,7 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
               textInputType: TextInputType.visiblePassword,
               isPass: true,
             ),
-            const SizedBox(height: 24.0),
+            const SizedBox(height: 16.0),
             // button login
             InkWell(
               onTap: signIn,
