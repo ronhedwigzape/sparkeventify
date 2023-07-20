@@ -12,6 +12,7 @@ import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/providers/user_provider.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/services/firebase_notifications.dart';
+import 'package:student_event_calendar/utils/unknown_user.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -95,12 +96,12 @@ class AuthScreen extends StatelessWidget {
               
               if (userType == 'Admin' && runningOnWeb()) {
                 return const AdminScreenLayout();
-              } else if (runningOnMobile()) {
+              } else if ((userType == 'Student' && runningOnMobile()) ||
+                  (userType == 'Staff' && runningOnMobile()) ||
+                  (userType == 'Officer' && runningOnMobile())) {
                 return const ClientScreenLayout();
               } else {
-                return const Center(
-                  child: Text('Unknown user'),
-                );
+                return const UnknownUser();
               }
             } else {
               // Handle case when the document does not exist
