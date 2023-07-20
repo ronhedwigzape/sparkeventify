@@ -25,7 +25,11 @@ class FireStoreUserMethods {
         .set(user.toJson(), SetOptions(merge: true));
   }
 
-  Future<model.User> getUserDetailsByEventsCreatedBy(String createdBy) async {
+  Stream<model.User> getUserDetailsByEventsCreatedBy(String createdBy) {
+    return Stream.fromFuture(getUserByEventsCreatedBy(createdBy));
+  }
+
+  Future<model.User> getUserByEventsCreatedBy(String createdBy) async {
     // Query the events collection for events created by the user
     QuerySnapshot eventQuerySnapshot = await FirebaseFirestore.instance
         .collection('events')
