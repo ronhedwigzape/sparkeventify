@@ -14,7 +14,6 @@ const schoolLogo = 'assets/images/cspc_logo.png';
 const appName = 'Announce';
 
 // Global key for the events calendar
-
 List<Widget> homeScreenItems = [
   kIsWeb
       ? const EventsCalendarScreen()

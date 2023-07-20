@@ -13,6 +13,7 @@ class TextFieldInput extends StatefulWidget {
   final bool isTime; // Determines if the TextField is a time picker
   final double height; // The height of the TextField
   final double width;
+  final FormFieldValidator<String>? validator;
 
   // Constructor for the widget
   const TextFieldInput({
@@ -26,6 +27,7 @@ class TextFieldInput extends StatefulWidget {
     this.enabled = true,
     this.isDate = false,
     this.isTime = false,
+    this.validator,
   }) : super(key: key);
 
   // Create the state for the widget
@@ -48,7 +50,7 @@ class _TextFieldInputState extends State<TextFieldInput> {
     return SizedBox(
       height: widget.height,
       width: widget.width,
-      child: TextField(
+      child: TextFormField(
         controller: widget.textEditingController, // Set the controller
         decoration: InputDecoration( // Set the decoration for the TextField
           hintText: widget.hintText, // Set the hint text
@@ -71,6 +73,7 @@ class _TextFieldInputState extends State<TextFieldInput> {
                 )
               : null,
         ),
+        validator: widget.validator,
         keyboardType: widget.textInputType, // Set the input type
         obscureText: widget.isPass && !_isPasswordVisible, // Set the obscure text
         enabled: widget.enabled, // Set if the TextField is enabled
