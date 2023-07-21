@@ -1,3 +1,5 @@
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +11,7 @@ import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../models/user.dart' as model;
+import 'package:http/http.dart' as http;
 
 class EventsCalendarScreen extends StatefulWidget {
   const EventsCalendarScreen({Key? key}) : super(key: key);
@@ -115,12 +118,13 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                         showDialog(
                           context: context,
                           builder: (context) {
+                            String defaultUrl = 'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg';
                             return AlertDialog(
                               title: Center(
                                 child: Text('Events for ${DateFormat('MMMM dd, yyyy').format(adjustedSelectedDay)}'),
                               ),
                               content: SizedBox(
-                                width: double.maxFinite,
+                                width: kIsWeb ? 500 : double.maxFinite,
                                 child: ListView.builder(
                                   shrinkWrap: true,
                                   itemCount: selectedDayEvents.length,
@@ -150,57 +154,73 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                                             ],
                                           ),
                                           const SizedBox(height: 8.0),
-                                          StreamBuilder<model.User>(
-                                            stream: FireStoreUserMethods().getUserDetailsByEventsCreatedBy(event.createdBy),  // assuming that this returns a Future<String>
-                                            builder: (BuildContext context, AsyncSnapshot<model.User> snapshot) {
-                                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                                return const Text('Fetching Data...');
-                                              } else {
-                                                if (snapshot.hasError) {
-                                                  return Text('Error: ${snapshot.error}');
-                                                } else {
-                                                  return Row(
-                                                    children: [
-                                                      Expanded(
-                                                        child: Text(
+                                          Row(
+                                            children: [
+                                              Expanded(
+                                                child: StreamBuilder<model.User>(
+                                                  stream: FireStoreUserMethods().getUserDetailsByEventsCreatedBy(event.createdBy),  // assuming that this returns a Future<String>
+                                                  builder: (BuildContext context, AsyncSnapshot<model.User> snapshot) {
+                                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                                      return const Text('Fetching Data...');
+                                                    } else {
+                                                      if (snapshot.hasError) {
+                                                        return Text('Error: ${snapshot.error}');
+                                                      } else {
+                                                        return Text(
                                                           'Created by ${snapshot.data?.profile?.fullName}',
-                                                            style: const TextStyle(
+                                                          style: const TextStyle(
                                                               color: lightModeSecondaryColor
-                                                            ),
-                                                        ),
-                                                      ),
-                                                      const SizedBox(width: 10),
-                                                      SizedBox(
-                                                        width: 120,
-                                                        child: Chip(
-                                                          label: Padding(
-                                                            padding: const EdgeInsets.all(1.0),
-                                                            child: Text(
-                                                              event.type,
-                                                              style: const TextStyle(color: Colors.white, fontSize: 12),  // I reduced the fontSize here to make the chip smaller.
-                                                            ),
                                                           ),
-                                                          backgroundColor: event.type == 'Academic' ? (darkModeOn ? darkModeMaroonColor : lightModeMaroonColor) : (darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
-                                                          shape: RoundedRectangleBorder(
-                                                            borderRadius: BorderRadius.circular(20.0),
-                                                          ),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  );  // Text widget
-                                                }
-                                              }
-                                            },
+                                                        );
+                                                      }
+                                                    }
+                                                  },
+                                                ),
+                                              ),
+                                              const SizedBox(width: 10),
+                                              SizedBox(
+                                                width: 120,
+                                                child: Chip(
+                                                  label: Padding(
+                                                    padding: const EdgeInsets.all(1.0),
+                                                    child: Text(
+                                                      event.type,
+                                                      style: const TextStyle(color: Colors.white, fontSize: 12),  // I reduced the fontSize here to make the chip smaller.
+                                                    ),
+                                                  ),
+                                                  backgroundColor: event.type == 'Academic' ? (darkModeOn ? darkModeMaroonColor : lightModeMaroonColor) : (darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.circular(20.0),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                           const SizedBox(height: 10.0),
                                           (event.image?.isEmpty ?? true)
-                                              ? Image.network(
-                                            'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
+                                              ? CachedNetworkImage(
+                                            imageUrl: 'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
                                             width: double.infinity,
+                                            placeholder: (context, url) => const Center(
+                                              child: SizedBox(
+                                                width: 30.0,
+                                                height: 30.0,
+                                                child: CircularProgressIndicator(),
+                                              ),
+                                            ),
+                                            errorWidget: (context, url, error) => const Icon(Icons.error),
                                           )
-                                              : Image.network(
-                                            event.image!,
+                                              : CachedNetworkImage(
+                                            imageUrl: event.image!,
                                             width: double.infinity,
+                                            placeholder: (context, url) => const Center(
+                                              child: SizedBox(
+                                                width: 30.0,
+                                                height: 30.0,
+                                                child: CircularProgressIndicator(),
+                                              ),
+                                            ),
+                                            errorWidget: (context, url, error) => const Icon(Icons.error),
                                           ),
                                           const SizedBox(height: 8.0),
                                           Column(
