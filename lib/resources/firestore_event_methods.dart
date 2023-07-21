@@ -27,7 +27,7 @@ class FireStoreEventMethods {
       // If the image is not null, upload it to storage and get the URL
       String imageUrl = '';
       if (image != null) {
-         imageUrl = await StorageMethods().uploadImageToStorage('images', image, false);
+         imageUrl = await StorageMethods().uploadImageToStorage('images', image, true);
       }
       // If the document is not null, upload it to storage and get the URL
       String documentUrl = '';
