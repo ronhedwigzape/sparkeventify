@@ -6,6 +6,7 @@ import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/utils/file_pickers.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../models/user.dart' as model;
 
@@ -52,9 +53,10 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
         } else {
           _events = snapshot.data!;
           return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Padding(
-                padding: EdgeInsets.symmetric(vertical: 20.0),
+                padding: EdgeInsets.symmetric(vertical: 10.0),
                 child: Text('Calendar of Events',
                     style:
                         TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
@@ -201,10 +203,21 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                                             width: double.infinity,
                                           ),
                                           const SizedBox(height: 8.0),
-                                          Text(
-                                              event.description,
-                                              style: Theme.of(context).textTheme.bodyMedium,
-                                            ),
+                                          Column(
+                                            children: [
+                                              event.document == null || event.document == '' ?
+                                              const SizedBox.shrink() :
+                                              TextButton.icon(
+                                                  onPressed: () => downloadAndOpenFile(event.document ?? '', event.title),
+                                                  icon: const Icon(Icons.download_for_offline),
+                                                  label: Text('Download and Open ${event.title} document')
+                                              ),
+                                              Text(
+                                                  event.description,
+                                                  style: Theme.of(context).textTheme.bodyMedium,
+                                                ),
+                                            ],
+                                          ),
                                           const SizedBox(height: 15.0,)
                                         ],
                                       ),

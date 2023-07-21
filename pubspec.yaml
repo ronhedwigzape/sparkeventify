@@ -52,6 +52,7 @@ dependencies:
   firebase_analytics: ^10.4.4
   overlay_support: ^2.1.0
   device_info_plus: ^9.0.2
+  open_file: ^3.3.2
 
 dev_dependencies:
   flutter_test:
