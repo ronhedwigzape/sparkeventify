@@ -8,6 +8,8 @@ import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/screens/event_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:timezone/timezone.dart' as tz;
+
 class PostCard extends StatefulWidget {
   const PostCard({Key? key, required this.snap}) : super(key: key);
   final snap;
@@ -48,6 +50,10 @@ class _PostCardState extends State<PostCard> {
           } else {
             final author = snapshot.data?.profile?.fullName;
             final authorImage = snapshot.data?.profile?.profileImage;
+            final datePublished = widget.snap.datePublished ?? DateTime.now().toUtc();
+            final manila = tz.getLocation('Asia/Manila');
+            final localTime = tz.TZDateTime.from(datePublished, manila);
+
             return Container(
               decoration: BoxDecoration(border: Border.all(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor), color: darkModeOn ? darkColor : lightColor),
               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -81,9 +87,7 @@ class _PostCardState extends State<PostCard> {
                                 text: TextSpan(
                                   children: [
                                     TextSpan(
-                                      text: DateFormat.yMMMd().format(
-                                        widget.snap.datePublished ?? DateTime.now()
-                                      ),
+                                      text: DateFormat.yMMMd().format(localTime),
                                       style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium!
@@ -96,9 +100,7 @@ class _PostCardState extends State<PostCard> {
                                     ),
                                     const TextSpan( text: " "),
                                     TextSpan(
-                                      text: DateFormat.jm().format(
-                                        widget.snap.datePublished ?? DateTime.now()
-                                      ),
+                                      text: DateFormat.jm().format(localTime),
                                       style: Theme.of(context)
                                         .textTheme
                                         .bodyMedium!

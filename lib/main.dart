@@ -13,8 +13,10 @@ import 'package:student_event_calendar/providers/user_provider.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/services/firebase_notifications.dart';
 import 'package:student_event_calendar/utils/unknown_user.dart';
+import 'package:timezone/data/latest.dart' as timezone;
 
 void main() async {
+  timezone.initializeTimeZones();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const App());
