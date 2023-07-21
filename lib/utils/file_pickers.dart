@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:path_provider/path_provider.dart';
@@ -6,6 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:mime/mime.dart';
+import 'package:universal_html/html.dart' as html;
+import 'package:flutter/services.dart';
 
 // Function to pick an image from the specified source
 pickImage(ImageSource source) async {
@@ -62,21 +65,36 @@ String? getFileExtension(Uint8List uint8list){
 
 Future<void> downloadAndOpenFile(String url, String fileName) async {
   // Download file data
-  Uint8List fileData = await downloadFile(url);
+  Uint8List fileData;
+  String? fileExtension;
 
-  String? fileExtension = getFileExtension(fileData);
+  try {
+    fileData = await downloadFile(url);
+    fileExtension = getFileExtension(fileData);
+  } on PlatformException {
+    throw ("Can't download or decode file data");
+  }
 
-  if(fileExtension == null)
-  {
+  if(fileExtension == null) {
     throw ("Can't determine the file extension");
   }
 
-  // Get the temporary directory.
-  final tempDir = await getTemporaryDirectory();
+  if (kIsWeb) {
+    // Flutter web code to trigger a download
+    final base64 = base64Encode(fileData);
+    final anchor = html.AnchorElement(
+        href: 'data:application/octet-stream;base64,$base64'
+    )..setAttribute('download', '$fileName.$fileExtension')
+      ..click();
+  } else {
+    // Android/IOS code to store the file in temp directory and open it
+    final tempDir = await getTemporaryDirectory();
+    File file = await File('${tempDir.path}/$fileName.$fileExtension').writeAsBytes(fileData);
 
-  // Write the file.
-  File file = await File('${tempDir.path}/$fileName.$fileExtension').writeAsBytes(fileData);
-
-  // Open file with the native viewer
-  OpenFile.open(file.path);
+    try {
+      OpenFile.open(file.path);
+    } on PlatformException {
+      throw ('Could not open file at ${file.path}');
+    }
+  }
 }
