@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
 import 'package:student_event_calendar/layouts/client_screen_layout.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
@@ -11,6 +12,7 @@ import 'package:student_event_calendar/widgets/cspc_logo.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
 
 import '../data/auth_repository.dart';
+import '../providers/darkmode_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -81,6 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return Scaffold(
       body: SafeArea(
           child: Container(
@@ -156,11 +159,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   width: double.infinity,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  decoration: const ShapeDecoration(
-                    shape: RoundedRectangleBorder(
+                  decoration: ShapeDecoration(
+                    shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     ),
-                    color: lightModeBlueColor,
+                    color: darkModeOn ? darkModePrimaryColor : lightModeBlueColor,
                   ),
                   child: _isLoading
                       ? const Center(

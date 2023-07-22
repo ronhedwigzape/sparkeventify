@@ -16,4 +16,3 @@ const darkModeMaroonColor = Color.fromARGB(255, 163, 0, 0);
 const darkModePrimaryColor = Color.fromARGB(255, 83, 108, 255);
 const darkModeSecondaryColor = Color.fromARGB(255, 141, 141, 141);
 const darkModeGreyColor = Color.fromRGBO(255, 255, 255, 0.1);
-const darkModeIndigo = Color.fromARGB(255, 130, 144, 224);

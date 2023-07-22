@@ -283,7 +283,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             children: [
                               const Icon(Icons.school),
                               const SizedBox(width: 20),
-                              Text('Dept.: $department', style: const TextStyle(fontSize: 16.0))
+                              Text('Dept: $department', style: const TextStyle(fontSize: 16.0))
                             ],
                           )
                       ),

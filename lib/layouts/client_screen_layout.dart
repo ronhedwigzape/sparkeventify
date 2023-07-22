@@ -130,7 +130,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
     return [
       buildBottomNavigationBarItem(Icons.home, 0),
       buildBottomNavigationBarItem(Icons.calendar_month, 1),
-      buildBottomNavigationBarItem(Icons.announcement, 2),
+      buildBottomNavigationBarItem(Icons.feedback, 2),
       buildBottomNavigationBarItem(Icons.note_alt, 3),
       buildBottomNavigationBarItem(Icons.person, 4),
     ];

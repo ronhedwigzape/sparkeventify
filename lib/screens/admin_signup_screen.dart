@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
 import 'package:student_event_calendar/models/profile.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
@@ -7,6 +8,8 @@ import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
+
+import '../providers/darkmode_provider.dart';
 
 class AdminSignupScreen extends StatefulWidget {
   const AdminSignupScreen({super.key});
@@ -90,6 +93,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return Scaffold(
       body: SafeArea(
           child: Container(
@@ -192,11 +196,11 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
                   width: double.infinity,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  decoration: const ShapeDecoration(
-                    shape: RoundedRectangleBorder(
+                  decoration: ShapeDecoration(
+                    shape: const RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(5.0)),
                     ),
-                    color: lightModeBlueColor,
+                    color: darkModeOn ? darkModePrimaryColor : lightModeBlueColor,
                   ),
                   child: _isLoading
                       ? const Center(

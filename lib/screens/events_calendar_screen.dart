@@ -1,17 +1,11 @@
-import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
-import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
-import 'package:student_event_calendar/utils/file_pickers.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../models/user.dart' as model;
-import 'package:http/http.dart' as http;
+import '../widgets/event_dialog.dart';
 
 class EventsCalendarScreen extends StatefulWidget {
   const EventsCalendarScreen({Key? key}) : super(key: key);
@@ -93,6 +87,10 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                     rowHeight: 60,
                     daysOfWeekHeight: 50.0,
                     calendarStyle: CalendarStyle(
+                      todayDecoration: BoxDecoration(
+                        color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                        shape: BoxShape.circle,
+                      ),
                       tableBorder: TableBorder(
                         verticalInside: BorderSide(
                           color: darkModeOn ? darkColor : lightColor,
@@ -107,7 +105,7 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                           color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
                         ),
                         weekdayStyle: const TextStyle(color: lightColor),
-                        weekendStyle: const TextStyle(color: darkBlueColor)),
+                        weekendStyle: TextStyle(color: darkModeOn ? darkBlueColor : lightModeIndigo)),
                     onDaySelected: (selectedDay, focusedDay) {
                       // Use `selectedDay` to retrieve the selected day.
                       DateTime adjustedSelectedDay = DateTime(selectedDay.year,
@@ -127,144 +125,7 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                       if (selectedDayEvents.isNotEmpty) {
                         showDialog(
                           context: context,
-                          builder: (context) {
-                            String defaultUrl = 'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg';
-                            return AlertDialog(
-                              title: Center(
-                                child: Text('Events for ${DateFormat('MMMM dd, yyyy').format(adjustedSelectedDay)}'),
-                              ),
-                              content: SizedBox(
-                                width: kIsWeb ? 500 : double.maxFinite,
-                                child: ListView.builder(
-                                  shrinkWrap: true,
-                                  itemCount: selectedDayEvents.length,
-                                  itemBuilder: (context, index) {
-                                    var event = selectedDayEvents[index];
-                                    return Padding(
-                                      padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: Text(
-                                                  event.title,
-                                                  style: const TextStyle(
-                                                    fontWeight: FontWeight.bold,
-                                                    fontSize: 24.0
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(width: 10),
-                                              Text(
-                                                DateFormat.jm().format(event.time),  // assuming time is a string
-                                                style: Theme.of(context).textTheme.titleMedium,
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 8.0),
-                                          Row(
-                                            children: [
-                                              Expanded(
-                                                child: StreamBuilder<model.User>(
-                                                  stream: FireStoreUserMethods().getUserDetailsByEventsCreatedBy(event.createdBy),  // assuming that this returns a Future<String>
-                                                  builder: (BuildContext context, AsyncSnapshot<model.User> snapshot) {
-                                                    if (snapshot.connectionState == ConnectionState.waiting) {
-                                                      return const Text('Fetching Data...');
-                                                    } else {
-                                                      if (snapshot.hasError) {
-                                                        return Text('Error: ${snapshot.error}');
-                                                      } else {
-                                                        return Text(
-                                                          'Created by ${snapshot.data?.profile?.fullName}',
-                                                          style: const TextStyle(
-                                                              color: lightModeSecondaryColor
-                                                          ),
-                                                        );
-                                                      }
-                                                    }
-                                                  },
-                                                ),
-                                              ),
-                                              const SizedBox(width: 10),
-                                              SizedBox(
-                                                width: 120,
-                                                child: Chip(
-                                                  label: Padding(
-                                                    padding: const EdgeInsets.all(1.0),
-                                                    child: Text(
-                                                      event.type,
-                                                      style: const TextStyle(color: lightColor, fontSize: 12),
-                                                    ),
-                                                  ),
-                                                  backgroundColor: event.type == 'Academic' ? (darkModeOn ? darkModeMaroonColor : lightModeMaroonColor) : (darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius: BorderRadius.circular(20.0),
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 10.0),
-                                          (event.image?.isEmpty ?? true)
-                                              ? CachedNetworkImage(
-                                            imageUrl: 'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
-                                            width: double.infinity,
-                                            placeholder: (context, url) => const Center(
-                                              child: SizedBox(
-                                                width: 30.0,
-                                                height: 30.0,
-                                                child: CircularProgressIndicator(),
-                                              ),
-                                            ),
-                                            errorWidget: (context, url, error) => const Icon(Icons.error),
-                                          )
-                                              : CachedNetworkImage(
-                                            imageUrl: event.image!,
-                                            width: double.infinity,
-                                            placeholder: (context, url) => const Center(
-                                              child: SizedBox(
-                                                width: 30.0,
-                                                height: 30.0,
-                                                child: CircularProgressIndicator(),
-                                              ),
-                                            ),
-                                            errorWidget: (context, url, error) => const Icon(Icons.error),
-                                          ),
-                                          const SizedBox(height: 8.0),
-                                          Column(
-                                            children: [
-                                              event.document == null || event.document == '' ?
-                                              const SizedBox.shrink() :
-                                              TextButton.icon(
-                                                  onPressed: () => downloadAndOpenFile(event.document ?? '', event.title),
-                                                  icon: const Icon(Icons.download_for_offline),
-                                                  label: Text('Download and Open ${event.title} document')
-                                              ),
-                                              Text(
-                                                  event.description,
-                                                  style: Theme.of(context).textTheme.bodyMedium,
-                                                ),
-                                            ],
-                                          ),
-                                          const SizedBox(height: 15.0,)
-                                        ],
-                                      ),
-                                    );
-                                  },
-                                ),
-                              ),
-                              actions: [
-                                TextButton(
-                                  child: const Text('OK'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                              ],
-                            );
-                          },
+                          builder: (context) => EventDialog(selectedDayEvents, adjustedSelectedDay),
                         );
                       }
                     },
@@ -294,7 +155,7 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                             alignment: Alignment.center,
                             child: Text(
                               dateTime.day.toString(),
-                              style: const TextStyle(color: lightColor),
+                              style: const TextStyle(color: darkColor),
                             ),
                           );
                         }
