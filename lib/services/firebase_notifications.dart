@@ -100,7 +100,7 @@ class FirebaseNotifications {
 
   // Send a push notification to a user
   Future<String> sendPushNotification(String title, String body, String token) async {
-    const postUrl = 'https://fcm.googleapis.com/v1/projects/student-event-calendar-dce10/messages:send';
+    const postUrl = 'https://fcm.googleapis.com/fcm/send';
     String message = 'Some error occured while sending push notification.';
     final data = {
       "notification": {"body": body, "title": title},
@@ -115,7 +115,7 @@ class FirebaseNotifications {
 
     final headers = {
       'content-type': 'application/json',
-      'Authorization': 'Bearer AAAAtR0ymdU:APA91bH3hL344H0RDqmi82cs2LvFyGVo_fVnNxQr8l1umWH0eolSmhrkR2Y6bdvuHmMx2lrfPxKT1A0sfLIJjVykcrEXi9PRSKAJsvwALMuB65Dc6zkWapNUbTSJ5ozhd086NUdQAAMX',
+      'Authorization': 'key=AAAAtR0ymdU:APA91bH3hL344H0RDqmi82cs2LvFyGVo_fVnNxQr8l1umWH0eolSmhrkR2Y6bdvuHmMx2lrfPxKT1A0sfLIJjVykcrEXi9PRSKAJsvwALMuB65Dc6zkWapNUbTSJ5ozhd086NUdQAAMX',
     };
 
     final response = await http.post(Uri.parse(postUrl),
@@ -125,8 +125,22 @@ class FirebaseNotifications {
 
     if (response.statusCode == 200) {
       message = 'Notification sent successfully';
+      if (kDebugMode) {
+        print(message);
+      }
     } else {
       message = 'Notification not sent';
+      if (kDebugMode) {
+        print(message);
+        print(response.statusCode);
+        print(response.body);
+        print(response.reasonPhrase);
+        print(response.contentLength);
+        print(response.headers);
+      }
+    }
+    if (kDebugMode) {
+      print(message);
     }
     return message;
   }
@@ -169,14 +183,15 @@ class FirebaseNotifications {
   }
 
 
-  Future<void> sendNotificationToUser(String userId, String title, String body) async {
+  Future<String> sendNotificationToUser(String userId, String title, String body) async {
+    String message = 'Some error occurred while sending push notification.';
     try {
       var userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
       if (!userDoc.exists) {
         if (kDebugMode) {
           print('User not found');
         }
-        return;
+        return 'User not found';
       }
 
       var user = model.User.fromSnap(userDoc);
@@ -184,23 +199,27 @@ class FirebaseNotifications {
       if (user.deviceTokens != null) {
         for (var token in user.deviceTokens!.values) {
           try {
-            await sendPushNotification(title, body, token);
+            message = await sendPushNotification(title, body, token);
           } catch (e) {
             if (kDebugMode) {
               print('Failed to send notification: $e');
             }
+            return 'Failed to send notification: $e';
           }
         }
       } else {
         if (kDebugMode) {
           print('User has no device token.');
         }
+        return 'User has no device token.';
       }
     } catch (e) {
       if (kDebugMode) {
         print('Failed to get user: $e');
       }
+      return 'Failed to get user: $e';
     }
+    return message;
   }
 
 
