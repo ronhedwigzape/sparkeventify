@@ -21,8 +21,21 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   List<String> selectedUsers = [];
   List<model.User> allUsers = [];
   List<model.User> filteredUsers = [];
+  String searchQuery = "";
 
   bool get _allUsersSelected => selectedUsers.length == filteredUsers.length;
+  final TextEditingController searchController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    // Listen for changes in text field
+    searchController.addListener(() {
+      setState(() {
+        searchQuery = searchController.text;
+      });
+    });
+  }
 
   bool get _allFilteredUsersSelected {
     List<model.User> filteredUsers = allUsers.where((user) {
@@ -49,6 +62,12 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     });
   }
 
+  @override
+  void dispose() {
+    // Dispose when not needed
+    searchController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -68,11 +87,20 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           return user.userType != 'Admin' &&
               (dropdownUserType == 'All' || user.userType == dropdownUserType) &&
               (dropdownYear == 'All' || (user.profile?.year ?? 'All') == dropdownYear) &&
-              (dropdownSection == 'All' || (user.profile?.section ?? 'All') == dropdownSection);
+              (dropdownSection == 'All' || (user.profile?.section ?? 'All') == dropdownSection) &&
+              (searchQuery.isEmpty || (user.profile?.fullName != null && user.profile!.fullName!.toLowerCase().startsWith(searchQuery.toLowerCase())));
         }).toList();
 
         return Column(
           children: [
+            TextField(
+              controller: searchController,
+              decoration: const InputDecoration(
+                border: OutlineInputBorder(),
+                suffixIcon: Icon(Icons.search),
+                labelText: "Search for users",
+              ),
+            ),
             DropdownButton<String>(
               value: dropdownUserType,
               onChanged: (String? newValue) {
