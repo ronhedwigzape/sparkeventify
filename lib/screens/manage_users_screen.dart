@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:student_event_calendar/services/firebase_notifications.dart';
 import 'package:student_event_calendar/widgets/users_card.dart';
 import '../models/user.dart' as model;
 
@@ -47,13 +48,14 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     });
   }
 
-  void sendNotifications(List<String> selectedUsers, String title, String message) {
+  void sendNotifications(List<String> selectedUsers, String title, String message) async {
     for (String user in selectedUsers) {
       if (kDebugMode) {
         print("Notification sent to User $user");
         print("Title: $title");
         print("Message: $message");
       }
+      await FirebaseNotifications().sendNotificationToUser(user, title, message);
     }
     setState(() {
       selectedUsers.clear();
@@ -138,7 +140,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                     String message = '';
 
                     return AlertDialog(
-                      title: const Text('Send notification'),
+                      title: Text('Send notifications to ${selectedUsers.length} users'),
                       content: Form(
                         key: formKey,
                         child: Column(
@@ -152,8 +154,15 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                                 return null;
                               },
                             ),
+                            const SizedBox(height: 10.0),
                             TextFormField(
-                              decoration: const InputDecoration(labelText: 'Notification message'),
+                              decoration: const InputDecoration(
+                                hintText: 'Notification message',
+                                border: OutlineInputBorder()
+                              ),
+                              keyboardType: TextInputType.multiline,
+                              minLines: 4,
+                              maxLines: null,
                               validator: (value) {
                                 if (value == null || value.isEmpty) return 'Please enter a message.';
                                 message = value;
@@ -181,7 +190,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   },
                 );
               },
-              child: const Text('Send Notifications'),
+              child: Text('Send Notifications (${selectedUsers.length})'),
             ),
             Checkbox(
               value: _allFilteredUsersSelected,
