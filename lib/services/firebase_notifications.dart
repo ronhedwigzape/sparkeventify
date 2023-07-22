@@ -115,7 +115,7 @@ class FirebaseNotifications {
 
     final headers = {
       'content-type': 'application/json',
-      'Authorization': 'Bearer YOUR_SERVER_KEY',
+      'Authorization': 'Bearer AAAAtR0ymdU:APA91bH3hL344H0RDqmi82cs2LvFyGVo_fVnNxQr8l1umWH0eolSmhrkR2Y6bdvuHmMx2lrfPxKT1A0sfLIJjVykcrEXi9PRSKAJsvwALMuB65Dc6zkWapNUbTSJ5ozhd086NUdQAAMX',
     };
 
     final response = await http.post(Uri.parse(postUrl),
@@ -190,6 +190,10 @@ class FirebaseNotifications {
               print('Failed to send notification: $e');
             }
           }
+        }
+      } else {
+        if (kDebugMode) {
+          print('User has no device token.');
         }
       }
     } catch (e) {
