@@ -30,7 +30,7 @@ pickImage(ImageSource source) async {
 Future<Uint8List?> pickDocument() async {
   FilePickerResult? result = await FilePicker.platform.pickFiles(
     type: FileType.custom,
-    allowedExtensions: ['pdf', 'doc', 'xls', 'ppt', 'txt'],
+    allowedExtensions: ['pdf'],
   );
 
   if (result != null) {
@@ -59,7 +59,7 @@ Future<Uint8List> downloadFile(String url) async {
 
 String? getFileExtension(Uint8List uint8list){
   String? mimeStr = lookupMimeType('', headerBytes: uint8list);
-  return extensionFromMime(mimeStr!);
+  return mimeStr != null ? extensionFromMime(mimeStr) : null;
 }
 
 
@@ -76,9 +76,11 @@ Future<void> downloadAndOpenFile(String url, String fileName) async {
   }
 
   if(fileExtension == null) {
-    throw ("Can't determine the file extension");
+    if (kDebugMode) {
+      print("Warning: Can't determine the file extension for file $fileName");
+    }
+    return;  // Stop further execution
   }
-
   if (kIsWeb) {
     // Flutter web code to trigger a download
     final base64 = base64Encode(fileData);
