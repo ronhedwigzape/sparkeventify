@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/services/firebase_notifications.dart';
+import 'package:student_event_calendar/widgets/notification_button.dart';
 import 'package:student_event_calendar/widgets/users_card.dart';
 import '../models/user.dart' as model;
 
@@ -48,19 +49,6 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     });
   }
 
-  void sendNotifications(List<String> selectedUsers, String title, String message) async {
-    for (String user in selectedUsers) {
-      if (kDebugMode) {
-        print("Notification sent to User $user");
-        print("Title: $title");
-        print("Message: $message");
-      }
-      await FirebaseNotifications().sendNotificationToUser(user, title, message);
-    }
-    setState(() {
-      selectedUsers.clear();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -130,68 +118,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 );
               }).toList(),
             ),
-            ElevatedButton(
-              onPressed: () async {
-                showDialog(
-                  context: context,
-                  builder: (BuildContext context) {
-                    final formKey = GlobalKey<FormState>();
-                    String title = '';
-                    String message = '';
-
-                    return AlertDialog(
-                      title: Text('Send notifications to ${selectedUsers.length} users'),
-                      content: Form(
-                        key: formKey,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            TextFormField(
-                              decoration: const InputDecoration(labelText: 'Notification title'),
-                              validator: (value) {
-                                if (value == null || value.isEmpty) return 'Please enter a title.';
-                                title = value;
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 10.0),
-                            TextFormField(
-                              decoration: const InputDecoration(
-                                hintText: 'Notification message',
-                                border: OutlineInputBorder()
-                              ),
-                              keyboardType: TextInputType.multiline,
-                              minLines: 4,
-                              maxLines: null,
-                              validator: (value) {
-                                if (value == null || value.isEmpty) return 'Please enter a message.';
-                                message = value;
-                                return null;
-                              },
-                            ),
-                            TextButton(
-                              child: const Text('Send'),
-                              onPressed: () {
-                                if (formKey.currentState!.validate()) {
-                                  // Close the dialog
-                                  Navigator.of(context).pop();
-                                  // Send the notification
-                                  sendNotifications(selectedUsers, title, message);
-                                  setState(() {
-                                    selectedUsers.clear();
-                                  });
-                                }
-                              },
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                );
-              },
-              child: Text('Send Notifications (${selectedUsers.length})'),
-            ),
+            NotificationButton(selectedUsers: selectedUsers),
             Checkbox(
               value: _allFilteredUsersSelected,
               onChanged: (bool? value) {
