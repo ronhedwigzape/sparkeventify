@@ -5,6 +5,7 @@ import 'package:student_event_calendar/screens/manage_users_screen.dart';
 import 'package:student_event_calendar/screens/post_screen.dart';
 import 'package:student_event_calendar/screens/profile_screen.dart';
 import 'package:student_event_calendar/screens/events_calendar_screen.dart';
+import 'package:student_event_calendar/screens/settings_screen.dart';
 
 // Constant variables for the app
 const webScreenSize = 600;
@@ -25,6 +26,6 @@ List<Widget> homeScreenItems = [
   kIsWeb
       ? const ManageUsersScreen()
       : const Center(child: Text('Personal Events')),
-  kIsWeb ? const Center(child: Text('Settings')) : const ProfileScreen(),
+  kIsWeb ? const SettingsScreen() : const ProfileScreen(),
   const Center(child: Text('Notifications'))
 ];
