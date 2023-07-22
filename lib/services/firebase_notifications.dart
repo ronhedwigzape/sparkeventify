@@ -100,7 +100,7 @@ class FirebaseNotifications {
 
   // Send a push notification to a user
   Future<String> sendPushNotification(String title, String body, String token) async {
-    const postUrl = 'https://fcm.googleapis.com/fcm/send';
+    const postUrl = 'https://fcm.googleapis.com/v1/projects/student-event-calendar-dce10/messages:send';
     String message = 'Some error occured while sending push notification.';
     final data = {
       "notification": {"body": body, "title": title},
@@ -115,7 +115,7 @@ class FirebaseNotifications {
 
     final headers = {
       'content-type': 'application/json',
-      'Authorization': 'key=YOUR_SERVER_KEY',
+      'Authorization': 'Bearer YOUR_SERVER_KEY',
     };
 
     final response = await http.post(Uri.parse(postUrl),
@@ -169,7 +169,7 @@ class FirebaseNotifications {
   }
 
 
-  Future<void> sendNotificationToUser(String userId, String title, String body, String message) async {
+  Future<void> sendNotificationToUser(String userId, String title, String body) async {
     try {
       var userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
       if (!userDoc.exists) {
