@@ -185,7 +185,7 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                                                     padding: const EdgeInsets.all(1.0),
                                                     child: Text(
                                                       event.type,
-                                                      style: const TextStyle(color: Colors.white, fontSize: 12),
+                                                      style: const TextStyle(color: lightColor, fontSize: 12),
                                                     ),
                                                   ),
                                                   backgroundColor: event.type == 'Academic' ? (darkModeOn ? darkModeMaroonColor : lightModeMaroonColor) : (darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),

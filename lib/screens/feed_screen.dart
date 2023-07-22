@@ -55,7 +55,8 @@ class _FeedScreenState extends State<FeedScreen> {
                       event.type == dropdownEventType);
                 }).toList();
 
-                return Column(children: [
+                return Column(
+                  children: [
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
                     child: Row(
