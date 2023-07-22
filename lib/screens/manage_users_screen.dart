@@ -17,6 +17,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   String dropdownYear = 'All';
   String dropdownSection = 'All';
   List<String> selectedUsers = [];
+  bool _checkboxSelected = false;
 
   void selectAllUsers(List<model.User> users) {
     setState(() {
@@ -173,11 +174,14 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
               },
               child: const Text('Send Notifications'),
             ),
-            ElevatedButton(
-              onPressed: () {
-                toggleAllSelected(filteredUsers);
+            Checkbox( //fill color when checkbox is selected
+              value: _checkboxSelected,
+              onChanged: (bool? value) {
+                setState(() {
+                  _checkboxSelected = !_checkboxSelected;
+                  toggleAllSelected(filteredUsers);
+                });
               },
-              child: const Text('Toggle Select All'),
             ),
             Expanded(
               child: ListView.builder(
