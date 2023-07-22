@@ -43,6 +43,7 @@ class _UsersCardState extends State<UsersCard> {
                     Text('Department: ${currentProfile.department ?? 'N/A'}'),
                     Text('Year: ${currentProfile.year ?? 'N/A'}'),
                     Text('Section: ${currentProfile.section ?? 'N/A'}'),
+                    Text('Course: ${currentProfile.course ?? 'N/A'}'),
                   ],
                 ),
               ),

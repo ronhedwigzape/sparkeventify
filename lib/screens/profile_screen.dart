@@ -174,6 +174,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           String phoneNumber = currentUser?.profile!.phoneNumber ?? '';
           String fullName = currentUser?.profile!.fullName ?? '';
           String department = currentUser?.profile!.department ?? '';
+          String course = currentUser?.profile!.course ?? '';
           String year = currentUser?.profile!.year ?? '';
           String section = currentUser?.profile!.section ?? '';
 
@@ -275,10 +276,26 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   const Divider(height: 30, thickness: 2),
                   currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin'
                   ? Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      const Icon(Icons.school),
-                      const SizedBox(width: 20),
-                        Text('Department: $department', style: const TextStyle(fontSize: 16.0))
+                      Flexible(child:
+                          Row(
+                            children: [
+                              const Icon(Icons.school),
+                              const SizedBox(width: 20),
+                              Text('Dept.: $department', style: const TextStyle(fontSize: 16.0))
+                            ],
+                          )
+                      ),
+                      Flexible(child:
+                        Row(
+                          children: [
+                            const Icon(Icons.school),
+                            const SizedBox(width: 20),
+                            Text('Course: $course', style: const TextStyle(fontSize: 16.0))
+                          ],
+                        )
+                      ),
                     ],
                   ): const SizedBox.shrink(),
                   const Divider(height: 30, thickness: 2),
