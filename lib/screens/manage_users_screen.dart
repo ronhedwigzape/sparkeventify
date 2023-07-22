@@ -17,19 +17,27 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   String dropdownYear = 'All';
   String dropdownSection = 'All';
   List<String> selectedUsers = [];
-  bool _checkboxSelected = false;
+  List<model.User> allUsers = [];
+  List<model.User> filteredUsers = [];
 
-  void selectAllUsers(List<model.User> users) {
-    setState(() {
-      List<String> allUserUids = users.map((user) => user.uid).toList();
-      selectedUsers = allUserUids;
-    });
+  bool get _allUsersSelected => selectedUsers.length == filteredUsers.length;
+
+  bool get _allFilteredUsersSelected {
+    List<model.User> filteredUsers = allUsers.where((user) {
+      return user.userType != 'Admin' &&
+          (dropdownUserType == 'All' || user.userType == dropdownUserType) &&
+          (dropdownYear == 'All' || (user.profile?.year ?? 'All') == dropdownYear) &&
+          (dropdownSection == 'All' || (user.profile?.section ?? 'All') == dropdownSection);
+    }).toList();
+    var filteredUserIds = filteredUsers.map((u) => u.uid).toSet();
+    var selectedUserIds = selectedUsers.toSet();
+    return selectedUserIds.containsAll(filteredUserIds);
   }
 
-  void toggleAllSelected(List<model.User> users) {
+  void toggleAllSelected() {
     setState(() {
-      List<String> allUserUids = users.map((user) => user.uid).toList();
-      if (selectedUsers.length == allUserUids.length) {
+      List<String> allUserUids = filteredUsers.map((user) => user.uid).toList();
+      if (_allUsersSelected) {
         // If every user is already selected, clear the selection
         selectedUsers.clear();
       } else {
@@ -64,10 +72,11 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           return const Center(child: CircularProgressIndicator());
         }
 
-        List<model.User> allUsers = snapshot.data!.docs.map((doc) => model.User.fromSnap(doc)).toList();
+        allUsers = snapshot.data!.docs.map((doc) => model.User.fromSnap(doc)).toList();
 
-        List<model.User> filteredUsers = allUsers.where((user) {
-          return (dropdownUserType == 'All' || user.userType == dropdownUserType) &&
+        filteredUsers = allUsers.where((user) {
+          return user.userType != 'Admin' &&
+              (dropdownUserType == 'All' || user.userType == dropdownUserType) &&
               (dropdownYear == 'All' || (user.profile?.year ?? 'All') == dropdownYear) &&
               (dropdownSection == 'All' || (user.profile?.section ?? 'All') == dropdownSection);
         }).toList();
@@ -174,12 +183,11 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
               },
               child: const Text('Send Notifications'),
             ),
-            Checkbox( //fill color when checkbox is selected
-              value: _checkboxSelected,
+            Checkbox(
+              value: _allFilteredUsersSelected,
               onChanged: (bool? value) {
                 setState(() {
-                  _checkboxSelected = !_checkboxSelected;
-                  toggleAllSelected(filteredUsers);
+                  toggleAllSelected();
                 });
               },
             ),
