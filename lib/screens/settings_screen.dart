@@ -45,7 +45,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 },
                 child: Row(
                   children: <Widget>[
-                    Icon(Icons.check_circle, color: darkModeOn ? darkModeGrassColor : lightModeGrassColor),
+                    Icon(Icons.check_circle, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
                     const SizedBox(width: 10),
                     const Text('Yes'),
                   ],
@@ -55,7 +55,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 padding: const EdgeInsets.all(20),
                 child: Row(
                   children: <Widget>[
-                    Icon(Icons.cancel, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
+                    Icon(Icons.cancel, color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
                     const SizedBox(width: 10),
                     const Text('Go Back'),
                   ],
@@ -84,7 +84,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           IconButton(
             onPressed: _signOut,
             icon: Icon(Icons.logout,
-                color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
+                color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
             tooltip: 'Log out',
           ),
         ],

@@ -63,7 +63,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                 automaticallyImplyLeading: false,
                 title: buildAppBarTitle(),
                 elevation: 0.0,
-                backgroundColor: lightModeTertiaryColor,
+                backgroundColor: darkModeOn ? darkColor : lightColor,
                 actions: [
                   buildIconButton(Icons.dashboard, 0, 'Dashboard'),
                   buildIconButton(Icons.add_circle_sharp, 1, 'Post'),

@@ -69,7 +69,7 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                 child: Container(
                   decoration: BoxDecoration(
                       border: Border.all(
-                          color: darkModeOn ? lightColor : darkColor)),
+                          color: darkModeOn ? darkColor : lightColor)),
                   child: TableCalendar(
                     eventLoader: (day) {
                       // Use `eventLoader` to return a list of events for the given day.
@@ -90,13 +90,23 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                               .toLocal(); // Set the time by midnight
                       return isSameDay(_selectedDay, adjustedDay);
                     },
-                    rowHeight: 50,
-                    daysOfWeekHeight: 40.0,
+                    rowHeight: 60,
+                    daysOfWeekHeight: 50.0,
+                    calendarStyle: CalendarStyle(
+                      tableBorder: TableBorder(
+                        verticalInside: BorderSide(
+                          color: darkModeOn ? darkColor : lightColor,
+                        ),
+                        horizontalInside: BorderSide(
+                          color: darkModeOn ? darkColor : lightColor,
+                        ),
+                      )
+                    ),
                     daysOfWeekStyle: DaysOfWeekStyle(
                         decoration: BoxDecoration(
                           color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
                         ),
-                        weekdayStyle: const TextStyle(color: lightModeGreyColor),
+                        weekdayStyle: const TextStyle(color: lightColor),
                         weekendStyle: const TextStyle(color: darkBlueColor)),
                     onDaySelected: (selectedDay, focusedDay) {
                       // Use `selectedDay` to retrieve the selected day.

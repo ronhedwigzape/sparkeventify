@@ -79,7 +79,7 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                       horizontal: 50.0, vertical: 10.0),
                   decoration: BoxDecoration(
                     color: darkModeOn ? darkColor : lightColor,
-                    border: Border.all(color: lightModeTertiaryColor),
+                    border: Border.all(color: secondaryDarkColor),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text('Student'.toUpperCase())),
@@ -94,7 +94,7 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                       horizontal: 50.0, vertical: 10.0),
                   decoration: BoxDecoration(
                     color: darkModeOn ? darkColor : lightColor,
-                    border: Border.all(color: lightModeTertiaryColor),
+                    border: Border.all(color: secondaryDarkColor),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text('Organization Officer'.toUpperCase())),
@@ -109,7 +109,7 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                       horizontal: 50.0, vertical: 10.0),
                   decoration: BoxDecoration(
                     color: darkModeOn ? darkColor : lightColor,
-                    border: Border.all(color: lightModeTertiaryColor),
+                    border: Border.all(color: secondaryDarkColor),
                     borderRadius: BorderRadius.circular(5),
                   ),
                   child: Text('SASO Staff'.toUpperCase())),

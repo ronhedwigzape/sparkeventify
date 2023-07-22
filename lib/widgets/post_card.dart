@@ -55,7 +55,7 @@ class _PostCardState extends State<PostCard> {
             final localTime = tz.TZDateTime.from(datePublished, manila);
 
             return Container(
-              decoration: BoxDecoration(border: Border.all(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor), color: darkModeOn ? darkColor : lightColor),
+              decoration: BoxDecoration(border: Border.all(color: darkModeOn ? secondaryDarkColor : lightColor), color: darkModeOn ? darkColor : lightColor),
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Column(children: <Widget>[
                 Container(

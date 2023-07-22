@@ -130,7 +130,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
               child: Row(
                 children: <Widget>[
                   Icon(Icons.check_circle, 
-                  color: darkModeOn ? darkModeGrassColor : lightModeGrassColor),
+                  color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
                   const SizedBox(width: 10),
                   const Text('Yes'),
                 ],

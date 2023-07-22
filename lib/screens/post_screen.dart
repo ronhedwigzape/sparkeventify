@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/user.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
@@ -8,6 +9,8 @@ import 'package:student_event_calendar/utils/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
+
+import '../providers/darkmode_provider.dart';
 
 class PostScreen extends StatefulWidget {
   const PostScreen({super.key});
@@ -273,6 +276,7 @@ class _PostScreenState extends State<PostScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return FutureBuilder<User>(
       future: currentUser,
       builder: (context, AsyncSnapshot<User> snapshot) {
@@ -414,12 +418,12 @@ class _PostScreenState extends State<PostScreen> {
                                   alignment: Alignment.center,
                                   padding: const EdgeInsets.symmetric(
                                       vertical: 16.0),
-                                  decoration: const ShapeDecoration(
-                                    shape: RoundedRectangleBorder(
+                                  decoration: ShapeDecoration(
+                                    shape: const RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(
                                           Radius.circular(5.0)),
                                     ),
-                                    color: lightModeBlueColor,
+                                    color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
                                   ),
                                   child: _isLoading
                                       ? const Center(
