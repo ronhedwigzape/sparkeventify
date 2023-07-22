@@ -311,8 +311,7 @@ class _PostScreenState extends State<PostScreen> {
                                 child: DropdownButtonFormField<String>(
                                   decoration: const InputDecoration(
                                     prefixIcon: Icon(Icons.event),
-                                    filled: true,
-                                    hintText: 'Select announcement type*',
+                                    labelText: 'Select announcement type*',
                                   ),
                                   value: _eventTypeController.text.isEmpty
                                       ? null
@@ -362,7 +361,7 @@ class _PostScreenState extends State<PostScreen> {
                             Flexible(
                               child: TextFieldInput(
                                 textEditingController: _eventTitleController,
-                                hintText: 'Title*',
+                                labelText: 'Title*',
                                 textInputType: TextInputType.text,
                               ),
                             ),
@@ -370,7 +369,7 @@ class _PostScreenState extends State<PostScreen> {
                             Flexible(
                               child: TextFieldInput(
                                 textEditingController: _eventVenueController,
-                                hintText: 'Venue (Optional)',
+                                labelText: 'Venue (Optional)',
                                 textInputType: TextInputType.text,
                               ),
                             )
@@ -378,7 +377,7 @@ class _PostScreenState extends State<PostScreen> {
                           const SizedBox(height: 10.0),
                           TextFieldInput(
                             textEditingController: _eventDescriptionsController,
-                            hintText: 'Description*',
+                            labelText: 'Description*',
                             textInputType: TextInputType.text,
                           ),
                           const SizedBox(height: 10.0),
@@ -386,7 +385,7 @@ class _PostScreenState extends State<PostScreen> {
                             Flexible(
                               child: TextFieldInput(
                                 textEditingController: _eventDateController,
-                                hintText: 'Select Date*',
+                                labelText: 'Select Date*',
                                 textInputType: TextInputType.datetime,
                                 isDate: true,
                               ),
@@ -395,7 +394,7 @@ class _PostScreenState extends State<PostScreen> {
                             Flexible(
                               child: TextFieldInput(
                                 textEditingController: _eventTimeController,
-                                hintText: 'Select Time*',
+                                labelText: 'Select Time*',
                                 textInputType: TextInputType.datetime,
                                 isTime: true,
                               ),
@@ -404,7 +403,7 @@ class _PostScreenState extends State<PostScreen> {
                           const SizedBox(height: 10.0),
                           TextFieldInput(
                             textEditingController: _eventParticipantsController,
-                            hintText:
+                            labelText:
                                 'Participants* (Students, Teacher, etc.) Separate Participants with a comma (,)',
                             textInputType: TextInputType.text,
                           ),

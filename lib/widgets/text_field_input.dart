@@ -6,7 +6,7 @@ class TextFieldInput extends StatefulWidget {
   // Define the properties of the widget
   final TextEditingController textEditingController; // Controller for the TextField
   final bool isPass; // Determines if the TextField is a password field
-  final String hintText; // Hint text for the TextField
+  final String labelText; // Hint text for the TextField
   final TextInputType textInputType; // Input type for the TextField
   final bool enabled; // Determines if the TextField is enabled
   final bool isDate; // Determines if the TextField is a date picker
@@ -22,7 +22,7 @@ class TextFieldInput extends StatefulWidget {
     this.width = double.infinity,
     required this.textEditingController,
     this.isPass = false,
-    required this.hintText,
+    required this.labelText,
     required this.textInputType,
     this.enabled = true,
     this.isDate = false,
@@ -53,11 +53,10 @@ class _TextFieldInputState extends State<TextFieldInput> {
       child: TextFormField(
         controller: widget.textEditingController, // Set the controller
         decoration: InputDecoration( // Set the decoration for the TextField
-          hintText: widget.hintText, // Set the hint text
+          labelText: widget.labelText, // Set the hint text
           border: inputBorder, // Set the border
           focusedBorder: inputBorder, // Set the border when the TextField is focused
           enabledBorder: inputBorder, // Set the border when the TextField is enabled
-          filled: true, // Fill the TextField
           contentPadding: const EdgeInsets.all(8), // Set the padding
           suffixIcon: widget.isPass // Set the suffix icon
               ? IconButton(

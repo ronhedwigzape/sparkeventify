@@ -149,14 +149,14 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
             // text field input for username
             TextFieldInput(
               textEditingController: _emailController,
-              hintText: 'Enter your email address',
+              labelText: 'Enter your email address',
               textInputType: TextInputType.emailAddress,
             ),
             const SizedBox(height: 20.0),
             // text field input for full name
             TextFieldInput(
               textEditingController: _fullNameController,
-              hintText: 'Enter your full name',
+              labelText: 'Enter your full name',
               textInputType: TextInputType.text,
             ),
             // text field input for phone number
@@ -174,7 +174,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
                 Expanded(
                   child: TextFieldInput(
                     textEditingController: _phoneNumberController,
-                    hintText: '9123456789',
+                    labelText: '9123456789',
                     textInputType: TextInputType.phone,
                   ),
                 ),
@@ -184,7 +184,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
             // text field input for password
             TextFieldInput(
               textEditingController: _passwordController,
-              hintText: 'Enter your password',
+              labelText: 'Enter your password',
               textInputType: TextInputType.visiblePassword,
               isPass: true,
             ),
