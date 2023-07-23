@@ -17,7 +17,7 @@ class FireStoreEventMethods {
     Uint8List? document,
     DateTime date,
     DateTime time,
-    List participants,
+    Map<String, List<dynamic>> participants,
     String venue,
     String type,
     String status,

@@ -9,7 +9,7 @@ class Event {
   String createdBy;
   String? image;
   String? document;
-  List<dynamic>? participants;
+  Map<String, dynamic>? participants;
   String? venue;
   String type;
   String status;
@@ -60,7 +60,7 @@ class Event {
       createdBy: snapshot['createdBy'],
       image: snapshot['image'],
       document: snapshot['document'],
-      participants: snapshot['participants'],
+      participants: Map<String, List<dynamic>>.from(snapshot['participants']),
       venue: snapshot['venue'],
       type: snapshot['type'],
       status: snapshot['status'],

@@ -180,8 +180,8 @@ class _PostScreenState extends State<PostScreen> {
         DateFormat time12Format = DateFormat('h:mm a');
         DateTime parsedTime12 = time12Format.parse(pickedTime);
         // Split the participants string into a list
-        List<dynamic> participants =
-            _eventParticipantsController.text.split(', ');
+        Map<String, List<dynamic>> participants =
+            _eventParticipantsController.text.split(', ') as Map<String, List<dynamic>>;
         // Add the event to the database
         String response = await FireStoreEventMethods().postEvent(
             _eventTitleController.text,
