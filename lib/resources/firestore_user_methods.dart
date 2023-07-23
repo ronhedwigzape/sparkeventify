@@ -1,11 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
+import 'package:cloud_functions/cloud_functions.dart';
 
 class FireStoreUserMethods {
   // Reference to the 'users' collection in Firestore
   final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users');
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFunctions functions = FirebaseFunctions.instance;
 
   Future<model.User?> getCurrentUserData() async {
     model.User? user;
@@ -54,6 +57,20 @@ class FireStoreUserMethods {
     model.User user = model.User.fromSnap(userSnapshot);
     // Return the User object
     return user;
+  }
+
+  Future<void> deleteUser(String uid) async {
+    try {
+      final HttpsCallable callable = functions.httpsCallable('deleteUser');
+      await callable.call(<String, dynamic>{'uid': uid});
+      if (kDebugMode) {
+        print('User deleted successfully');
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error deleting user: $e}');
+      }
+    }
   }
 
 }
