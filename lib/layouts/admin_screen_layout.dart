@@ -68,7 +68,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                   buildIconButton(Icons.dashboard, 0, 'Dashboard'),
                   buildIconButton(Icons.add_circle_sharp, 1, 'Post'),
                   buildIconButton(
-                      Icons.event_note, 2, 'Edit Events/Announcement'),
+                      Icons.event_note, 2, 'Edit Events'),
                   buildIconButton(
                       Icons.supervised_user_circle_sharp, 3, 'Users'),
                   buildIconButton(Icons.settings, 4, 'Settings'),

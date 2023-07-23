@@ -9,7 +9,6 @@ import 'package:student_event_calendar/utils/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
-
 import '../providers/darkmode_provider.dart';
 
 class PostScreen extends StatefulWidget {
@@ -27,14 +26,16 @@ class _PostScreenState extends State<PostScreen> {
   final TextEditingController _eventVenueController = TextEditingController();
   final TextEditingController _eventDateController = TextEditingController();
   final TextEditingController _eventTimeController = TextEditingController();
-  final TextEditingController _eventParticipantsController =
-      TextEditingController();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
   Future<User> currentUser = AuthMethods().getUserDetails();
   Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
+  List<String> courseParticipants = ['BSCS', 'BSIT', 'BSEE'];
+  List<String> departmentParticipants = ['CCS', 'EES'];
+  List<String> staffParticipants = ['Faculty', 'Dean'];
+  Map<String, List<String>> selectedParticipants = {'course': [], 'department': [], 'staff': []};
 
   void _selectImage(BuildContext context) async {
     return showDialog(
@@ -167,7 +168,7 @@ class _PostScreenState extends State<PostScreen> {
           _eventDescriptionsController.text.isNotEmpty &&
           _eventDateController.text.isNotEmpty &&
           _eventTimeController.text.isNotEmpty &&
-          _eventParticipantsController.text.isNotEmpty) {
+          selectedParticipants.isNotEmpty) {
         // Get the date and time from the text controllers
         String pickedDate = _eventDateController.text;
         String pickedTime = _eventTimeController.text;
@@ -179,9 +180,6 @@ class _PostScreenState extends State<PostScreen> {
         // Parse 12-hour format time string to DateTime
         DateFormat time12Format = DateFormat('h:mm a');
         DateTime parsedTime12 = time12Format.parse(pickedTime);
-        // Split the participants string into a list
-        Map<String, List<dynamic>> participants =
-            _eventParticipantsController.text.split(', ') as Map<String, List<dynamic>>;
         // Add the event to the database
         String response = await FireStoreEventMethods().postEvent(
             _eventTitleController.text,
@@ -191,7 +189,7 @@ class _PostScreenState extends State<PostScreen> {
             _documentFile,
             datePart,
             parsedTime12,
-            participants,
+            selectedParticipants,
             _eventVenueController.text,
             _eventTypeController.text,
             'Upcoming');
@@ -258,7 +256,6 @@ class _PostScreenState extends State<PostScreen> {
       _eventVenueController.clear();
       _eventDateController.clear();
       _eventTimeController.clear();
-      _eventParticipantsController.clear();
     });
   }
 
@@ -271,7 +268,6 @@ class _PostScreenState extends State<PostScreen> {
     _eventVenueController.dispose();
     _eventDateController.dispose();
     _eventTimeController.dispose();
-    _eventParticipantsController.dispose();
   }
 
   @override
@@ -291,156 +287,192 @@ class _PostScreenState extends State<PostScreen> {
                   key: _scaffoldMessengerKey,
                   child: Scaffold(
                     body: Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 16.0),
-                            child: Text(
-                              'Post an Announcement',
-                              style: TextStyle(
-                                fontSize: 20.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(height: 10.0),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: DropdownButtonFormField<String>(
-                                  decoration: const InputDecoration(
-                                    prefixIcon: Icon(Icons.event),
-                                    labelText: 'Select announcement type*',
-                                  ),
-                                  value: _eventTypeController.text.isEmpty
-                                      ? null
-                                      : _eventTypeController.text,
-                                  items: <String>['Academic', 'Non-academic']
-                                      .map((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Row(
-                                        children: <Widget>[
-                                          const Icon(Icons.check),
-                                          const SizedBox(width: 10),
-                                          Text(value),
-                                        ],
-                                      ),
-                                    );
-                                  }).toList(),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      _eventTypeController.text = newValue!;
-                                    });
-                                  },
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20.0),
-                                child: IconButton(
-                                  onPressed: () => _selectImage(context),
-                                  icon: const Icon(Icons.add_a_photo),
-                                  tooltip: 'Add a photo',
-                                ),
-                              ),
-                              Padding(
-                                padding: const EdgeInsets.symmetric(
-                                    horizontal: 20.0),
-                                child: IconButton(
-                                  onPressed: () => _selectDocument(context),
-                                  icon: const Icon(Icons.file_present_rounded),
-                                  tooltip: 'Add a document',
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10.0),
-                          Row(children: [
-                            Flexible(
-                              child: TextFieldInput(
-                                textEditingController: _eventTitleController,
-                                labelText: 'Title*',
-                                textInputType: TextInputType.text,
-                              ),
-                            ),
-                            const SizedBox(width: 10.0),
-                            Flexible(
-                              child: TextFieldInput(
-                                textEditingController: _eventVenueController,
-                                labelText: 'Venue (Optional)',
-                                textInputType: TextInputType.text,
-                              ),
-                            )
-                          ]),
-                          const SizedBox(height: 10.0),
-                          TextFieldInput(
-                            textEditingController: _eventDescriptionsController,
-                            labelText: 'Description*',
-                            textInputType: TextInputType.text,
-                          ),
-                          const SizedBox(height: 10.0),
-                          Row(children: [
-                            Flexible(
-                              child: TextFieldInput(
-                                textEditingController: _eventDateController,
-                                labelText: 'Select Date*',
-                                textInputType: TextInputType.datetime,
-                                isDate: true,
-                              ),
-                            ),
-                            const SizedBox(width: 10.0),
-                            Flexible(
-                              child: TextFieldInput(
-                                textEditingController: _eventTimeController,
-                                labelText: 'Select Time*',
-                                textInputType: TextInputType.datetime,
-                                isTime: true,
-                              ),
-                            )
-                          ]),
-                          const SizedBox(height: 10.0),
-                          TextFieldInput(
-                            textEditingController: _eventParticipantsController,
-                            labelText:
-                                'Participants* (Students, Teacher, etc.) Separate Participants with a comma (,)',
-                            textInputType: TextInputType.text,
-                          ),
-                          const SizedBox(height: 10.0),
-                          // participants (Checkbox that adds to a local array of participants)
-                          Center(
-                            child: InkWell(
-                              onTap: _post,
-                              child: Container(
-                                  width: double.infinity,
-                                  alignment: Alignment.center,
-                                  padding: const EdgeInsets.symmetric(
-                                      vertical: 16.0),
-                                  decoration: ShapeDecoration(
-                                    shape: const RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.all(
-                                          Radius.circular(5.0)),
+                      child: SingleChildScrollView(
+                        child: Card(
+                          child: Padding(
+                            padding: const EdgeInsets.all(30.0),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                const Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 16.0),
+                                  child: Text(
+                                    'Post an Announcement',
+                                    style: TextStyle(
+                                      fontSize: 32.0,
+                                      fontWeight: FontWeight.bold,
                                     ),
-                                    color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
                                   ),
-                                  child: _isLoading
-                                      ? const Center(
-                                          child: CircularProgressIndicator(
-                                          valueColor:
-                                              AlwaysStoppedAnimation<Color>(
-                                                  lightColor),
-                                        ))
-                                      : const Text(
-                                          'Create a New Announcement',
-                                          style: TextStyle(
-                                            color: lightColor,
-                                            fontWeight: FontWeight.bold,
+                                ),
+                                const SizedBox(height: 10.0),
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: DropdownButtonFormField<String>(
+                                        decoration: const InputDecoration(
+                                          prefixIcon: Icon(Icons.event),
+                                          labelText: 'Select announcement type*',
+                                        ),
+                                        value: _eventTypeController.text.isEmpty
+                                            ? null
+                                            : _eventTypeController.text,
+                                        items: <String>['Academic', 'Non-academic']
+                                            .map((String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Row(
+                                              children: <Widget>[
+                                                const Icon(Icons.check),
+                                                const SizedBox(width: 10),
+                                                Text(value),
+                                              ],
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            _eventTypeController.text = newValue!;
+                                          });
+                                        },
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20.0),
+                                      child: IconButton(
+                                        onPressed: () => _selectImage(context),
+                                        icon: const Icon(Icons.add_a_photo),
+                                        tooltip: 'Add a photo',
+                                      ),
+                                    ),
+                                    Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 20.0),
+                                      child: IconButton(
+                                        onPressed: () => _selectDocument(context),
+                                        icon: const Icon(Icons.file_present_rounded),
+                                        tooltip: 'Add a document',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 10.0),
+                                Row(children: [
+                                  Flexible(
+                                    child: TextFieldInput(
+                                      textEditingController: _eventTitleController,
+                                      labelText: 'Title*',
+                                      textInputType: TextInputType.text,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10.0),
+                                  Flexible(
+                                    child: TextFieldInput(
+                                      textEditingController: _eventVenueController,
+                                      labelText: 'Venue (Optional)',
+                                      textInputType: TextInputType.text,
+                                    ),
+                                  )
+                                ]),
+                                const SizedBox(height: 10.0),
+                                TextFieldInput(
+                                  textEditingController: _eventDescriptionsController,
+                                  labelText: 'Description*',
+                                  textInputType: TextInputType.text,
+                                ),
+                                const SizedBox(height: 10.0),
+                                Row(children: [
+                                  Flexible(
+                                    child: TextFieldInput(
+                                      textEditingController: _eventDateController,
+                                      labelText: 'Select Date*',
+                                      textInputType: TextInputType.datetime,
+                                      isDate: true,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 10.0),
+                                  Flexible(
+                                    child: TextFieldInput(
+                                      textEditingController: _eventTimeController,
+                                      labelText: 'Select Time*',
+                                      textInputType: TextInputType.datetime,
+                                      isTime: true,
+                                    ),
+                                  )
+                                ]),
+                                const SizedBox(height: 10.0),
+                                Padding(
+                                  padding: const EdgeInsets.all(20.0),
+                                  child: SingleChildScrollView(
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment: CrossAxisAlignment.center,
+                                      children: [
+                                        const Flexible(
+                                            child: Center(
+                                                child: Padding(
+                                                  padding: EdgeInsets.all(10.0),
+                                                  child: Text(
+                                                    'Participants',
+                                                    style: TextStyle(
+                                                        fontSize: 30,
+                                                        fontWeight: FontWeight.bold
+                                                    )),
+                                                ))),
+                                        Flexible(
+                                          fit: FlexFit.loose,
+                                          child: Row(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              Expanded(child: _buildParticipant('Course', courseParticipants)),
+                                              Expanded(child: _buildParticipant('Department', departmentParticipants)),
+                                              Expanded(child: _buildParticipant('Staff', staffParticipants)),
+                                            ],
                                           ),
-                                        )),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                const SizedBox(height: 10.0),
+                                // participants (Checkbox that adds to a local array of participants)
+                                Center(
+                                  child: InkWell(
+                                    onTap: _post,
+                                    child: Container(
+                                        width: double.infinity,
+                                        alignment: Alignment.center,
+                                        padding: const EdgeInsets.symmetric(
+                                            vertical: 16.0),
+                                        decoration: ShapeDecoration(
+                                          shape: const RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.all(
+                                                Radius.circular(5.0)),
+                                          ),
+                                          color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                                        ),
+                                        child: _isLoading
+                                            ? const Center(
+                                                child: CircularProgressIndicator(
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<Color>(
+                                                        lightColor),
+                                              ))
+                                            : const Text(
+                                                'Create a New Announcement',
+                                                style: TextStyle(
+                                                  color: lightColor,
+                                                  fontWeight: FontWeight.bold,
+                                                ),
+                                              )),
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
-                        ],
+                        ),
                       ),
                     ),
                   ),
@@ -450,4 +482,33 @@ class _PostScreenState extends State<PostScreen> {
       },
     );
   }
+
+  Column _buildParticipant(String type, List<String> participants) {
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            type,
+            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
+        ), ...participants.map(
+              (participant) => CheckboxListTile(
+            title: Text(participant),
+            value: selectedParticipants[type.toLowerCase()]?.contains(participant),
+            onChanged: (bool? value) {
+              setState(() {
+                if (value!) {
+                  selectedParticipants[type.toLowerCase()]?.add(participant);
+                } else {
+                  selectedParticipants[type.toLowerCase()]?.remove(participant);
+                }
+              });
+            },
+          ),
+        ).toList(),
+      ],
+    );
+  }
 }
+

@@ -91,91 +91,112 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
               (searchQuery.isEmpty || (user.profile?.fullName != null && user.profile!.fullName!.toLowerCase().startsWith(searchQuery.toLowerCase())));
         }).toList();
 
-        return Column(
-          children: [
-            TextField(
-              controller: searchController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                suffixIcon: Icon(Icons.search),
-                labelText: "Search for users",
-              ),
-            ),
-            DropdownButton<String>(
-              value: dropdownUserType,
-              onChanged: (String? newValue) {
-                setState(() {
-                  dropdownUserType = newValue!;
-                });
-              },
-              items: <String>['All', 'Student', 'Officer', 'Staff']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            DropdownButton<String>(
-              value: dropdownYear,
-              onChanged: (String? newValue) {
-                setState(() {
-                  dropdownYear = newValue!;
-                });
-              },
-              items: <String>['All', '1', '2', '3', '4']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            DropdownButton<String>(
-              value: dropdownSection,
-              onChanged: (String? newValue) {
-                setState(() {
-                  dropdownSection = newValue!;
-                });
-              },
-              items: <String>['All', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            NotificationButton(selectedUsers: selectedUsers),
-            Checkbox(
-              value: _allFilteredUsersSelected,
-              onChanged: (bool? value) {
-                setState(() {
-                  toggleAllSelected();
-                });
-              },
-            ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: filteredUsers.length,
-                itemBuilder: (context, index) {
-                  return UsersCard(
-                    user: filteredUsers[index],
-                    selectedUsers: selectedUsers,
-                    onSelectedChanged: (uid) {
-                      setState(() {
-                        if (selectedUsers.contains(uid)) {
-                          selectedUsers.remove(uid);
-                        } else {
-                          selectedUsers.add(uid);
-                        }
-                      });
+        return SizedBox(
+          height: MediaQuery.of(context).size.height,
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  TextField(
+                    controller: searchController,
+                    decoration: const InputDecoration(
+                      border: OutlineInputBorder(),
+                      suffixIcon: Icon(Icons.search),
+                      labelText: "Search for users",
+                    ),
+                  ),
+                  Flexible(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      Flexible(
+                        child: DropdownButton<String>(
+                          value: dropdownUserType,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              dropdownUserType = newValue!;
+                            });
+                          },
+                          items: <String>['All', 'Student', 'Officer', 'Staff']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      Flexible(
+                        child: DropdownButton<String>(
+                          value: dropdownYear,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              dropdownYear = newValue!;
+                            });
+                          },
+                          items: <String>['All', '1', '2', '3', '4']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      Flexible(
+                        child: DropdownButton<String>(
+                          value: dropdownSection,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              dropdownSection = newValue!;
+                            });
+                          },
+                          items: <String>['All', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                      NotificationButton(selectedUsers: selectedUsers),
+                      Checkbox(
+                        value: _allFilteredUsersSelected,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            toggleAllSelected();
+                          });
+                        },
+                      ),
+                    ],
+                  )),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: filteredUsers.length,
+                    itemBuilder: (context, index) {
+                      return UsersCard(
+                        user: filteredUsers[index],
+                        selectedUsers: selectedUsers,
+                        onSelectedChanged: (uid) {
+                          setState(() {
+                            if (selectedUsers.contains(uid)) {
+                              selectedUsers.remove(uid);
+                            } else {
+                              selectedUsers.add(uid);
+                            }
+                          });
+                        },
+                      );
                     },
-                  );
-                },
+                  ),
+                ],
               ),
             ),
-          ],
+          ),
         );
       },
     );

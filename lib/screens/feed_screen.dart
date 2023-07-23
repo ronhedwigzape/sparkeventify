@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/post_card.dart';
@@ -62,7 +63,7 @@ class _FeedScreenState extends State<FeedScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        const Flexible(child: Text('Feeds', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24.0),)),
+                        const Flexible(child: Text(kIsWeb ? 'Edit Events' : 'Feed Screen', style: TextStyle(fontWeight: FontWeight.bold, fontSize: kIsWeb ? 32.0 : 24.0),)),
                         Flexible(
                           child: DropdownButton<String>(
                             value: dropdownEventType,
