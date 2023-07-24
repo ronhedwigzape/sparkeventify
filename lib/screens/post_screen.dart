@@ -232,6 +232,7 @@ class _PostScreenState extends State<PostScreen> {
     });
     showSnackBar('Post uploaded successfully', context);
     clearInputs();
+    clearSelections();
   }
 
   void onPostFailure(String message) {
@@ -244,6 +245,15 @@ class _PostScreenState extends State<PostScreen> {
   void showSnackBar(String message, BuildContext context) {
     final snackBar = SnackBar(content: Text(message));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
+
+  void clearSelections() {
+    // clear selected participants
+    setState(() {
+      selectedParticipants.forEach((key, value) {
+        selectedParticipants[key] = [];
+      });
+    });
   }
 
   void clearInputs() {
@@ -302,7 +312,7 @@ class _PostScreenState extends State<PostScreen> {
                             padding: const EdgeInsets.all(kIsWeb ? 8.0 : 2),
                             child: Card(
                               child: Padding(
-                                padding: const EdgeInsets.all( kIsWeb ? 30.0 : 5),
+                                padding: kIsWeb ? const EdgeInsets.all(30.0) : const EdgeInsets.symmetric(horizontal: 5),
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
