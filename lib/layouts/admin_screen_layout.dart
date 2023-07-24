@@ -67,16 +67,14 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                 actions: [
                   buildIconButton(Icons.dashboard, 0, 'Dashboard'),
                   buildIconButton(Icons.add_circle_sharp, 1, 'Post'),
-                  buildIconButton(
-                      Icons.event_note, 2, 'Edit Events'),
-                  buildIconButton(
-                      Icons.supervised_user_circle_sharp, 3, 'Users'),
+                  buildIconButton(Icons.feed, 2, 'Edit Events'),
+                  buildIconButton(Icons.supervised_user_circle_sharp, 3, 'Users'),
                   buildIconButton(Icons.settings, 4, 'Settings'),
                   Row(
                     children: [
                       Padding(
                         padding: const EdgeInsets.fromLTRB(
-                            30.0, 7.5, 5.0, 7.5),
+                            40.0, 7.5, 5.0, 7.5),
                         child: CircleAvatar(
                           radius: 13,
                           backgroundImage: NetworkImage(currentUser
@@ -86,7 +84,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(
-                            5.0, 7.5, 30.0, 7.5),
+                            5.0, 7.5, 50.0, 7.5),
                         child: Text(
                           currentUser?.profile?.fullName ?? '',
                           style: const TextStyle(
@@ -139,7 +137,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
       icon: Icon(
         iconData,
         color: _page == pageIndex ?
-           (darkModeOn ? darkModePrimaryColor :  lightModePrimaryColor ) : 
+           (darkModeOn ? darkModePrimaryColor :  lightModePrimaryColor ) :
           (darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),
       ),
       tooltip: tooltip,
