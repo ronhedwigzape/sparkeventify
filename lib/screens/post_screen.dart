@@ -32,8 +32,8 @@ class _PostScreenState extends State<PostScreen> {
   Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
-  List<String> courseParticipants = ['BSCS', 'BSIT', 'BSEE'];
-  List<String> departmentParticipants = ['CCS', 'EES'];
+  List<String> courseParticipants = ['BSCS', 'BSIT', 'BSN'];
+  List<String> departmentParticipants = ['CCS', 'CHS'];
   List<String> staffParticipants = ['Faculty', 'Dean'];
   Map<String, List<String>> selectedParticipants = {'course': [], 'department': [], 'staff': []};
 
