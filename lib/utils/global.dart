@@ -6,6 +6,8 @@ import 'package:student_event_calendar/screens/post_screen.dart';
 import 'package:student_event_calendar/screens/profile_screen.dart';
 import 'package:student_event_calendar/screens/events_calendar_screen.dart';
 import 'package:student_event_calendar/screens/settings_screen.dart';
+import '../resources/firestore_user_methods.dart';
+import 'package:student_event_calendar/models/user.dart' as model;
 
 // Constant variables for the app
 const webScreenSize = 600;
@@ -25,7 +27,22 @@ List<Widget> homeScreenItems = [
       : const Center(child: Text('Feedbacks')),
   kIsWeb
       ? const ManageUsersScreen()
-      : const Center(child: Text('Personal Events')),
+      : FutureBuilder(
+        future: FireStoreUserMethods().getCurrentUserData(),
+        builder: (context, AsyncSnapshot<model.User?> snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            } else {
+              if (snapshot.data?.userType == 'Staff') {
+                return const PostScreen();
+              } else {
+                return const Center(child: Text('Personal Events'));
+              }
+            }
+          }
+        ),
   kIsWeb ? const SettingsScreen() : const ProfileScreen(),
   const Center(child: Text('Notifications'))
 ];

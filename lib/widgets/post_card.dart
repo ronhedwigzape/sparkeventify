@@ -134,7 +134,7 @@ class _PostCardState extends State<PostCard> {
                                       TextSpan(
                                         children: <TextSpan>[
                                           TextSpan(
-                                            text: 'Are you sure you want to delete this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'} forever?'
+                                            text: 'Are you sure you want to delete this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'} forever?',
                                           ),
                                           const TextSpan(
                                             text: '\nThis action cannot be undone.',
@@ -146,13 +146,13 @@ class _PostCardState extends State<PostCard> {
                                     titleTextStyle: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
-                                      color: darkModeOn ? lightColor : darkColor),
+                                      color: darkModeOn ? darkColor : lightColor),
                                     backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
                                     automaticallyImplyLeading: false,
                                     actions: [
                                       IconButton(
                                         onPressed: () => Navigator.of(context).pop(),
-                                        icon: Icon(Icons.close, color: darkModeOn ? lightColor : darkColor),
+                                        icon: Icon(Icons.close, color: darkModeOn ? darkColor : lightColor),
                                       )
                                     ],
                                   ),
