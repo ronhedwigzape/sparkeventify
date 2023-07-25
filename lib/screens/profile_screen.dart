@@ -298,7 +298,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ],
                   ): const SizedBox.shrink(),
-                  const Divider(height: 30, thickness: 2),
+                  currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin' ? const Divider(height: 30, thickness: 2) : const SizedBox.shrink(),
                   currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin'
                   ? Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
