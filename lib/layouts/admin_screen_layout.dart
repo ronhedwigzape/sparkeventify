@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/user.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
-import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
@@ -151,7 +150,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
       child: PageView(
         controller: pageController,
         onPageChanged: onPageChanged,
-        physics: const AlwaysScrollableScrollPhysics(),
+        physics: const NeverScrollableScrollPhysics(),
         children: homeScreenItems,
       ),
     );
