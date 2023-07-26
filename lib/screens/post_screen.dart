@@ -232,7 +232,6 @@ class _PostScreenState extends State<PostScreen> {
     });
     showSnackBar('Post uploaded successfully', context);
     clearInputs();
-    clearSelections();
   }
 
   void onPostFailure(String message) {
@@ -247,15 +246,7 @@ class _PostScreenState extends State<PostScreen> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
-  void clearSelections() {
-    // clear selected participants
-    setState(() {
-      selectedParticipants.forEach((key, value) {
-        selectedParticipants[key] = [];
-      });
-    });
-  }
-
+  // Clears input field
   void clearInputs() {
     setState(() {
       _imageFile = null;
@@ -266,9 +257,13 @@ class _PostScreenState extends State<PostScreen> {
       _eventVenueController.clear();
       _eventDateController.clear();
       _eventTimeController.clear();
+      selectedParticipants.forEach((key, value) {
+        selectedParticipants[key] = [];
+      });
     });
   }
 
+  // Disposing after changing
   @override
   void dispose() {
     super.dispose();
