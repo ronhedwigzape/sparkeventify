@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
+import 'package:student_event_calendar/screens/report_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../widgets/event_dialog.dart';
@@ -61,6 +62,27 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
+                      kIsWeb ? Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          TextButton(
+                            child: const Text('Generate Report'),
+                            onPressed: () async {
+                              List<Event> currentMonthEvents = [];
+                              _events.forEach((eventDate, eventList) {
+                                if (eventDate.month == _focusedDay.month) {
+                                  currentMonthEvents.addAll(eventList);
+                                }
+                              });
+                              currentMonthEvents.sort((a, b) => a.date.compareTo(b.date));
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => ReportScreen(events: currentMonthEvents)),
+                              );
+                            },
+                          ),
+                        ],
+                      ) : const SizedBox.shrink(),
                       const Padding(
                         padding: EdgeInsets.symmetric(vertical: 10.0),
                         child: Text('Calendar of Events',

@@ -63,7 +63,7 @@ class _FeedScreenState extends State<FeedScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.spaceAround,
                       children: [
-                        const Flexible(child: Text(kIsWeb ? 'Edit Events' : 'Feed Screen', style: TextStyle(fontWeight: FontWeight.bold, fontSize: kIsWeb ? 32.0 : 24.0),)),
+                        const Flexible(child: Text(kIsWeb ? 'Edit Events' : 'Feed', style: TextStyle(fontWeight: FontWeight.bold, fontSize: kIsWeb ? 32.0 : 24.0),)),
                         Flexible(
                           child: DropdownButton<String>(
                             value: dropdownEventType,

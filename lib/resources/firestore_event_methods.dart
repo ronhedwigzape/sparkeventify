@@ -105,27 +105,15 @@ class FireStoreEventMethods {
   Future<Map<DateTime, List<Event>>> getEventsByDate() async {
     Map<DateTime, List<Event>> eventMap = {};
     QuerySnapshot snapshot = await _eventsCollection.get();
-    // if (kDebugMode) {
-    //   print('Snapshot: $snapshot');
-    // }
     if (snapshot.docs.isNotEmpty) {
       for (var doc in snapshot.docs) {
         Event event = await Event.fromSnap(doc);
-        // if (kDebugMode) {
-        //   print('Event: $event');
-        // }
         DateTime eventDate =
             DateTime(event.date.year, event.date.month, event.date.day, 0, 0, 0)
                 .toLocal();
         if (eventMap[eventDate] == null) eventMap[eventDate] = [];
         eventMap[eventDate]!.add(event);
-        // if (kDebugMode) {
-        //   print('Event map: $eventMap');
-        // }
       }
-    }
-    if (kDebugMode) {
-      print(eventMap);
     }
     return eventMap;
   }
