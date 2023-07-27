@@ -12,7 +12,7 @@ class CSPCLogo extends StatelessWidget {
   });
   final double height;
 
-  // Build method for the widget
+// Build method for the widget
   @override
   Widget build(BuildContext context) {
     // Use a FutureBuilder to handle the asynchronous loading of the image
@@ -29,16 +29,17 @@ class CSPCLogo extends StatelessWidget {
               height: height.toDouble(), // Set the height of the image
             );
           } else {
-            // If the data is null, return a Text widget indicating an error
-            return const Text('Error loading image');
+            // If the data is null, return an empty widget
+            return const SizedBox.shrink();
           }
         } else {
-          // If the Future is not complete, return a CircularProgressIndicator
-          return const CircularProgressIndicator();
+          // If the Future is not complete, return an empty widget
+          return const SizedBox.shrink();
         }
       },
     );
   }
+
 
   // Method to load the image
   Future<Uint8List> loadImage() async {

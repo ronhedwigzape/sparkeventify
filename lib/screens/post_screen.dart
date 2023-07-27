@@ -327,10 +327,11 @@ class _PostScreenState extends State<PostScreen> {
                                        child: Padding(
                                          padding: EdgeInsets.symmetric(vertical: 8.0),
                                          child: Text(
-                                           'Instructions: Fill up the required* details and post the announcement. Only one image and document can be selected.',
+                                           'Instructions: Fill up the required* details and post the announcement. Only one image and document can be selected. For document, only .pdf files can be uploaded. For image it can be .jpg or .png',
                                            style: TextStyle(
                                              fontSize: 15.0,
                                            ),
+                                           textAlign: TextAlign.center,
                                          ),
                                        ),
                                    ),
@@ -472,7 +473,7 @@ class _PostScreenState extends State<PostScreen> {
                                                       child: Padding(
                                                         padding: EdgeInsets.all(8.0),
                                                         child: Text(
-                                                            'Check all the participants that will be involved.',
+                                                            'Check all the type of participants that will be involved.',
                                                             style: TextStyle(
                                                               fontSize: 15,
                                                             )),

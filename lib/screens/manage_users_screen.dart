@@ -102,12 +102,15 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextField(
-                controller: searchController,
-                decoration: const InputDecoration(
-                  border: OutlineInputBorder(),
-                  suffixIcon: Icon(Icons.search),
-                  labelText: "Search for users",
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14),
+                child: TextField(
+                  controller: searchController,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    suffixIcon: Icon(Icons.search),
+                    labelText: "Search for users",
+                  ),
                 ),
               ),
               Flexible(
