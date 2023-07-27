@@ -40,16 +40,14 @@ Future<List<Widget>> homeScreenItems() async {
       const EventsFeedScreen(),
       const ManageUsersScreen(),
       const SettingsScreen(),
-      const EventsFeedScreen(),
     ];
   }
-
   // Widgets for Students and Officers
   return [
     const EventsCalendarScreen(),
     const Center(child: Text('Feedbacks')),
     const Center(child: Text('Personal Events')),
     const ProfileScreen(),
-    const EventsFeedScreen(),
+    const Center(child: Text('Notifications'),),
   ];
 }
