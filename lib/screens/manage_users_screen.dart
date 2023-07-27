@@ -221,23 +221,24 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 height: 550,
                 child: SingleChildScrollView(
                   child: Column(
-                  children: filteredUsers.map((user) => Container(
-                      margin: EdgeInsets.symmetric(
-                        horizontal: width > webScreenSize ? width * 0.08 : 0,
-                        vertical: width > webScreenSize ? 8 : 0),
+                  children: filteredUsers.isEmpty
+                  ? <Widget>[const Text('No user matches your search.')]  // If filteredUsers is empty, display a text message
+                  : filteredUsers.map((user) => Container(  // Otherwise, display the list of users
+                    margin: EdgeInsets.symmetric(
+                    horizontal: width > webScreenSize ? width * 0.08 : 0,
+                    vertical: width > webScreenSize ? 8 : 0),
                       child: UsersCard(
                         user: user,
                         selectedUsers: selectedUsers,
                         onSelectedChanged: (uid) {
                           setState(() {
-                            if (selectedUsers.contains(uid)) {
-                              selectedUsers.remove(uid);
-                            } else {
-                              selectedUsers.add(uid);
-                            }
-                          });
+                          if (selectedUsers.contains(uid)) {
+                            selectedUsers.remove(uid);
+                          } else {
+                            selectedUsers.add(uid);
                         }
-                      )
+                      });
+                      })
                     )).toList(),
                   ),
                 ),

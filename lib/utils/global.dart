@@ -5,7 +5,7 @@ import 'package:student_event_calendar/screens/events_feed_screen.dart';
 import 'package:student_event_calendar/screens/manage_users_screen.dart';
 import 'package:student_event_calendar/screens/post_screen.dart';
 import 'package:student_event_calendar/screens/profile_screen.dart';
-import 'package:student_event_calendar/screens/events_calendar_screen.dart';
+import 'package:student_event_calendar/widgets/events_calendar.dart';
 import 'package:student_event_calendar/screens/settings_screen.dart';
 import '../resources/auth_methods.dart';
 import '../resources/firestore_user_methods.dart';
@@ -25,7 +25,7 @@ Future<List<Widget>> homeScreenItems() async {
   if (userType == 'Staff') {
     // Widgets for 'Staff'
     return [
-      const EventsCalendarScreen(),
+      const EventsCalendar(),
       const Center(child: Text('Feedbacks')),
       const PostScreen(),
       const EventsFeedScreen(),
@@ -44,7 +44,7 @@ Future<List<Widget>> homeScreenItems() async {
   }
   // Widgets for Students and Officers
   return [
-    const EventsCalendarScreen(),
+    const EventsCalendar(),
     const Center(child: Text('Feedbacks')),
     const Center(child: Text('Personal Events')),
     const ProfileScreen(),

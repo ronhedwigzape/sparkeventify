@@ -7,27 +7,27 @@ import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/screens/report_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../widgets/event_dialog.dart';
+import 'event_dialog.dart';
 
-class EventsCalendarScreen extends StatefulWidget {
-  const EventsCalendarScreen({Key? key}) : super(key: key);
+class EventsCalendar extends StatefulWidget {
+  const EventsCalendar({Key? key}) : super(key: key);
 
   @override
-  EventsCalendarScreenState createState() => EventsCalendarScreenState();
+  EventsCalendarState createState() => EventsCalendarState();
 }
 
-class EventsCalendarScreenState extends State<EventsCalendarScreen> {
+class EventsCalendarState extends State<EventsCalendar> {
   CalendarFormat _calendarFormat = CalendarFormat.month;
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   Map<DateTime, List<Event>> _events = {};
   final fireStoreEventMethods = FireStoreEventMethods();
-  late Future<Map<DateTime, List<Event>>> eventsFuture;
+  late Future<Map<DateTime, List<Event>>> events;
 
   @override
   void initState() {
     super.initState();
-    eventsFuture = fireStoreEventMethods.getEventsByDate();
+    events = fireStoreEventMethods.getEventsByDate();
   }
 
   List<Event> _getEventsForDay(DateTime day) {
@@ -43,7 +43,7 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return FutureBuilder<Map<DateTime, List<Event>>>(
-      future: eventsFuture,
+      future: events,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
