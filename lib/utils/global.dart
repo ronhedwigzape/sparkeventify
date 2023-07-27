@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:student_event_calendar/screens/admin_dashboard_screen.dart';
 import 'package:student_event_calendar/screens/events_feed_screen.dart';
 import 'package:student_event_calendar/screens/manage_users_screen.dart';
 import 'package:student_event_calendar/screens/post_screen.dart';
@@ -19,7 +20,7 @@ const appName = 'Announce';
 // Global key for the events calendar
 List<Widget> homeScreenItems = [
   kIsWeb
-      ? const Center(child: Text('Admin Dashboard'))
+      ? const AdminDashboardScreen()
       : const EventsCalendarScreen(),
   kIsWeb ? const PostScreen() : const Center(child: Text('Feedbacks')),
   kIsWeb
@@ -43,5 +44,6 @@ List<Widget> homeScreenItems = [
   kIsWeb
       ? const ManageUsersScreen()
       :  const ProfileScreen(),
-  kIsWeb ? const SettingsScreen() : const Center(child: Text('Notifications'))
+  kIsWeb ? const SettingsScreen() : const Center(child: Text('Notifications')),
+  const EventsFeedScreen()
 ];

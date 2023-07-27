@@ -74,6 +74,7 @@ class EventsCalendarScreenState extends State<EventsCalendarScreen> {
                                   currentMonthEvents.addAll(eventList);
                                 }
                               });
+                              // If a.date is earlier than b.date, it will return a negative number, and a will be placed before b in the sorted list
                               currentMonthEvents.sort((a, b) => a.date.compareTo(b.date));
                               Navigator.push(
                                 context,

@@ -44,95 +44,68 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return Scaffold(
-      appBar: buildAppBar(),
-      body: buildBody(),
-      bottomNavigationBar: buildBottomNavigationBar(),
-    );
-  }
-
-  AppBar buildAppBar() {
-    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-    return AppBar(
-      automaticallyImplyLeading: false,
-      backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-      elevation: 0.0,
-      title: buildAppBarTitle(),
-      actions: buildAppBarActions(),
-    );
-  }
-
-  Row buildAppBarTitle() {
-    final darkModeOn = Provider.of<DarkModeProvider>(context, listen: false).darkMode;
-    return Row(
-      children: [
-        const CSPCLogo(height: 30.0),
-        const SizedBox(
-          width: 10.0,
-        ),
-        Text(
-          appName,
-          style: TextStyle(
-            color: lightColor,
-            fontSize: 20.0,
-            fontWeight: FontWeight.bold,
-            shadows: darkModeOn ? <Shadow>[
-              const Shadow(
-                offset: Offset(1.0, 1.0),
-                blurRadius: 1.0,
-                color: darkModePrimaryColor,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+        elevation: 0.0,
+        title: Row(
+          children: [
+            const CSPCLogo(height: 30.0),
+            const SizedBox(
+              width: 10.0,
+            ),
+            Text(
+              appName,
+              style: TextStyle(
+                color: lightColor,
+                fontSize: 20.0,
+                fontWeight: FontWeight.bold,
+                shadows: darkModeOn ? <Shadow>[
+                  const Shadow(
+                    offset: Offset(1.0, 1.0),
+                    blurRadius: 1.0,
+                    color: darkModePrimaryColor,
+                  ),
+                  const Shadow(
+                    offset: Offset(1.0, 1.0),
+                    blurRadius: 8.0,
+                    color: lightModeBlueColor,
+                  ),
+                ] : null,
               ),
-              const Shadow(
-                offset: Offset(1.0, 1.0),
-                blurRadius: 8.0,
-                color: lightModeBlueColor,
-              ),
-            ] : null,
-          ),
+            ),
+          ],
         ),
-      ],
+        actions: [
+          IconButton(
+            onPressed: () => navigationTapped(4),
+            icon: const Icon(
+              Icons.notifications,
+              color: lightColor,
+            ),
+          )
+        ],
+      ),
+      body: PageView(
+        controller: pageController,
+        onPageChanged: onPageChanged,
+        physics: const NeverScrollableScrollPhysics(),
+        children: homeScreenItems,
+      ),
+      bottomNavigationBar: CupertinoTabBar(
+        onTap: navigationTapped,
+        backgroundColor: darkModeOn ? darkColor : lightColor,
+        activeColor: darkModeOn ? lightColor : darkColor,
+        items: [
+          buildBottomNavigationBarItem(Icons.calendar_month, 0),
+          buildBottomNavigationBarItem(Icons.feedback, 1),
+          buildBottomNavigationBarItem(Icons.note_alt, 2),
+          buildBottomNavigationBarItem(Icons.person, 3),
+        ],
+      ),
     );
-  }
-
-
-  List<Widget> buildAppBarActions() {
-    return [
-      IconButton(
-        onPressed: () => navigationTapped(4),
-        icon: const Icon(
-          Icons.notifications,
-          color: lightColor,
-        ),
-      )
-    ];
-  }
-
-  PageView buildBody() {
-    return PageView(
-      controller: pageController,
-      onPageChanged: onPageChanged,
-      physics: const NeverScrollableScrollPhysics(),
-      children: homeScreenItems,
-    );
-  }
-
-  CupertinoTabBar buildBottomNavigationBar() {
-    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-    return CupertinoTabBar(
-      onTap: navigationTapped,
-      backgroundColor: darkModeOn ? darkColor : lightColor,
-      activeColor: darkModeOn ? lightColor : darkColor,
-      items: buildBottomNavigationBarItems(),
-    );
-  }
-
-  List<BottomNavigationBarItem> buildBottomNavigationBarItems() {
-    return [
-      buildBottomNavigationBarItem(Icons.calendar_month, 0),
-      buildBottomNavigationBarItem(Icons.feedback, 1),
-      buildBottomNavigationBarItem(Icons.note_alt, 2),
-      buildBottomNavigationBarItem(Icons.person, 3),
-    ];
   }
 
   BottomNavigationBarItem buildBottomNavigationBarItem(IconData iconData, int pageIndex) {
@@ -142,8 +115,8 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
         padding: const EdgeInsets.symmetric(vertical: 10.0),
         child: Icon(
           iconData,
-          color: _page == pageIndex ? 
-          (darkModeOn ? darkModePrimaryColor :  lightModePrimaryColor ) : 
+          color: _page == pageIndex ?
+          (darkModeOn ? darkModePrimaryColor :  lightModePrimaryColor ) :
           (darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),
         ),
       ),
