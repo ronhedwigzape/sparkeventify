@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
+import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
@@ -42,6 +43,11 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
     });
   }
 
+  Future<bool> isStaff() async {
+    String userType = await AuthMethods().getCurrentUserType();
+    return userType == 'Staff';
+  }
+
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
@@ -80,7 +86,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
         ),
         actions: [
           IconButton(
-            onPressed: () => navigationTapped(4),
+            onPressed: () => navigationTapped(5),
             icon: const Icon(
               Icons.notifications,
               color: lightColor,
@@ -88,23 +94,45 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
           )
         ],
       ),
-      body: PageView(
-        controller: pageController,
-        onPageChanged: onPageChanged,
-        physics: const NeverScrollableScrollPhysics(),
-        children: homeScreenItems,
-      ),
-      bottomNavigationBar: CupertinoTabBar(
-        onTap: navigationTapped,
-        backgroundColor: darkModeOn ? darkColor : lightColor,
-        activeColor: darkModeOn ? lightColor : darkColor,
-        items: [
-          buildBottomNavigationBarItem(Icons.calendar_month, 0),
-          buildBottomNavigationBarItem(Icons.feedback, 1),
-          buildBottomNavigationBarItem(Icons.note_alt, 2),
-          buildBottomNavigationBarItem(Icons.person, 3),
-        ],
-      ),
+        body: FutureBuilder<List<Widget>>(
+          future: homeScreenItems(),
+          builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
+            if (!snapshot.hasData) {
+              return const Center(child: CircularProgressIndicator());
+            }
+
+            final List<Widget> homeScreenItems = snapshot.data!;
+            return PageView(
+              controller: pageController,
+              onPageChanged: onPageChanged,
+              physics: const NeverScrollableScrollPhysics(),
+              children: homeScreenItems,
+            );
+          },
+        ),
+        bottomNavigationBar: FutureBuilder<String>(
+          future: AuthMethods().getCurrentUserType(),
+          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+            String userType = snapshot.data ?? '';
+            return CupertinoTabBar(
+              onTap: navigationTapped,
+              backgroundColor: darkModeOn ? darkColor : lightColor,
+              activeColor: darkModeOn ? lightColor : darkColor,
+              items: userType == 'Staff' ? [
+                buildBottomNavigationBarItem(Icons.calendar_month, 0),
+                buildBottomNavigationBarItem(Icons.feedback, 1),
+                buildBottomNavigationBarItem(Icons.add_circle, 2),
+                buildBottomNavigationBarItem(Icons.note_alt, 3),
+                buildBottomNavigationBarItem(Icons.person, 4)
+              ] : [
+                buildBottomNavigationBarItem(Icons.calendar_month, 0),
+                buildBottomNavigationBarItem(Icons.feedback, 1),
+                buildBottomNavigationBarItem(Icons.note_alt, 2),
+                buildBottomNavigationBarItem(Icons.person, 3)
+              ],
+            );
+          },
+        ),
     );
   }
 

@@ -84,133 +84,141 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-    return Scaffold(
-      body: SafeArea(
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-        padding: MediaQuery.of(context).size.width > webScreenSize
-            ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) :
-            const EdgeInsets.symmetric(horizontal: 32.0),
-        width: double.infinity,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Flexible(
-                fit: FlexFit.loose,
-                flex: 2,
-                child: Container(),
-              ),
-              // Logo
-              const Padding(
-                padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
-                child: CSPCLogo(height: 150.0),
-              ),
-              // School name and address
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                    ),
-                    child: const Text(
-                      schoolName,
-                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 8,
-                    ),
-                    child: const Text(schoolAddress),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20.0),
-              // text field input for email
-              const Text('Log in',
-                  style: TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
-                  )),
-              const SizedBox(height: 24.0),
-              TextFieldInput(
-                textEditingController: _emailController,
-                labelText: 'Enter your email',
-                textInputType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 16.0),
-              // text field input for password
-              TextFieldInput(
-                textEditingController: _passwordController,
-                labelText: 'Enter your password',
-                textInputType: TextInputType.visiblePassword,
-                isPass: true,
-              ),
-              const SizedBox(height: 16.0),
-              // button login
-              InkWell(
-                onTap: signIn,
-                child: Container(
-                    width: double.infinity,
-                    alignment: Alignment.center,
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    decoration: ShapeDecoration(
-                      shape: const RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                      ),
-                      color: darkModeOn ? darkModePrimaryColor : lightModeBlueColor,
-                    ),
-                    child: _isLoading
-                        ? const Center(
-                            child: CircularProgressIndicator(
-                            valueColor: AlwaysStoppedAnimation<Color>(lightColor),
-                          ))
-                        : const Text(
-                            'Log in',
-                            style: TextStyle(
-                              color: lightColor,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          )),
-              ),
-              const SizedBox(height: 12.0),
-              Flexible(
-                flex: 2,
-                child: Container(),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 15,
-                    ),
-                    child: const Text('Don\'t have an account?'),
-                  ),
-                  GestureDetector(
-                    onTap: navigateToSignup,
-                    child: Container(
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: Scaffold(
+        body: SafeArea(
+            child: Container(
+              height: MediaQuery.of(context).size.height,
+          padding: MediaQuery.of(context).size.width > webScreenSize
+              ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) :
+              const EdgeInsets.symmetric(horizontal: 32.0),
+          width: double.infinity,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Flexible(
+                  fit: FlexFit.loose,
+                  flex: 2,
+                  child: Container(),
+                ),
+                // Logo
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                  child: CSPCLogo(height: 150.0),
+                ),
+                // School name and address
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
                       padding: const EdgeInsets.symmetric(
                         vertical: 8,
                       ),
                       child: const Text(
-                        ' Sign up.',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                        ),
+                        schoolName,
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                       ),
                     ),
-                  )
-                ],
-              )
-              // transitioning to signing up
-            ],
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                      ),
+                      child: const Text(schoolAddress),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 20.0),
+                // text field input for email
+                const Text('Log in',
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                    )),
+                const SizedBox(height: 24.0),
+                TextFieldInput(
+                  textEditingController: _emailController,
+                  labelText: 'Enter your email',
+                  textInputType: TextInputType.emailAddress,
+                ),
+                const SizedBox(height: 16.0),
+                // text field input for password
+                TextFieldInput(
+                  textEditingController: _passwordController,
+                  labelText: 'Enter your password',
+                  textInputType: TextInputType.visiblePassword,
+                  isPass: true,
+                ),
+                const SizedBox(height: 16.0),
+                // button login
+                InkWell(
+                  onTap: signIn,
+                  child: Container(
+                      width: double.infinity,
+                      alignment: Alignment.center,
+                      padding: const EdgeInsets.symmetric(vertical: 16.0),
+                      decoration: ShapeDecoration(
+                        shape: const RoundedRectangleBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                        ),
+                        color: darkModeOn ? darkModePrimaryColor : lightModeBlueColor,
+                      ),
+                      child: _isLoading
+                          ? const Center(
+                              child: CircularProgressIndicator(
+                              valueColor: AlwaysStoppedAnimation<Color>(lightColor),
+                            ))
+                          : const Text(
+                              'Log in',
+                              style: TextStyle(
+                                color: lightColor,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            )),
+                ),
+                const SizedBox(height: 12.0),
+                Flexible(
+                  flex: 2,
+                  child: Container(),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 15,
+                      ),
+                      child: const Text('Don\'t have an account?'),
+                    ),
+                    GestureDetector(
+                      onTap: navigateToSignup,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 8,
+                        ),
+                        child: const Text(
+                          ' Sign up.',
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                )
+                // transitioning to signing up
+              ],
+            ),
           ),
-        ),
-      )),
+        )),
+      ),
     );
   }
 }

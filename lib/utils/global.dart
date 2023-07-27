@@ -7,6 +7,7 @@ import 'package:student_event_calendar/screens/post_screen.dart';
 import 'package:student_event_calendar/screens/profile_screen.dart';
 import 'package:student_event_calendar/screens/events_calendar_screen.dart';
 import 'package:student_event_calendar/screens/settings_screen.dart';
+import '../resources/auth_methods.dart';
 import '../resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
 
@@ -18,32 +19,37 @@ const schoolLogo = 'assets/images/cspc_logo.png';
 const appName = 'Announce';
 
 // Global key for the events calendar
-List<Widget> homeScreenItems = [
-  kIsWeb
-      ? const AdminDashboardScreen()
-      : const EventsCalendarScreen(),
-  kIsWeb ? const PostScreen() : const Center(child: Text('Feedbacks')),
-  kIsWeb
-      ? const EventsFeedScreen()
-      : FutureBuilder(
-      future: FireStoreUserMethods().getCurrentUserData(),
-      builder: (context, AsyncSnapshot<model.User?> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else {
-          if (snapshot.data?.userType == 'Staff') {
-            return const PostScreen();
-          } else {
-            return const Center(child: Text('Personal Events'));
-          }
-        }
-      }
-  ),
-  kIsWeb
-      ? const ManageUsersScreen()
-      :  const ProfileScreen(),
-  kIsWeb ? const SettingsScreen() : const Center(child: Text('Notifications')),
-  const EventsFeedScreen()
-];
+Future<List<Widget>> homeScreenItems() async {
+  final String userType = await AuthMethods().getCurrentUserType();
+
+  if (userType == 'Staff') {
+    // Widgets for 'Staff'
+    return [
+      const EventsCalendarScreen(),
+      const Center(child: Text('Feedbacks')),
+      const PostScreen(),
+      const EventsFeedScreen(),
+      const ProfileScreen(),
+      const Center(child: Text('Notifications')),
+    ];
+  } else if (userType == 'Admin' && kIsWeb) {
+    // Widgets for 'Admin' only when app is running on Web platform
+    return [
+      const AdminDashboardScreen(),
+      const PostScreen(),
+      const EventsFeedScreen(),
+      const ManageUsersScreen(),
+      const SettingsScreen(),
+      const EventsFeedScreen(),
+    ];
+  }
+
+  // Widgets for Students and Officers
+  return [
+    const EventsCalendarScreen(),
+    const Center(child: Text('Feedbacks')),
+    const Center(child: Text('Personal Events')),
+    const ProfileScreen(),
+    const EventsFeedScreen(),
+  ];
+}
