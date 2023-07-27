@@ -58,7 +58,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
       backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
       elevation: 0.0,
       title: buildAppBarTitle(),
-      actions: buildAppBarActions(5),
+      actions: buildAppBarActions(),
     );
   }
 
@@ -95,10 +95,10 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   }
 
 
-  List<Widget> buildAppBarActions(int pageIndex) {
+  List<Widget> buildAppBarActions() {
     return [
       IconButton(
-        onPressed: () => navigationTapped(pageIndex),
+        onPressed: () => navigationTapped(4),
         icon: const Icon(
           Icons.notifications,
           color: lightColor,
@@ -128,11 +128,10 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
 
   List<BottomNavigationBarItem> buildBottomNavigationBarItems() {
     return [
-      buildBottomNavigationBarItem(Icons.home, 0),
-      buildBottomNavigationBarItem(Icons.calendar_month, 1),
-      buildBottomNavigationBarItem(Icons.feedback, 2),
-      buildBottomNavigationBarItem(Icons.note_alt, 3),
-      buildBottomNavigationBarItem(Icons.person, 4),
+      buildBottomNavigationBarItem(Icons.calendar_month, 0),
+      buildBottomNavigationBarItem(Icons.feedback, 1),
+      buildBottomNavigationBarItem(Icons.note_alt, 2),
+      buildBottomNavigationBarItem(Icons.person, 3),
     ];
   }
 

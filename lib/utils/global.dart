@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:student_event_calendar/screens/feed_screen.dart';
+import 'package:student_event_calendar/screens/events_feed_screen.dart';
 import 'package:student_event_calendar/screens/manage_users_screen.dart';
 import 'package:student_event_calendar/screens/post_screen.dart';
 import 'package:student_event_calendar/screens/profile_screen.dart';
@@ -19,30 +19,29 @@ const appName = 'Announce';
 // Global key for the events calendar
 List<Widget> homeScreenItems = [
   kIsWeb
-      ? const EventsCalendarScreen()
-      : const FeedScreen(),
-  kIsWeb ? const PostScreen() : const EventsCalendarScreen(),
+      ? const Center(child: Text('Admin Dashboard'))
+      : const EventsCalendarScreen(),
+  kIsWeb ? const PostScreen() : const Center(child: Text('Feedbacks')),
   kIsWeb
-      ? const FeedScreen()
-      : const Center(child: Text('Feedbacks')),
+      ? const EventsFeedScreen()
+      : FutureBuilder(
+      future: FireStoreUserMethods().getCurrentUserData(),
+      builder: (context, AsyncSnapshot<model.User?> snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else {
+          if (snapshot.data?.userType == 'Staff') {
+            return const PostScreen();
+          } else {
+            return const Center(child: Text('Personal Events'));
+          }
+        }
+      }
+  ),
   kIsWeb
       ? const ManageUsersScreen()
-      : FutureBuilder(
-        future: FireStoreUserMethods().getCurrentUserData(),
-        builder: (context, AsyncSnapshot<model.User?> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
-            } else if (snapshot.hasError) {
-              return Center(child: Text('Error: ${snapshot.error}'));
-            } else {
-              if (snapshot.data?.userType == 'Staff') {
-                return const PostScreen();
-              } else {
-                return const Center(child: Text('Personal Events'));
-              }
-            }
-          }
-        ),
-  kIsWeb ? const SettingsScreen() : const ProfileScreen(),
-  const Center(child: Text('Notifications'))
+      :  const ProfileScreen(),
+  kIsWeb ? const SettingsScreen() : const Center(child: Text('Notifications'))
 ];

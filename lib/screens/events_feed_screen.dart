@@ -6,16 +6,16 @@ import 'package:student_event_calendar/widgets/post_card.dart';
 
 import '../models/event.dart';
 
-class FeedScreen extends StatefulWidget {
-  const FeedScreen({Key? key, this.snap}) : super(key: key);
+class EventsFeedScreen extends StatefulWidget {
+  const EventsFeedScreen({Key? key, this.snap}) : super(key: key);
 
   final snap;
 
   @override
-  State<FeedScreen> createState() => _FeedScreenState();
+  State<EventsFeedScreen> createState() => _EventsFeedScreenState();
 }
 
-class _FeedScreenState extends State<FeedScreen> {
+class _EventsFeedScreenState extends State<EventsFeedScreen> {
   String dropdownEventType = 'All';
 
   @override
