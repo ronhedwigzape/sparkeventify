@@ -35,9 +35,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> signIn() async {
-    setState(() {
-      _isLoading = true;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = true;
+      });
+    }
 
     String res = await _authRepository.signIn(
         email: _emailController.text.trim(),
@@ -51,9 +53,11 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void onSignInSuccess(String message) async {
-    setState(() {
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
 
     if (!kIsWeb) {
       Navigator.of(context).push(
@@ -65,14 +69,17 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void onSignInFailure(String message) {
-    setState(() {
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
       duration: const Duration(seconds: 2),
     ));
   }
+
 
   void navigateToSignup() {
     Navigator.of(context).push(MaterialPageRoute(
