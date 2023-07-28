@@ -1,9 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/notification_button.dart';
 import 'package:student_event_calendar/widgets/users_card.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import '../models/user.dart' as model;
+import '../providers/darkmode_provider.dart';
 
 class ManageUsersScreen extends StatefulWidget {
   const ManageUsersScreen({super.key});
@@ -74,6 +77,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     final width = MediaQuery.of(context).size.width;
     return StreamBuilder<QuerySnapshot>(
       stream: _usersStream,
@@ -108,20 +112,33 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   controller: searchController,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
-                    suffixIcon: Icon(Icons.search),
+                    prefixIcon: Icon(Icons.search),
                     labelText: "Search for users",
                   ),
                 ),
               ),
-              Flexible(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Flexible(
-                      child: DropdownButton<String>(
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 100),
+                child: SizedBox(
+                  height: 50.0,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Icon(
+                        Icons.manage_accounts,
+                        color: darkModeOn ? lightColor : darkColor
+                      ),
+                      const SizedBox(width: 10,),
+                      Text(
+                        'Manage Users',
+                        style: TextStyle(
+                            fontSize: 32.0,
+                            fontWeight: FontWeight.bold,
+                            color: darkModeOn ? lightColor : darkColor
+                        ),
+                      ),
+                      const SizedBox(width: 50), // You can adjust the space between widgets here
+                      DropdownButton<String>(
                         value: dropdownUserType,
                         onChanged: (String? newValue) {
                           setState(() {
@@ -136,9 +153,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                    ),
-                    Flexible(
-                      child: DropdownButton<String>(
+                      SizedBox(width: 30), // Add necessary space between items
+                      DropdownButton<String>(
                         value: dropdownYear,
                         onChanged: (String? newValue) {
                           setState(() {
@@ -153,9 +169,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                    ),
-                    Flexible(
-                      child: DropdownButton<String>(
+                      SizedBox(width: 30), // Add necessary space between items
+                      DropdownButton<String>(
                         value: dropdownDepartment,
                         onChanged: (String? newValue) {
                           setState(() {
@@ -170,9 +185,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                    ),
-                    Flexible(
-                      child: DropdownButton<String>(
+                      SizedBox(width: 30), // Add necessary space between items
+                      DropdownButton<String>(
                         value: dropdownCourse,
                         onChanged: (String? newValue) {
                           setState(() {
@@ -187,9 +201,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                    ),
-                    Flexible(
-                      child: DropdownButton<String>(
+                      SizedBox(width: 30), // Add necessary space between items
+                      DropdownButton<String>(
                         value: dropdownSection,
                         onChanged: (String? newValue) {
                           setState(() {
@@ -204,21 +217,23 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                    ),
-                    NotificationButton(selectedUsers: selectedUsers),
-                    Checkbox(
-                      value: _allFilteredUsersSelected,
-                      onChanged: (bool? value) {
-                        setState(() {
-                          toggleAllSelected();
-                        });
-                      },
-                    ),
-                  ],
+                      SizedBox(width: 30), // Add necessary space between items
+                      NotificationButton(selectedUsers: selectedUsers),
+                      SizedBox(width: 20),
+                      Checkbox(
+                        value: _allFilteredUsersSelected,
+                        onChanged: (bool? value) {
+                          setState(() {
+                            toggleAllSelected();
+                          });
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-              )),
+              ),
               SizedBox(
-                height: 550,
+                height: width > webScreenSize ? width * 0.3667 : 0,
                 child: SingleChildScrollView(
                   child: Column(
                   children: filteredUsers.isEmpty
@@ -226,7 +241,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   : filteredUsers.map((user) => Container(  // Otherwise, display the list of users
                     margin: EdgeInsets.symmetric(
                     horizontal: width > webScreenSize ? width * 0.08 : 0,
-                    vertical: width > webScreenSize ? 8 : 0),
+                    vertical: width > webScreenSize ? 7 : 0),
                       child: UsersCard(
                         user: user,
                         selectedUsers: selectedUsers,

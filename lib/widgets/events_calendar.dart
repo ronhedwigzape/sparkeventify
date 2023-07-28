@@ -88,7 +88,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                         padding: EdgeInsets.symmetric(vertical: 10.0),
                         child: Text('Calendar of Events',
                             style:
-                                TextStyle(fontSize: kIsWeb ? 32.0 : 24.0, fontWeight: FontWeight.bold)),
+                                TextStyle(fontSize: kIsWeb ? 28.0 : 24.0, fontWeight: FontWeight.bold)),
                       ),
                       Padding(
                         padding: const EdgeInsets.all(10.0),

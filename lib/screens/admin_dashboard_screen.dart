@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
+import 'package:student_event_calendar/utils/colors.dart';
 
+import '../providers/darkmode_provider.dart';
 import '../widgets/events_calendar.dart';
 import '../widgets/upcoming_events.dart';
 
@@ -23,6 +26,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return FutureBuilder<Map<DateTime, List<Event>>>(
       future: events,
       builder: (context, snapshot) {
@@ -33,7 +37,25 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         } else {
           return Scaffold(
             appBar: AppBar(
-              title: const Text('Admin Dashboard'),
+              automaticallyImplyLeading: false,
+              title: Row(
+                children: [
+                  Icon(
+                      Icons.dashboard_outlined,
+                      color: darkModeOn ? lightColor : darkColor,
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                      'Admin Dashboard',
+                      style: TextStyle(
+                          fontSize: 32.0,
+                          fontWeight: FontWeight.bold,
+                          color: darkModeOn ? lightColor : darkColor
+                      )
+                  ),
+                ],
+              ),
+              toolbarHeight: 60,
             ),
             body: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,

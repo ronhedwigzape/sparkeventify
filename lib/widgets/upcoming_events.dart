@@ -34,15 +34,26 @@ class UpcomingEventsState extends State<UpcomingEvents> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.builder(
-      itemCount: upcomingEvents.length,
-      itemBuilder: (context, index) {
-        final event = upcomingEvents[index];
-        return ListTile(
-          title: Text(event.title),
-          subtitle: Text(event.date.toString()),
-        );
-      },
+    return Center(
+      child: SingleChildScrollView(
+        child: Card(
+          child: Column(
+            children: [
+              const Text(
+                'Upcoming Events!',
+                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              ),
+              ...upcomingEvents.map((event) {
+                return ListTile(
+                  title: Center(child: Text(event.title)),
+                  subtitle: Center(child: Text(event.date.toString())),
+                );
+              }).toList(),
+            ],
+          ),
+        ),
+      ),
     );
   }
+
 }

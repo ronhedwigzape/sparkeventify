@@ -316,15 +316,26 @@ class _PostScreenState extends State<PostScreen> {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      const Flexible(
+                                      Flexible(
                                         child: Padding(
                                           padding: EdgeInsets.symmetric(vertical: 16.0),
-                                          child: Text(
-                                            'Post an Announcement',
-                                            style: TextStyle(
-                                              fontSize: kIsWeb ? 32.0 : 24.0,
-                                              fontWeight: FontWeight.bold,
-                                            ),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              Icon(
+                                                  Icons.post_add,
+                                                color: darkModeOn ? lightColor : darkColor,
+                                              ),
+                                              const SizedBox(width: 10),
+                                              Text(
+                                                'Post an Announcement',
+                                                style: TextStyle(
+                                                  fontSize: kIsWeb ? 32.0 : 24.0,
+                                                  fontWeight: FontWeight.bold,
+                                                  color: darkModeOn ? lightColor : darkColor,
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ),

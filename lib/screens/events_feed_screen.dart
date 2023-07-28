@@ -1,10 +1,13 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/post_card.dart';
 import '../models/event.dart';
+import '../providers/darkmode_provider.dart';
+import '../utils/colors.dart';
 
 class EventsFeedScreen extends StatefulWidget {
   const EventsFeedScreen({Key? key, this.snap}) : super(key: key);
@@ -50,6 +53,7 @@ class _EventsFeedScreenState extends State<EventsFeedScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     final width = MediaQuery.of(context).size.width;
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 8),
@@ -59,7 +63,7 @@ class _EventsFeedScreenState extends State<EventsFeedScreen> {
             controller: _searchController,
             decoration: const InputDecoration(
                 border: OutlineInputBorder(),
-                labelText: 'Search events', suffixIcon: Icon(Icons.search)),
+                labelText: 'Search events', prefixIcon: Icon(Icons.search),),
           ),
           titleSpacing: 0.0,
           toolbarHeight: 70,
@@ -114,15 +118,26 @@ class _EventsFeedScreenState extends State<EventsFeedScreen> {
                         Padding(
                           padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
                           child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Flexible(
-                                  child: Text(
+                              Flexible(
+                                  child: Row(
+                                    children: [
+                                      Icon(
+                                        Icons.edit,
+                                        color: darkModeOn ? lightColor : darkColor,
+                                      ),
+                                      const SizedBox(width: 10),
+                                      Text(
                                 'Edit Events',
                                 style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: kIsWeb ? 32.0 : 24.0),
-                              )),
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: kIsWeb ? 32.0 : 24.0,
+                                        color: darkModeOn ? lightColor : darkColor,
+                                        ),
+                                      ),
+                                    ],
+                                  )),
                               Flexible(
                                 child: DropdownButton<String>(
                                   value: dropdownEventType,
@@ -153,7 +168,7 @@ class _EventsFeedScreenState extends State<EventsFeedScreen> {
                               itemBuilder: (context, index) => Container(
                                   margin: EdgeInsets.symmetric(
                                       horizontal:
-                                          width > webScreenSize ? width * 0.25 : 0,
+                                          width > webScreenSize ? width * 0.2 : 0,
                                       vertical: width > webScreenSize ? 10 : 0),
                                   child: PostCard(
                                       snap: searchTermFilteredEvents[index]))),

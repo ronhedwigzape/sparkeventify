@@ -61,8 +61,8 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                 ? Scaffold(
               appBar: AppBar(
                 automaticallyImplyLeading: false,
-                title: Padding(
-                  padding: const EdgeInsets.fromLTRB(30.0, 0, 0, 0),
+                title: const Padding(
+                  padding: EdgeInsets.fromLTRB(30.0, 0, 0, 0),
                   child: Row(
                     children: [
                       CSPCLogo(
