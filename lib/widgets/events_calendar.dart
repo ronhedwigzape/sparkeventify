@@ -82,7 +82,8 @@ class EventsCalendarState extends State<EventsCalendar> {
                                 MaterialPageRoute(builder: (context) => ReportScreen(events: currentMonthEvents)),
                               );
                             },
-                            child: Text('Generate Report for $currentMonth'),
+                            child: Text('Generate Report for $currentMonth',
+                              style: const TextStyle(color: lightModeIndigo),),
                           ),
                         ],
                       ) : const SizedBox.shrink(),

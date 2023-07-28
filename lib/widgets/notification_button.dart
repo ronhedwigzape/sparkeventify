@@ -1,6 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:student_event_calendar/utils/colors.dart';
 
+import '../providers/darkmode_provider.dart';
 import '../services/firebase_notifications.dart';
 class NotificationButton extends StatefulWidget {
   final List<String> selectedUsers;
@@ -45,7 +48,11 @@ class _NotificationButtonState extends State<NotificationButton> {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return ElevatedButton(
+      style: ElevatedButton.styleFrom(
+        foregroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor
+      ),
       onPressed: () async {
         showDialog(
           context: context,
@@ -72,7 +79,8 @@ class _NotificationButtonState extends State<NotificationButton> {
                     const SizedBox(height: 10.0),
                     TextFormField(
                       decoration: const InputDecoration(
-                          hintText: 'Notification message',
+                          labelText: 'Notification message',
+                          alignLabelWithHint: true,
                           border: OutlineInputBorder()
                       ),
                       keyboardType: TextInputType.multiline,
@@ -84,19 +92,36 @@ class _NotificationButtonState extends State<NotificationButton> {
                         return null;
                       },
                     ),
-                    TextButton(
-                      child: const Text('Send'),
-                      onPressed: () {
-                        if (formKey.currentState!.validate()) {
-                          // Close the dialog
-                          Navigator.of(context).pop();
-                          // Send the notification
-                          sendNotifications(widget.selectedUsers, title, message);
-                          setState(() {
-                            widget.selectedUsers.clear();
-                          });
-                        }
-                      },
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          TextButton(
+                              style: TextButton.styleFrom(
+                                  foregroundColor: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor
+                              ),
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text('Cancel')),
+                          TextButton(
+                            style: TextButton.styleFrom(
+                                foregroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor
+                            ),
+                            onPressed: () {
+                              if (formKey.currentState!.validate()) {
+                                // Close the dialog
+                                Navigator.of(context).pop();
+                                // Send the notification
+                                sendNotifications(widget.selectedUsers, title, message);
+                                setState(() {
+                                  widget.selectedUsers.clear();
+                                });
+                              }
+                            },
+                            child: const Text('Send'),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ),
