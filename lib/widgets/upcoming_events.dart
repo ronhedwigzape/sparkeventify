@@ -37,19 +37,22 @@ class UpcomingEventsState extends State<UpcomingEvents> {
     return Center(
       child: SingleChildScrollView(
         child: Card(
-          child: Column(
-            children: [
-              const Text(
-                'Upcoming Events!',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              ...upcomingEvents.map((event) {
-                return ListTile(
-                  title: Center(child: Text(event.title)),
-                  subtitle: Center(child: Text(event.date.toString())),
-                );
-              }).toList(),
-            ],
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10),
+            child: Column(
+              children: [
+                const Text(
+                  'Upcoming Events!',
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                ...upcomingEvents.map((event) {
+                  return ListTile(
+                    title: Center(child: Text(event.title)),
+                    subtitle: Center(child: Text(event.date.toString())),
+                  );
+                }).toList(),
+              ],
+            ),
           ),
         ),
       ),
