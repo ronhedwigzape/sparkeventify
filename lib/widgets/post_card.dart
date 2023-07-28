@@ -140,9 +140,9 @@ class _PostCardState extends State<PostCard> {
                                           text:
                                           'Are you sure you want to delete this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'} forever?',
                                         ),
-                                        const TextSpan(
+                                        TextSpan(
                                           text: '\nThis action cannot be undone.',
-                                          style: TextStyle(fontSize: 14),
+                                          style: TextStyle(fontSize: 14, color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor),
                                         ),
                                       ],
                                     ),
@@ -155,6 +155,7 @@ class _PostCardState extends State<PostCard> {
                                       ? darkModePrimaryColor
                                       : lightModePrimaryColor,
                                   automaticallyImplyLeading: false,
+                                  toolbarHeight: 70,
                                   actions: [
                                     IconButton(
                                       onPressed: () => Navigator.of(context).pop(),

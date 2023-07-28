@@ -6,6 +6,7 @@ const lightModeBlueColor = Color.fromARGB(255, 21, 29, 83);
 const lightModeMaroonColor = Color.fromARGB(255, 88, 0, 0);
 const lightModePrimaryColor = Color.fromARGB(255, 41, 56, 141);
 const lightModeSecondaryColor = Color.fromARGB(255, 126, 126, 126);
+const lightModeTertiaryColor = Color.fromARGB(255, 176, 176, 176);
 const lightModeIndigo = Color.fromARGB(255, 130, 144, 224);
 
 // Dark mode colors
@@ -15,4 +16,5 @@ const darkBlueColor = Color.fromARGB(255, 6, 8, 38);
 const darkModeMaroonColor = Color.fromARGB(255, 163, 0, 0);
 const darkModePrimaryColor = Color.fromARGB(255, 83, 108, 255);
 const darkModeSecondaryColor = Color.fromARGB(255, 141, 141, 141);
+const darkModeTertiaryColor = Color.fromRGBO(72, 72, 72, 1.0);
 const darkModeGreyColor = Color.fromRGBO(255, 255, 255, 0.1);

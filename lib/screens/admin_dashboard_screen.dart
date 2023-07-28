@@ -9,6 +9,7 @@ import 'package:student_event_calendar/utils/global.dart';
 
 import '../providers/darkmode_provider.dart';
 import '../widgets/events_calendar.dart';
+import '../widgets/past_events.dart';
 import '../widgets/upcoming_events.dart';
 
 class AdminDashboardScreen extends StatefulWidget {
@@ -78,7 +79,12 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                           ),
                           Expanded(
                             flex: 1,
-                            child: UpcomingEvents(snapshot.data!),
+                            child: Column(
+                              children: [
+                                UpcomingEvents(snapshot.data!),
+                                PastEvents(snapshot.data!),
+                              ],
+                            ),
                           ),
                         ],
                       ),
