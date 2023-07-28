@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
@@ -23,6 +24,7 @@ class EventsCalendarState extends State<EventsCalendar> {
   Map<DateTime, List<Event>> _events = {};
   final fireStoreEventMethods = FireStoreEventMethods();
   late Future<Map<DateTime, List<Event>>> events;
+  String currentMonth = DateFormat('MMMM yyyy').format(DateTime.now());
 
   @override
   void initState() {
@@ -66,7 +68,6 @@ class EventsCalendarState extends State<EventsCalendar> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           TextButton(
-                            child: const Text('Generate Report'),
                             onPressed: () async {
                               List<Event> currentMonthEvents = [];
                               _events.forEach((eventDate, eventList) {
@@ -81,6 +82,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                                 MaterialPageRoute(builder: (context) => ReportScreen(events: currentMonthEvents)),
                               );
                             },
+                            child: Text('Generate Report for $currentMonth'),
                           ),
                         ],
                       ) : const SizedBox.shrink(),
@@ -171,6 +173,9 @@ class EventsCalendarState extends State<EventsCalendar> {
                             },
                             onPageChanged: (focusedDay) {
                               _focusedDay = focusedDay;
+                              setState(() {
+                                currentMonth = DateFormat('MMMM yyyy').format(focusedDay);
+                              });
                             },
                             calendarBuilders: CalendarBuilders(
                               defaultBuilder: (context, dateTime, focusedDay) {

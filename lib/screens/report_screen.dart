@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/models/event.dart' as model;
+import 'package:student_event_calendar/utils/colors.dart';
 
 class ReportScreen extends StatelessWidget {
   final List<model.Event> events;
