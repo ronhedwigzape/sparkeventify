@@ -19,16 +19,39 @@ class DarkModeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // Load the dark mode setting from Firebase
+
+// Load the dark mode setting from Firebase
   _loadFromFirebase() async {
-    DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser?.uid).get();
-    _darkMode = snapshot.get(key) ?? false;
-    notifyListeners();
+    User? currentUser = FirebaseAuth.instance.currentUser;
+    if(currentUser != null) {
+      DocumentSnapshot snapshot = await FirebaseFirestore.instance.collection('users').doc(currentUser.uid).get();
+      if(snapshot.exists){
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        if(data.containsKey(key)){
+          _darkMode = data[key] ?? false;
+        } else{
+          if (kDebugMode) {
+            print('$key does not exist on this document');
+          }
+        }
+      }
+      else{
+        if (kDebugMode) {
+          print('Document does not exist');
+        }
+      }
+      notifyListeners();
+    }
+    else {
+      if (kDebugMode) {
+        print('User not authenticated');
+      }
+    }
   }
+
 
   // Save the dark mode setting to Firebase
   _saveToFirebase() async {
     await FirebaseFirestore.instance.collection('users').doc(FirebaseAuth.instance.currentUser?.uid).update({key: _darkMode});
   }
 }
-
