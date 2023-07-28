@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../models/profile.dart' as model;
 import '../models/user.dart' as model;
+import '../providers/darkmode_provider.dart';
+import '../utils/colors.dart';
 
 class UsersCard extends StatefulWidget {
   final model.User user;
@@ -22,13 +25,14 @@ class UsersCard extends StatefulWidget {
 class _UsersCardState extends State<UsersCard> {
   @override
   Widget build(BuildContext context) {
-
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     model.Profile currentProfile = widget.user.profile ?? model.Profile();
 
     return widget.user.userType != 'Admin' ?
     Column(
       children: <Widget>[
          Card(
+           color: darkModeOn ? darkColor : lightColor,
            child: Padding(
              padding: const EdgeInsets.all(10.0),
              child: Row(

@@ -51,7 +51,8 @@ class _NotificationButtonState extends State<NotificationButton> {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return ElevatedButton(
       style: ElevatedButton.styleFrom(
-        foregroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor
+        foregroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+        backgroundColor: darkModeOn ? darkColor : lightColor
       ),
       onPressed: () async {
         showDialog(

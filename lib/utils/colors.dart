@@ -18,3 +18,6 @@ const darkModePrimaryColor = Color.fromARGB(255, 83, 108, 255);
 const darkModeSecondaryColor = Color.fromARGB(255, 141, 141, 141);
 const darkModeTertiaryColor = Color.fromRGBO(119, 119, 119, 1.0);
 const darkModeGreyColor = Color.fromRGBO(255, 255, 255, 0.1);
+
+// Transparent colors
+const transparent = Colors.transparent;

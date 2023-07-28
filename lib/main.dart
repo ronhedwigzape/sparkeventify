@@ -12,6 +12,7 @@ import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/providers/user_provider.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/services/firebase_notifications.dart';
+import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/unknown_user.dart';
 import 'package:timezone/data/latest.dart' as timezone;
 
@@ -76,6 +77,7 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return StreamBuilder(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (ctx, userSnapshot) {
@@ -87,8 +89,10 @@ class AuthScreen extends StatelessWidget {
               .get(),
           builder: (ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(
-                child: CircularProgressIndicator(),
+              return Center(
+                child: CircularProgressIndicator(
+                  color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor
+                ),
               );
             }
             // Check if document exists

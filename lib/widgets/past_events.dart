@@ -43,6 +43,7 @@ class PastEventsState extends State<PastEvents> {
     return Center(
       child: SingleChildScrollView(
         child: Card(
+          color: darkModeOn ? darkColor : lightColor,
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
             child: ListView(

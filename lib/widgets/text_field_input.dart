@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
+import 'package:student_event_calendar/utils/colors.dart';
+
+import '../providers/darkmode_provider.dart';
 
 // Define a StatefulWidget as it has mutable state
 class TextFieldInput extends StatefulWidget {
@@ -41,9 +45,13 @@ class _TextFieldInputState extends State<TextFieldInput> {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     // Define the border for the TextField
     final inputBorder = OutlineInputBorder(
-      borderSide: Divider.createBorderSide(context),
+      borderSide: Divider.createBorderSide(
+          context,
+        color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor
+      ),
     );
 
     // Return a TextField widget

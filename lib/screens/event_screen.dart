@@ -41,8 +41,8 @@ class _EventScreenState extends State<EventScreen> {
             .snapshots(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
+            return Center(
+              child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
             );
           }
           final snap = snapshot.data;

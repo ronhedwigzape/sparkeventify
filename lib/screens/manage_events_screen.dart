@@ -67,6 +67,8 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
           ),
           titleSpacing: 0.0,
           toolbarHeight: 70,
+          elevation: 0.0,
+          backgroundColor: transparent,
         ),
         body: StreamBuilder<String>(
           stream: _searchSubject.stream.debounceTime(const Duration(milliseconds: 300)),
@@ -81,7 +83,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
                 }
                 if (snapshot.hasError) {
                   return const Center(child: Text('Something went wrong'));
@@ -95,7 +97,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                     builder: (BuildContext context,
                         AsyncSnapshot<List<Event>> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CircularProgressIndicator());
+                        return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
                       }
                       if (snapshot.hasError) {
                         return const Center(child: Text('Something went wrong'));

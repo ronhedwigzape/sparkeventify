@@ -35,7 +35,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
         future: events,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
           } else if (snapshot.hasError) {
             return const Center(child: Text("Something went wrong!"));
           } else {
@@ -67,6 +67,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                       ),
                     ),
                     toolbarHeight: 60,
+                    elevation: 0.0,
+                    backgroundColor: transparent,
                   ),
                   body: Center(
                     child: ConstrainedBox(

@@ -52,7 +52,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
         future: currentUser,
         builder: (context, AsyncSnapshot<model.User> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
+            return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
@@ -235,7 +235,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                 future: homeScreenItems(),
                 builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
                   if (!snapshot.hasData) {
-                    return const Center(child: CircularProgressIndicator());
+                    return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
                   }
 
                   final List<Widget> homeScreenItems = snapshot.data!;
@@ -248,7 +248,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                 },
               ),
             )
-                : const Center(child: CircularProgressIndicator());
+                : Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
           }
         }
     );

@@ -48,7 +48,7 @@ class EventsCalendarState extends State<EventsCalendar> {
       future: events,
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
         } else if (snapshot.hasError) {
           return const Center(child: Text("Something went wrong!"));
         } else {
@@ -57,7 +57,7 @@ class EventsCalendarState extends State<EventsCalendar> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Card(
-                color: kIsWeb ? Theme.of(context).cardColor : Colors.transparent,
+                color: kIsWeb ? (darkModeOn ? darkColor : lightColor) : transparent,
                 child: Padding(
                   padding: const EdgeInsets.all(kIsWeb ? 20.0 : 0),
                   child: Column(

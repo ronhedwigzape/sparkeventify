@@ -98,7 +98,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
           future: homeScreenItems(),
           builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
             if (!snapshot.hasData) {
-              return const Center(child: CircularProgressIndicator());
+              return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
             }
 
             final List<Widget> homeScreenItems = snapshot.data!;

@@ -288,7 +288,7 @@ class _PostScreenState extends State<PostScreen> {
       future: currentUser,
       builder: (context, AsyncSnapshot<User> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
@@ -311,6 +311,7 @@ class _PostScreenState extends State<PostScreen> {
                             child: Padding(
                               padding: const EdgeInsets.all(kIsWeb ? 8.0 : 2),
                               child: Card(
+                                color: darkModeOn ? darkColor : lightColor,
                                 child: Padding(
                                   padding: kIsWeb ? const EdgeInsets.all(30.0) : const EdgeInsets.symmetric(horizontal: 5),
                                   child: Column(

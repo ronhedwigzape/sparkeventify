@@ -86,7 +86,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           return const Center(child: Text('Something went wrong'));
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
         }
 
         allUsers = snapshot.data!.docs.map((doc) => model.User.fromSnap(doc)).toList();
@@ -102,7 +102,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
         }).toList();
 
         return Padding(
-          padding: const EdgeInsets.all(12.0),
+          padding: const EdgeInsets.fromLTRB(13, 15, 13, 0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [

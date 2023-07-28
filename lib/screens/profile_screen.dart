@@ -162,7 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       future: currentUser,
       builder: (context, AsyncSnapshot<model.User?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
+          return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
@@ -213,6 +213,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
                                   if (loadingProgress == null) return child;
                                   return CircularProgressIndicator(
+                                    color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
                                     value: loadingProgress.expectedTotalBytes != null
                                       ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
                                       : null,
