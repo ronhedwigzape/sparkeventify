@@ -79,11 +79,13 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                           ),
                           Expanded(
                             flex: 1,
-                            child: Column(
-                              children: [
-                                UpcomingEvents(snapshot.data!),
-                                PastEvents(snapshot.data!),
-                              ],
+                            child: SingleChildScrollView(
+                              child: Column(
+                                children: [
+                                  UpcomingEvents(snapshot.data!),
+                                  PastEvents(snapshot.data!),
+                                ],
+                              ),
                             ),
                           ),
                         ],

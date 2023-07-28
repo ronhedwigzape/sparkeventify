@@ -39,11 +39,15 @@ class UpcomingEventsState extends State<UpcomingEvents> {
         child: Card(
           child: Padding(
             padding: const EdgeInsets.symmetric(vertical: 10),
-            child: Column(
+            child: ListView(
+              shrinkWrap: true,
               children: [
                 const Text(
                   'Upcoming Events!',
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold),
+                  textAlign: TextAlign.center,
                 ),
                 ...upcomingEvents.map((event) {
                   return ListTile(
