@@ -118,76 +118,91 @@ class _PostCardState extends State<PostCard> {
                           ),
                         ),
                       ),
-                      kIsWeb ? 
-                      IconButton(
-                        onPressed: () {
-                         showDialog<dynamic>(
-                          context: context,
-                          builder: (context) => Dialog(
-                            child: SizedBox(
-                              width: 600,
-                              child: Column(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  AppBar(
-                                     title: Text.rich(
-                                      TextSpan(
-                                        children: <TextSpan>[
-                                          TextSpan(
-                                            text: 'Are you sure you want to delete this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'} forever?',
-                                          ),
-                                          const TextSpan(
-                                            text: '\nThis action cannot be undone.',
-                                            style: TextStyle(fontSize: 14),
-                                          ),
-                                        ]
-                                      ),
+                      kIsWeb
+                      ? IconButton(
+                      onPressed: () {
+                      showDialog<dynamic>(
+                        context: context,
+                        builder: (context) => Dialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5),
+                          ),
+                          child: SizedBox(
+                            width: 600,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: <Widget>[
+                                AppBar(
+                                  title: Text.rich(
+                                    TextSpan(
+                                      children: <TextSpan>[
+                                        TextSpan(
+                                          text:
+                                          'Are you sure you want to delete this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'} forever?',
+                                        ),
+                                        const TextSpan(
+                                          text: '\nThis action cannot be undone.',
+                                          style: TextStyle(fontSize: 14),
+                                        ),
+                                      ],
                                     ),
-                                    titleTextStyle: TextStyle(
+                                  ),
+                                  titleTextStyle: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
                                       color: darkModeOn ? darkColor : lightColor),
-                                    backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-                                    automaticallyImplyLeading: false,
-                                    actions: [
-                                      IconButton(
-                                        onPressed: () => Navigator.of(context).pop(),
-                                        icon: Icon(Icons.close, color: darkModeOn ? darkColor : lightColor),
-                                      )
-                                    ],
-                                  ),
-                                  ListView(
-                                    padding: const EdgeInsets.symmetric(vertical: 16),
-                                    shrinkWrap: true,
-                                    children: ['Delete Forever',].map((e) => InkWell(
-                                      onTap: () async {
-                                        FireStoreEventMethods().removeEvent(widget.snap.id);
-                                        Navigator.of(context).pop();
-                                      },
-                                      child: Container(
-                                        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-                                        child: Row(
-                                          children: [
-                                             Icon(Icons.delete_forever, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
-                                            const SizedBox(width: 16),
-                                            Text(e, style: TextStyle(
-                                              color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,
-                                              fontWeight: FontWeight.bold,
-                                            )),
-                                          ]
+                                  backgroundColor: darkModeOn
+                                      ? darkModePrimaryColor
+                                      : lightModePrimaryColor,
+                                  automaticallyImplyLeading: false,
+                                  actions: [
+                                    IconButton(
+                                      onPressed: () => Navigator.of(context).pop(),
+                                      icon: Icon(Icons.close,
+                                          color: darkModeOn ? darkColor : lightColor),
+                                    )
+                                  ],
+                                ),
+                                ListView(
+                                  padding: const EdgeInsets.symmetric(vertical: 16),
+                                  shrinkWrap: true,
+                                  children: ['Delete Forever',].map((e) => InkWell(
+                                    onTap: () async {
+                                      FireStoreEventMethods().removeEvent(widget.snap.id);
+                                      Navigator.of(context).pop();
+                                    },
+                                    child: Container(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 12, horizontal: 16),
+                                      child: Row(
+                                        children: [
+                                          Icon(Icons.delete_forever,
+                                              color: darkModeOn
+                                                  ? darkModeMaroonColor
+                                                  : lightModeMaroonColor),
+                                          const SizedBox(width: 16),
+                                          Text(e,
+                                              style: TextStyle(
+                                                color: darkModeOn
+                                                    ? darkModeMaroonColor
+                                                    : lightModeMaroonColor,
+                                                fontWeight: FontWeight.bold,
+                                              )),
+                                            ],
+                                          ),
                                         ),
-                                      )
                                       )).toList(),
                                     ),
-                                  ]
+                                  ],
                                 ),
-                            )
+                              ),
                             ),
                           );
                         },
-                        icon: const Icon(Icons.delete_forever, color: darkModeMaroonColor,))
-                    : const SizedBox.shrink(),
-                    ]),
+                        icon: const Icon(Icons.delete_forever, color: darkModeMaroonColor),
+                      )
+                      : const SizedBox.shrink(),
+                      ]),
                   ),
                 ),
                 Stack(
