@@ -52,6 +52,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                           Icon(
                             Icons.dashboard_outlined,
                             color: darkModeOn ? lightColor : darkColor,
+                            size: 40,
                           ),
                           const SizedBox(width: 10),
                           Text(

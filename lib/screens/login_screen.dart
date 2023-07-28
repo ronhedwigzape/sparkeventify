@@ -80,7 +80,6 @@ class _LoginScreenState extends State<LoginScreen> {
     ));
   }
 
-
   void navigateToSignup() {
     Navigator.of(context).push(MaterialPageRoute(
         builder: (context) => !kIsWeb

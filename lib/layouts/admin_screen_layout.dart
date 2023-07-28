@@ -85,71 +85,126 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                 elevation: 0.0,
                 backgroundColor: darkModeOn ? darkColor : lightColor,
                 actions: [
-                  IconButton(
+                  TextButton.icon(
                     onPressed: () => navigationTapped(0),
                     icon: Icon(Icons.dashboard,
-                        color: _page == 0
-                            ? darkModeOn
-                            ? darkModePrimaryColor
-                            :  lightModePrimaryColor
-                            : darkModeOn
-                            ? darkModeSecondaryColor
-                            : lightModeSecondaryColor),
-                    tooltip: 'Dashboard',
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      color: _page == 0
+                          ? darkModeOn
+                          ? darkModePrimaryColor
+                          :  lightModePrimaryColor
+                          : darkModeOn
+                          ? darkModeSecondaryColor
+                          : lightModeSecondaryColor),
+                    label: Text(
+                      'Dashboard',
+                      style: TextStyle(
+                      color: _page == 0
+                          ? darkModeOn
+                          ? darkModePrimaryColor
+                          :  lightModePrimaryColor
+                          : darkModeOn
+                          ? darkModeSecondaryColor
+                          : lightModeSecondaryColor
+                        ),
+                    ),
                   ),
-                  IconButton(
+                  const SizedBox(width: 10.0,),
+                  TextButton.icon(
                     onPressed: () => navigationTapped(1),
                     icon: Icon(Icons.add_circle_sharp,
-                        color: _page == 1
-                            ? darkModeOn
-                            ? darkModePrimaryColor
-                            : lightModePrimaryColor
-                            : darkModeOn
-                            ? darkModeSecondaryColor
-                            : lightModeSecondaryColor),
-                    tooltip: 'Post',
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      color: _page == 1
+                          ? darkModeOn
+                          ? darkModePrimaryColor
+                          : lightModePrimaryColor
+                          : darkModeOn
+                          ? darkModeSecondaryColor
+                          : lightModeSecondaryColor),
+                    label: Text(
+                      'Post',
+                      style: TextStyle(
+                      color: _page == 1
+                          ? darkModeOn
+                          ? darkModePrimaryColor
+                          :  lightModePrimaryColor
+                          : darkModeOn
+                          ? darkModeSecondaryColor
+                          : lightModeSecondaryColor
+                      ),
+                    ),
                   ),
-                  IconButton(
+                  const SizedBox(width: 10.0,),
+                  TextButton.icon(
                     onPressed: () => navigationTapped(2),
                     icon: Icon(Icons.feed,
-                        color: _page == 2
-                            ? darkModeOn
-                            ? darkModePrimaryColor
-                            : lightModePrimaryColor
-                            : darkModeOn
-                            ? darkModeSecondaryColor
-                            : lightModeSecondaryColor),
-                    tooltip: 'Edit Events',
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      color: _page == 2
+                          ? darkModeOn
+                          ? darkModePrimaryColor
+                          : lightModePrimaryColor
+                          : darkModeOn
+                          ? darkModeSecondaryColor
+                          : lightModeSecondaryColor),
+                    label: Text(
+                      'Events',
+                      style: TextStyle(
+                      color: _page == 2
+                          ? darkModeOn
+                          ? darkModePrimaryColor
+                          :  lightModePrimaryColor
+                          : darkModeOn
+                          ? darkModeSecondaryColor
+                          : lightModeSecondaryColor
+                      ),
+                    ),
                   ),
-                  IconButton(
+                  const SizedBox(width: 10.0,),
+                  TextButton.icon(
                     onPressed: () => navigationTapped(3),
                     icon: Icon(Icons.supervised_user_circle_sharp,
-                        color: _page == 3
-                            ? darkModeOn
-                            ? darkModePrimaryColor
-                            : lightModePrimaryColor
-                            : darkModeOn
-                            ? darkModeSecondaryColor
-                            : lightModeSecondaryColor),
-                    tooltip: 'Users',
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      color: _page == 3
+                          ? darkModeOn
+                          ? darkModePrimaryColor
+                          : lightModePrimaryColor
+                          : darkModeOn
+                          ? darkModeSecondaryColor
+                          : lightModeSecondaryColor),
+                    label: Text(
+                        'Users',
+                      style: TextStyle(
+                      color: _page == 3
+                          ? darkModeOn
+                          ? darkModePrimaryColor
+                          :  lightModePrimaryColor
+                          : darkModeOn
+                          ? darkModeSecondaryColor
+                          : lightModeSecondaryColor
+                      ),
+                    ),
                   ),
-                  IconButton(
+                  const SizedBox(width: 10.0,),
+                  TextButton.icon(
                     onPressed: () => navigationTapped(4),
                     icon: Icon(Icons.settings,
-                        color: _page == 4
-                            ? darkModeOn
-                            ? darkModePrimaryColor
-                            : lightModePrimaryColor
-                            : darkModeOn
-                            ? darkModeSecondaryColor
-                            : lightModeSecondaryColor),
-                    tooltip: 'Settings',
-                    padding: const EdgeInsets.symmetric(horizontal: 15.0),
+                      color: _page == 4
+                          ? darkModeOn
+                          ? darkModePrimaryColor
+                          : lightModePrimaryColor
+                          : darkModeOn
+                          ? darkModeSecondaryColor
+                          : lightModeSecondaryColor),
+                    label: Text(
+                      'Settings',
+                      style: TextStyle(
+                      color: _page == 4
+                          ? darkModeOn
+                          ? darkModePrimaryColor
+                          :  lightModePrimaryColor
+                          : darkModeOn
+                          ? darkModeSecondaryColor
+                          : lightModeSecondaryColor
+                      ),
+                    ),
                   ),
+                  const SizedBox(width: 10.0,),
                   Row(
                     children: [
                       Padding(

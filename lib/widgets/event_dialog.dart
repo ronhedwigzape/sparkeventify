@@ -14,12 +14,12 @@ class EventDialog extends StatefulWidget {
   final List<model.Event> selectedDayEvents;
   final DateTime adjustedSelectedDay;
 
-  EventDialog(this.selectedDayEvents, this.adjustedSelectedDay, {Key? key}) : super(key: key);
+  const EventDialog(this.selectedDayEvents, this.adjustedSelectedDay, {Key? key}) : super(key: key);
 
   @override
-  _EventDialogState createState() => _EventDialogState();
+  EventDialogState createState() => EventDialogState();
 }
-class _EventDialogState extends State<EventDialog> {
+class EventDialogState extends State<EventDialog> {
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;

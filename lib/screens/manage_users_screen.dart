@@ -126,9 +126,10 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                     children: [
                       Icon(
                         Icons.manage_accounts,
-                        color: darkModeOn ? lightColor : darkColor
+                        color: darkModeOn ? lightColor : darkColor,
+                        size: 40,
                       ),
-                      const SizedBox(width: 10,),
+                      const SizedBox(width: 5,),
                       Text(
                         'Manage Users',
                         style: TextStyle(
@@ -229,6 +230,16 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         },
                       ),
                     ],
+                  ),
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                child: Text(
+                  'Instructions: In this section, all users can be viewed. Notify them for events & announcements. You can update and delete the users account information here. ',
+                  style: TextStyle(
+                      fontSize: 15.0,
+                      color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor
                   ),
                 ),
               ),

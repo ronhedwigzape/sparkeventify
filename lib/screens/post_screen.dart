@@ -325,6 +325,7 @@ class _PostScreenState extends State<PostScreen> {
                                               Icon(
                                                   Icons.post_add,
                                                 color: darkModeOn ? lightColor : darkColor,
+                                                size: 40,
                                               ),
                                               const SizedBox(width: 10),
                                               Text(
@@ -339,13 +340,14 @@ class _PostScreenState extends State<PostScreen> {
                                           ),
                                         ),
                                       ),
-                                     const Flexible(
+                                     Flexible(
                                          child: Padding(
-                                           padding: EdgeInsets.symmetric(vertical: 8.0),
+                                           padding: const EdgeInsets.symmetric(vertical: 8.0),
                                            child: Text(
                                              'Instructions: Fill up the required* details and post the announcement. Only one image and document can be selected. For document, only .pdf files can be uploaded. For image it can be .jpg or .png',
                                              style: TextStyle(
                                                fontSize: 15.0,
+                                                 color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor
                                              ),
                                              textAlign: TextAlign.center,
                                            ),
@@ -484,7 +486,7 @@ class _PostScreenState extends State<PostScreen> {
                                                                   fontWeight: FontWeight.bold
                                                               )),
                                                         ))),
-                                                const Flexible(
+                                                Flexible(
                                                     child: Center(
                                                         child: Padding(
                                                           padding: EdgeInsets.all(8.0),
@@ -492,6 +494,7 @@ class _PostScreenState extends State<PostScreen> {
                                                               'Check all the type of participants that will be involved.',
                                                               style: TextStyle(
                                                                 fontSize: 15,
+                                                                color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor
                                                               )),
                                                         ))),
                                                 // participants (Checkbox that adds to a local array of participants)

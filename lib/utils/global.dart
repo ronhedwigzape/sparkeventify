@@ -1,15 +1,13 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/screens/admin_dashboard_screen.dart';
-import 'package:student_event_calendar/screens/events_feed_screen.dart';
+import 'package:student_event_calendar/screens/manage_events_screen.dart';
 import 'package:student_event_calendar/screens/manage_users_screen.dart';
 import 'package:student_event_calendar/screens/post_screen.dart';
 import 'package:student_event_calendar/screens/profile_screen.dart';
 import 'package:student_event_calendar/widgets/events_calendar.dart';
 import 'package:student_event_calendar/screens/settings_screen.dart';
 import '../resources/auth_methods.dart';
-import '../resources/firestore_user_methods.dart';
-import 'package:student_event_calendar/models/user.dart' as model;
 
 // Constant variables for the app
 const webScreenSize = 600;
@@ -28,7 +26,7 @@ Future<List<Widget>> homeScreenItems() async {
       const EventsCalendar(),
       const Center(child: Text('Feedbacks')),
       const PostScreen(),
-      const EventsFeedScreen(),
+      const ManageEventsScreen(),
       const ProfileScreen(),
       const Center(child: Text('Notifications')),
     ];
@@ -37,7 +35,7 @@ Future<List<Widget>> homeScreenItems() async {
     return [
       const AdminDashboardScreen(),
       const PostScreen(),
-      const EventsFeedScreen(),
+      const ManageEventsScreen(),
       const ManageUsersScreen(),
       const SettingsScreen(),
     ];

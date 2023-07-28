@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart';
+
+import '../providers/darkmode_provider.dart';
+import '../utils/colors.dart';
 
 class UpcomingEvents extends StatefulWidget {
   const UpcomingEvents(this._events, {Key? key}) : super(key: key);
@@ -34,6 +39,7 @@ class UpcomingEventsState extends State<UpcomingEvents> {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return Center(
       child: SingleChildScrollView(
         child: Card(
@@ -52,7 +58,10 @@ class UpcomingEventsState extends State<UpcomingEvents> {
                 ...upcomingEvents.map((event) {
                   return ListTile(
                     title: Center(child: Text(event.title)),
-                    subtitle: Center(child: Text(event.date.toString())),
+                    subtitle: Center(
+                        child: Text(
+                          DateFormat('MMMM dd, yyyy').format(event.date),
+                          style: TextStyle(color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor))),
                   );
                 }).toList(),
               ],

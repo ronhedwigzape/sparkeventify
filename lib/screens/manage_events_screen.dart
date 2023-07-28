@@ -9,16 +9,16 @@ import '../models/event.dart';
 import '../providers/darkmode_provider.dart';
 import '../utils/colors.dart';
 
-class EventsFeedScreen extends StatefulWidget {
-  const EventsFeedScreen({Key? key, this.snap}) : super(key: key);
+class ManageEventsScreen extends StatefulWidget {
+  const ManageEventsScreen({Key? key, this.snap}) : super(key: key);
 
   final snap;
 
   @override
-  State<EventsFeedScreen> createState() => _EventsFeedScreenState();
+  State<ManageEventsScreen> createState() => _ManageEventsScreenState();
 }
 
-class _EventsFeedScreenState extends State<EventsFeedScreen> {
+class _ManageEventsScreenState extends State<ManageEventsScreen> {
   String dropdownEventType = 'All';
   late TextEditingController _searchController;
   final _searchSubject = BehaviorSubject<String>();
@@ -126,11 +126,12 @@ class _EventsFeedScreenState extends State<EventsFeedScreen> {
                                       Icon(
                                         Icons.edit,
                                         color: darkModeOn ? lightColor : darkColor,
+                                        size: 40,
                                       ),
                                       const SizedBox(width: 10),
                                       Text(
-                                'Edit Events',
-                                style: TextStyle(
+                                    'Manage Events',
+                                    style: TextStyle(
                                         fontWeight: FontWeight.bold,
                                         fontSize: kIsWeb ? 32.0 : 24.0,
                                         color: darkModeOn ? lightColor : darkColor,
@@ -159,6 +160,16 @@ class _EventsFeedScreenState extends State<EventsFeedScreen> {
                                 ),
                               )
                             ],
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: Text(
+                            'Instructions: In this section, all events can be viewed. You can update and delete the created events here.',
+                            style: TextStyle(
+                            fontSize: 15.0,
+                            color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor
+                            ),
                           ),
                         ),
                         Expanded(
