@@ -48,10 +48,7 @@ class _TextFieldInputState extends State<TextFieldInput> {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     // Define the border for the TextField
     final inputBorder = OutlineInputBorder(
-      borderSide: Divider.createBorderSide(
-          context,
-        color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor
-      ),
+      borderSide: Divider.createBorderSide(context),
     );
 
     // Return a TextField widget

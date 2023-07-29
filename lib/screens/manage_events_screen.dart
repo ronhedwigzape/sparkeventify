@@ -59,11 +59,16 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
       padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 8),
       child: Scaffold(
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           title: TextField(
             controller: _searchController,
-            decoration: const InputDecoration(
-                border: OutlineInputBorder(),
-                labelText: 'Search events', prefixIcon: Icon(Icons.search),),
+            decoration: InputDecoration(
+                border: const OutlineInputBorder(),
+                labelText: 'Search events',
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: darkModeOn ? lightColor : darkColor,
+                    size: kIsWeb ? 40 : 25,),),
           ),
           titleSpacing: 0.0,
           toolbarHeight: 70,
@@ -116,10 +121,12 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                         return const Text('No events match your search.');
                       }
 
-                      return Column(children: [
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
                         Padding(
                           padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
-                          child: Row(
+                          child: kIsWeb ? Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Flexible(
@@ -135,7 +142,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                                     'Manage Events',
                                     style: TextStyle(
                                         fontWeight: FontWeight.bold,
-                                        fontSize: kIsWeb ? 32.0 : 24.0,
+                                        fontSize: 32.0,
                                         color: darkModeOn ? lightColor : darkColor,
                                         ),
                                       ),
@@ -162,6 +169,60 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                                 ),
                               )
                             ],
+                          ) : SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                  child: Row(
+                                  children: [
+                                    Flexible(
+                                      child: Icon(
+                                        Icons.edit,
+                                        color: darkModeOn ? lightColor : darkColor,
+                                        size: 24,
+                                      ),
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Flexible(
+                                      child: Text(
+                                        'Manage Events',
+                                        style: TextStyle(
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 24.0,
+                                          color: darkModeOn ? lightColor : darkColor,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                )),
+                                Flexible(
+                                  child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      DropdownButton<String>(
+                                        value: dropdownEventType,
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            dropdownEventType = newValue!;
+                                          });
+                                        },
+                                        items: <String>[
+                                          'All',
+                                          'Non-academic',
+                                          'Academic'
+                                        ].map<DropdownMenuItem<String>>((String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
                         ),
                         Container(

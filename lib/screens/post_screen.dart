@@ -319,7 +319,7 @@ class _PostScreenState extends State<PostScreen> {
                                     children: [
                                       Flexible(
                                         child: Padding(
-                                          padding: EdgeInsets.symmetric(vertical: 16.0),
+                                          padding: const EdgeInsets.symmetric(vertical: 16.0),
                                           child: Row(
                                             mainAxisAlignment: MainAxisAlignment.center,
                                             children: [
@@ -528,38 +528,36 @@ class _PostScreenState extends State<PostScreen> {
                                           ),
                                         ),
                                       ),
-
                                       const SizedBox(height: 10.0),
-
                                       Center(
                                         child: InkWell(
                                           onTap: _post,
                                           child: Container(
-                                              width: double.infinity,
-                                              alignment: Alignment.center,
-                                              padding: const EdgeInsets.symmetric(
-                                                  vertical: 16.0),
-                                              decoration: ShapeDecoration(
-                                                shape: const RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.all(
-                                                      Radius.circular(5.0)),
-                                                ),
-                                                color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                                            width: double.infinity,
+                                            alignment: Alignment.center,
+                                            padding: const EdgeInsets.symmetric(
+                                                vertical: 16.0),
+                                            decoration: ShapeDecoration(
+                                              shape: const RoundedRectangleBorder(
+                                                borderRadius: BorderRadius.all(
+                                                    Radius.circular(5.0)),
                                               ),
-                                              child: _isLoading
-                                                  ? const Center(
-                                                      child: CircularProgressIndicator(
-                                                      valueColor:
-                                                          AlwaysStoppedAnimation<Color>(
-                                                              lightColor),
-                                                    ))
-                                                  : const Text(
-                                                      'Create a New Announcement',
-                                                      style: TextStyle(
-                                                        color: lightColor,
-                                                        fontWeight: FontWeight.bold,
-                                                      ),
-                                                    )),
+                                              color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                                            ),
+                                            child: _isLoading
+                                              ? const Center(
+                                                  child: CircularProgressIndicator(
+                                                  valueColor:
+                                                      AlwaysStoppedAnimation<Color>(
+                                                          lightColor),
+                                                ))
+                                              : const Text(
+                                                  'Create a New Announcement',
+                                                  style: TextStyle(
+                                                    color: lightColor,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                )),
                                         ),
                                       ),
                                     ],

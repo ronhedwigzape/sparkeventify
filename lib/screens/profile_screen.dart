@@ -24,12 +24,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Uint8List? _pickedImage;
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
 
-  @override
-  void dispose() {
-    super.dispose();
-    _pickedImage = null;
-  }
-
   void _selectImage(BuildContext context) async {
     return showDialog(
       context: context,
