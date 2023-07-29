@@ -326,7 +326,7 @@ class _PostScreenState extends State<PostScreen> {
                                               Icon(
                                                   Icons.post_add,
                                                 color: darkModeOn ? lightColor : darkColor,
-                                                size: 40,
+                                                size: kIsWeb ? 40 : 25,
                                               ),
                                               const SizedBox(width: 10),
                                               Text(

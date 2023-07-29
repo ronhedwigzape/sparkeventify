@@ -57,9 +57,9 @@ class EventsCalendarState extends State<EventsCalendar> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Card(
-                color: kIsWeb ? (darkModeOn ? darkColor : lightColor) : transparent,
+                color: darkModeOn ? darkColor : lightColor,
                 child: Padding(
-                  padding: const EdgeInsets.all(kIsWeb ? 20.0 : 0),
+                  padding: const EdgeInsets.all(kIsWeb ? 20.0 : 10),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.center,
@@ -88,7 +88,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                         ],
                       ) : const SizedBox.shrink(),
                       Padding(
-                        padding: const  EdgeInsets.symmetric(vertical: 10.0),
+                        padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: Center(
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -112,7 +112,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                         child: Container(
                           decoration: BoxDecoration(
                               border: Border.all(
-                                  color: darkModeOn ? darkColor : lightColor)),
+                                  color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor)),
                           child: TableCalendar(
                             eventLoader: (day) {
                               // Use `eventLoader` to return a list of events for the given day.

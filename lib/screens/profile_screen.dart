@@ -325,15 +325,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Flexible(
                         child: Padding(
                           padding: const EdgeInsets.all(15.0),
-                          child: TextButton(
+                          child: TextButton.icon(
                             onPressed: _signOut,
                             style: TextButton.styleFrom(
                               backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
                             ),
-                            child: const Text(
+                            icon: Icon(
+                                Icons.logout,
+                                color: darkModeOn ? darkColor : lightColor,
+                            ),
+                            label: Text(
                               'Sign out',
                               style: TextStyle(
-                                color: lightColor,
+                                color: darkModeOn ? darkColor : lightColor,
                                 fontSize: 16.0,
                               ),
                             )
