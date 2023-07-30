@@ -142,9 +142,7 @@ class _PostCardState extends State<PostCard> {
                                       InkWell(
                                         onTap: () async {
                                           await FireStoreEventMethods().removeEvent(widget.snap.id);
-                                          if (mounted) {
                                             Navigator.of(context).pop();
-                                          }
                                         },
                                         child: Row(
                                           children: [
