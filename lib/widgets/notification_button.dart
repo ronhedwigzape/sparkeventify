@@ -2,11 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
-
 import '../providers/darkmode_provider.dart';
 import '../services/firebase_notifications.dart';
+
 class NotificationButton extends StatefulWidget {
   final List<String> selectedUsers;
 
@@ -20,6 +19,7 @@ class _NotificationButtonState extends State<NotificationButton> {
 
   void sendNotifications(List<String> selectedUsers, String title, String message) async {
     List<String> messages = [];
+    String currentUser = FirebaseAuth.instance.currentUser!.uid;
     for (String user in selectedUsers) {
       if (kDebugMode) {
         print("Notification sent to User $user");
@@ -28,7 +28,7 @@ class _NotificationButtonState extends State<NotificationButton> {
       }
       messages.add(
           await FirebaseNotifications().sendNotificationToUser(
-              FirebaseAuth.instance.currentUser!.uid,
+              currentUser,
               user,
               title,
               message
@@ -46,6 +46,7 @@ class _NotificationButtonState extends State<NotificationButton> {
         );
       }
     } else {
+      // todo: refactor this
       for(String m in messages) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
