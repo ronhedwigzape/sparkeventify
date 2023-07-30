@@ -8,6 +8,8 @@ import 'dart:convert';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/widgets/popup_notification.dart';
+import 'package:student_event_calendar/models/notification.dart';
+import 'package:uuid/uuid.dart';
 
 
 // Place this on top to avoid Null Safety errors
@@ -183,8 +185,12 @@ class FirebaseNotifications {
   }
 
 
-  Future<String> sendNotificationToUser(String userId, String title, String body) async {
+  Future<String> sendNotificationToUser(
+      String senderId, String userId, String title, String body) async {
     String message = 'Some error occurred while sending push notification.';
+
+    var notificationCollection = FirebaseFirestore.instance.collection('notifications');
+
     try {
       var userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
       if (!userDoc.exists) {
@@ -195,11 +201,30 @@ class FirebaseNotifications {
       }
 
       var user = model.User.fromSnap(userDoc);
+      var senderRef = FirebaseFirestore.instance.collection('users').doc(senderId);
 
       if (user.deviceTokens != null) {
         for (var token in user.deviceTokens!.values) {
           try {
             message = await sendPushNotification(title, body, token);
+
+            var notificationId = const Uuid().v4();
+
+            // Stores the notification in Firestore for each user
+            var notification = Notification(
+              id: notificationId,
+              title: title,
+              message: body,
+              sender: senderRef,
+              recipient: userDoc.reference,
+              timestamp: Timestamp.now(),
+              read: false,
+            );
+
+            await notificationCollection
+                .doc(notificationId)
+                .set(notification.toJson());
+
           } catch (e) {
             if (kDebugMode) {
               print('Failed to send notification: $e');

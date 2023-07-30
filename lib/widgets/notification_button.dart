@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 
 import '../providers/darkmode_provider.dart';
@@ -24,7 +26,14 @@ class _NotificationButtonState extends State<NotificationButton> {
         print("Title: $title");
         print("Message: $message");
       }
-      messages.add(await FirebaseNotifications().sendNotificationToUser(user, title, message));
+      messages.add(
+          await FirebaseNotifications().sendNotificationToUser(
+              FirebaseAuth.instance.currentUser!.uid,
+              user,
+              title,
+              message
+          )
+      );
     }
     setState(() {
       selectedUsers.clear();
