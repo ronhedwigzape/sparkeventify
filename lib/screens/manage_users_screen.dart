@@ -138,10 +138,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                             color: darkModeOn ? lightColor : darkColor
                         ),
                       ),
-                      const SizedBox(
-                        width: 50,
-                        child: Text('User Type'),
-                      ),
+                      const SizedBox(width: 50),
                       DropdownButton<String>(
                         value: dropdownUserType,
                         onChanged: (String? newValue) {
