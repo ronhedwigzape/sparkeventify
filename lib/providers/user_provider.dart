@@ -38,7 +38,7 @@ class UserProvider with ChangeNotifier {
 
   // Method to refresh the user details
   Future<void> refreshUser() async {
-    custom.User? user = await _authMethods.getUserDetails();
+    custom.User? user = await _authMethods.getCurrentUserDetails();
 
     // Check if user details are available
     if (user != null) {

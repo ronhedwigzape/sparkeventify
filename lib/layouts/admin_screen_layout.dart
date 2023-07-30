@@ -16,7 +16,7 @@ class AdminScreenLayout extends StatefulWidget {
 }
 
 class _AdminScreenLayoutState extends State<AdminScreenLayout> {
-  Future<model.User> currentUser = AuthMethods().getUserDetails();
+  Future<model.User> currentUser = AuthMethods().getCurrentUserDetails();
   int _page = 0;
   PageController pageController = PageController();
 

@@ -13,16 +13,10 @@ class AuthMethods {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   // Get current user details
-  Future<model.User> getUserDetails() async {
+  Future<model.User> getCurrentUserDetails() async {
     User currentUser = _auth.currentUser!;
     DocumentSnapshot snap = await _firestore.collection('users').doc(currentUser.uid).get();
     return model.User.fromSnap(snap);
-  }
-
-  // Get current user uid
-  Future<String> getCurrentUserUid() async {
-    User currentUser = _auth.currentUser!;
-    return currentUser.uid;
   }
 
   // Get current user type

@@ -1,8 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:student_event_calendar/models/user.dart';
+import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
@@ -29,7 +30,7 @@ class _PostScreenState extends State<PostScreen> {
   final TextEditingController _eventTimeController = TextEditingController();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
-  Future<User> currentUser = AuthMethods().getUserDetails();
+  Future<model.User> currentUser = AuthMethods().getCurrentUserDetails();
   Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
@@ -162,7 +163,6 @@ class _PostScreenState extends State<PostScreen> {
       if (kDebugMode) {
         print('Trying to add event...');
       }
-      String currentUser = await AuthMethods().getCurrentUserUid();
       // Check if all required parameters are not null
       if (_eventTypeController.text.isNotEmpty &&
           _eventTitleController.text.isNotEmpty &&
@@ -186,7 +186,7 @@ class _PostScreenState extends State<PostScreen> {
             _eventTitleController.text,
             _imageFile,
             _eventDescriptionsController.text,
-            currentUser,
+            FirebaseAuth.instance.currentUser!.uid,
             _documentFile,
             datePart,
             parsedTime12,
@@ -284,15 +284,15 @@ class _PostScreenState extends State<PostScreen> {
     final outlineBorder = OutlineInputBorder(
       borderSide: Divider.createBorderSide(context),
     );
-    return FutureBuilder<User>(
+    return FutureBuilder<model.User>(
       future: currentUser,
-      builder: (context, AsyncSnapshot<User> snapshot) {
+      builder: (context, AsyncSnapshot<model.User> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
-          User? currentUser = snapshot.data;
+          model.User? currentUser = snapshot.data;
           return currentUser?.userType == 'Admin' || currentUser?.userType == 'Staff'
               ? ScaffoldMessenger(
                   key: _scaffoldMessengerKey,
