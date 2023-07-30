@@ -138,7 +138,10 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                             color: darkModeOn ? lightColor : darkColor
                         ),
                       ),
-                      const SizedBox(width: 50), // You can adjust the space between widgets here
+                      const SizedBox(
+                        width: 50,
+                        child: Text('User Type'),
+                      ),
                       DropdownButton<String>(
                         value: dropdownUserType,
                         onChanged: (String? newValue) {
@@ -154,7 +157,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                      SizedBox(width: 30), // Add necessary space between items
+                      const SizedBox(width: 30),
                       DropdownButton<String>(
                         value: dropdownYear,
                         onChanged: (String? newValue) {
@@ -170,7 +173,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                      SizedBox(width: 30), // Add necessary space between items
+                      const SizedBox(width: 30),
                       DropdownButton<String>(
                         value: dropdownDepartment,
                         onChanged: (String? newValue) {
@@ -186,7 +189,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                      SizedBox(width: 30), // Add necessary space between items
+                      const SizedBox(width: 30),
                       DropdownButton<String>(
                         value: dropdownCourse,
                         onChanged: (String? newValue) {
@@ -202,7 +205,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                      SizedBox(width: 30), // Add necessary space between items
+                      const SizedBox(width: 30),
                       DropdownButton<String>(
                         value: dropdownSection,
                         onChanged: (String? newValue) {
@@ -218,9 +221,9 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                      SizedBox(width: 30), // Add necessary space between items
+                      const SizedBox(width: 30),
                       NotificationButton(selectedUsers: selectedUsers),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 20),
                       Checkbox(
                         value: _allFilteredUsersSelected,
                         onChanged: (bool? value) {
@@ -244,7 +247,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 ),
               ),
               SizedBox(
-                height: width > webScreenSize ? width * 0.3667 : 0,
+                height: MediaQuery.of(context).size.height > webScreenSize ? width * 0.33 : 0,
                 child: SingleChildScrollView(
                   child: Column(
                   children: filteredUsers.isEmpty

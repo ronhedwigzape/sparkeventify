@@ -68,7 +68,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                   prefixIcon: Icon(
                     Icons.search,
                     color: darkModeOn ? lightColor : darkColor,
-                    size: kIsWeb ? 40 : 25,),),
+                    size: kIsWeb ? 24 : 25,),),
           ),
           titleSpacing: 0.0,
           toolbarHeight: 70,
