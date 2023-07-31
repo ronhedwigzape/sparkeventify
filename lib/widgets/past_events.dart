@@ -34,7 +34,7 @@ class PastEventsState extends State<PastEvents> {
     );
 
     // Sort past events by date in descending order
-    pastEvents.sort((a, b) => b.date.compareTo(a.date));
+    pastEvents.sort((a, b) => b.startDate.compareTo(a.startDate));
   }
 
   @override
@@ -59,7 +59,7 @@ class PastEventsState extends State<PastEvents> {
                     title: Center(child: Text(event.title)),
                     subtitle: Center(
                         child: Text(
-                          DateFormat('MMMM dd, yyyy').format(event.date),
+                          DateFormat('MMMM dd, yyyy').format(event.startDate),
                           style: TextStyle(color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor),)),
                   );
                 }).toList(),

@@ -21,21 +21,22 @@ class PostScreen extends StatefulWidget {
 }
 
 class _PostScreenState extends State<PostScreen> {
-  final TextEditingController _eventTypeController = TextEditingController();
-  final TextEditingController _eventTitleController = TextEditingController();
-  final TextEditingController _eventDescriptionsController =
-      TextEditingController();
-  final TextEditingController _eventVenueController = TextEditingController();
-  final TextEditingController _eventDateController = TextEditingController();
-  final TextEditingController _eventTimeController = TextEditingController();
+  final _eventTypeController = TextEditingController();
+  final _eventTitleController = TextEditingController();
+  final _eventDescriptionsController = TextEditingController();
+  final _eventVenueController = TextEditingController();
+  final _startDateController = TextEditingController();
+  final _endDateController = TextEditingController();
+  final _startTimeController = TextEditingController();
+  final _endTimeController = TextEditingController();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
   Future<model.User> currentUser = AuthMethods().getCurrentUserDetails();
   Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
-  List<String> courseParticipants = ['BSCS', 'BSIT', 'BSN'];
-  List<String> departmentParticipants = ['CCS', 'CHS'];
+  List<String> courseParticipants = ['BSCS', 'BSIT', 'BSCE', 'BSN', 'BSEE'];
+  List<String> departmentParticipants = ['CCS', 'CHS', 'CEA', 'CTHBM', 'CAS'];
   List<String> staffParticipants = ['Faculty', 'Dean'];
   Map<String, List<String>> selectedParticipants = {'course': [], 'department': [], 'staff': []};
 
@@ -166,21 +167,27 @@ class _PostScreenState extends State<PostScreen> {
       // Check if all required parameters are not null
       if (_eventTypeController.text.isNotEmpty &&
           _eventTitleController.text.isNotEmpty &&
+          _startDateController.text.isNotEmpty &&
+          _endDateController.text.isNotEmpty &&
+          _startTimeController.text.isNotEmpty &&
+          _endTimeController.text.isNotEmpty &&
           _eventDescriptionsController.text.isNotEmpty &&
-          _eventDateController.text.isNotEmpty &&
-          _eventTimeController.text.isNotEmpty &&
           selectedParticipants.isNotEmpty) {
         // Get the date and time from the text controllers
-        String pickedDate = _eventDateController.text;
-        String pickedTime = _eventTimeController.text;
+        String pickedStartDate = _startDateController.text;
+        String pickedEndDate = _endDateController.text;
+        String pickedStartTime = _startTimeController.text;
+        String pickedEndTime = _endTimeController.text;
         // Convert picked date (yyyy-mm-dd) to DateTime
-        DateTime pickedDateTime = DateTime.parse(pickedDate);
+        DateTime startDate = DateTime.parse(pickedStartDate);
+        DateTime endDate = DateTime.parse(pickedEndDate);
         // Get only the date part as a DateTime object
-        DateTime datePart = DateTime(
-            pickedDateTime.year, pickedDateTime.month, pickedDateTime.day);
+        DateTime startDatePart = DateTime(startDate.year, startDate.month, startDate.day);
+        DateTime endDatePart = DateTime(endDate.year, endDate.month, endDate.day);
         // Parse 12-hour format time string to DateTime
         DateFormat time12Format = DateFormat('h:mm a');
-        DateTime parsedTime12 = time12Format.parse(pickedTime);
+        DateTime startTime12 = time12Format.parse(pickedStartTime);
+        DateTime endTime12 = time12Format.parse(pickedEndTime);
         // Add the event to the database
         String response = await FireStoreEventMethods().postEvent(
             _eventTitleController.text,
@@ -188,8 +195,10 @@ class _PostScreenState extends State<PostScreen> {
             _eventDescriptionsController.text,
             FirebaseAuth.instance.currentUser!.uid,
             _documentFile,
-            datePart,
-            parsedTime12,
+            startDatePart,
+            endDatePart,
+            startTime12,
+            endTime12,
             selectedParticipants,
             _eventVenueController.text,
             _eventTypeController.text,
@@ -227,6 +236,7 @@ class _PostScreenState extends State<PostScreen> {
     }
   }
 
+
   void onPostSuccess() {
     setState(() {
       _isLoading = false;
@@ -256,8 +266,10 @@ class _PostScreenState extends State<PostScreen> {
       _eventTitleController.clear();
       _eventDescriptionsController.clear();
       _eventVenueController.clear();
-      _eventDateController.clear();
-      _eventTimeController.clear();
+      _startDateController.clear();
+      _endDateController.clear();
+      _startTimeController.clear();
+      _endTimeController.clear();
       selectedParticipants.forEach((key, value) {
         selectedParticipants[key] = [];
       });
@@ -272,8 +284,10 @@ class _PostScreenState extends State<PostScreen> {
     _eventTitleController.dispose();
     _eventDescriptionsController.dispose();
     _eventVenueController.dispose();
-    _eventDateController.dispose();
-    _eventTimeController.dispose();
+    _startDateController.dispose();
+    _endDateController.dispose();
+    _startTimeController.dispose();
+    _endTimeController.dispose();
   }
 
   @override
@@ -282,7 +296,10 @@ class _PostScreenState extends State<PostScreen> {
     final width = MediaQuery.of(context).size.width;
 
     final outlineBorder = OutlineInputBorder(
-      borderSide: Divider.createBorderSide(context),
+      borderSide: Divider.createBorderSide(
+          context,
+        color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor
+      ),
     );
     return FutureBuilder<model.User>(
       future: currentUser,
@@ -451,19 +468,21 @@ class _PostScreenState extends State<PostScreen> {
                                         child: Row(children: [
                                           Flexible(
                                             child: TextFieldInput(
-                                              textEditingController: _eventDateController,
-                                              labelText: 'Select Date*',
+                                              startTextEditingController: _startDateController,
+                                              endTextEditingController: _endDateController,
+                                              isDateRange: true,
+                                              labelText: 'Event Date',
                                               textInputType: TextInputType.datetime,
-                                              isDate: true,
                                             ),
                                           ),
                                           const SizedBox(width: 10.0),
                                           Flexible(
                                             child: TextFieldInput(
-                                              textEditingController: _eventTimeController,
-                                              labelText: 'Select Time*',
+                                              startTextEditingController: _startTimeController,
+                                              endTextEditingController: _endTimeController,
+                                              isTimeRange: true,
+                                              labelText: 'Event Time',
                                               textInputType: TextInputType.datetime,
-                                              isTime: true,
                                             ),
                                           )
                                         ]),

@@ -15,8 +15,10 @@ class FireStoreEventMethods {
     String description,
     String createdBy,
     Uint8List? document,
-    DateTime date,
-    DateTime time,
+    DateTime startDate,
+    DateTime endDate,
+    DateTime startTime,
+    DateTime endTime,
     Map<String, List<dynamic>> participants,
     String venue,
     String type,
@@ -46,8 +48,10 @@ class FireStoreEventMethods {
         document: documentUrl,
         participants: participants,
         venue: venue,
-        date: date,
-        time: time,
+        startDate: startDate,
+        endDate: endDate,
+        startTime: startTime,
+        endTime: endTime,
         type: type,
         status: status,
         datePublished: DateTime.now(),
@@ -103,20 +107,33 @@ class FireStoreEventMethods {
 
   // Method that has a key of type event's DateTime and a value of type List<Event>
   Future<Map<DateTime, List<Event>>> getEventsByDate() async {
-    Map<DateTime, List<Event>> eventMap = {};
+    Map<DateTime, List<Event>> events = {};
     QuerySnapshot snapshot = await _eventsCollection.get();
+
     if (snapshot.docs.isNotEmpty) {
       for (var doc in snapshot.docs) {
         Event event = await Event.fromSnap(doc);
-        DateTime eventDate =
-            DateTime(event.date.year, event.date.month, event.date.day, 0, 0, 0)
-                .toLocal();
-        if (eventMap[eventDate] == null) eventMap[eventDate] = [];
-        eventMap[eventDate]!.add(event);
+
+        DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+            .toLocal();
+        DateTime endDate = DateTime(event.endDate.year, event.endDate.month, event.endDate.day, 23, 59, 59)
+            .toLocal();
+
+        for (var day = startDate; day.isBefore(endDate) || day.isAtSameMomentAs(endDate);
+        day = day.add(const Duration(days: 1))) {
+          DateTime adjustedDay = DateTime(day.year, day.month, day.day, 0, 0, 0)
+              .toLocal();
+          if (events.containsKey(adjustedDay)) {
+            events[adjustedDay]!.add(event);
+          } else {
+            events[adjustedDay] = [event];
+          }
+        }
       }
     }
-    return eventMap;
+    return events;
   }
+
 
   // Method that gets event by event id
   Future<Event> getEventById(String eventId) async {

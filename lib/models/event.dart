@@ -3,8 +3,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Event {
   String id;
   String title;
-  DateTime date; 
-  DateTime time;
+  DateTime startDate;
+  DateTime endDate;
+  DateTime startTime;
+  DateTime endTime;
   String description;
   String createdBy;
   String? image;
@@ -18,8 +20,10 @@ class Event {
   Event({
     required this.id, 
     required this.title,
-    required this.date,
-    required this.time,
+    required this.startDate,
+    required this.endDate,
+    required this.startTime,
+    required this.endTime,
     required this.description,
     required this.createdBy,
     this.image,
@@ -35,8 +39,10 @@ class Event {
   Map<String, dynamic> toJson() => {
         'id': id,
         'title': title,
-        'date': date,
-        'time': time,
+        'startDate': startDate,
+        'endDate': endDate,
+        'startTime': startTime,
+        'endTime': endTime,
         'description': description,
         'createdBy': createdBy,
         'image': image,
@@ -54,8 +60,10 @@ class Event {
     return Event(
       id: snapshot['id'],
       title: snapshot['title'],
-      date: (snapshot['date'] as Timestamp).toDate().toLocal(),
-      time: (snapshot['time'] as Timestamp).toDate().toLocal(),
+      startDate: (snapshot['startDate'] as Timestamp).toDate().toLocal(),
+      endDate: (snapshot['endDate'] as Timestamp).toDate().toLocal(),
+      startTime: (snapshot['startTime'] as Timestamp).toDate().toLocal(),
+      endTime: (snapshot['endTime'] as Timestamp).toDate().toLocal(),
       description: snapshot['description'],
       createdBy: snapshot['createdBy'],
       image: snapshot['image'],
@@ -72,4 +80,20 @@ class Event {
   // String toString() {
   //   return 'Event{id: $id, title: $title, date: $date, time: $time, description: $description, createdBy: $createdBy, image: $image, document: $document, participants: $participants, venue: $venue, type: $type, status: $status, updatedAt: $updatedAt}';
   // }
+  void updateStatus() {
+    DateTime currentDateTime = DateTime.now();
+
+    // If the current date/time is before the start date/time, then the status is "Upcoming"
+    if (startDate.isAfter(currentDateTime)) {
+      status = "Upcoming";
+    }
+    // If the current date/time is after the end date/time, then the status is "Past"
+    else if (endDate.isBefore(currentDateTime)) {
+      status = "Past";
+    }
+    // If the current date/time is between the start and end date/time, then the status is "Ongoing"
+    else {
+      status = "Ongoing";
+    }
+  }
 }

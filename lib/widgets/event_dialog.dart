@@ -52,7 +52,7 @@ class EventDialogState extends State<EventDialog> {
                       ),
                       const SizedBox(width: 10),
                       Text(
-                        DateFormat.jm().format(event.time),  // assuming time is a string
+                        DateFormat.jm().format(event.startTime),  // assuming time is a string
                         style: Theme.of(context).textTheme.titleMedium,
                       ),
                     ],

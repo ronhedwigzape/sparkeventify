@@ -76,7 +76,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                                 }
                               });
                               // If a.date is earlier than b.date, it will return a negative number, and a will be placed before b in the sorted list
-                              currentMonthEvents.sort((a, b) => a.date.compareTo(b.date));
+                              currentMonthEvents.sort((a, b) => a.startDate.compareTo(b.startDate));
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(builder: (context) => ReportScreen(events: currentMonthEvents)),
@@ -98,17 +98,17 @@ class EventsCalendarState extends State<EventsCalendar> {
                                 size: 30,),
                               const SizedBox(width: 10),
                               Text('Calendar of Events',
-                              style:
-                                TextStyle(fontSize: kIsWeb ? 28.0 : 24.0,
+                                  style:
+                                  TextStyle(fontSize: kIsWeb ? 28.0 : 24.0,
                                     fontWeight: FontWeight.bold,
                                     color: darkModeOn ? lightColor : darkColor,
-                                )),
+                                  )),
                             ],
                           ),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.all(10.0),
+                      padding: const EdgeInsets.all(10.0),
                         child: Container(
                           decoration: BoxDecoration(
                               border: Border.all(
@@ -117,9 +117,9 @@ class EventsCalendarState extends State<EventsCalendar> {
                             eventLoader: (day) {
                               // Use `eventLoader` to return a list of events for the given day.
                               DateTime adjustedDay =
-                                  DateTime(day.year, day.month, day.day, 0, 0, 0)
-                                      .toLocal(); // Set the time by midnight
-                              return _getEventsForDay(adjustedDay);
+                              DateTime(day.year, day.month, day.day, 0, 0, 0)
+                                  .toLocal(); // Set the time by midnight
+                              return _events[adjustedDay] ?? [];
                             },
                             firstDay: DateTime.utc(2015, 01, 01),
                             lastDay: DateTime.utc(2030, 3, 14),
@@ -155,6 +155,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                                 ),
                                 weekdayStyle: const TextStyle(color: lightColor),
                                 weekendStyle: TextStyle(color: darkModeOn ? darkBlueColor : lightModeIndigo)),
+
                             onDaySelected: (selectedDay, focusedDay) {
                               // Use `selectedDay` to retrieve the selected day.
                               DateTime adjustedSelectedDay = DateTime(selectedDay.year,

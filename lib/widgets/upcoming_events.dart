@@ -16,7 +16,7 @@ class UpcomingEvents extends StatefulWidget {
 }
 
 class UpcomingEventsState extends State<UpcomingEvents> {
-  List<Event> upcomingEvents = [];
+  Set<Event> upcomingEvents = {};
 
   @override
   void initState() {
@@ -25,16 +25,20 @@ class UpcomingEventsState extends State<UpcomingEvents> {
     DateTime now = DateTime.now();
 
     // Get upcoming events
-    widget._events.forEach(
-            (eventDate, events) {
-          if (eventDate.isAfter(now)) {
-            upcomingEvents.addAll(events);  // Add all events of days in future
-          }
-        }
-    );
+    widget._events.forEach((eventDate, events) {
+      if (eventDate.isAfter(now)) {
+        upcomingEvents.addAll(events);  // Add all events of days in future
+      }
+    });
+
+    // Convert the Set to a List for sorting
+    List<Event> upcomingEventsList = upcomingEvents.toList();
 
     // Sort upcoming events by date
-    upcomingEvents.sort((a, b) => a.date.compareTo(b.date));
+    upcomingEventsList.sort((a, b) => a.startDate.compareTo(b.startDate));
+
+    // Update the Set with the sorted List
+    upcomingEvents = upcomingEventsList.toSet();
   }
 
   @override
@@ -58,11 +62,20 @@ class UpcomingEventsState extends State<UpcomingEvents> {
                 ),
                 ...upcomingEvents.map((event) {
                   return ListTile(
-                    title: Center(child: Text(event.title)),
-                    subtitle: Center(
-                        child: Text(
-                          DateFormat('MMMM dd, yyyy').format(event.date),
-                          style: TextStyle(color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor))),
+                    title: Center(child: Text(event.title, style: const TextStyle(fontSize: 16),)),
+                    subtitle: Text(
+                      (event.startDate.day == event.endDate.day
+                          ? '${DateFormat('MMM dd, yyyy').format(event.startDate)}\n'
+                          : '${DateFormat('MMM dd, yyyy').format(event.startDate)} - ${DateFormat('MMM dd, yyyy').format(event.endDate)}\n')
+                      + (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
+                          ? DateFormat.jm().format(event.startTime)
+                          : '${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        height: 2,
+                        fontSize: 12
+                      ),
+                    ),
                   );
                 }).toList(),
               ],
@@ -72,5 +85,4 @@ class UpcomingEventsState extends State<UpcomingEvents> {
       ),
     );
   }
-
 }
