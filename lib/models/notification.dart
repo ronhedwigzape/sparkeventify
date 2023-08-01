@@ -23,6 +23,7 @@ class Notification {
   // Convert Notification object to JSON
   Map<String, dynamic> toJson() => {
     'id': id,
+    'title': title,
     'message': message,
     'sender': sender,
     'recipient': recipient,
@@ -35,6 +36,7 @@ class Notification {
     var data = snap.data() as Map<String, dynamic>;
     return Notification(
       id: data['id'],
+      title: data['title'],
       message: data['message'],
       sender: data['sender'],
       recipient: data['recipient'],
