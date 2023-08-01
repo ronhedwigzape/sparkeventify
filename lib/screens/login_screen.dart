@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
 import 'package:student_event_calendar/layouts/client_screen_layout.dart';
-import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/screens/admin_signup_screen.dart';
 import 'package:student_event_calendar/screens/client_selection_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';

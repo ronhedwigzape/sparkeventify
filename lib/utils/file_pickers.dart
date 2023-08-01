@@ -84,6 +84,7 @@ Future<void> downloadAndOpenFile(String url, String fileName) async {
   if (kIsWeb) {
     // Flutter web code to trigger a download
     final base64 = base64Encode(fileData);
+    // ignore: unused_local_variable
     final anchor = html.AnchorElement(
         href: 'data:application/octet-stream;base64,$base64'
     )..setAttribute('download', '$fileName.$fileExtension')
