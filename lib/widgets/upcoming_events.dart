@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart';
-
 import '../providers/darkmode_provider.dart';
 import '../utils/colors.dart';
 
