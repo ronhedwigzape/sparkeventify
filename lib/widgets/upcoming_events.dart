@@ -27,6 +27,12 @@ class UpcomingEventsState extends State<UpcomingEvents> {
     widget._events.forEach((eventDate, events) {
       if (eventDate.isAfter(now)) {
         upcomingEvents.addAll(events);  // Add all events of days in future
+      } else if (eventDate.day == now.day) {
+        for (var event in events) {
+          if (event.endDate.isAfter(now)) {
+            upcomingEvents.add(event);  // Add ongoing events
+          }
+        }
       }
     });
 
@@ -43,6 +49,7 @@ class UpcomingEventsState extends State<UpcomingEvents> {
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
+    DateTime now = DateTime.now();
     return Center(
       child: SingleChildScrollView(
         child: Card(
@@ -60,19 +67,20 @@ class UpcomingEventsState extends State<UpcomingEvents> {
                   textAlign: TextAlign.center,
                 ),
                 ...upcomingEvents.map((event) {
+                  DateTime startDate = event.startDate.isBefore(now) ? now.add(Duration(days: 1)) : event.startDate;
                   return ListTile(
                     title: Center(child: Text(event.title, style: const TextStyle(fontSize: 16),)),
                     subtitle: Text(
-                      (event.startDate.day == event.endDate.day
-                          ? '${DateFormat('MMM dd, yyyy').format(event.startDate)}\n'
-                          : '${DateFormat('MMM dd, yyyy').format(event.startDate)} - ${DateFormat('MMM dd, yyyy').format(event.endDate)}\n')
-                      + (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
+                      (startDate.day == event.endDate.day
+                          ? '${DateFormat('MMM dd, yyyy').format(startDate)}\n'
+                          : '${DateFormat('MMM dd, yyyy').format(startDate)} - ${DateFormat('MMM dd, yyyy').format(event.endDate)}\n')
+                          + (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
                           ? DateFormat.jm().format(event.startTime)
                           : '${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
                       textAlign: TextAlign.center,
                       style: const TextStyle(
-                        height: 2,
-                        fontSize: 12
+                          height: 2,
+                          fontSize: 12
                       ),
                     ),
                   );
