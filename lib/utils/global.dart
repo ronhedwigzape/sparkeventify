@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:student_event_calendar/screens/admin_dashboard_screen.dart';
 import 'package:student_event_calendar/screens/manage_events_screen.dart';
 import 'package:student_event_calendar/screens/manage_users_screen.dart';
+import 'package:student_event_calendar/screens/notification_screen.dart';
 import 'package:student_event_calendar/screens/post_screen.dart';
 import 'package:student_event_calendar/screens/profile_screen.dart';
 import 'package:student_event_calendar/widgets/events_calendar.dart';
@@ -28,7 +29,7 @@ Future<List<Widget>> homeScreenItems() async {
       const PostScreen(),
       const ManageEventsScreen(),
       const ProfileScreen(),
-      const Center(child: Text('Notifications')),
+      const NotificationScreen(),
     ];
   } else if (userType == 'Admin' && kIsWeb) {
     // Widgets for 'Admin' only when app is running on Web platform
@@ -46,6 +47,6 @@ Future<List<Widget>> homeScreenItems() async {
     const Center(child: Text('Feedbacks')),
     const Center(child: Text('Personal Events')),
     const ProfileScreen(),
-    const Center(child: Text('Notifications'),),
+    const NotificationScreen(),
   ];
 }
