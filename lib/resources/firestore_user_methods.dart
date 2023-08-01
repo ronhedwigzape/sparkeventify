@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:cloud_functions/cloud_functions.dart';
+import 'package:student_event_calendar/resources/storage_methods.dart';
 
 class FireStoreUserMethods {
   // Reference to the 'users' collection in Firestore
@@ -73,4 +74,20 @@ class FireStoreUserMethods {
     }
   }
 
+  Future<void> updateProfileImage(Uint8List? file, String currentUserUid) async {      
+    
+    String downloadUrl = '';
+    if (file != null) {
+      downloadUrl = await StorageMethods()
+          .uploadImageToStorage('profileImages', file, false);
+    }
+
+    // Get a reference to the user's document in Firestore
+    DocumentReference userDocRef = FirebaseFirestore.instance.collection('users').doc(currentUserUid);
+
+    // Update the profileImage field in the user's document
+    return userDocRef.update({
+      'profile.profileImage': downloadUrl,
+    });
+  }
 }

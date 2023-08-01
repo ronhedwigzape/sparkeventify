@@ -11,6 +11,7 @@ import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
 import '../services/firebase_notifications.dart';
+import 'package:another_flushbar/flushbar.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -22,74 +23,20 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   Future<model.User?> currentUser = FireStoreUserMethods().getCurrentUserData();
   Uint8List? _pickedImage;
-  final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+  bool _isImageUpdated = false;
 
-  void _selectImage(BuildContext context) async {
-    return showDialog(
-      context: context,
-      builder: (context) {
-        return SimpleDialog(
-          title: const Text('Upload an Image'),
-          children: [
-            SimpleDialogOption(
-              padding: const EdgeInsets.all(20),
-              child: const Row(
-                children: <Widget>[
-                  Icon(Icons.camera),
-                  SizedBox(width: 10),
-                  Text('Take a photo'),
-                ],
-              ),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                Uint8List? file = await pickImage(ImageSource.camera);
-                if (file != null) {
-                  _pickedImage = file;
-                  const SnackBar snackBar =
-                      SnackBar(content: Text('Image is uploaded!'));
-                  ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!)
-                      .showSnackBar(snackBar);
-                }
-              },
-            ),
-            SimpleDialogOption(
-              padding: const EdgeInsets.all(20),
-              child: const Row(
-                children: <Widget>[
-                  Icon(Icons.image_rounded),
-                  SizedBox(width: 10),
-                  Text('Choose from gallery'),
-                ],
-              ),
-              onPressed: () async {
-                Navigator.of(context).pop();
-                Uint8List? file = await pickImage(ImageSource.gallery);
-                if (file != null) {
-                  _pickedImage = file;
-                  const SnackBar snackBar =
-                      SnackBar(content: Text('Image is uploaded!'));
-                  ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!)
-                      .showSnackBar(snackBar);
-                }
-              },
-            ),
-            SimpleDialogOption(
-              padding: const EdgeInsets.all(20),
-              child: const Row(
-                children: <Widget>[
-                  Icon(Icons.cancel),
-                  SizedBox(width: 10),
-                  Text('Cancel'),
-                ],
-              ),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      }
-    );
+  void _showSuccessMessage() {
+    Flushbar(
+      message: "Profile image updated successfully!",
+      duration: const Duration(seconds: 3),
+    ).show(context);
+  }
+
+  void selectImage() async {
+    Uint8List image = await pickImage(ImageSource.gallery);
+    setState(() {
+      _pickedImage = image;
+    });
   }
 
   _signOut() async {
@@ -162,6 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         } else {
           model.User? currentUser = snapshot.data;
           String? profileImage = currentUser?.profile?.profileImage ?? '';
+          String? uid = currentUser?.uid;
           String username = currentUser?.username ?? '';
           String email = currentUser?.email ?? '';
           // String password = currentUser?.password ?? '';
@@ -191,6 +139,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Padding(
                     padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
                     child: Stack(
+                      alignment: AlignmentDirectional.center,
                       children: [
                         // if _pickedImage is not null, display the _pickedImage
                         _pickedImage != null
@@ -202,18 +151,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ? CircleAvatar(
                               radius: 40,
                               backgroundImage: NetworkImage(profileImage),
-                              child: Image.network(
-                                profileImage,
-                                loadingBuilder: (BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
-                                  if (loadingProgress == null) return child;
-                                  return CircularProgressIndicator(
-                                    color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-                                    value: loadingProgress.expectedTotalBytes != null
-                                      ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
-                                      : null,
-                                  );
-                                },
-                              ),
                             )
                           // else display the default profile image
                           : CircleAvatar(
@@ -224,15 +161,47 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           bottom: -10,
                           left: 42,
                           child: IconButton(
-                            onPressed: () => _selectImage(context),
+                            onPressed: _pickedImage == null ? selectImage : () {},
                             icon: const Icon(
                               Icons.add_a_photo,
                             )
                           )
-                        )
+                        ),  
                       ],
-                    ),
+                    ), 
                   ),
+                 _pickedImage != null && !_isImageUpdated ? Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('Update profile picture?'),
+                      Flexible(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            IconButton(
+                              onPressed: () async {
+                                await FireStoreUserMethods().updateProfileImage(_pickedImage!, uid!); 
+                                setState(() {
+                                  _isImageUpdated = true;
+                                });
+                                _showSuccessMessage();
+                              }, 
+                              icon: const Icon(Icons.check_circle, color: darkModeGrassColor,)
+                            ),
+                            IconButton(
+                              onPressed: () {
+                                setState(() {
+                                  _pickedImage = null;
+                                  _isImageUpdated = false;
+                                });
+                              }, 
+                              icon: const Icon(Icons.cancel, color: darkModeMaroonColor,)
+                            ),  
+                          ],
+                        ),
+                      ),
+                    ],
+                  ) : const SizedBox.shrink(),
                   kIsWeb ? const SizedBox(height: 20) : const SizedBox.shrink(),
                   kIsWeb
                   ? Text('Username: $username',style: const TextStyle(fontSize: 20.0, fontWeight: FontWeight.bold))

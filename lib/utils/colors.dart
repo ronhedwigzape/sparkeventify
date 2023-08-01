@@ -14,6 +14,7 @@ const darkColor = Color.fromRGBO(38, 38, 38, 1);
 const secondaryDarkColor = Color.fromRGBO(28, 27, 31, 1.0);
 const darkBlueColor = Color.fromARGB(255, 6, 8, 38);
 const darkModeMaroonColor = Color.fromARGB(255, 163, 0, 0);
+const darkModeGrassColor = Color.fromARGB(255, 0, 154, 39);
 const darkModePrimaryColor = Color.fromARGB(255, 83, 108, 255);
 const darkModeSecondaryColor = Color.fromARGB(255, 141, 141, 141);
 const darkModeTertiaryColor = Color.fromRGBO(119, 119, 119, 1.0);
