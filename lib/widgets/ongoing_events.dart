@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -16,30 +17,61 @@ class OngoingEvents extends StatefulWidget {
 
 class OngoingEventsState extends State<OngoingEvents> {
   Set<Event> ongoingEvents = {};
+  late Timer _timer;
 
   @override
   void initState() {
     super.initState();
 
-    DateTime now = DateTime.now();
+    // Defined update function
+    void update() {
+      DateTime now = DateTime.now();
+      TimeOfDay nowTime = TimeOfDay(hour: now.hour, minute: now.minute);
 
-    // Get ongoing events
-    widget._events.forEach((eventDate, events) {
-      events.forEach((event) {
-        if (event.startDate.isBefore(now) && event.endDate.isAfter(now)) {
-          ongoingEvents.add(event);  // Add all ongoing events
+      // Clear the list of ongoing events
+      ongoingEvents.clear();
+
+      // Get ongoing events
+      widget._events.forEach((eventDate, events) {
+        for (var event in events) {
+          DateTime startDate = DateTime(
+            event.startDate.year,
+            event.startDate.month,
+            event.startDate.day,
+          );
+
+          DateTime endDate = DateTime(
+            event.endDate.year,
+            event.endDate.month,
+            event.endDate.day,
+          );
+
+
+          TimeOfDay endTime = TimeOfDay(
+            hour: event.endTime.hour,
+            minute: event.endTime.minute,
+          );
+
+          if ((now.isAfter(startDate) || now.isAtSameMomentAs(startDate)) && (now.isBefore(endDate) || now.isAtSameMomentAs(endDate))) {
+            if (!(now.isAtSameMomentAs(endDate) && (nowTime.hour > endTime.hour || (nowTime.hour == endTime.hour && nowTime.minute > endTime.minute)))) {
+              ongoingEvents.add(event);  // Add all ongoing events
+            }
+          }
         }
       });
-    });
+    }
 
-    // Convert the Set to a List for sorting
-    List<Event> ongoingEventsList = ongoingEvents.toList();
+    // Call update function every minute
+    _timer = Timer.periodic(const Duration(minutes: 1), (timer) => update());
 
-    // Sort ongoing events by start date
-    ongoingEventsList.sort((a, b) => a.startDate.compareTo(b.startDate));
+    // Call update function immediately on init
+    update();
+  }
 
-    // Update the Set with the sorted List
-    ongoingEvents = ongoingEventsList.toSet();
+  @override
+  void dispose() {
+    _timer.cancel();
+    super.dispose();
   }
 
   @override
