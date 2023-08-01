@@ -45,6 +45,7 @@ class OngoingEventsState extends State<OngoingEvents> {
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
+    DateTime now = DateTime.now();
     return Center(
       child: SingleChildScrollView(
         child: Card(
@@ -65,12 +66,10 @@ class OngoingEventsState extends State<OngoingEvents> {
                   return ListTile(
                     title: Center(child: Text(event.title, style: const TextStyle(fontSize: 16),)),
                     subtitle: Text(
-                      (event.startDate.day == event.endDate.day
-                          ? '${DateFormat('MMM dd, yyyy').format(event.startDate)}\n'
-                          : '${DateFormat('MMM dd, yyyy').format(event.startDate)} - ${DateFormat('MMM dd, yyyy').format(event.endDate)}\n')
-                          + (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
+                      '${DateFormat('MMM dd, yyyy').format(now)}\n'
+                      '${event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
                           ? DateFormat.jm().format(event.startTime)
-                          : '${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
+                          : '${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'}',
                       textAlign: TextAlign.center,
                       style: const TextStyle(
                           height: 2,
