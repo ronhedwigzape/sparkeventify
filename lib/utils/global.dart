@@ -7,7 +7,6 @@ import 'package:student_event_calendar/screens/notification_screen.dart';
 import 'package:student_event_calendar/screens/post_screen.dart';
 import 'package:student_event_calendar/screens/profile_screen.dart';
 import 'package:student_event_calendar/widgets/events_calendar.dart';
-import 'package:student_event_calendar/screens/settings_screen.dart';
 import '../resources/auth_methods.dart';
 
 // Constant variables for the app
@@ -38,7 +37,7 @@ Future<List<Widget>> homeScreenItems() async {
       const PostScreen(),
       const ManageEventsScreen(),
       const ManageUsersScreen(),
-      const SettingsScreen(),
+      const ProfileScreen(),
     ];
   } else if (userType == 'Officer') {
     // Widgets for 'Officer'
