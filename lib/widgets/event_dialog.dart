@@ -20,12 +20,30 @@ class EventDialog extends StatefulWidget {
   EventDialogState createState() => EventDialogState();
 }
 class EventDialogState extends State<EventDialog> {
+
+  String formatParticipants(Map<String, dynamic>? participants) {
+    List<String> formattedList = [];
+    participants?.removeWhere((key, value) => (value as List).isEmpty);
+    participants?.forEach((key, value) {
+      String formattedString = '${key[0].toUpperCase()}${key.substring(1)}: ${(value as List).join(', ')}';
+      formattedList.add(formattedString);
+    });
+    return formattedList.join('\n');
+  }
+
+
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return AlertDialog(
       title: Center(
-        child: Text('Events for ${DateFormat('MMMM dd, yyyy').format(widget.adjustedSelectedDay)}'),
+        child: Row(
+          children: [
+            const Icon(Icons.calendar_today, size: !kIsWeb ? 20 : 22,),
+            const SizedBox(width: 10.0),
+            Text('Events for ${DateFormat('MMMM dd, yyyy').format(widget.adjustedSelectedDay)}'),
+          ],
+        ),
       ),
       content: SizedBox(
         width: kIsWeb ? 500 : double.maxFinite,
@@ -70,11 +88,18 @@ class EventDialogState extends State<EventDialog> {
                               if (snapshot.hasError) {
                                 return Text('Error: ${snapshot.error}');
                               } else {
-                                return Text(
-                                  'Created by ${snapshot.data?.profile?.fullName}',
-                                  style: const TextStyle(
-                                      color: lightModeSecondaryColor
-                                  ),
+                                return Row(
+                                  children: [
+                                    const Icon(Icons.person, size: 15,),
+                                    const SizedBox(width: 5),
+                                    Text(
+                                      'Created by ${snapshot.data?.profile?.fullName}',
+                                      style: const TextStyle(
+                                          color: lightModeSecondaryColor,
+                                          fontSize: 12
+                                      ),
+                                    ),
+                                  ],
                                 );
                               }
                             }
@@ -124,7 +149,7 @@ class EventDialogState extends State<EventDialog> {
                     ),
                     errorWidget: (context, url, error) => const Icon(Icons.error),
                   ),
-                  const SizedBox(height: 8.0),
+                  const SizedBox(height: 20.0),
                   Column(
                     children: [
                       event.document == null || event.document == '' ?
@@ -132,11 +157,33 @@ class EventDialogState extends State<EventDialog> {
                       TextButton.icon(
                           onPressed: () => downloadAndOpenFile(event.document ?? '', event.title),
                           icon: const Icon(Icons.download_for_offline),
-                          label: Text('Download and Open ${event.title} document')
+                          label: Text('Open ${event.title} document')
                       ),
-                      Text(
-                        event.description,
-                        style: Theme.of(context).textTheme.bodyMedium,
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Icon(Icons.description, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
+                          const SizedBox(width: 10.0),
+                          Expanded(
+                            child: Text(
+                              event.description,
+                              style: TextStyle(
+                                color: darkModeOn ? lightColor : darkColor,
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8.0),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Icon(Icons.supervised_user_circle_sharp, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
+                          const SizedBox(width: 10,),
+                          Expanded(child: Text(formatParticipants(event.participants), style: TextStyle(fontSize: 15, color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor),)),
+                        ],
                       ),
                     ],
                   ),
