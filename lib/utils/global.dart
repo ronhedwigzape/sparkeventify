@@ -40,8 +40,16 @@ Future<List<Widget>> homeScreenItems() async {
       const ManageUsersScreen(),
       const SettingsScreen(),
     ];
+  } else if (userType == 'Officer') {
+    // Widgets for 'Officer'
+    return [
+      const EventsCalendar(),
+      const Center(child: Text('Feedbacks')),
+      const ProfileScreen(),
+      const NotificationScreen(),
+    ];
   }
-  // Widgets for Students and Officers
+  // Widgets for Students
   return [
     const EventsCalendar(),
     const Center(child: Text('Feedbacks')),

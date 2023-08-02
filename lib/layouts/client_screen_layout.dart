@@ -43,11 +43,6 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
     });
   }
 
-  Future<bool> isStaff() async {
-    String userType = await AuthMethods().getCurrentUserType();
-    return userType == 'Staff';
-  }
-
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
@@ -124,6 +119,10 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
                 buildBottomNavigationBarItem(Icons.add_circle, 2),
                 buildBottomNavigationBarItem(Icons.note_alt, 3),
                 buildBottomNavigationBarItem(Icons.person, 4)
+              ] : userType == 'Officer' ? [
+                buildBottomNavigationBarItem(Icons.calendar_month, 0),
+                buildBottomNavigationBarItem(Icons.feedback, 1),
+                buildBottomNavigationBarItem(Icons.person, 2)
               ] : [
                 buildBottomNavigationBarItem(Icons.calendar_month, 0),
                 buildBottomNavigationBarItem(Icons.feedback, 1),
