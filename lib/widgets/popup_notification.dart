@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:student_event_calendar/utils/colors.dart';
 
 class PopupNotification extends StatelessWidget {
   final String message;
@@ -12,15 +13,15 @@ class PopupNotification extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
-      color: Colors.white,
+      color: lightColor,
       child: SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(5, 0, 5, 10),
           child: ListTile(
             leading:
                 ClipOval(child: Image.asset('assets/images/cspc_logo.png')),
-            title: Text(title),
-            subtitle: Text(message),
+            title: Text(title, style: const TextStyle(color: darkColor)),
+            subtitle: Text(message, style: const TextStyle(color: darkColor)),
             trailing: IconButton(
               icon: const Icon(Icons.close),
               onPressed: () {

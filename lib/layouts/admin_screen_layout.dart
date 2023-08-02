@@ -208,23 +208,32 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                   Row(
                     children: [
                       Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                            40.0, 7.5, 5.0, 7.5),
+                        padding: const EdgeInsets.fromLTRB(40.0, 0, 2.5, 0),
                         child: CircleAvatar(
-                          radius: 13,
-                          backgroundImage: NetworkImage(currentUser?.profile?.profileImage ?? 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
+                          backgroundColor: darkModeOn ? lightColor : darkColor,
+                          radius: 12.0,
+                          child: Icon(Icons.person, color: darkModeOn ? darkColor : lightColor, size: 18,)
+                          ),
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.fromLTRB(
+                            2.5, 7.5, 5.0, 7.5),
+                        child: Text(
+                          currentUser?.profile?.fullName ?? '',
+                          style: TextStyle(
+                            color: darkModeOn ? lightColor : darkColor,
+                            fontSize: 16.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       Padding(
                         padding: const EdgeInsets.fromLTRB(
                             5.0, 7.5, 50.0, 7.5),
-                        child: Text(
-                          currentUser?.profile?.fullName ?? '',
-                          style: const TextStyle(
-                            color: lightModeSecondaryColor,
-                            fontSize: 16.0,
-                            fontWeight: FontWeight.bold,
-                          ),
+                        child: CircleAvatar(
+                          radius: 13,
+                          backgroundImage: NetworkImage(currentUser?.profile?.profileImage ?? 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
+                          backgroundColor: transparent,
                         ),
                       ),
                     ],

@@ -68,6 +68,7 @@ class _PostCardState extends State<PostCard> {
                         radius: 16,
                         backgroundImage: NetworkImage(authorImage ??
                             'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
+                        backgroundColor: transparent,
                       ),
                       Expanded(
                         child: Padding(
@@ -128,10 +129,10 @@ class _PostCardState extends State<PostCard> {
                               ),
                               title: Text(
                                   'Are you sure you want to delete this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'} forever?',
-                                  style: TextStyle(
+                                  style: const TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
-                                      color: darkModeOn ? darkColor : lightColor
+                                      color: darkColor
                                   )
                               ),
                               children: <Widget>[
@@ -145,6 +146,7 @@ class _PostCardState extends State<PostCard> {
                                             Navigator.of(context).pop();
                                         },
                                         child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
                                             Icon(Icons.delete_forever,
                                                 color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
@@ -173,6 +175,7 @@ class _PostCardState extends State<PostCard> {
 
                       },
                         icon: const Icon(Icons.delete_forever, color: darkModeMaroonColor),
+                        tooltip: 'Delete event',
                       ),
                       ]),
                   ),

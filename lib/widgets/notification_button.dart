@@ -137,30 +137,36 @@ class _NotificationButtonState extends State<NotificationButton> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
-                                TextButton.icon(
+                                SizedBox(
+                                  height: 40.0,
+                                  child: TextButton.icon(
+                                      style: TextButton.styleFrom(
+                                          foregroundColor: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor
+                                      ),
+                                      onPressed: () => Navigator.of(context).pop(),
+                                      label: const Text('Cancel'),
+                                      icon: const Icon(Icons.cancel),),
+                                ),
+                                SizedBox(
+                                  height: 40.0,
+                                  child: TextButton.icon(
                                     style: TextButton.styleFrom(
-                                        foregroundColor: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor
+                                        foregroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor
                                     ),
-                                    onPressed: () => Navigator.of(context).pop(),
-                                    label: const Text('Cancel'),
-                                    icon: const Icon(Icons.cancel),),
-                                TextButton.icon(
-                                  style: TextButton.styleFrom(
-                                      foregroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor
+                                    onPressed: () {
+                                      if (formKey.currentState!.validate()) {
+                                        // Close the dialog
+                                        Navigator.of(context).pop();
+                                        // Send the notification
+                                        sendNotifications(widget.selectedUsers, title, message);
+                                        setState(() {
+                                          widget.selectedUsers.clear();
+                                        });
+                                      }
+                                    },
+                                    icon: const Icon(Icons.send),
+                                    label: const Text('Send'),
                                   ),
-                                  onPressed: () {
-                                    if (formKey.currentState!.validate()) {
-                                      // Close the dialog
-                                      Navigator.of(context).pop();
-                                      // Send the notification
-                                      sendNotifications(widget.selectedUsers, title, message);
-                                      setState(() {
-                                        widget.selectedUsers.clear();
-                                      });
-                                    }
-                                  },
-                                  icon: const Icon(Icons.send),
-                                  label: const Text('Send'),
                                 ),
                               ],
                             ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 // Light mode colors
 const lightColor = Color.fromARGB(255, 220, 220, 220);
+const lightSecondaryColor = Color.fromARGB(255, 194, 194, 194);
 const lightModeBlueColor = Color.fromARGB(255, 21, 29, 83);
 const lightModeMaroonColor = Color.fromARGB(255, 88, 0, 0);
 const lightModePrimaryColor = Color.fromARGB(255, 41, 56, 141);

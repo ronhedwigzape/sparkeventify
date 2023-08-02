@@ -130,21 +130,26 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      Icon(
-                        Icons.manage_accounts,
-                        color: darkModeOn ? lightColor : darkColor,
-                        size: 40,
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.manage_accounts,
+                            color: darkModeOn ? lightColor : darkColor,
+                            size: 40,
+                          ),
+                          const SizedBox(width: 5,),
+                          Text(
+                            'Manage Users',
+                            style: TextStyle(
+                                fontSize: 32.0,
+                                fontWeight: FontWeight.bold,
+                                color: darkModeOn ? lightColor : darkColor
+                            ),
+                          ),
+                        ],
                       ),
-                      const SizedBox(width: 5,),
-                      Text(
-                        'Manage Users',
-                        style: TextStyle(
-                            fontSize: 32.0,
-                            fontWeight: FontWeight.bold,
-                            color: darkModeOn ? lightColor : darkColor
-                        ),
-                      ),
-                      const SizedBox(width: 50),
+                      
+                     
                       DropdownButton<String>(
                         value: dropdownUserType,
                         onChanged: (String? newValue) {
@@ -160,7 +165,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                      const SizedBox(width: 30),
+                    
                       DropdownButton<String>(
                         value: dropdownYear,
                         onChanged: (String? newValue) {
@@ -176,7 +181,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                      const SizedBox(width: 30),
+                     
                       DropdownButton<String>(
                         value: dropdownDepartment,
                         onChanged: (String? newValue) {
@@ -192,7 +197,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                      const SizedBox(width: 30),
+                      
                       DropdownButton<String>(
                         value: dropdownCourse,
                         onChanged: (String? newValue) {
@@ -208,7 +213,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                      const SizedBox(width: 30),
+                      
                       DropdownButton<String>(
                         value: dropdownSection,
                         onChanged: (String? newValue) {
@@ -224,9 +229,9 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                      const SizedBox(width: 30),
+                     
                       NotificationButton(selectedUsers: selectedUsers, clearSelectedUsers: clearSelectedUsers,),
-                      const SizedBox(width: 20),
+                      
                       Checkbox(
                         value: _allFilteredUsersSelected,
                         onChanged: (bool? value) {

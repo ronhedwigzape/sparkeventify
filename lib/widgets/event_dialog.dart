@@ -41,7 +41,7 @@ class EventDialogState extends State<EventDialog> {
           children: [
             const Icon(Icons.calendar_today, size: !kIsWeb ? 20 : 22,),
             const SizedBox(width: 10.0),
-            Text('Events for ${DateFormat('MMMM dd, yyyy').format(widget.adjustedSelectedDay)}'),
+            Text('${widget.selectedDayEvents.length > 1 ? 'Events' : 'Event'} for ${DateFormat('MMMM dd, yyyy').format(widget.adjustedSelectedDay)}'),
           ],
         ),
       ),
