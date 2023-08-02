@@ -8,8 +8,9 @@ import '../services/firebase_notifications.dart';
 
 class NotificationButton extends StatefulWidget {
   final List<String> selectedUsers;
+  final Function clearSelectedUsers;
 
-  const NotificationButton({Key? key, required this.selectedUsers}) : super(key: key);
+  const NotificationButton({Key? key, required this.selectedUsers, required this.clearSelectedUsers}) : super(key: key);
 
   @override
   State<NotificationButton> createState() => _NotificationButtonState();
@@ -17,29 +18,28 @@ class NotificationButton extends StatefulWidget {
 
 class _NotificationButtonState extends State<NotificationButton> {
 
-  void sendNotifications(List<String> selectedUsers, String title, String message) async {
+  Future<String> sendNotifications(List<String> selectedUsers, String title, String message) async {
     List<String> messages = [];
     String currentUser = FirebaseAuth.instance.currentUser!.uid;
+    String response = '';
+
     for (String user in selectedUsers) {
       if (kDebugMode) {
         print("Notification sent to User $user");
         print("Title: $title");
         print("Message: $message");
       }
-      messages.add(
-          await FirebaseNotifications().sendNotificationToUser(
-              currentUser,
-              user,
-              title,
-              message
-          )
+      response = await FirebaseNotifications().sendNotificationToUser(
+          currentUser,
+          user,
+          title,
+          message
       );
+      messages.add(response);
     }
-    setState(() {
-      selectedUsers.clear();
-    });
 
     if (messages.every((message) => message == 'Notification sent successfully')) {
+      widget.clearSelectedUsers();
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('All notifications sent successfully')),
@@ -47,6 +47,7 @@ class _NotificationButtonState extends State<NotificationButton> {
       }
     } else {
       // todo: refactor this
+      widget.clearSelectedUsers();
       for(String m in messages) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -54,7 +55,9 @@ class _NotificationButtonState extends State<NotificationButton> {
         }
       }
     }
+    return response;
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -82,13 +85,6 @@ class _NotificationButtonState extends State<NotificationButton> {
                   color: darkModeOn ? darkColor : lightColor,
                   shape: BoxShape.rectangle,
                   borderRadius: const BorderRadius.all(Radius.circular(15)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: darkModeOn ? lightColor : darkColor,
-                      blurRadius: 10.0,
-                      offset: const Offset(0.0, 10.0),
-                    ),
-                  ],
                 ),
                 width: MediaQuery.of(context).size.width - 40,
                 child: Padding(

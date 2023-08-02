@@ -68,6 +68,12 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
     });
   }
 
+  void clearSelectedUsers() {
+    setState(() {
+      selectedUsers.clear();
+    });
+  }
+
   @override
   void dispose() {
     // Dispose when not needed
@@ -219,7 +225,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         }).toList(),
                       ),
                       const SizedBox(width: 30),
-                      NotificationButton(selectedUsers: selectedUsers),
+                      NotificationButton(selectedUsers: selectedUsers, clearSelectedUsers: clearSelectedUsers,),
                       const SizedBox(width: 20),
                       Checkbox(
                         value: _allFilteredUsersSelected,
