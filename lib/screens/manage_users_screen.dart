@@ -229,10 +229,10 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           );
                         }).toList(),
                       ),
-                     
-                      NotificationButton(selectedUsers: selectedUsers, clearSelectedUsers: clearSelectedUsers,),
-                      
+                      NotificationButton(selectedUsers: selectedUsers, clearSelectedUsers: clearSelectedUsers),
                       Checkbox(
+                        activeColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                        checkColor: darkModeOn ? darkColor : lightColor,
                         value: _allFilteredUsersSelected,
                         onChanged: (bool? value) {
                           setState(() {

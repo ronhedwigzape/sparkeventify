@@ -67,7 +67,7 @@ class UpcomingEventsState extends State<UpcomingEvents> {
                   textAlign: TextAlign.center,
                 ),
                 ...upcomingEvents.map((event) {
-                  DateTime startDate = event.startDate.isBefore(now) ? now.add(Duration(days: 1)) : event.startDate;
+                  DateTime startDate = event.startDate.isBefore(now) ? now.add(const Duration(days: 1)) : event.startDate;
                   return ListTile(
                     title: Center(child: Text(event.title, style: const TextStyle(fontSize: 16),)),
                     subtitle: Text(
