@@ -97,11 +97,16 @@ class _NotificationButtonState extends State<NotificationButton> {
                           Center(
                             child: Padding(
                               padding: const EdgeInsets.only(bottom: 15.0),
-                              child: Text(
-                                  'Send notifications to ${widget.selectedUsers.length} ${widget.selectedUsers.length > 1 ? 'users' : 'user'}',
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold)
+                              child: Column(
+                                children: [
+                                  Text(
+                                      'Send notifications to ${widget.selectedUsers.length} ${widget.selectedUsers.length > 1 ? 'users' : 'user'}',
+                                      style: const TextStyle(
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.bold)
+                                  ),
+                                  Text('Note: Only users with a signed-in account can receive push notifications, or users with a phone number can receive SMS notifications.', style: TextStyle(color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor),)
+                                ],
                               ),
                             ),
                           ),
@@ -165,7 +170,7 @@ class _NotificationButtonState extends State<NotificationButton> {
                                       }
                                     },
                                     icon: const Icon(Icons.send),
-                                    label: const Text('Send'),
+                                    label: const Text('Send a push notification'),
                                   ),
                                 ),
                               ],

@@ -35,134 +35,130 @@ class _UsersCardState extends State<UsersCard> {
            color: darkModeOn ? darkColor : lightColor,
            child: Padding(
              padding: const EdgeInsets.symmetric(vertical: 20.0),
-             child: Row(
-                children: [
-                  Flexible(
-                    child:Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        Flexible(
-                          flex: 4,
-                          child: Column(
-                            children: [
-                              CircleAvatar(
-                                radius: 40,
-                                backgroundImage: NetworkImage(currentProfile.profileImage ?? 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
-                                backgroundColor: darkColor,
-                              ),
-                              const SizedBox(height: 10.0),
-                              Text(currentProfile.fullName ?? 'N/A'),
-                            ],
-                          ),
-                        ),
-                        Flexible(
-                          flex: 4,
-                          child: Row(
-                            children: [
-                              Expanded(
-                                flex: 3,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        const Icon(Icons.email, size: 18,),
-                                        const SizedBox(width: 10.0,),
-                                        Text(widget.user.email, 
-                                        style: TextStyle(
-                                          height: 2,
-                                          fontSize: 18,
-                                          color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                    Row(
-                                      children: [
-                                        const Icon(Icons.phone, size: 18,),
-                                        const SizedBox(width: 10.0,),
-                                        Text('+${currentProfile.phoneNumber ?? 'N/A'}', 
-                                        style: TextStyle(
-                                          height: 2,
-                                          fontSize: 18,
-                                          color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor
-                                          )
-                                        ),
-                                      ],
-                                    ),]
-                                )
-                              ),
-                            Expanded(
-                                flex: 2,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (widget.user.userType == 'Student' || widget.user.userType == 'Officer')
-                                      ...[
-                                        Row(
-                                          children: [
-                                            const Text('Department:'),
-                                            const SizedBox(width: 10.0,),
-                                            Text(currentProfile.department ?? 'N/A', 
-                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Text('Year:'),
-                                            const SizedBox(width: 10.0,),
-                                            Text(currentProfile.year ?? 'N/A', 
-                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Text('Section:'),
-                                            const SizedBox(width: 10.0,),
-                                            Text(currentProfile.section ?? 'N/A', 
-                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
-                                          ],
-                                        ),
-                                        Row(
-                                          children: [
-                                            const Text('Course:'),
-                                            const SizedBox(width: 10.0,),
-                                            Text(currentProfile.course ?? 'N/A', 
-                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
-                                          ],
-                                        ),
-                                      ],
-                                    if (widget.user.userType == 'Staff')
-                                      ...[],
-                                    if (widget.user.userType != 'Student' && widget.user.userType != 'Officer' && widget.user.userType != 'Staff')
-                                      const Text('User type not found!'),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                        Flexible(
-                          flex: 2,
-                          child: CheckboxListTile(
-                            activeColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-                            checkColor: darkModeOn ? darkColor : lightColor,
-                            title: Text(widget.user.deviceTokens!.isNotEmpty ? 'User is signed in' : 'User not signed in',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: widget.user.deviceTokens!.isNotEmpty ? darkModeGrassColor : darkModeSecondaryColor
-                            )),
-                            value: widget.selectedUsers.contains(widget.user.uid),
-                            onChanged: (bool? value) {
-                              widget.onSelectedChanged(widget.user.uid);
-                            },
-                          ),
-                        )
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+             child: Flexible(
+               child: Row(
+                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+                 children: [
+                   Flexible(
+                     flex: 4,
+                     child: Column(
+                       children: [
+                         CircleAvatar(
+                           radius: 30,
+                           backgroundImage: NetworkImage(currentProfile.profileImage ?? 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
+                           backgroundColor: darkColor,
+                         ),
+                         const SizedBox(height: 10.0),
+                         Text(currentProfile.fullName ?? 'N/A'),
+                       ],
+                     ),
+                   ),
+                   Flexible(
+                     flex: 4,
+                     child: Row(
+                       children: [
+                         Expanded(
+                           flex: 3,
+                           child: Column(
+                             crossAxisAlignment: CrossAxisAlignment.start,
+                             children: [
+                               Row(
+                                 children: [
+                                   const Icon(Icons.email, size: 18,),
+                                   const SizedBox(width: 10.0,),
+                                   Text(widget.user.email, 
+                                   style: TextStyle(
+                                     height: 2,
+                                     fontSize: 18,
+                                     color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor
+                                     ),
+                                   ),
+                                 ],
+                               ),
+                               Row(
+                                 children: [
+                                   const Icon(Icons.phone, size: 18,),
+                                   const SizedBox(width: 10.0,),
+                                   Text('+${currentProfile.phoneNumber ?? 'N/A'}', 
+                                   style: TextStyle(
+                                     height: 2,
+                                     fontSize: 18,
+                                     color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor
+                                     )
+                                   ),
+                                 ],
+                               ),]
+                           )
+                         ),
+                       Expanded(
+                           flex: 2,
+                           child: Column(
+                             crossAxisAlignment: CrossAxisAlignment.start,
+                             children: [
+                               if (widget.user.userType == 'Student' || widget.user.userType == 'Officer')
+                                 ...[
+                                   Row(
+                                     children: [
+                                       const Text('Department:'),
+                                       const SizedBox(width: 10.0,),
+                                       Text(currentProfile.department ?? 'N/A', 
+                                       style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                     ],
+                                   ),
+                                   Row(
+                                     children: [
+                                       const Text('Year:'),
+                                       const SizedBox(width: 10.0,),
+                                       Text(currentProfile.year ?? 'N/A', 
+                                       style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                     ],
+                                   ),
+                                   Row(
+                                     children: [
+                                       const Text('Section:'),
+                                       const SizedBox(width: 10.0,),
+                                       Text(currentProfile.section ?? 'N/A', 
+                                       style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                     ],
+                                   ),
+                                   Row(
+                                     children: [
+                                       const Text('Course:'),
+                                       const SizedBox(width: 10.0,),
+                                       Text(currentProfile.course ?? 'N/A', 
+                                       style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                     ],
+                                   ),
+                                 ],
+                               if (widget.user.userType == 'Staff')
+                                 ...[],
+                               if (widget.user.userType != 'Student' && widget.user.userType != 'Officer' && widget.user.userType != 'Staff')
+                                 const Text('User type not found!'),
+                             ],
+                           ),
+                         ),
+                       ],
+                     ),
+                   ),
+                   Flexible(
+                     flex: 2,
+                     child: CheckboxListTile(
+                       activeColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                       checkColor: darkModeOn ? darkColor : lightColor,
+                       title: Text(widget.user.deviceTokens!.isNotEmpty ? 'User is signed in' : 'User not signed in',
+                         style: TextStyle(
+                           fontSize: 14,
+                           color: widget.user.deviceTokens!.isNotEmpty ? darkModeGrassColor : darkModeSecondaryColor
+                       )),
+                       value: widget.selectedUsers.contains(widget.user.uid),
+                       onChanged: (bool? value) {
+                         widget.onSelectedChanged(widget.user.uid);
+                       },
+                     ),
+                   )
+                 ],
+               ),
+             ),
            ),
          ),
       ],

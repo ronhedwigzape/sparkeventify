@@ -129,10 +129,10 @@ class _PostCardState extends State<PostCard> {
                               ),
                               title: Text(
                                   'Are you sure you want to delete this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'} forever?',
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                       fontSize: 18,
                                       fontWeight: FontWeight.bold,
-                                      color: darkColor
+                                      color: darkModeOn ? lightColor : darkColor
                                   )
                               ),
                               children: <Widget>[

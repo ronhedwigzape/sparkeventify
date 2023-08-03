@@ -362,7 +362,7 @@ class _PostScreenState extends State<PostScreen> {
                                          child: Padding(
                                            padding: const EdgeInsets.symmetric(vertical: 8.0),
                                            child: Text(
-                                             'Instructions: Fill up the required* details and post the announcement. Only one image and document can be selected. For document, only .pdf files can be uploaded. For image it can be .jpg or .png',
+                                             'Instructions: Please fill up the required* details correctly and then post the announcement. Only one image and document can be selected. For document, only .pdf files can be uploaded. For image it can be .jpg or .png',
                                              style: TextStyle(
                                                fontSize: 15.0,
                                                  color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor

@@ -60,7 +60,7 @@ class _TextFieldInputState extends State<TextFieldInput> {
             children: [
               _buildTextField(
                 controller: widget.startTextEditingController!,
-                labelText: 'Start ${widget.isDateRange ? 'Date' : 'Time'}',
+                labelText: 'Start ${widget.isDateRange ? 'Date*' : 'Time*'}',
                 onTap: () async {
                   if (widget.isDateRange) {
                     DateTime? date = await showDatePicker(
@@ -88,7 +88,7 @@ class _TextFieldInputState extends State<TextFieldInput> {
               const SizedBox(width: 10,),
               _buildTextField(
                 controller: widget.endTextEditingController!,
-                labelText: 'End ${widget.isDateRange ? 'Date' : 'Time'}',
+                labelText: 'End ${widget.isDateRange ? 'Date*' : 'Time*'}',
                 onTap: () async {
                   if (widget.isDateRange) {
                     DateTime? date = await showDatePicker(
