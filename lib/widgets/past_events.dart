@@ -27,6 +27,12 @@ class PastEventsState extends State<PastEvents> {
     widget._events.forEach((eventDate, events) {
       if (eventDate.isBefore(now)) {
         pastEvents.addAll(events);  // Add all events of days in past
+      } else if (eventDate.day == now.day) {
+        for (var event in events) {
+          if (event.endDate.isBefore(now)) {
+            pastEvents.add(event);  // Add events that ended today
+          }
+        }
       }
     });
 
@@ -43,6 +49,7 @@ class PastEventsState extends State<PastEvents> {
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
+    DateTime now = DateTime.now();
     return Center(
       child: SingleChildScrollView(
         child: Card(
@@ -60,12 +67,13 @@ class PastEventsState extends State<PastEvents> {
                   textAlign: TextAlign.center,
                 ),
                 ...pastEvents.map((event) {
+                  DateTime endDate = event.endDate.isAfter(now) ? now.subtract(const Duration(days: 1)) : event.endDate;
                   return ListTile(
                     title: Center(child: Text(event.title, style: const TextStyle(fontSize: 16),)),
                     subtitle: Text(
-                      (event.startDate.day == event.endDate.day
+                      (event.startDate.day == endDate.day
                           ? '${DateFormat('MMM dd, yyyy').format(event.startDate)}\n'
-                          : '${DateFormat('MMM dd, yyyy').format(event.startDate)} - ${DateFormat('MMM dd, yyyy').format(event.endDate)}\n')
+                          : '${DateFormat('MMM dd, yyyy').format(event.startDate)} - ${DateFormat('MMM dd, yyyy').format(endDate)}\n')
                           + (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
                           ? DateFormat.jm().format(event.startTime)
                           : '${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
