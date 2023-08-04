@@ -7,14 +7,15 @@ class ReportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final uniqueEvents = events.toSet().toList();
     return Scaffold(
         appBar: AppBar(),
         body: ListView.builder(
-            itemCount: events.length,
+            itemCount: uniqueEvents.length,
             itemBuilder: (context, index) {
               return ListTile(
-                  title: Text(events[index].title),
-                  subtitle: Text(events[index].description),
+                  title: Text(uniqueEvents[index].title),
+                  subtitle: Text(uniqueEvents[index].description),
               );
             }
         )
