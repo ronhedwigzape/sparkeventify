@@ -14,12 +14,9 @@ class EventScreen extends StatefulWidget {
 }
 
 class _EventScreenState extends State<EventScreen> {
-  final TextEditingController _commentController = TextEditingController();
-
   @override
   void dispose() {
     super.dispose();
-    _commentController.dispose();
   }
 
   @override
