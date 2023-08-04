@@ -1,13 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:student_event_calendar/models/user.dart' as model;
 
 class Notification {
   String? id;
   String? title;
   String? message;
-  DocumentReference? sender;
-  DocumentReference? recipient;
+  DocumentReference<Object?>? sender;
+  DocumentReference<Object?>? recipient;
   Timestamp? timestamp;
   bool? read;
+  model.User? senderData; 
+  model.User? recipientData;
 
   // Named constructor
   Notification({
@@ -18,6 +21,8 @@ class Notification {
     this.recipient,
     this.timestamp,
     this.read,
+    this.senderData,
+    this.recipientData,
   });
 
   // Convert Notification object to JSON
