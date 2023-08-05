@@ -22,9 +22,7 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _fullNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
-  final TextEditingController _departmentController = TextEditingController();
-  final TextEditingController _yearController = TextEditingController();
-  final TextEditingController _sectionController = TextEditingController();
+  final TextEditingController _positionController = TextEditingController();
   bool _isLoading = false;
 
   @override
@@ -34,9 +32,7 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
     _passwordController.dispose();
     _fullNameController.dispose();
     _phoneNumberController.dispose();
-    _departmentController.dispose();
-    _yearController.dispose();
-    _sectionController.dispose();
+    _positionController.dispose();
   }
 
   Future<void> signUpAsClient() async {
@@ -47,7 +43,8 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
     if (_fullNameController.text.trim().isEmpty ||
         _emailController.text.trim().isEmpty ||
         _phoneNumberController.text.trim().isEmpty ||
-        _passwordController.text.trim().isEmpty
+        _passwordController.text.trim().isEmpty ||
+        _positionController.text.trim().isEmpty
     ) return onSignupFailure('Please complete all required fields.');
 
     // Validate the phone number
@@ -63,9 +60,7 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
     model.Profile profile = model.Profile(
       fullName: _fullNameController.text.trim(),
       phoneNumber: phoneNumber,
-      department: _departmentController.text.trim(),
-      year: _yearController.text.trim(),
-      section: _sectionController.text.trim(),
+      position: _positionController.text.trim(),
     );
 
     String res = await AuthMethods().signUp(
@@ -193,6 +188,12 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
                         ),
                       )
                     ],
+                  ),
+                  const SizedBox(height: 10.0),
+                  TextFieldInput(
+                    textEditingController: _positionController,
+                    labelText: 'Enter your position*',
+                    textInputType: TextInputType.text,
                   ),
                   const SizedBox(height: 10.0),
                   // text field input for password

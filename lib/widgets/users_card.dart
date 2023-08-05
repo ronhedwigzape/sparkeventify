@@ -131,7 +131,16 @@ class _UsersCardState extends State<UsersCard> {
                                    ),
                                  ],
                                if (widget.user.userType == 'Staff')
-                                 ...[],
+                                 ...[
+                                  Row(
+                                     children: [
+                                       const Text('Position:'),
+                                       const SizedBox(width: 10.0,),
+                                       Text(currentProfile.position ?? 'N/A', 
+                                       style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                     ],
+                                   ),
+                                 ],
                                if (widget.user.userType != 'Student' && widget.user.userType != 'Officer' && widget.user.userType != 'Staff')
                                  const Text('User type not found!'),
                              ],

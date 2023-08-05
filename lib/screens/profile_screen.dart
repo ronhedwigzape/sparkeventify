@@ -264,7 +264,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             Text('+$phoneNumber', style: const TextStyle(fontSize: 16.0)),
                           ],
                         ),
-                        const Divider(height: 30, thickness: 2),
+                        currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin' ? const Divider(height: 30, thickness: 2) : const SizedBox.shrink(),
                         currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin'
                         ? Row(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -313,6 +313,17 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ]
                               )
                             )
+                          ],
+                        ) : const SizedBox.shrink(),
+                        currentUser?.userType != 'Staff' ? const SizedBox(height: 20) : const SizedBox.shrink(),
+                        currentUser?.userType == 'Staff' ? const Divider(height: 30, thickness: 2) : const SizedBox.shrink(),
+                        currentUser?.userType == 'Staff' ? 
+                        Row(
+                          children: [
+                            const Icon(Icons.work),
+                            const SizedBox(width: 20),
+                            Text(currentUser?.profile?.position ?? 'Staff',
+                            style: const TextStyle(fontSize: 16.0)),
                           ],
                         ) : const SizedBox.shrink(),
                         const SizedBox(height: 20),
@@ -423,7 +434,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                             ),
-                            
                           ],
                         )
                       ],
