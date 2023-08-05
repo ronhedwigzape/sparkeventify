@@ -211,8 +211,8 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                         padding: const EdgeInsets.fromLTRB(40.0, 0, 2.5, 0),
                         child: CircleAvatar(
                           backgroundColor: darkModeOn ? lightColor : darkColor,
-                          radius: 12.0,
-                          child: Icon(Icons.person, color: darkModeOn ? darkColor : lightColor, size: 18,)
+                          radius: 8.0,
+                          child: Icon(Icons.person, color: darkModeOn ? darkColor : lightColor, size: 14,)
                           ),
                       ),
                       Padding(
