@@ -30,10 +30,10 @@ void main() {
     });
 
     test('Sign in with short password', () async {
-      when(mockAuthRepository.signIn(email: 'student@email.com', password: 'short'))
+      when(mockAuthRepository.signIn(email: 'student@my.cspc.edu.ph', password: 'short'))
           .thenAnswer((_) async => 'Invalid email or password');
 
-      final result = await mockAuthRepository.signIn(email: 'student@email.com', password: 'short');
+      final result = await mockAuthRepository.signIn(email: 'student@my.cspc.edu.ph', password: 'short');
       expect(result, 'Invalid email or password');
     });
   });
@@ -41,18 +41,18 @@ void main() {
   // Requirement-Based Testing: Login Test for Student, CSPC Organization Officers, and Admin
   group("User login with valid credentials", () {
     test("The user enters valid login credentials and can successfully enter the system", () async {
-      when(mockAuthRepository.signIn(email: 'person@email.com', password: 'password123'))
+      when(mockAuthRepository.signIn(email: 'person@my.cspc.edu.ph', password: 'password123'))
           .thenAnswer((_) async => 'Success');
 
-      var result = await mockAuthRepository.signIn(email: 'person@email.com', password: 'password123');
+      var result = await mockAuthRepository.signIn(email: 'person@my.cspc.edu.ph', password: 'password123');
       expect(result, 'Success');
     });
 
     test("The user enters valid login credentials and is unable to successfully enter the system", () async {
-      when(mockAuthRepository.signIn(email: 'person@email.com', password: 'password123'))
+      when(mockAuthRepository.signIn(email: 'person@my.cspc.edu.ph', password: 'password123'))
           .thenThrow(Exception());
 
-      expect(() async => await mockAuthRepository.signIn(email: 'person@email.com', password: 'password123'), throwsException);
+      expect(() async => await mockAuthRepository.signIn(email: 'person@my.cspc.edu.ph', password: 'password123'), throwsException);
     });
   });
 
