@@ -47,7 +47,7 @@ class _PostScreenState extends State<PostScreen> {
           return SimpleDialog(
             title: const Text('Upload an Image'),
             children: [
-              SimpleDialogOption(
+              !kIsWeb ? SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
                 child: const Row(
                   children: <Widget>[
@@ -67,14 +67,14 @@ class _PostScreenState extends State<PostScreen> {
                         .showSnackBar(snackBar);
                   }
                 },
-              ),
+              ) : const SizedBox.shrink() ,
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
                 child: const Row(
                   children: <Widget>[
                     Icon(Icons.image_rounded),
                     SizedBox(width: 10),
-                    Text('Choose from gallery'),
+                    Text('Choose from ${kIsWeb ? 'files' : 'gallery'}'),
                   ],
                 ),
                 onPressed: () async {
