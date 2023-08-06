@@ -5,43 +5,44 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 // Flutter package for determining platform code is running on
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // This class provides different Firebase configuration options for different platforms. 
 class DefaultFirebaseOptions {
   // Firebase configuration for web platform
   static FirebaseOptions get webPlatform {
-    return const FirebaseOptions(
+    return FirebaseOptions(
       // These are various configuration parameters needed to setup Firebase for your app
       // Please replace them with your actual values when setting up Firebase for your application
-      apiKey: "AIzaSyC8DWmwROAeyPru_SYh3xwDJG2BX_eNcD4",
-      authDomain: "student-event-calendar-dce10.firebaseapp.com",
-      projectId: "student-event-calendar-dce10",
-      storageBucket: "student-event-calendar-dce10.appspot.com",
-      messagingSenderId: "777878936021",
-      appId: "1:777878936021:web:972eba2175a9e6eedf855c",
-      measurementId: "G-6ZJTE7VPBD"
+      apiKey: dotenv.env['WEB_API_KEY']!,
+      authDomain: dotenv.env['WEB_AUTH_DOMAIN']!,
+      projectId: dotenv.env['WEB_PROJECT_ID']!,
+      storageBucket: dotenv.env['WEB_STORAGE_BUCKET']!,
+      messagingSenderId: dotenv.env['WEB_MESSAGING_SENDER_ID']!,
+      appId: dotenv.env['WEB_APP_ID']!,
+      measurementId: dotenv.env['WEB_MEASUREMENT_ID']!,
     );
   }
 
   // Firebase configuration for Android platform
   static FirebaseOptions get androidPlatform {
-    return const FirebaseOptions(
+    return FirebaseOptions(
       // Replace these with actual values from Firebase console when setting up Firebase for Android app
-      apiKey: 'AIzaSyDDGkg8ZG26GT2j_wTlOR5Xj2JjLZh8AY0',
-      appId: '1:777878936021:android:980072560145bcc0df855c',
-      messagingSenderId: '777878936021',
-      projectId: 'student-event-calendar-dce10',
+      apiKey: dotenv.env['ANDROID_API_KEY']!,
+      appId: dotenv.env['ANDROID_APP_ID']!,
+      messagingSenderId: dotenv.env['ANDROID_MESSAGING_SENDER_ID']!,
+      projectId: dotenv.env['ANDROID_PROJECT_ID']!,
     );
   }
 
   // Firebase configuration for iOS platform
   static FirebaseOptions get iosPlatform {
-    return const FirebaseOptions(
+    return FirebaseOptions(
       // Replace these with actual values from Firebase console when setting up Firebase for iOS app
-      apiKey: 'AIzaSyDDGkg8ZG26GT2j_wTlOR5Xj2JjLZh8AY0',
-      appId: '1:777878936021:ios:d06f0a15a482fe84df855c',
-      messagingSenderId: '777878936021',
-      projectId: 'student-event-calendar-dce10',
+      apiKey: dotenv.env['IOS_API_KEY']!,
+      appId: dotenv.env['IOS_APP_ID']!,
+      messagingSenderId: dotenv.env['IOS_MESSAGING_SENDER_ID']!,
+      projectId: dotenv.env['IOS_PROJECT_ID']!,
     );
   }
 

@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:overlay_support/overlay_support.dart';
@@ -102,7 +103,7 @@ class FirebaseNotifications {
 
   // Send a push notification to a user
   Future<String> sendPushNotification(String title, String body, String token) async {
-    const postUrl = 'https://fcm.googleapis.com/fcm/send';
+    String postUrl = dotenv.env['FCM_POST_URL']!;
     String message = 'Some error occured while sending push notification.';
     final data = {
       "notification": {"body": body, "title": title},
@@ -117,7 +118,7 @@ class FirebaseNotifications {
 
     final headers = {
       'content-type': 'application/json',
-      'Authorization': 'key=AAAAtR0ymdU:APA91bH3hL344H0RDqmi82cs2LvFyGVo_fVnNxQr8l1umWH0eolSmhrkR2Y6bdvuHmMx2lrfPxKT1A0sfLIJjVykcrEXi9PRSKAJsvwALMuB65Dc6zkWapNUbTSJ5ozhd086NUdQAAMX',
+      'Authorization': 'key=${dotenv.env['FCM_SERVER_KEY']!}',
     };
 
     final response = await http.post(Uri.parse(postUrl),
