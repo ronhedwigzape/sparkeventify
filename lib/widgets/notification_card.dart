@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
@@ -6,8 +7,8 @@ import 'package:student_event_calendar/utils/colors.dart';
 
 class NotificationCard extends StatefulWidget {
   const NotificationCard({Key? key, required this.snap}) : super(key: key);
-  // ignore: prefer_typing_uninitialized_variables
-  final snap;
+
+  final dynamic snap;
 
   @override
   State<NotificationCard> createState() => _NotificationCardState();
@@ -15,11 +16,13 @@ class NotificationCard extends StatefulWidget {
 
 class _NotificationCardState extends State<NotificationCard> {
   model.User? senderData; // Declare senderData variable
+  model.User? recipientData; // Declare receiverData variable
 
   @override
   void initState() {
     super.initState();
     loadSenderData(); // Load senderData
+    loadRecipientData(); // Load receiverData
   }
 
   void loadSenderData() {
@@ -30,10 +33,21 @@ class _NotificationCardState extends State<NotificationCard> {
     });
   }
 
+  void loadRecipientData() {
+    widget.snap.recipient?.get().then((snapshot) {
+      setState(() {
+        recipientData = model.User.fromSnap(snapshot);
+      });
+    });
+  }
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-    return Container(
+    final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
+    final recipientUid = recipientData?.uid; 
+
+    return recipientUid == currentUserUid ?
+     Container(
       decoration: BoxDecoration(
         border: Border.all(
           color: darkModeOn ? secondaryDarkColor : lightColor,
@@ -95,6 +109,23 @@ class _NotificationCardState extends State<NotificationCard> {
             ),
           ),
         ],
+      ),
+    ) : Center(
+      child: Padding(
+        padding: const EdgeInsets.all(50.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.notifications_off, size: 20.0, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
+                const Text('No recent updates.'),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
