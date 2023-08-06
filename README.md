@@ -1,7 +1,8 @@
 # CSPC Announce
 
 - ### A student event calendar app
-Before starting the project setup, you should have Flutter SDK installed and Git installed. 
+
+> Before starting the project setup, you should have Flutter SDK installed and Git installed. 
 
 ## Installation
 
@@ -92,6 +93,18 @@ flutter upgrade
 ```
 flutter run -d chrome --web-renderer html
 ``` 
+
+8. Also, change the directory to /web using the following command:
+
+```
+cd /web
+```
+
+and then install the `dotenv` package using the following command:
+
+```
+npm install 
+```
 
 ## Production Setup
 Build and release a Flutter app for production on Android, iOS, and Web.
