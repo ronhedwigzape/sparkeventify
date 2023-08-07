@@ -101,6 +101,8 @@ flutter:
   assets:
     - assets/images/cspc_logo.png
     - assets/images/cspc_background.jpg
+    - assets/icon/monochrome_cspc_launcher_icon_white.png
+    - assets/icon/monochrome_cspc_launcher_icon_black.png
     - .env
   #   - images/a_dot_ham.jpeg
 

@@ -5,7 +5,7 @@ import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
-import 'package:student_event_calendar/widgets/cspc_logo.dart';
+import 'package:student_event_calendar/widgets/cspc_logo_white.dart';
 
 class ClientScreenLayout extends StatefulWidget {
   const ClientScreenLayout({Key? key}) : super(key: key);
@@ -53,7 +53,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
         elevation: 0.0,
         title: Row(
           children: [
-            const CSPCLogo(height: 30.0),
+            const CSPCLogoWhite(height: 30.0),
             const SizedBox(
               width: 10.0,
             ),

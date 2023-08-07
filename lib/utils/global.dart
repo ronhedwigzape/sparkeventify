@@ -13,6 +13,8 @@ import '../resources/auth_methods.dart';
 const webScreenSize = 600;
 const schoolName = 'Camarines Sur Polytechnic Colleges';
 const schoolAddress = 'Nabua, Camarines Sur';
+const schoolLogoWhite = 'assets/icon/monochrome_cspc_launcher_icon_white.png';
+const schoolLogoBlack = 'assets/icon/monochrome_cspc_launcher_icon_black.png';
 const schoolLogo = 'assets/images/cspc_logo.png';
 const appName = 'Announce';
 

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
+import 'package:student_event_calendar/widgets/cspc_logo_white.dart';
 import '../models/user.dart' as model;
 import '../providers/darkmode_provider.dart';
 import '../resources/auth_methods.dart';
 import '../utils/colors.dart';
 import '../utils/global.dart';
-import '../widgets/cspc_logo.dart';
 
 class AdminScreenLayout extends StatefulWidget {
   const AdminScreenLayout({super.key});
@@ -65,7 +64,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                   padding: EdgeInsets.fromLTRB(30.0, 0, 0, 0),
                   child: Row(
                     children: [
-                      CSPCLogo(
+                      CSPCLogoWhite(
                         height: 30.0,
                       ),
                       SizedBox(
