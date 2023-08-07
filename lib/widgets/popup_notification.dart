@@ -20,8 +20,14 @@ class PopupNotification extends StatelessWidget {
           child: ListTile(
             leading:
                 ClipOval(child: Image.asset('assets/images/cspc_logo.png')),
-            title: Text(title, style: const TextStyle(color: darkColor)),
-            subtitle: Text(message, style: const TextStyle(color: darkColor)),
+            title: Text(
+              title, 
+              overflow: TextOverflow.ellipsis, 
+              style: const TextStyle(color: darkColor)),
+            subtitle: Text(
+              message, 
+              overflow: TextOverflow.ellipsis, 
+              style: const TextStyle(color: darkColor)),
             trailing: IconButton(
               icon: const Icon(Icons.close),
               onPressed: () {
