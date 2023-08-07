@@ -110,23 +110,6 @@ class _NotificationCardState extends State<NotificationCard> {
           ),
         ],
       ),
-    ) : Center(
-      child: Padding(
-        padding: const EdgeInsets.all(50.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.notifications_off, size: 20.0, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
-                const Text('No recent updates.'),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
+    ) : const SizedBox.shrink();
   }
 }
