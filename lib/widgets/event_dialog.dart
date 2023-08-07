@@ -9,49 +9,68 @@ import '../providers/darkmode_provider.dart';
 import '../resources/firestore_user_methods.dart';
 import '../utils/colors.dart';
 import '../utils/file_pickers.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class EventDialog extends StatefulWidget {
   final List<model.Event> selectedDayEvents;
   final DateTime adjustedSelectedDay;
 
-  const EventDialog(this.selectedDayEvents, this.adjustedSelectedDay, {Key? key}) : super(key: key);
+  const EventDialog(this.selectedDayEvents, this.adjustedSelectedDay,
+      {Key? key})
+      : super(key: key);
 
   @override
   EventDialogState createState() => EventDialogState();
 }
-class EventDialogState extends State<EventDialog> {
 
+class EventDialogState extends State<EventDialog> {
   String formatParticipants(Map<String, dynamic>? participants) {
     List<String> formattedList = [];
     participants?.removeWhere((key, value) => (value as List).isEmpty);
     participants?.forEach((key, value) {
-      String formattedString = '${key[0].toUpperCase()}${key.substring(1)}: ${(value as List).join(', ')}';
+      String formattedString =
+          '${key[0].toUpperCase()}${key.substring(1)}: ${(value as List).join(', ')}';
       formattedList.add(formattedString);
     });
     return formattedList.join('\n');
   }
 
-
   @override
   Widget build(BuildContext context) {
+    
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return AlertDialog(
       title: Center(
         child: Row(
           children: [
-            const Icon(Icons.calendar_today, size: !kIsWeb ? 20 : 22,),
+            const Icon(
+              Icons.calendar_today,
+              size: !kIsWeb ? 20 : 22,
+            ),
             const SizedBox(width: 10.0),
-            Text('${widget.selectedDayEvents.length > 1 ? 'Events' : 'Event'} for ${DateFormat('MMMM dd, yyyy').format(widget.adjustedSelectedDay)}'),
+            kIsWeb
+                ? Text(
+                    '${widget.selectedDayEvents.length > 1 ? 'Events' : 'Event'} for ${DateFormat('MMMM dd, yyyy').format(widget.adjustedSelectedDay)}',
+                    style: const TextStyle(fontSize: 26))
+                : Text(
+                    DateFormat('MMMM dd, yyyy')
+                        .format(widget.adjustedSelectedDay),
+                    style: const TextStyle(fontSize: 24),
+                  ),
           ],
         ),
       ),
       content: SizedBox(
-        width: kIsWeb ? 500 : double.maxFinite,
+        width: kIsWeb ? 500 : double.infinity,
         child: ListView.builder(
           shrinkWrap: true,
           itemCount: widget.selectedDayEvents.length,
           itemBuilder: (context, index) {
+            // Initialize the event, local time, and location
             var event = widget.selectedDayEvents[index];
+            final manila = tz.getLocation('Asia/Manila');
+            final localTime = tz.TZDateTime.from(event.datePublished!, manila);
+
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 8.0),
               child: Column(
@@ -64,14 +83,27 @@ class EventDialogState extends State<EventDialog> {
                           event.title,
                           style: const TextStyle(
                               fontWeight: FontWeight.bold,
-                              fontSize: 24.0
-                          ),
+                              fontSize: kIsWeb ? 24 : 22.0),
                         ),
                       ),
                       const SizedBox(width: 10),
-                      Text(
-                        DateFormat.jm().format(event.startTime),  // assuming time is a string
-                        style: Theme.of(context).textTheme.titleMedium,
+                      Column(
+                        children: [
+                          Text(
+                            DateFormat.jm().format(event.startTime), // assuming time is a string
+                            style: TextStyle(
+                              color: darkModeOn ? lightColor : darkColor,
+                              fontSize: kIsWeb ? 18 : 13
+                            ),
+                          ),
+                          Text(
+                            DateFormat.jm().format(event.endTime), // assuming time is a string
+                            style: TextStyle(
+                              color: darkModeOn ? lightColor : darkColor,
+                              fontSize: kIsWeb ? 18 : 13
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -80,23 +112,64 @@ class EventDialogState extends State<EventDialog> {
                     children: [
                       Expanded(
                         child: StreamBuilder<model.User>(
-                          stream: FireStoreUserMethods().getUserDetailsByEventsCreatedBy(event.createdBy),  // assuming that this returns a Future<String>
-                          builder: (BuildContext context, AsyncSnapshot<model.User> snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
+                          stream: FireStoreUserMethods()
+                              .getUserDetailsByEventsCreatedBy(event
+                                  .createdBy), // assuming that this returns a Future<String>
+                          builder: (BuildContext context,
+                              AsyncSnapshot<model.User> snapshot) {
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
                               return const Text('Fetching Data...');
                             } else {
                               if (snapshot.hasError) {
                                 return Text('Error: ${snapshot.error}');
                               } else {
-                                return Row(
+                                return Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    const Icon(Icons.person, size: 15,),
-                                    const SizedBox(width: 5),
-                                    Text(
-                                      'Created by ${snapshot.data?.profile?.fullName}',
-                                      style: const TextStyle(
-                                          color: lightModeSecondaryColor,
-                                          fontSize: 12
+                                    Row(
+                                      children: [
+                                        const Icon(
+                                          Icons.person,
+                                          size: 15,
+                                        ),
+                                        const SizedBox(width: 5),
+                                        Text(
+                                          '${snapshot.data?.profile?.fullName}',
+                                          overflow: TextOverflow.ellipsis,
+                                          style: TextStyle(
+                                              color: darkModeOn
+                                            ? darkModeSecondaryColor
+                                            : lightModeSecondaryColor,
+                                              fontSize: 13.5),
+                                        ),
+                                      ],
+                                    ),
+                                    RichText(
+                                      text: TextSpan(
+                                        children: [
+                                          TextSpan(
+                                            text: DateFormat.yMMMd().format(localTime),
+                                            style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!
+                                              .copyWith(
+                                                color: lightModeSecondaryColor,
+                                                fontSize: 11,
+                                              ),
+                                          ),
+                                          const TextSpan( text: " "),
+                                          TextSpan(
+                                            text: DateFormat.jm().format(localTime),
+                                            style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium!
+                                              .copyWith(
+                                                color: lightModeSecondaryColor,
+                                                fontSize: 11
+                                              ),
+                                          ),              
+                                        ],
                                       ),
                                     ),
                                   ],
@@ -108,18 +181,26 @@ class EventDialogState extends State<EventDialog> {
                       ),
                       const SizedBox(width: 10),
                       SizedBox(
-                        width: 120,
+                        height: 30,
+                        width: kIsWeb
+                            ? (event.type == 'Academic' ? 80 : 100)
+                            : (event.type == 'Academic' ? 60 : 80),
                         child: Chip(
-                          label: Padding(
-                            padding: const EdgeInsets.all(1.0),
-                            child: Text(
-                              event.type,
-                              style: const TextStyle(color: lightColor, fontSize: 12),
-                            ),
+                          label: Text(
+                            event.type,
+                            style: const TextStyle(
+                                color: lightColor, fontSize: kIsWeb ? 12 : 8),
                           ),
-                          backgroundColor: event.type == 'Academic' ? (darkModeOn ? darkModeMaroonColor : lightModeMaroonColor) : (darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                          padding: const EdgeInsets.all(2.0),
+                          backgroundColor: event.type == 'Academic'
+                              ? (darkModeOn
+                                  ? darkModeMaroonColor
+                                  : lightModeMaroonColor)
+                              : (darkModeOn
+                                  ? darkModePrimaryColor
+                                  : lightModePrimaryColor),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(20.0),
+                            borderRadius: BorderRadius.circular(10.0),
                           ),
                         ),
                       ),
@@ -128,66 +209,122 @@ class EventDialogState extends State<EventDialog> {
                   const SizedBox(height: 10.0),
                   (event.image?.isEmpty ?? true)
                       ? CachedNetworkImage(
-                    imageUrl: 'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
-                    width: double.infinity,
-                    placeholder: (context, url) => Center(
-                      child: SizedBox(
-                        height: kIsWeb ? 250.0 : 100,
-                        child: Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor)),
-                      ),
-                    ),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
-                  )
-                      : CachedNetworkImage(
-                    imageUrl: event.image!,
-                    width: double.infinity,
-                    placeholder: (context, url) => Center(
-                      child: SizedBox(
-                        height: kIsWeb ? 250.0 : 100,
-                        child: Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor)),
-                      ),
-                    ),
-                    errorWidget: (context, url, error) => const Icon(Icons.error),
-                  ),
-                  const SizedBox(height: 20.0),
-                  Column(
-                    children: [
-                      event.document == null || event.document == '' ?
-                      const SizedBox.shrink() :
-                      TextButton.icon(
-                          onPressed: () => downloadAndOpenFile(event.document ?? '', event.title),
-                          icon: const Icon(Icons.download_for_offline),
-                          label: Text('Open ${event.title} document')
-                      ),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          Icon(Icons.description, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
-                          const SizedBox(width: 10.0),
-                          Expanded(
-                            child: Text(
-                              event.description,
-                              style: TextStyle(
-                                color: darkModeOn ? lightColor : darkColor,
-                                fontSize: 16.0,
-                              ),
+                          imageUrl:
+                              'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
+                          width: double.infinity,
+                          placeholder: (context, url) => Center(
+                            child: SizedBox(
+                              height: kIsWeb ? 250.0 : 100,
+                              child: Center(
+                                  child: CircularProgressIndicator(
+                                      color: darkModeOn
+                                          ? darkModePrimaryColor
+                                          : lightModePrimaryColor)),
                             ),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        )
+                      : CachedNetworkImage(
+                          imageUrl: event.image!,
+                          width: double.infinity,
+                          placeholder: (context, url) => Center(
+                            child: SizedBox(
+                              height: kIsWeb ? 250.0 : 100,
+                              child: Center(
+                                  child: CircularProgressIndicator(
+                                      color: darkModeOn
+                                          ? darkModePrimaryColor
+                                          : lightModePrimaryColor)),
+                            ),
+                          ),
+                          errorWidget: (context, url, error) =>
+                              const Icon(Icons.error),
+                        ),
+                  const SizedBox(height: 20.0),
+                  event.document == null || event.document == ''
+                      ? const SizedBox.shrink()
+                      : Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            TextButton.icon(
+                                onPressed: () => downloadAndOpenFile(
+                                    event.document ?? '', event.title),
+                                icon: const Icon(Icons.download_for_offline),
+                                label: Text('Open ${event.title} document')),
+                          ],
+                        ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.description,
+                            color: darkModeOn
+                                ? darkModeSecondaryColor
+                                : lightModeSecondaryColor,
+                            size: 15,
+                          ),
+                          Text(
+                            ' Description',
+                            style: TextStyle(
+                                color: darkModeOn ? lightColor : darkColor,
+                                fontSize: kIsWeb ? 18 : 15),
                           ),
                         ],
                       ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Text(
+                        event.description,
+                        style: TextStyle(
+                          color: darkModeOn
+                              ? darkModeSecondaryColor
+                              : lightModeSecondaryColor,
+                          fontSize: kIsWeb ? 16.0 : 13,
+                        ),
+                      ),
                       const SizedBox(height: 8.0),
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Icon(Icons.supervised_user_circle_sharp, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
-                          const SizedBox(width: 10,),
-                          Expanded(child: Text(formatParticipants(event.participants), style: TextStyle(fontSize: 15, color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor),)),
-                        ],
+                    ],
+                  ),
+                  const SizedBox(height: 10.0),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.supervised_user_circle_sharp,
+                        color: darkModeOn
+                            ? darkModeSecondaryColor
+                            : lightModeSecondaryColor,
+                        size: 15,
+                      ),
+                      Text(
+                        ' Participants',
+                        style: TextStyle(
+                            color: darkModeOn ? lightColor : darkColor,
+                            fontSize: kIsWeb ? 18 : 15),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 15.0,)
+                  const SizedBox(
+                    height: 5,
+                  ),
+                  Column(
+                    children: [
+                      Text(
+                        formatParticipants(event.participants),
+                        style: TextStyle(
+                            fontSize: kIsWeb ? 16.0 : 13,
+                            color: darkModeOn
+                                ? darkModeTertiaryColor
+                                : lightModeTertiaryColor),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(
+                    height: 15.0,
+                  )
                 ],
               ),
             );
