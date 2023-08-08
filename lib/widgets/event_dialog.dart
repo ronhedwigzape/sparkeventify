@@ -61,7 +61,7 @@ class EventDialogState extends State<EventDialog> {
         ),
       ),
       content: SizedBox(
-        width: kIsWeb ? 500 : double.infinity,
+        width: kIsWeb ? 500 : double.maxFinite,
         child: ListView.builder(
           shrinkWrap: true,
           itemCount: widget.selectedDayEvents.length,
