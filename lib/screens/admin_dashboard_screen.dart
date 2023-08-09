@@ -41,33 +41,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
               builder: (BuildContext context, BoxConstraints constraints) {
                 final maxWidth = min(1250, constraints.maxWidth).toDouble();
                 return Scaffold(
-                  appBar: AppBar(
-                    automaticallyImplyLeading: false,
-                    title: Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.dashboard_outlined,
-                            color: darkModeOn ? lightColor : darkColor,
-                            size: 40,
-                          ),
-                          const SizedBox(width: 10),
-                          Text(
-                              'Admin Dashboard',
-                              style: TextStyle(
-                                  fontSize: 32.0,
-                                  fontWeight: FontWeight.bold,
-                                  color: darkModeOn ? lightColor : darkColor
-                              )
-                          ),
-                        ],
-                      ),
-                    ),
-                    toolbarHeight: 60,
-                    elevation: 0.0,
-                    backgroundColor: transparent,
-                  ),
                   body: Center(
                     child: ConstrainedBox(
                       constraints: BoxConstraints(maxWidth: maxWidth),

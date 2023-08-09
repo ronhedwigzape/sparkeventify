@@ -23,3 +23,7 @@ const darkModeGreyColor = Color.fromRGBO(255, 255, 255, 0.1);
 
 // Transparent colors
 const transparent = Colors.transparent;
+
+// Other colors
+const black = Colors.black;
+const white = Colors.white;
