@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -54,7 +54,8 @@ class _PostCardState extends State<PostCard> {
             final manila = tz.getLocation('Asia/Manila');
             final localTime = tz.TZDateTime.from(datePublished, manila);
 
-            return Container(
+            return FirebaseAuth.instance.currentUser?.uid == widget.snap.createdBy 
+            ? Container(
               decoration: BoxDecoration(border: Border.all(color: darkModeOn ? secondaryDarkColor : lightColor), color: darkModeOn ? darkColor : lightColor),
               padding: const EdgeInsets.symmetric(vertical: 10),
               child: Column(children: <Widget>[
@@ -240,12 +241,14 @@ class _PostCardState extends State<PostCard> {
                               text:
                                   '${widget.snap.description ?? 'default_description'}',
                             ),
-                          ])),
+                          ]),
+                          overflow: TextOverflow.ellipsis,
+                          ),
                         ),
                       ]),
                 )
               ]),
-            );
+            ) : const SizedBox.shrink();
           }
         });
   }
