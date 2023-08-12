@@ -30,7 +30,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   void _showSuccessMessage() {
     Flushbar(
-      message: "Profile image updated successfully!, Please reload the page to take effect.",
+      message: "Profile image updated successfully!",
       duration: const Duration(seconds: 5),
     ).show(context);
   }
