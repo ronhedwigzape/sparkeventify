@@ -374,8 +374,10 @@ class _PostScreenState extends State<PostScreen> {
                                       const SizedBox(height: 10.0),
                                       Flexible(
                                           child: Row(
+                                            mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Expanded(
+                                                flex: 2,
                                                 child: DropdownButtonFormField<String>(
                                                   decoration: const InputDecoration(
                                                     prefixIcon: Icon(Icons.event),
@@ -389,9 +391,8 @@ class _PostScreenState extends State<PostScreen> {
                                                     return DropdownMenuItem<String>(
                                                       value: value,
                                                       child: Row(
-                                                        children: <Widget>[
-                                                          const Icon(Icons.check),
-                                                          const SizedBox(width: 10),
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
                                                           Text(value),
                                                         ],
                                                       ),
@@ -404,18 +405,16 @@ class _PostScreenState extends State<PostScreen> {
                                                   },
                                                 ),
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                    horizontal: 20.0),
+                                              Expanded(
+                                                flex: 1,
                                                 child: IconButton(
                                                   onPressed: () => _selectImage(context),
                                                   icon: const Icon(Icons.add_a_photo),
                                                   tooltip: 'Add a photo',
                                                 ),
                                               ),
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(
-                                                    horizontal: 20.0),
+                                              Expanded(
+                                                flex: 1,
                                                 child: IconButton(
                                                   onPressed: () => _selectDocument(context),
                                                   icon: const Icon(Icons.file_present_rounded),
