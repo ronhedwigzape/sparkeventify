@@ -115,6 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           String? uid = currentUser?.uid;
           String email = currentUser?.email ?? '';
           // String password = currentUser?.password ?? '';
+          String userType = currentUser?.userType ?? '';
           String phoneNumber = currentUser?.profile!.phoneNumber ?? '';
           String fullName = currentUser?.profile!.fullName ?? '';
           String department = currentUser?.profile!.department ?? '';
@@ -232,6 +233,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                           ],
                         ) : const SizedBox.shrink(),
+                        Container(
+                          padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                userType.toUpperCase(), 
+                                style: TextStyle(
+                                  fontSize: 15.0, 
+                                  fontWeight: FontWeight.bold,
+                                  color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                            ],
+                          ),
+                        ),
                         kIsWeb ? const SizedBox(height: 20) : const SizedBox.shrink(),
                         const SizedBox(height: 20),
                         Row(
