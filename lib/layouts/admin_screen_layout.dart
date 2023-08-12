@@ -15,7 +15,7 @@ class AdminScreenLayout extends StatefulWidget {
 }
 
 class _AdminScreenLayoutState extends State<AdminScreenLayout> {
-  Future<model.User> currentUser = AuthMethods().getCurrentUserDetails();
+  Future<model.User?> currentUser = AuthMethods().getCurrentUserDetails();
   int _page = 0;
   PageController pageController = PageController();
 
@@ -49,7 +49,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return FutureBuilder(
         future: currentUser,
-        builder: (context, AsyncSnapshot<model.User> snapshot) {
+        builder: (context, AsyncSnapshot<model.User?> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
           } else if (snapshot.hasError) {

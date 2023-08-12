@@ -31,7 +31,7 @@ class _PostScreenState extends State<PostScreen> {
   final _endTimeController = TextEditingController();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
-  Future<model.User> currentUser = AuthMethods().getCurrentUserDetails();
+  Future<model.User?> currentUser = AuthMethods().getCurrentUserDetails();
   Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
@@ -301,9 +301,9 @@ class _PostScreenState extends State<PostScreen> {
         color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor
       ),
     );
-    return FutureBuilder<model.User>(
+    return FutureBuilder<model.User?>(
       future: currentUser,
-      builder: (context, AsyncSnapshot<model.User> snapshot) {
+      builder: (context, AsyncSnapshot<model.User?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
         } else if (snapshot.hasError) {
