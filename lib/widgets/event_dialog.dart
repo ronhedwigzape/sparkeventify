@@ -1,3 +1,4 @@
+import 'package:another_flushbar/flushbar.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -24,6 +25,14 @@ class EventDialog extends StatefulWidget {
 }
 
 class EventDialogState extends State<EventDialog> {
+
+  void _showOpenDocumentMessage() {
+    Flushbar(
+      message: "Please wait for the document to be accessed...",
+      duration: const Duration(seconds: 6),
+    ).show(context);
+  }
+
   String formatParticipants(Map<String, dynamic>? participants) {
     List<String> formattedList = [];
     participants?.removeWhere((key, value) => (value as List).isEmpty);
@@ -248,12 +257,17 @@ class EventDialogState extends State<EventDialog> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             TextButton.icon(
-                                onPressed: () => downloadAndOpenFile(
-                                    event.document ?? '', event.title),
-                                icon: const Icon(Icons.download_for_offline),
-                                label: Text('Open ${event.title} document')),
+                              onPressed: () { 
+                                downloadAndOpenFile(event.document ?? '', event.title);
+                                _showOpenDocumentMessage();
+                              },
+                              icon: const Icon(Icons.download_for_offline),
+                              label: Text('Open ${event.title} document')),
                           ],
                         ),
+                  event.document == null || event.document == ''
+                      ? const SizedBox.shrink()
+                      : const SizedBox(height: 20.0),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
@@ -264,7 +278,7 @@ class EventDialogState extends State<EventDialog> {
                             color: darkModeOn
                                 ? darkModeSecondaryColor
                                 : lightModeSecondaryColor,
-                            size: 15,
+                            size: kIsWeb ? 18 : 15,
                           ),
                           Text(
                             ' Description',
@@ -297,7 +311,7 @@ class EventDialogState extends State<EventDialog> {
                         color: darkModeOn
                             ? darkModeSecondaryColor
                             : lightModeSecondaryColor,
-                        size: 15,
+                        size: kIsWeb ? 18 : 15,
                       ),
                       Text(
                         ' Participants',

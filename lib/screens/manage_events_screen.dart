@@ -177,6 +177,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                                   child: Row(
                                   children: [
                                     Flexible(
+                                      flex: 1,
                                       child: Icon(
                                         Icons.edit,
                                         color: darkModeOn ? lightColor : darkColor,
@@ -184,9 +185,10 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                                       ),
                                     ),
                                     const SizedBox(width: 10),
-                                    Flexible(
+                                    Expanded(
+                                      flex: 1,
                                       child: Text(
-                                        'Manage Events',
+                                        'Manage Your Events',
                                         style: TextStyle(
                                           fontWeight: FontWeight.bold,
                                           fontSize: 24.0,

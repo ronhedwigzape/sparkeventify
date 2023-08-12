@@ -56,6 +56,7 @@ class _PostCardState extends State<PostCard> {
             final manila = tz.getLocation('Asia/Manila');
             final localTime = tz.TZDateTime.from(datePublished, manila);
 
+            // For Staff View Only
             return FirebaseAuth.instance.currentUser?.uid == widget.snap.createdBy && authorType == 'Staff'
             ? Container(
               decoration: BoxDecoration(border: Border.all(color: darkModeOn ? secondaryDarkColor : lightColor), color: darkModeOn ? darkColor : lightColor),
@@ -203,7 +204,6 @@ class _PostCardState extends State<PostCard> {
                     ),
                   ],
                 ),
-             
                 Row(
                   children: [
                     TextButton.icon(
@@ -250,13 +250,15 @@ class _PostCardState extends State<PostCard> {
                       ]),
                 )
               ]),
-            ) : FutureBuilder<model.User?>(
+            ) : 
+          FutureBuilder<model.User?>(
           future: AuthMethods().getCurrentUserDetails(),
           builder: (BuildContext context, AsyncSnapshot<model.User?> snapshot) {
             final model.User? user = snapshot.data;
             String? userUid = user?.uid;
             String? userType = user?.userType;
 
+            // For Admin View Only
             return FirebaseAuth.instance.currentUser?.uid == userUid && userType == 'Admin' ?
             Container(
               decoration: BoxDecoration(border: Border.all(color: darkModeOn ? secondaryDarkColor : lightColor), color: darkModeOn ? darkColor : lightColor),
