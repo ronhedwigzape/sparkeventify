@@ -146,4 +146,55 @@ class FireStoreEventMethods {
     // Convert the document snapshot to an Event object and return it
     return Event.fromSnap(doc);
   }
+
+  Future<String> updateEventStatus(
+      String eventId, 
+      bool isCancelled, 
+      bool isMoved, 
+      DateTime startDate, 
+      DateTime endDate, 
+      Event? movedEvent  // if event is moved, new event details should be provided here
+  ) async {
+    String response = 'Some error occurred';
+    DateTime currentDateTime = DateTime.now();
+
+    try {
+      // If the event is moved, update event's details using the supplied new event details
+      if (isMoved && movedEvent != null) {
+        return await updateEvent(eventId, movedEvent);
+      }
+
+      // If the current date/time is before the start date/time, then the status is "Upcoming"
+      if (startDate.isAfter(currentDateTime)) {
+        await _eventsCollection.doc(eventId).set({
+            'status': isCancelled ? 'Cancelled' : 'Upcoming',
+        }, SetOptions(merge: true));
+      } 
+      // If the current date/time is after the end date/time, then the status is "Past"
+      else if (endDate.isBefore(currentDateTime)) {
+        await _eventsCollection.doc(eventId).set({
+            'status': isCancelled ? 'Cancelled' : 'Past',
+        }, SetOptions(merge: true));
+      } 
+      // If the current date/time is between the start and end datetime, then the status is "Ongoing"
+      else {
+        await _eventsCollection.doc(eventId).set({
+            'status': isCancelled ? 'Cancelled' : 'Ongoing',
+        }, SetOptions(merge: true));
+      }
+
+      // Set response to 'Success' if the status is updated successfully
+      response = 'Success';
+    } on FirebaseException catch (err) {
+        // Handle any errors that occur
+        if (err.code == 'permission-denied') {
+          response = 'Permission denied';
+        }
+        // Handle other errors
+        response = err.toString();
+    }
+    // Return the response
+    return response;
+  }
+
 }
