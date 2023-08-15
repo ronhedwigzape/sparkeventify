@@ -184,7 +184,13 @@ class _NotificationButtonState extends State<NotificationButton> {
           });
 
     },
-      child: Text('Send Notifications (${widget.selectedUsers.length})'),
+      child: Row(
+        children: [
+          const Icon(Icons.send, size: 13,),
+          const SizedBox(width: 5.0,),
+          Text('Send Notifications (${widget.selectedUsers.length})'),
+        ],
+      ),
     );
   }
 }
