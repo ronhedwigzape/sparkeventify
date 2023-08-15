@@ -80,20 +80,4 @@ class Event {
   // String toString() {
   //   return 'Event{id: $id, title: $title, date: $date, time: $time, description: $description, createdBy: $createdBy, image: $image, document: $document, participants: $participants, venue: $venue, type: $type, status: $status, updatedAt: $updatedAt}';
   // }
-  void updateStatus() {
-    DateTime currentDateTime = DateTime.now();
-
-    // If the current date/time is before the start date/time, then the status is "Upcoming"
-    if (startDate.isAfter(currentDateTime)) {
-      status = "Upcoming";
-    }
-    // If the current date/time is after the end date/time, then the status is "Past"
-    else if (endDate.isBefore(currentDateTime)) {
-      status = "Past";
-    }
-    // If the current date/time is between the start and end date/time, then the status is "Ongoing"
-    else {
-      status = "Ongoing";
-    }
-  }
 }
