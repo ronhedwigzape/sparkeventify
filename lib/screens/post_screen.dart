@@ -596,6 +596,7 @@ class _PostScreenState extends State<PostScreen> {
   }
 
   _buildParticipant(String type, List<String> participants) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return kIsWeb ? Column(
       children: <Widget>[
         Padding(
@@ -606,6 +607,8 @@ class _PostScreenState extends State<PostScreen> {
           ),
         ), ...participants.map(
               (participant) => CheckboxListTile(
+            activeColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+            checkColor: darkModeOn ? darkColor : lightColor,
             title: Text(participant),
             value: selectedParticipants[type.toLowerCase()]?.contains(participant),
             onChanged: (bool? value) {
@@ -634,6 +637,8 @@ class _PostScreenState extends State<PostScreen> {
           physics: const NeverScrollableScrollPhysics(),
           children: participants.map(
                 (participant) => CheckboxListTile(
+              activeColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+              checkColor: darkModeOn ? darkColor : lightColor,
               title: Text(participant),
               value: selectedParticipants[type.toLowerCase()]?.contains(participant),
               onChanged: (bool? value) {
