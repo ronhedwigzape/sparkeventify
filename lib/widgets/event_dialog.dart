@@ -99,14 +99,14 @@ class EventDialogState extends State<EventDialog> {
                       Column(
                         children: [
                           Text(
-                            DateFormat.jm().format(event.startTime), // assuming time is a string
+                            DateFormat.jm().format(event.startTime), 
                             style: TextStyle(
                               color: darkModeOn ? lightColor : darkColor,
                               fontSize: kIsWeb ? 18 : 13
                             ),
                           ),
                           Text(
-                            DateFormat.jm().format(event.endTime), // assuming time is a string
+                            DateFormat.jm().format(event.endTime), 
                             style: TextStyle(
                               color: darkModeOn ? lightColor : darkColor,
                               fontSize: kIsWeb ? 18 : 13
@@ -123,7 +123,7 @@ class EventDialogState extends State<EventDialog> {
                         child: StreamBuilder<model.User>(
                           stream: FireStoreUserMethods()
                               .getUserDetailsByEventsCreatedBy(event
-                                  .createdBy), // assuming that this returns a Future<String>
+                                  .createdBy), 
                           builder: (BuildContext context,
                               AsyncSnapshot<model.User> snapshot) {
                             if (snapshot.connectionState ==
