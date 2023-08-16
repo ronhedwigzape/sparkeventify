@@ -3,28 +3,24 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_file_saver/flutter_file_saver.dart';
+import 'package:http/io_client.dart';
 import 'package:student_event_calendar/models/event.dart' as model;
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:pdf/widgets.dart' as pw;
-// ignore: avoid_web_libraries_in_flutter
-import 'dart:html' as html;
+import 'package:universal_io/io.dart';
 
 
 class ReportScreen extends StatelessWidget {
   final List<model.Event> events;
   const ReportScreen({super.key, required this.events});
 
-  Future<pw.MemoryImage?> _fetchImage(String url) async {
+ Future<pw.MemoryImage?> _fetchImage(String url) async {
     try {
-      final response = await html.window.fetch(url);
-      final data = await response.arrayBuffer();
-      final blob = html.Blob([data]);
-      final reader = html.FileReader();
-      final completer = Completer<Uint8List>();
-      reader.onLoadEnd.listen((_) => completer.complete(reader.result as Uint8List));
-      reader.readAsArrayBuffer(blob);
-      final imageData = await completer.future;
-      return pw.MemoryImage(imageData);
+      final httpClient = HttpClient();
+      final ioClient = IOClient(httpClient);
+      final response = await ioClient.get(Uri.parse(url));
+      return pw.MemoryImage(response.bodyBytes);
     } catch (e) {
       if (kDebugMode) {
         print('Error fetching image $url: $e');
@@ -59,16 +55,14 @@ class ReportScreen extends StatelessWidget {
         ),
       );
     }
-    // Saving the document to a List
-    final bytes = await pdf.save();
-    // Creating a blob for the data
-    final blob = html.Blob([bytes], 'application/pdf');
-    // Creating a URL for the blob
-    final url = html.Url.createObjectUrlFromBlob(blob);
-    // Creating an anchor element and clicking it to start the download
-    html.AnchorElement(href: url)
-      ..setAttribute('download', 'events.pdf')
-      ..click();
+       // Finalize the PDF and get the file content as a Uint8List
+    final pdfContentBytes = await pdf.save();
+
+    // Save the file using flutter_file_saver
+    await FlutterFileSaver().writeFileAsBytes(
+      fileName: 'Event Report.pdf',
+      bytes: pdfContentBytes,
+    );
   }
 
   @override
