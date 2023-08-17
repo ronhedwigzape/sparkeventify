@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class NotificationCard extends StatefulWidget {
   const NotificationCard({Key? key, required this.snap}) : super(key: key);
@@ -46,70 +47,73 @@ class _NotificationCardState extends State<NotificationCard> {
     final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
     final recipientUid = recipientData?.uid; 
 
-    return recipientUid == currentUserUid ?
-     Container(
-      decoration: BoxDecoration(
-        border: Border.all(
-          color: darkModeOn ? secondaryDarkColor : lightColor,
+   return recipientUid == currentUserUid
+    ? Container(
+        decoration: BoxDecoration(
+          border: Border.all(
+            color: darkModeOn ? secondaryDarkColor : lightColor,
+          ),
+          color: darkModeOn ? darkColor : lightColor,
         ),
-        color: darkModeOn ? darkColor : lightColor,
-      ),
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Column(
-        children: <Widget>[
-          Container(
-            padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 16)
-                .copyWith(right: 0),
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(2, 2, 2, 8),
-              child: Row(
-                children: <Widget>[
-                  CircleAvatar(
-                    backgroundImage: NetworkImage(
-                      senderData?.profile?.profileImage ??
-                          'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png',
-                    ),
-                  ),
-                  const SizedBox(width: 10),
+        padding: const EdgeInsets.fromLTRB(10, 15, 20, 15),
+        child: Row(
+          children: [
+            Container(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+              child: CircleAvatar(
+                radius: 30,
+                backgroundImage: NetworkImage(
+                  senderData?.profile?.profileImage ??
+                      'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png',
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
                   Text(
                     '${widget.snap.title}',
-                    style: const TextStyle(fontWeight: FontWeight.bold),
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15.0,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: RichText(
+                      text: TextSpan(
+                        text: '${widget.snap.message ?? ''}',
+                        style: TextStyle(
+                          fontSize: 13.0,
+                          color: darkModeOn ? lightColor : darkColor,
+                        ),
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  Text(
+                    timeago.format(widget.snap.timestamp.toDate()),
+                    style: TextStyle(
+                      color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
+                      fontSize: 11.0,
+                    ),
                   ),
                 ],
               ),
             ),
-          ),
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                  child: RichText(
-                    text: TextSpan(
-                      style: TextStyle(
-                        color: darkModeOn ? lightColor : darkColor,
-                      ),
-                      children: [
-                        const TextSpan(
-                          text: 'Description: ',
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        TextSpan(
-                          text: '${widget.snap.message ?? 'default_description'}',
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    ) : const SizedBox.shrink();
+            Visibility(
+              visible: widget.snap.unread,  //toggle this based on your unread logic
+              child: CircleAvatar(
+                radius: 5,
+                backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+              ),
+            )
+          ],
+        ),
+      )
+    : const SizedBox.shrink();
   }
 }
