@@ -1,8 +1,10 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
+import 'package:student_event_calendar/services/firebase_notifications.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo_white.dart';
@@ -17,11 +19,16 @@ class ClientScreenLayout extends StatefulWidget {
 class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   int _page = 0;
   PageController pageController = PageController();
+  final firestoreNotification = FirebaseNotifications();
+  late Future<int> notificationCount;
 
   @override
   void initState() {
     super.initState();
     pageController = PageController();
+    notificationCount = firestoreNotification.getNotificationCount(
+      FirebaseAuth.instance.currentUser?.uid ?? '',
+    );
   }
 
   @override
@@ -82,9 +89,45 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
         actions: [
           IconButton(
             onPressed: () => navigationTapped(5),
-            icon: const Icon(
-              Icons.notifications,
-              color: lightColor,
+            icon: Stack(
+              children: <Widget>[
+                const Icon(
+                  Icons.notifications,
+                  color: lightColor,
+                ),
+               FutureBuilder<int>(
+                  future: notificationCount,
+                  builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                    if (!snapshot.hasData) {
+                      return const SizedBox.shrink();
+                    }
+                    final int count = snapshot.data!;
+                    return count == 0 ? const SizedBox.shrink() : 
+                    Positioned(
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(1),
+                        decoration: BoxDecoration(
+                          color: red,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 12,
+                          minHeight: 12,
+                        ),
+                        child: Text(
+                          count.toString(),
+                          style: const TextStyle(
+                            color: white,
+                            fontSize: 8,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           )
         ],

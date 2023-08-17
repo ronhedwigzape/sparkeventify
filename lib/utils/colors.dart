@@ -27,3 +27,4 @@ const transparent = Colors.transparent;
 // Other colors
 const black = Colors.black;
 const white = Colors.white;
+const red = Colors.red;

@@ -248,5 +248,12 @@ class FirebaseNotifications {
     return message;
   }
 
-
+  Future<int> getNotificationCount(String userId) async {
+    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+        .collection('notifications')
+        .where('recipient', isEqualTo: FirebaseFirestore.instance.doc('users/$userId'))
+        .get();
+    return querySnapshot.docs.length;
+  }
+  
 }
