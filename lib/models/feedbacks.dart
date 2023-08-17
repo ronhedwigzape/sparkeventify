@@ -1,23 +1,25 @@
+import 'package:student_event_calendar/models/evaluator.dart';
+
 class Feedbacks {
-  String? feedbackDocument;
-  String? feedbackLink;
+  String feedbackUid;
+  List<Evaluator> evaluators;
 
   Feedbacks({
-    this.feedbackDocument,
-    this.feedbackLink,
+    required this.feedbackUid,
+    required this.evaluators,
   });
 
   // Convert Feedbacks object to JSON
   Map<String, dynamic> toJson() => {
-        'feedbackDocument': feedbackDocument,
-        'feedbackLink': feedbackLink,
-      };
+    'feedbackUid': feedbackUid,
+    'evaluators': evaluators.map((e) => e.toJson()).toList(),
+  };
 
   // Create Feedbacks object from a map
   static Feedbacks fromMap(Map<String, dynamic> map) {
     return Feedbacks(
-      feedbackDocument: map['feedbackDocument'],
-      feedbackLink: map['feedbackLink'],
+      feedbackUid: map['feedbackUid'],
+      evaluators: (map['evaluators'] as List).map((e) => Evaluator.fromMap(e)).toList(),
     );
   }
 }
