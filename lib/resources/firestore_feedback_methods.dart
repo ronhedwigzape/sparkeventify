@@ -1,39 +1,51 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:student_event_calendar/models/feedbacks.dart';
+import 'package:student_event_calendar/models/evaluator.dart';
 import 'package:uuid/uuid.dart';
 
 // Reference to the 'events' collection in Firestore
-final CollectionReference _eventsCollection =
-    FirebaseFirestore.instance.collection('events');
+final FirebaseFirestore _db = FirebaseFirestore.instance;
+CollectionReference _eventRef = _db.collection('events');
 
 class FirestoreFeedbackMethods {
+
   // Method to add a feedback to a specific event
-  Future<void> addFeedback(String eventId, Feedbacks feedback) async {
+  Future<void> addEmptyFeedback(String eventId) {
     var uuid = const Uuid();
     String feedbackId = uuid.v4();
-    await _eventsCollection
-        .doc(eventId)
-        .collection('feedbacks')
-        .doc(feedbackId)
-        .set(feedback.toJson());
+
+    return _eventRef.doc(eventId).collection('feedbacks').doc(feedbackId).set({
+      'feedbackUid': feedbackId,
+      'evaluators': []
+    });
   }
 
-  // Method to update a specific feedback of a specific event
-  Future<void> updateFeedback(
-      String eventId, String feedbackId, Feedbacks feedback) async {
-    await _eventsCollection
-        .doc(eventId)
-        .collection('feedbacks')
-        .doc(feedbackId)
-        .update(feedback.toJson());
+  // Method to add evaluation to the feedback
+  Future<void> addEvaluatorFeedback(String eventId, String feedbackId, Evaluator evaluator) {
+    return _eventRef.doc(eventId)
+      .collection('feedbacks').doc(feedbackId)
+      .update({'evaluators': FieldValue.arrayUnion([evaluator.toJson()])});
   }
 
-  // Method to delete a specific feedback of a specific event
-  Future<void> removeFeedback(String eventId, String feedbackId) async {
-    await _eventsCollection
-        .doc(eventId)
-        .collection('feedbacks')
-        .doc(feedbackId)
-        .delete();
+  // Method to update evaluator's feedback
+  Future<void> updateEvaluatorFeedback(String eventId, String feedbackId, Evaluator oldEvaluator, Evaluator newEvaluator) async {
+    await _eventRef.doc(eventId)
+      .collection('feedbacks').doc(feedbackId)
+      .update({'evaluators': FieldValue.arrayRemove([oldEvaluator.toJson()])});
+    await _eventRef.doc(eventId)
+      .collection('feedbacks').doc(feedbackId)
+      .update({'evaluators': FieldValue.arrayUnion([newEvaluator.toJson()])});
   }
+
+  // Method to remove evaluator's feedback
+  Future<void> removeEvaluatorFeedback(String eventId, String feedbackId, Evaluator evaluator) {
+    return _eventRef.doc(eventId)
+      .collection('feedbacks').doc(feedbackId)
+      .update({'evaluators': FieldValue.arrayRemove([evaluator.toJson()])});
+  }
+
+  // Method to remove feedback
+  Future<void> removeFeedback(String eventId, String feedbackId) {
+    return _eventRef.doc(eventId).collection('feedbacks').doc(feedbackId).delete();
+  }
+
 }
