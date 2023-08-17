@@ -158,10 +158,9 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
               activeColor: darkModeOn ? lightColor : darkColor,
               items: userType == 'Staff' ? [
                 buildBottomNavigationBarItem(Icons.calendar_month, 0),
-                buildBottomNavigationBarItem(Icons.feedback, 1),
-                buildBottomNavigationBarItem(Icons.add_circle, 2),
-                buildBottomNavigationBarItem(Icons.note_alt, 3),
-                buildBottomNavigationBarItem(Icons.person, 4)
+                buildBottomNavigationBarItem(Icons.add_circle, 1),
+                buildBottomNavigationBarItem(Icons.note_alt, 2),
+                buildBottomNavigationBarItem(Icons.person, 3)
               ] : userType == 'Officer' ? [
                 buildBottomNavigationBarItem(Icons.calendar_month, 0),
                 buildBottomNavigationBarItem(Icons.feedback, 1),
