@@ -219,7 +219,7 @@ class FirebaseNotifications {
               sender: senderRef,
               recipient: userDoc.reference,
               timestamp: Timestamp.now(),
-              read: false,
+              unread: true,
             );
 
             await notificationCollection

@@ -8,7 +8,7 @@ class Notification {
   DocumentReference<Object?>? sender;
   DocumentReference<Object?>? recipient;
   Timestamp? timestamp;
-  bool? read;
+  bool? unread;
   model.User? senderData; 
   model.User? recipientData;
 
@@ -20,7 +20,7 @@ class Notification {
     this.sender,
     this.recipient,
     this.timestamp,
-    this.read,
+    this.unread,
     this.senderData,
     this.recipientData,
   });
@@ -33,7 +33,7 @@ class Notification {
     'sender': sender,
     'recipient': recipient,
     'timestamp': timestamp,
-    'read': read,
+    'unread': unread,
   };
 
   // Create Notification object from DocumentSnapshot
@@ -46,7 +46,7 @@ class Notification {
       sender: data['sender'],
       recipient: data['recipient'],
       timestamp: data['timestamp'],
-      read: data['read'],
+      unread: data['unread'],
     );
   }
 }
