@@ -242,6 +242,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                               shrinkWrap: true,
                               itemCount: searchTermFilteredEvents.length,
                               itemBuilder: (context, index) => Container(
+                                  key: ValueKey(searchTermFilteredEvents[index].id),
                                   margin: EdgeInsets.symmetric(
                                       horizontal:
                                           width > webScreenSize ? width * 0.2 : 0,
