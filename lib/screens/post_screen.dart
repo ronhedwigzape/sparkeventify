@@ -508,7 +508,7 @@ class _PostScreenState extends State<PostScreen> {
                                                 Flexible(
                                                     child: Center(
                                                         child: Padding(
-                                                          padding: EdgeInsets.all(8.0),
+                                                          padding: const EdgeInsets.all(8.0),
                                                           child: Text(
                                                               'Check all the type of participants that will be involved.',
                                                               style: TextStyle(
