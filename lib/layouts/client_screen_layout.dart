@@ -19,7 +19,7 @@ class ClientScreenLayout extends StatefulWidget {
 class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   int _page = 0;
   PageController pageController = PageController();
-  final firestoreNotification = FirebaseNotifications();
+  final firestoreNotification = FirebaseNotificationService();
   late Future<int> notificationCount;
 
   @override

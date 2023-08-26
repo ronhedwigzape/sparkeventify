@@ -5,7 +5,6 @@ import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/ongoing_events.dart';
-import 'package:student_event_calendar/widgets/past_events.dart';
 import '../providers/darkmode_provider.dart';
 import '../widgets/events_calendar.dart';
 import '../widgets/upcoming_events.dart';
@@ -58,7 +57,6 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
                                 children: [
                                   UpcomingEvents(snapshot.data!),
                                   OngoingEvents(snapshot.data!),
-                                  PastEvents(snapshot.data!),
                                 ],
                               ),
                             ),

@@ -63,7 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             SimpleDialogOption(
               padding: const EdgeInsets.all(20),
               onPressed: () async {
-                await FirebaseNotifications().unregisterDevice(FirebaseAuth.instance.currentUser!.uid);
+                await FirebaseNotificationService().unregisterDevice(FirebaseAuth.instance.currentUser!.uid);
                 await AuthMethods().signOut();
                 if (mounted) {
                   Navigator.of(context).pop();

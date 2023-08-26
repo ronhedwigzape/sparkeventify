@@ -61,7 +61,7 @@ class AuthMethods {
           var token = await _firebaseMessaging.getToken();
           // Call the registerDevice method with user's uid and token in mobile device
           if (token != null) {
-            await FirebaseNotifications().registerDevice(credential.user!.uid, token);
+            await FirebaseNotificationService().registerDevice(credential.user!.uid, token);
           }
           // ######################################################
         } 
@@ -105,7 +105,7 @@ class AuthMethods {
           var token = await _firebaseMessaging.getToken();
           // Call the registerDevice method with user's uid and token in mobile device
           if (token != null && !kIsWeb) {
-            await FirebaseNotifications().registerDevice(credential.user!.uid, token);
+            await FirebaseNotificationService().registerDevice(credential.user!.uid, token);
           }
           // ########################################################    
         }

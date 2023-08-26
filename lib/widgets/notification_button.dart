@@ -29,7 +29,7 @@ class _NotificationButtonState extends State<NotificationButton> {
         print("Title: $title");
         print("Message: $message");
       }
-      response = await FirebaseNotifications().sendNotificationToUser(
+      response = await FirebaseNotificationService().sendNotificationToUser(
           currentUser,
           user,
           title,

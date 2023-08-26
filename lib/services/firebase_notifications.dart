@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
-import 'package:student_event_calendar/providers/sms_provider.dart';
+import 'package:student_event_calendar/services/twillio_sms.dart';
 import 'package:student_event_calendar/widgets/popup_notification.dart';
 import 'package:student_event_calendar/models/notification.dart';
 import 'package:uuid/uuid.dart';
@@ -24,7 +24,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   }
 }
 
-class FirebaseNotifications {
+class FirebaseNotificationService {
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   void init() async {
@@ -227,7 +227,11 @@ class FirebaseNotifications {
 
             // Send SMS notification
             if (user.profile?.phoneNumber != null) {
-              var smsMessage = await sendSMS(user.profile!.phoneNumber!, dotenv.env['TWILLIO_PHONE_NUMBER']!, body);
+              var smsMessage = await TwillioSmsService().sendSMS(
+                user.profile!.phoneNumber!, 
+                dotenv.env['TWILLIO_PHONE_NUMBER']!, 
+                body);
+                
               if (kDebugMode) {
                 print(smsMessage);
               }
