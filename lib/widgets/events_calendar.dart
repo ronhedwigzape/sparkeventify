@@ -79,7 +79,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                               currentMonthEvents.sort((a, b) => a.startDate.compareTo(b.startDate));
                               Navigator.push(
                                 context,
-                                MaterialPageRoute(builder: (context) => ReportScreen(events: currentMonthEvents)),
+                                MaterialPageRoute(builder: (context) => ReportScreen(events: currentMonthEvents, currentMonth: currentMonth,)),
                               );
                             },
                             child: Text('Generate Report for $currentMonth',
