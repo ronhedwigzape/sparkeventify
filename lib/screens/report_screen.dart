@@ -15,7 +15,7 @@ class ReportScreen extends StatelessWidget {
   final List<model.Event> events;
   const ReportScreen({super.key, required this.events});
 
- Future<pw.MemoryImage?> _fetchImage(String url) async {
+  Future<pw.MemoryImage?> _fetchImage(String url) async {
     try {
       final httpClient = HttpClient();
       final ioClient = IOClient(httpClient);
@@ -33,29 +33,45 @@ class ReportScreen extends StatelessWidget {
     final pdf = pw.Document();
 
     final font = pw.Font.ttf(await rootBundle.load("fonts/OpenSans-Regular.ttf"));
-  
+
+    List<pw.Widget> eventWidgets = [];
+
     for (var event in events) {
       final image = event.image != null ? await _fetchImage(event.image!) : null;
-      pdf.addPage(
-        pw.Page(
-          build: (pw.Context context) => pw.Column(
-            children: <pw.Widget>[
-              pw.Header(
-                level: 0,
+      eventWidgets.add(
+        pw.Column(
+          mainAxisAlignment: pw.MainAxisAlignment.center,
+          children: <pw.Widget>[
+            pw.Header(
+              level: 0,
+              child: pw.Center(
                 child: pw.Text('Event Title: ${event.title}', style: pw.TextStyle(font: font)),
               ),
-              if (image != null)
-                pw.Image(image, width: 200.0),
-              pw.Paragraph(
+            ),
+            if (image != null)
+              pw.Center(
+                child: pw.Image(image, width: 200.0),
+              ),
+            pw.Center(
+              child: pw.Paragraph(
                 text: 'Event Description: ${event.description}',
                 style: pw.TextStyle(font: font,)
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
     }
-       // Finalize the PDF and get the file content as a Uint8List
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) => pw.ListView(
+          children: eventWidgets,
+        ),
+      ),
+    );
+
+    // Finalize the PDF and get the file content as a Uint8List
     final pdfContentBytes = await pdf.save();
 
     // Save the file using flutter_file_saver
@@ -64,6 +80,7 @@ class ReportScreen extends StatelessWidget {
       bytes: pdfContentBytes,
     );
   }
+
 
   @override
   Widget build(BuildContext context) {
