@@ -13,7 +13,8 @@ import 'package:universal_io/io.dart';
 
 class ReportScreen extends StatelessWidget {
   final List<model.Event> events;
-  const ReportScreen({super.key, required this.events});
+  final String currentMonth;
+  const ReportScreen({super.key, required this.events, required this.currentMonth});
 
   Future<pw.MemoryImage?> _fetchImage(String url) async {
     try {
@@ -36,6 +37,15 @@ class ReportScreen extends StatelessWidget {
 
     List<pw.Widget> eventWidgets = [];
 
+    eventWidgets.add(
+      pw.Header(
+        level: 0,
+        child: pw.Center(
+          child: pw.Text('Report for $currentMonth', style: pw.TextStyle(font: font)),
+        ),
+      ),
+    );
+
     for (var event in events) {
       final image = event.image != null ? await _fetchImage(event.image!) : null;
       eventWidgets.add(
@@ -43,7 +53,7 @@ class ReportScreen extends StatelessWidget {
           mainAxisAlignment: pw.MainAxisAlignment.center,
           children: <pw.Widget>[
             pw.Header(
-              level: 0,
+              level: 1,
               child: pw.Center(
                 child: pw.Text('Event Title: ${event.title}', style: pw.TextStyle(font: font)),
               ),
@@ -92,7 +102,7 @@ class ReportScreen extends StatelessWidget {
         return Scaffold(
           backgroundColor: white,
           appBar: AppBar(
-            title: const Text('Report'),
+            title: Text('Report for $currentMonth'),
             actions: [
               IconButton(
                 onPressed: () async {
