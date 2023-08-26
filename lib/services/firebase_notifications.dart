@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
+import 'package:student_event_calendar/providers/sms_provider.dart';
 import 'package:student_event_calendar/widgets/popup_notification.dart';
 import 'package:student_event_calendar/models/notification.dart';
 import 'package:uuid/uuid.dart';
@@ -186,10 +187,8 @@ class FirebaseNotifications {
   }
 
 
-  Future<String> sendNotificationToUser(
-      String senderId, String userId, String title, String body) async {
+  Future<String> sendNotificationToUser(String senderId, String userId, String title, String body) async {
     String message = 'Some error occurred while sending push notification.';
-
     var notificationCollection = FirebaseFirestore.instance.collection('notifications');
 
     try {
@@ -226,23 +225,21 @@ class FirebaseNotifications {
                 .doc(notificationId)
                 .set(notification.toJson());
 
-          } catch (e) {
-            if (kDebugMode) {
-              print('Failed to send notification: $e');
+            // Send SMS notification
+            if (user.profile?.phoneNumber != null) {
+              var smsMessage = await sendSMS(user.profile!.phoneNumber!, dotenv.env['TWILLIO_PHONE_NUMBER']!, body);
+              if (kDebugMode) {
+                print(smsMessage);
+              }
             }
+          } catch (e) {
             return 'Failed to send notification: $e';
           }
         }
       } else {
-        if (kDebugMode) {
-          print('User has no device token.');
-        }
         return 'User has no device token.';
       }
     } catch (e) {
-      if (kDebugMode) {
-        print('Failed to get user: $e');
-      }
       return 'Failed to get user: $e';
     }
     return message;
