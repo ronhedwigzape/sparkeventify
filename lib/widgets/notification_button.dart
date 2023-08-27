@@ -18,10 +18,10 @@ class NotificationButton extends StatefulWidget {
 
 class _NotificationButtonState extends State<NotificationButton> {
 
-  Future<String> sendNotifications(List<String> selectedUsers, String title, String message) async {
+  Future<String?> sendNotifications(List<String> selectedUsers, String title, String message) async {
     List<String> messages = [];
     String currentUser = FirebaseAuth.instance.currentUser!.uid;
-    String response = '';
+    String? response = '';
 
     for (String user in selectedUsers) {
       if (kDebugMode) {
@@ -35,7 +35,7 @@ class _NotificationButtonState extends State<NotificationButton> {
           title,
           message
       );
-      messages.add(response);
+      messages.add(response!);
     }
 
     if (messages.every((message) => message == 'Notification sent successfully')) {

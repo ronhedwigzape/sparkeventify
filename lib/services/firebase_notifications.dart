@@ -127,7 +127,7 @@ class FirebaseNotificationService {
         encoding: Encoding.getByName('utf-8'),
         headers: headers);
 
-    if (response.statusCode == 200) {
+    if (response.statusCode == 200 || response.statusCode == 201) {
       message = 'Notification sent successfully';
       if (kDebugMode) {
         print(message);
@@ -186,81 +186,78 @@ class FirebaseNotificationService {
     }
   }
 
-
-  Future<String> sendNotificationToUser(String senderId, String userId, String title, String body) async {
-    String message = 'Some error occurred while sending push notification.';
-    var notificationCollection = FirebaseFirestore.instance.collection('notifications');
-
+  Future<String?> sendNotificationToUser(String senderId, String userId, String title, String body) async {
     try {
-      var userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
-      if (!userDoc.exists) {
-        if (kDebugMode) {
-          print('User not found');
-        }
+      var user = await fetchUser(userId);
+      if (user == null) {
         return 'User not found';
       }
 
-      var user = model.User.fromSnap(userDoc);
-      var senderRef = FirebaseFirestore.instance.collection('users').doc(senderId);
+      var message = await sendAppNotification(user, title, body);
+      await saveNotificationToDatabase(senderId, userId, title, body);
+      await sendSmsNotification(user, body);
 
-      // Send SMS notification
-      if (user.profile?.phoneNumber != null && user.profile?.phoneNumber != '') {
-        var smsMessage = await TwillioSmsService().sendSMS(
-          user.profile!.phoneNumber!,
-          body
-        );
-          
-        if (kDebugMode) {
-          print(smsMessage);
-        }
-      }
-
-      // Send App notification
-      if (user.deviceTokens != null) {
-        for (var token in user.deviceTokens!.values) {
-          try {
-            message = await sendPushNotification(title, body, token);
-
-            var notificationId = const Uuid().v4();
-
-            // Stores the notification in Firestore for each user
-            var notification = Notification(
-              id: notificationId,
-              title: title,
-              message: body,
-              sender: senderRef,
-              recipient: userDoc.reference,
-              timestamp: Timestamp.now(),
-              unread: true,
-            );
-
-            await notificationCollection
-                .doc(notificationId)
-                .set(notification.toJson());
-
-          } catch (e) {
-            if (kDebugMode) {
-              print('Failed to send notification: $e');
-            }
-            return 'Failed to send notification: $e';
-          }
-        }
-      } else {
-        if (kDebugMode) {
-          print('User has no device token.');
-        }
-        return 'User has no device token.';
-      }
+      return message;
     } catch (e) {
       if (kDebugMode) {
         print('Failed to get user: $e');
       }
       return 'Failed to get user: $e';
     }
-    if (kDebugMode) {
-      print(message);
+  }
+
+  Future<model.User?> fetchUser(String userId) async {
+    var userDoc = await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    return userDoc.exists ? model.User.fromSnap(userDoc) : null;
+  }
+
+  Future<String?> sendAppNotification(model.User user, String title, String body) async {
+    if (user.deviceTokens != null) {
+      for (var token in user.deviceTokens!.values) {
+        try {
+          return await sendPushNotification(title, body, token);
+        } catch (e) {
+          if (kDebugMode) {
+            print('Failed to send push notification: $e');
+          }
+          return 'Failed to send push notification: $e';
+        }
+      }
+    } else {
+      if (kDebugMode) {
+        print('User has no device token.');
+      }
+      return 'User has no device token.';
     }
-    return message;
+    return null;
+  }
+
+  Future<void> saveNotificationToDatabase(String senderId, String userId, String title, String body) async {
+    var notificationCollection = FirebaseFirestore.instance.collection('notifications');
+    var notificationId = const Uuid().v4();
+    var senderRef = FirebaseFirestore.instance.collection('users').doc(senderId);
+    var receiverRef = FirebaseFirestore.instance.collection('users').doc(userId);
+
+    var notification = Notification(
+      id: notificationId,
+      title: title,
+      message: body,
+      sender: senderRef,
+      recipient: receiverRef,
+      timestamp: Timestamp.now(),
+      unread: true,
+    );
+
+    await notificationCollection.doc(notificationId).set(notification.toJson());
+  }
+
+  Future<void> sendSmsNotification(model.User user, String body) async {
+    if (user.profile?.phoneNumber != null && user.profile?.phoneNumber != '') {
+      var smsMessage = await TwillioSmsService().sendSMS(user.profile!.phoneNumber!, body);
+      if (kDebugMode) {
+        print(smsMessage);
+      }
+    }
   }
 
   Stream<int> getNotificationCount(String userId) {
