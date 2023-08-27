@@ -149,8 +149,6 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                             ),
                           ],
                         ),
-                        
-                       
                         DropdownButton<String>(
                           value: dropdownUserType,
                           onChanged: (String? newValue) {
@@ -165,8 +163,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                               child: Text(value),
                             );
                           }).toList(),
-                        ),
-                      
+                        ), 
                         DropdownButton<String>(
                           value: dropdownYear,
                           onChanged: (String? newValue) {
@@ -181,8 +178,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                               child: Text(value),
                             );
                           }).toList(),
-                        ),
-                       
+                        ),   
                         DropdownButton<String>(
                           value: dropdownDepartment,
                           onChanged: (String? newValue) {
@@ -198,7 +194,6 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                             );
                           }).toList(),
                         ),
-                        
                         DropdownButton<String>(
                           value: dropdownCourse,
                           onChanged: (String? newValue) {
@@ -214,7 +209,6 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                             );
                           }).toList(),
                         ),
-                        
                         DropdownButton<String>(
                           value: dropdownSection,
                           onChanged: (String? newValue) {
