@@ -25,7 +25,7 @@ class _NotificationButtonState extends State<NotificationButton> {
 
     for (String user in selectedUsers) {
       if (kDebugMode) {
-        print("Notification sent to User $user");
+        print("Notification is sending to User $user...");
         print("Title: $title");
         print("Message: $message");
       }
@@ -102,10 +102,22 @@ class _NotificationButtonState extends State<NotificationButton> {
                                   Text(
                                       'Send notifications to ${widget.selectedUsers.length} ${widget.selectedUsers.length > 1 ? 'users' : 'user'}',
                                       style: const TextStyle(
-                                          fontSize: 18,
+                                          fontSize: 24,
                                           fontWeight: FontWeight.bold)
                                   ),
-                                  Text('Note: Only users with a signed-in account can receive push notifications, or users with a phone number can receive SMS notifications.', style: TextStyle(color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor),)
+                                  Text(
+                                    'Instructions: Make sure you select first the users when sending SMS/Push notifications.', 
+                                  style: TextStyle(
+                                    color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor, 
+                                    fontSize: 16
+                                    ),
+                                  ),
+                                  Text(
+                                    'Note: Only users with a signed-in account can receive push notifications, or users with a phone number can receive SMS notifications.', 
+                                  style: TextStyle(
+                                    color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor
+                                    ),
+                                  )
                                 ],
                               ),
                             ),
@@ -143,7 +155,7 @@ class _NotificationButtonState extends State<NotificationButton> {
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: [
                                 SizedBox(
-                                  height: 40.0,
+                                  height: 50.0,
                                   child: TextButton.icon(
                                       style: TextButton.styleFrom(
                                           foregroundColor: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor
@@ -153,7 +165,7 @@ class _NotificationButtonState extends State<NotificationButton> {
                                       icon: const Icon(Icons.cancel),),
                                 ),
                                 SizedBox(
-                                  height: 40.0,
+                                  height: 50.0,
                                   child: TextButton.icon(
                                     style: TextButton.styleFrom(
                                         foregroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor
@@ -170,7 +182,7 @@ class _NotificationButtonState extends State<NotificationButton> {
                                       }
                                     },
                                     icon: const Icon(Icons.send),
-                                    label: const Text('Send a push notification'),
+                                    label: const Text('Send a notification (SMS/Push)'),
                                   ),
                                 ),
                               ],
