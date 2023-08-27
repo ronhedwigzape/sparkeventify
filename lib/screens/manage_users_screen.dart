@@ -240,13 +240,14 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                  padding: const EdgeInsets.fromLTRB(100, 0, 100, 10),
                   child: Text(
-                    'Instructions: In this section, all users can be viewed. Notify them for events & announcements. You can update and delete the users account information here. ',
+                    'Instructions: In this section, you can view all users. To edit or delete a user, you must first select them. You can also notify users about events and announcements. This is where you can update and delete user account information.',
                     style: TextStyle(
                         fontSize: 15.0,
                         color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor
                     ),
+                    textAlign: TextAlign.center,
                   ),
                 ),
                 SizedBox(
