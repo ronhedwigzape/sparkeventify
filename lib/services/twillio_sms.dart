@@ -5,17 +5,25 @@ import 'package:flutter/foundation.dart';
 
 class TwillioSmsService {
   
-  Future<String?> sendSMS(String to, String from, String body) async {
+  Future<String?> sendSMS(String to, String body) async {
     var twillioAccountSid = dotenv.env['TWILLIO_ACCOUNT_SID']!;
     var twillioAuthToken = dotenv.env['TWILLIO_AUTH_TOKEN']!;
     var authn = 'Basic ${base64Encode(utf8.encode('$twillioAccountSid:$twillioAuthToken'))}';
 
     var url = 'https://api.twilio.com/2010-04-01/Accounts/$twillioAccountSid/Messages.json';
 
-    var response = await http.post(url as Uri,
+    var response = await http.post(
+      Uri.parse(url), // parse to Uri
       headers: {'Authorization': authn},
-      body: {'To': '+$to', 'From': '+$from', 'Body': body},
+      body: {'To': '+$to', 'From': dotenv.env['TWILLIO_PHONE_NUMBER']!, 'Body': body},
     );
+
+    if (kDebugMode) {
+      print('Response status: ${response.statusCode}');
+    }
+    if (kDebugMode) {
+      print('Response body: ${response.body}');
+    }
 
     if (response.statusCode == 201 || response.statusCode == 200) {
       if (kDebugMode) {
