@@ -20,7 +20,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   int _page = 0;
   PageController pageController = PageController();
   final firestoreNotification = FirebaseNotificationService();
-  late Future<int> notificationCount;
+  late Stream<int> notificationCount;
 
   @override
   void initState() {
@@ -95,38 +95,38 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
                   Icons.notifications,
                   color: lightColor,
                 ),
-               FutureBuilder<int>(
-                  future: notificationCount,
-                  builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-                    if (!snapshot.hasData) {
-                      return const SizedBox.shrink();
-                    }
-                    final int count = snapshot.data!;
-                    return count == 0 ? const SizedBox.shrink() : 
-                    Positioned(
-                      right: 0,
-                      child: Container(
-                        padding: const EdgeInsets.all(1),
-                        decoration: BoxDecoration(
-                          color: red,
-                          borderRadius: BorderRadius.circular(6),
-                        ),
-                        constraints: const BoxConstraints(
-                          minWidth: 12,
-                          minHeight: 12,
-                        ),
-                        child: Text(
-                          count.toString(),
-                          style: const TextStyle(
-                            color: white,
-                            fontSize: 8,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
+               StreamBuilder<int>(
+                stream: notificationCount,
+                builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                  if (!snapshot.hasData) {
+                    return const SizedBox.shrink();
+                  }
+                  final int count = snapshot.data!;
+                  return count == 0 ? const SizedBox.shrink() : 
+                  Positioned(
+                    right: 0,
+                    child: Container(
+                      padding: const EdgeInsets.all(1),
+                      decoration: BoxDecoration(
+                        color: red,
+                        borderRadius: BorderRadius.circular(6),
                       ),
-                    );
-                  },
-                ),
+                      constraints: const BoxConstraints(
+                        minWidth: 12,
+                        minHeight: 12,
+                      ),
+                      child: Text(
+                        count.toString(),
+                        style: const TextStyle(
+                          color: white,
+                          fontSize: 8,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  );
+                },
+              ),
               ],
             ),
           )

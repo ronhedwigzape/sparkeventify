@@ -11,16 +11,21 @@ import '../models/user.dart' as model;
 class NotificationScreen extends StatelessWidget {
   const NotificationScreen({super.key});
 
-  Future<List<model.Notification>> fetchNotifications() async {
-    final snaps = await FirebaseFirestore.instance.collection('notifications').orderBy('timestamp', descending: true).get();
-    final notifications = <model.Notification>[];
-    for (final snap in snaps.docs) {
-      final notification = model.Notification.fromSnap(snap);
-      final senderSnap = await notification.sender!.get();
-      notification.senderData = model.User.fromSnap(senderSnap);
-      notifications.add(notification);
-    }
-    return notifications;
+  Stream<List<model.Notification>> fetchNotifications() {
+    return FirebaseFirestore.instance
+        .collection('notifications')
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .asyncMap((querySnapshot) async {
+      final notifications = <model.Notification>[];
+      for (final docSnapshot in querySnapshot.docs) {
+        final notification = model.Notification.fromSnap(docSnapshot);
+        final senderSnap = await notification.sender!.get();
+        notification.senderData = model.User.fromSnap(senderSnap);
+        notifications.add(notification);
+      }
+      return notifications;
+    });
   }
 
   @override
@@ -29,8 +34,8 @@ class NotificationScreen extends StatelessWidget {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
 
     return Scaffold(
-      body: FutureBuilder<List<model.Notification>>(
-        future: fetchNotifications(),
+      body: StreamBuilder<List<model.Notification>>(
+        stream: fetchNotifications(),
         builder: (BuildContext context, AsyncSnapshot<List<model.Notification>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
