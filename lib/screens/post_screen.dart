@@ -377,7 +377,6 @@ class _PostScreenState extends State<PostScreen> {
                                             mainAxisSize: MainAxisSize.min,
                                             children: [
                                               Expanded(
-                                                flex: 2,
                                                 child: DropdownButtonFormField<String>(
                                                   decoration: const InputDecoration(
                                                     prefixIcon: Icon(Icons.event),
@@ -405,16 +404,16 @@ class _PostScreenState extends State<PostScreen> {
                                                   },
                                                 ),
                                               ),
-                                              Expanded(
-                                                flex: 1,
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                                 child: IconButton(
                                                   onPressed: () => _selectImage(context),
                                                   icon: const Icon(Icons.add_a_photo),
                                                   tooltip: 'Add a photo',
                                                 ),
                                               ),
-                                              Expanded(
-                                                flex: 1,
+                                              Padding(
+                                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
                                                 child: IconButton(
                                                   onPressed: () => _selectDocument(context),
                                                   icon: const Icon(Icons.file_present_rounded),
