@@ -113,7 +113,7 @@ class _NotificationButtonState extends State<NotificationButton> {
                                     ),
                                   ),
                                   Text(
-                                    'Note: Only users with a signed-in account can receive push notifications, or users with a phone number can receive SMS notifications.', 
+                                    'Note: Only users with a signed-in account can receive push notifications and users with a phone number can receive SMS notifications.', 
                                   style: TextStyle(
                                     color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor
                                     ),
