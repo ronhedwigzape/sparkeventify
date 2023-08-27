@@ -203,6 +203,19 @@ class FirebaseNotificationService {
       var user = model.User.fromSnap(userDoc);
       var senderRef = FirebaseFirestore.instance.collection('users').doc(senderId);
 
+      // Send SMS notification
+      if (user.profile?.phoneNumber != null && user.profile?.phoneNumber != '') {
+        var smsMessage = await TwillioSmsService().sendSMS(
+          user.profile!.phoneNumber!,
+          body
+        );
+          
+        if (kDebugMode) {
+          print(smsMessage);
+        }
+      }
+
+      // Send App notification
       if (user.deviceTokens != null) {
         for (var token in user.deviceTokens!.values) {
           try {
@@ -225,36 +238,37 @@ class FirebaseNotificationService {
                 .doc(notificationId)
                 .set(notification.toJson());
 
-            // Send SMS notification
-            if (user.profile?.phoneNumber != null) {
-              var smsMessage = await TwillioSmsService().sendSMS(
-                user.profile!.phoneNumber!, 
-                dotenv.env['TWILLIO_PHONE_NUMBER']!, 
-                body);
-                
-              if (kDebugMode) {
-                print(smsMessage);
-              }
-            }
           } catch (e) {
+            if (kDebugMode) {
+              print('Failed to send notification: $e');
+            }
             return 'Failed to send notification: $e';
           }
         }
       } else {
+        if (kDebugMode) {
+          print('User has no device token.');
+        }
         return 'User has no device token.';
       }
     } catch (e) {
+      if (kDebugMode) {
+        print('Failed to get user: $e');
+      }
       return 'Failed to get user: $e';
+    }
+    if (kDebugMode) {
+      print(message);
     }
     return message;
   }
 
-  Future<int> getNotificationCount(String userId) async {
-    QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+  Stream<int> getNotificationCount(String userId) {
+    return FirebaseFirestore.instance
         .collection('notifications')
         .where('recipient', isEqualTo: FirebaseFirestore.instance.doc('users/$userId'))
-        .get();
-    return querySnapshot.docs.length;
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
   }
-  
+
 }
