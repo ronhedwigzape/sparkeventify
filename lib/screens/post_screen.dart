@@ -310,7 +310,7 @@ class _PostScreenState extends State<PostScreen> {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
           model.User? currentUser = snapshot.data;
-          return currentUser?.userType == 'Admin' || currentUser?.userType == 'Staff'
+          return currentUser?.userType != 'Student' 
               ? ScaffoldMessenger(
                   key: _scaffoldMessengerKey,
                   child: GestureDetector(

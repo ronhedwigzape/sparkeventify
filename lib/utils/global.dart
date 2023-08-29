@@ -45,6 +45,8 @@ Future<List<Widget>> homeScreenItems() async {
     return [
       const EventsCalendar(),
       const Center(child: Text('Feedbacks')),
+      const PostScreen(),
+      const ManageEventsScreen(),
       const ProfileScreen(),
       const NotificationScreen(),
     ];

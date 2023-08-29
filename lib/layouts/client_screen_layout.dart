@@ -164,7 +164,9 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
               ] : userType == 'Officer' ? [
                 buildBottomNavigationBarItem(Icons.calendar_month, 0),
                 buildBottomNavigationBarItem(Icons.feedback, 1),
-                buildBottomNavigationBarItem(Icons.person, 2)
+                buildBottomNavigationBarItem(Icons.add_circle, 2),
+                buildBottomNavigationBarItem(Icons.note_alt, 3),
+                buildBottomNavigationBarItem(Icons.person, 4)
               ] : [
                 buildBottomNavigationBarItem(Icons.calendar_month, 0),
                 buildBottomNavigationBarItem(Icons.feedback, 1),
