@@ -2,17 +2,29 @@
 
 - ### A student event calendar app
 
-> Before starting the project setup, you should have Flutter SDK installed and Git installed. 
+> Requirements
+> - Flutter SDK (Comes with Dart SDK)
+> - Java LTS
+> - Android Studio
+> - Visual Studio Community (For Development)
 
 ## Installation
 
 ### Flutter with Git
 
 1. Go to [**`Flutter Documentation`**](https://docs.flutter.dev/get-started/install) to get started. 
+
 2. Choose the appropriate OS for installing Flutter.
+
 3. You must meet the system requirements to be able to run Git commands, or if you have [**`Git`**](https://git-scm.com/download/win) installed, proceed to the next step.
+
 4. Download [**`Flutter SDK`**](https://docs.flutter.dev/get-started/install/windows#get-the-flutter-sdk), if you're using Windows, and make sure to follow the steps.
-5. Update your path. See the [documentation](https://docs.flutter.dev/get-started/install/windows#get-the-flutter-sdk) for instructions.
+
+5. Update your path. Go to `Edit the system environment variables` and set the PATH value to 
+`C://<path-to>/flutter/bin`
+
+See the [documentation](https://docs.flutter.dev/get-started/install/windows#get-the-flutter-sdk) for instructions.
+
 6. After updating the path, run **`flutter doctor`** in your terminal:
 ```shell
 flutter doctor
@@ -23,30 +35,24 @@ After completing these steps, you can ensure that Flutter is installed.
 ## Project Setup
 
 1. Clone this repository to your project directory using [**`Github Desktop`**](https://desktop.github.com/), or open your terminal and run the following Git command:
+
 ```shell
 git clone https://github.com/ronhedwigzape/student_event_calendar.git
 ```
 2. Navigate to the project directory:
+
 ```shell
 cd student_event_calendar
 ```
 
-3. If you don't have a device, start Android/IOS emulators and wait for them to finish loading. If you don't have emulators, install [**`Android Studio`**](https://developer.android.com/studio) and create an emulator. Here are the steps to take to create and run the emulator:
+3. Install [Visual Studio](https://visualstudio.microsoft.com/). After installing Visual Studio, you should have `Desktop Development with C++` installed.
 
-### Creating an Android Emulator from the Command Line
-- **Install necessary system images**: The Android emulator requires specific system images to run different versions of Android. You can install these images using the sdkmanager tool. Here's an example of how to install the system image for Android 31 with Google APIs:
-```shell
-sdkmanager --install "system-images;android-31;google_apis;x86_64"
-```
-- **Create a new Android Virtual Device (AVD)**: After installing the necessary system images, you can create a new AVD using the avdmanager tool. Here's an example of how to create a new AVD:
-```shell
-echo "no" | avdmanager create avd --name "my_android_31" --package "system-images;android-31;google_apis;x86_64" --tag "google_apis" --abi "x86_64"
-```
-- **Configure the AVD**: You can further configure the AVD by editing the **`config.ini`** file located in `~/.android/avd/<avd-name>.avd/config.ini`. Here you can set various properties such as the device's RAM size, screen resolution, and whether the Google Play Store is enabled.
-- **Launch the AVD**: Once the AVD is created and configured, you can launch it using the emulator command:
-```shell
-emulator @my_android_31
-```
+4. Install [Google Chrome](https://www.google.com/chrome/?brand=VDKB&ds_kid=43700034632748952&gclid=33d39886e2d31990bfd6fc76e5c02a24&gclsrc=3p.ds&&utm_source=bing&utm_medium=cpc&utm_campaign=1605158%20%7C%20Chrome%20Win11%20%7C%20DR%20%7C%20ESS01%20%7C%20APAC%20%7C%20APAC%20%7C%20en%20%7C%20Desk%20%7C%20SEM%20%7C%20BKWS%20-%20EXA%20%7C%20Txt%20%7C%20Bing_Top%20KWDS&utm_term=google%20chrome&utm_content=Desk%20%7C%20BKWS%20-%20EXA%20%7C%20Txt_Google%20Chrome_Top%20KWDS&gclid=33d39886e2d31990bfd6fc76e5c02a24&gclsrc=3p.ds) also for completion in flutter doctor.
+
+5. Install Android Studio. After installing, open Android Studio and go to `More Actions` > `SDK Manager` and go to SDK Tools tab, Install `Android SDK Command-line Tools (latest)`
+
+6. If you don't have a device, start Android/IOS emulators and wait for them to finish loading. If you don't have emulators, install [**`Android Studio`**](https://developer.android.com/studio) and create an emulator. Here are the steps to take to create and run the emulator:
+
 ### Creating an Android Emulator using Android Studio
 - **Open Android Studio**: Launch **Android Studio** on your machine. In the welcome screen, select `"More Options" > "Virtual Device Manager"`.
 - **Create a new Virtual Device**: In the Android Virtual Device Manager window, click on the `"Create Virtual Device"` button. Select a device from the list (for example, a `Pixel XL` or a `Pixel 4`), and click the `"Next"` button to continue.
@@ -60,7 +66,8 @@ Remember to include the `sdkmanager`, `avdmanager`, and `emulator` commands in y
 To open the Android emulator from the terminal in ***Windows***, you need to follow these steps:
 
 - **Locate Android SDK**: First, you need to know the location of your Android SDK. This will vary depending on your installation. The default location is usually `C:\Users\<your-user-name>\AppData\Local\Android\Sdk`
-- **Set the PATH environment variable**: You need to add the emulator directory to your PATH environment variable. This can be done by editing the system environment variables and adding the following path: `C:\Users\<your-user-name>\AppData\Local\Android\Sdk\emulator` Don't forget to replace **`<your-user-name>`** with your actual username.
+- **Set the ANDROID_HOME environment variable**: Create first ANDROID_HOME variable then, you need to add the emulator directory to your ANDROID_HOME environment variable. This can be done by editing the system environment variables and adding the following path: `C:\Users\<your-user-name>\AppData\Local\Android\Sdk\emulator` Don't forget to replace **`<your-user-name>`** with your actual username.
+- **Set the JAVA_HOME environment variable**: This can be done by creating the system environment variables and adding the following path, same to ANDROID_HOME: `C:\Program Files\Java\jdk-17`.
 - **List and run emulators**: Now you can list all your available Android Virtual Devices (AVDs) using the command `emulator -list-avds` in the terminal. To run a specific AVD, use the command `emulator -avd <name-of-your-emulator>`. Replace <name-of-your-emulator> with the name of the AVD that you want to run. 
 - Here is an example of how you can run an emulator:
 ```shell
@@ -68,15 +75,21 @@ emulator -avd Pixel_XL_API_33
 ```
 In this example, `Pixel_XL_API_33` is the name of the AVD to be launched.
 
-4. If you have a device, ensure that your device is connected. You can enable `Developer Options` on your phone and turn on `USB debugging mode`.
+6. Lastly, type the command `flutter doctor --android-licenses` to complete the flutter doctor issues.
 
-5. Run the following command to install the dependencies and start the development on both **`Android`** and **`iOS`**:
+6. Expected output for `flutter doctor`
+
+<img src="/assets/misc/flutter-doctor.PNG" height="700">
+
+7. If you have a device, ensure that your device is connected. You can enable `Developer Options` on your phone and turn on `USB debugging mode`.
+
+8. Run the following command to install the dependencies and start the development on both **`Android`** and **`iOS`**:
 
 ```
 flutter run
 ```
 
-6. If your project has a error of `Current Dart SDK version not updated`, you can run this command.
+9. If your project has a error of `Current Dart SDK version not updated`, you can run this command.
 
 ```
 flutter channel beta
@@ -88,13 +101,13 @@ flutter channel beta
 flutter upgrade
 ```
 
-7. To run on Chrome, use the following command:
+10. To run on Chrome, use the following command:
 
 ```
 flutter run -d chrome --web-renderer html
 ``` 
 
-8. Also, change the directory to /web using the following command:
+11. Also, change the directory to /web using the following command:
 
 ```
 cd /web
@@ -156,7 +169,7 @@ flutter pub upgrade
 
 ## Cleaning Build
 
-- Run this command if built app is not working as expected:
+- Run this command if the built app is not working as expected:
 
 ```
 flutter clean
