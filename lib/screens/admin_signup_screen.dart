@@ -8,7 +8,6 @@ import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
-
 import '../providers/darkmode_provider.dart';
 
 class AdminSignupScreen extends StatefulWidget {
@@ -21,7 +20,9 @@ class AdminSignupScreen extends StatefulWidget {
 class AdminSignupScreenState extends State<AdminSignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _middleNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   bool _isLoading = false;
 
@@ -30,7 +31,9 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _fullNameController.dispose();
+    _firstNameController.dispose();
+    _middleNameController.dispose();
+    _lastNameController.dispose();
     _phoneNumberController.dispose();
   }
 
@@ -49,8 +52,13 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
     // Prepend '+63' to the phone number
     phoneNumber = '63$phoneNumber';
 
+    String fullname = '${_firstNameController.text.trim()} ${_middleNameController.text.trim()} ${_lastNameController.text.trim()}';
+
     model.Profile profile = model.Profile(
-      fullName: _fullNameController.text.trim(),
+      fullName: fullname,
+      firstName: _firstNameController.text.trim(),
+      middleName: _middleNameController.text.trim(),
+      lastName: _lastNameController.text.trim(),
       phoneNumber: phoneNumber,
     );
 
@@ -147,40 +155,72 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
                 )),
             const SizedBox(height: 20.0),
             // text field input for username
-            TextFieldInput(
-              textEditingController: _emailController,
-              labelText: 'Enter your email address',
-              textInputType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 20.0),
-            // text field input for full name
-            TextFieldInput(
-              textEditingController: _fullNameController,
-              labelText: 'Enter your full name',
-              textInputType: TextInputType.text,
-            ),
-            // text field input for phone number
-            const SizedBox(height: 20.0),
             Row(
               children: [
-                const Text(
-                  '+63',
-                  style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
+                Flexible(
+                  child: TextFieldInput(
+                    textEditingController: _emailController,
+                    labelText: 'Enter your email address',
+                    textInputType: TextInputType.emailAddress,
+                  ), 
+                ),
+                const SizedBox(width: 10.0),
+                Flexible(
+                  child: Row(
+                    children: [
+                      const Text(
+                        '+63',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 5.0),
+                      Expanded(
+                        child: TextFieldInput(
+                          textEditingController: _phoneNumberController,
+                          labelText: '9123456789',
+                          textInputType: TextInputType.phone,
+                        ),
+                      ),
+                    ],
+                  ),  
+                )
+              ],
+            ),
+            const SizedBox(height: 10.0),
+            Row(
+              children: [
+                Flexible(
+                  child: TextFieldInput(
+                    textEditingController: _firstNameController,
+                    labelText: 'Enter your first name*',
+                    textInputType: TextInputType.text,
                   ),
                 ),
-                const SizedBox(width: 5.0),
-                Expanded(
+                const SizedBox(width: 10.0),
+                Flexible(
                   child: TextFieldInput(
-                    textEditingController: _phoneNumberController,
-                    labelText: '9123456789',
-                    textInputType: TextInputType.phone,
+                    textEditingController: _middleNameController,
+                    labelText: 'Enter your middle name',
+                    textInputType: TextInputType.text,
                   ),
                 ),
               ],
             ),
-            const SizedBox(height: 20.0),
+            const SizedBox(height: 10.0),
+            Row(
+              children: [
+                Flexible(
+                  child:  TextFieldInput(
+                    textEditingController: _lastNameController,
+                    labelText: 'Enter your last name*',
+                    textInputType: TextInputType.text,
+                  ),
+                ), 
+              ],
+            ),
+            const SizedBox(height: 10.0),
             // text field input for password
             TextFieldInput(
               textEditingController: _passwordController,

@@ -20,7 +20,9 @@ class StudentSignupScreen extends StatefulWidget {
 class _StudentSignupScreenState extends State<StudentSignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _fullNameController = TextEditingController();
+  final TextEditingController _firstNameController = TextEditingController();
+  final TextEditingController _middleNameController = TextEditingController();
+  final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _departmentController = TextEditingController();
   final TextEditingController _courseController = TextEditingController();
@@ -33,7 +35,9 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
     super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
-    _fullNameController.dispose();
+    _firstNameController.dispose();
+    _middleNameController.dispose();
+    _lastNameController.dispose();
     _phoneNumberController.dispose();
     _departmentController.dispose();
     _courseController.dispose();
@@ -46,7 +50,9 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
       _isLoading = true;
     });
 
-    if (_fullNameController.text.trim().isEmpty ||
+    if (_firstNameController.text.trim().isEmpty ||
+        _middleNameController.text.trim().isEmpty ||
+        _lastNameController.text.trim().isEmpty ||
         _emailController.text.trim().isEmpty ||
         _phoneNumberController.text.trim().isEmpty ||
         _courseController.text.trim().isEmpty ||
@@ -66,8 +72,13 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
     // Prepend '+63' to the phone number
     phoneNumber = '63$phoneNumber';
 
+    String fullname = '${_firstNameController.text.trim()} ${_middleNameController.text.trim()} ${_lastNameController.text.trim()}';
+
     model.Profile profile = model.Profile(
-      fullName: _fullNameController.text.trim(),
+      fullName: fullname,
+      firstName: _firstNameController.text.trim(),
+      middleName: _middleNameController.text.trim(),
+      lastName: _lastNameController.text.trim(),
       phoneNumber: phoneNumber,
       department: _departmentController.text.trim(),
       course: _courseController.text.trim(),
@@ -164,11 +175,33 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                   ),
                   Row(
                     children: [
-                      // text field input for fullname
+                      // text field input for first name
                       Expanded(
                         child: TextFieldInput(
-                          textEditingController: _fullNameController,
-                          labelText: 'Enter full name*',
+                          textEditingController: _firstNameController,
+                          labelText: 'Enter first name*',
+                          textInputType: TextInputType.text
+                        ),
+                      ),
+                      const SizedBox(width: 10.0),
+                      // text field input for middle name
+                      Expanded(
+                        child: TextFieldInput(
+                          textEditingController: _middleNameController,
+                          labelText: 'Enter middle name*',
+                          textInputType: TextInputType.text
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 10.0),
+                  Row(
+                    children: [
+                      // text field input for last name
+                      Expanded(
+                        child: TextFieldInput(
+                          textEditingController: _lastNameController,
+                          labelText: 'Enter last name*',
                           textInputType: TextInputType.text
                         ),
                       ),
