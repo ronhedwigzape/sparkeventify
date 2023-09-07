@@ -257,12 +257,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor)),
                                 ],
                               )
-                              : Text(
-                              userType.toUpperCase(), 
-                              style: TextStyle(
-                                fontSize: 15.0, 
-                                fontWeight: FontWeight.bold,
-                                color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                              : userType == 'Student' ? Text(
+                                '${course.toUpperCase()} ${userType.toUpperCase()}', 
+                                style: TextStyle(
+                                  fontSize: 15.0, 
+                                  fontWeight: FontWeight.bold,
+                                  color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor))
+                              : userType == 'Staff' ? Text(
+                                '${position.toUpperCase()} - ${userType.toUpperCase()}', 
+                                style: TextStyle(
+                                  fontSize: 15.0, 
+                                  fontWeight: FontWeight.bold,
+                                  color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor))
+                              : Text(   
+                                userType.toUpperCase(),
+                                style: TextStyle(
+                                  fontSize: 15.0, 
+                                  fontWeight: FontWeight.bold,
+                                  color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                             ],
                           ),
                         ),
