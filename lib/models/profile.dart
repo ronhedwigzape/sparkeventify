@@ -1,7 +1,7 @@
 class Profile {
   String? fullName;
   String? firstName;
-  String? middleName;
+  String? middleInitial;
   String? lastName;
   String? phoneNumber;
   String? department;
@@ -15,7 +15,7 @@ class Profile {
   Profile({
     this.fullName,
     this.firstName,
-    this.middleName,
+    this.middleInitial,
     this.lastName,
     this.phoneNumber,
     this.department,
@@ -31,7 +31,7 @@ class Profile {
   Map<String, dynamic> toJson() => {
         'fullName': fullName,
         'firstName': firstName,
-        'middleName': middleName,
+        'middleInitial': middleInitial,
         'lastName': lastName,
         'phoneNumber': phoneNumber,
         'department': department,
@@ -48,7 +48,7 @@ class Profile {
     return Profile(
       fullName: map['fullName'],
       firstName: map['firstName'],
-      middleName: map['middleName'],
+      middleInitial: map['middleInitial'],
       lastName: map['lastName'],
       phoneNumber: map['phoneNumber'],
       department: map['department'],

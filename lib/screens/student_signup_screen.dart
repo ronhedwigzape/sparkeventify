@@ -21,7 +21,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _middleNameController = TextEditingController();
+  final TextEditingController _middleInitialController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _departmentController = TextEditingController();
@@ -36,7 +36,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _firstNameController.dispose();
-    _middleNameController.dispose();
+    _middleInitialController.dispose();
     _lastNameController.dispose();
     _phoneNumberController.dispose();
     _departmentController.dispose();
@@ -51,7 +51,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
     });
 
     if (_firstNameController.text.trim().isEmpty ||
-        _middleNameController.text.trim().isEmpty ||
+        _middleInitialController.text.trim().isEmpty ||
         _lastNameController.text.trim().isEmpty ||
         _emailController.text.trim().isEmpty ||
         _phoneNumberController.text.trim().isEmpty ||
@@ -72,12 +72,12 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
     // Prepend '+63' to the phone number
     phoneNumber = '63$phoneNumber';
 
-    String fullname = '${_firstNameController.text.trim()} ${_middleNameController.text.trim()} ${_lastNameController.text.trim()}';
+    String fullname = '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}';
 
     model.Profile profile = model.Profile(
       fullName: fullname,
       firstName: _firstNameController.text.trim(),
-      middleName: _middleNameController.text.trim(),
+      middleInitial: _middleInitialController.text.trim(),
       lastName: _lastNameController.text.trim(),
       phoneNumber: phoneNumber,
       department: _departmentController.text.trim(),
@@ -184,11 +184,11 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                         ),
                       ),
                       const SizedBox(width: 10.0),
-                      // text field input for middle name
+                      // text field input for middle initial
                       Expanded(
                         child: TextFieldInput(
-                          textEditingController: _middleNameController,
-                          labelText: 'Enter middle name*',
+                          textEditingController: _middleInitialController,
+                          labelText: 'Enter middle initial*',
                           textInputType: TextInputType.text
                         ),
                       ),

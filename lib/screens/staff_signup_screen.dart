@@ -20,7 +20,7 @@ class StaffSignupScreen extends StatefulWidget {
 class _StaffSignupScreenState extends State<StaffSignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _middleNameController = TextEditingController();
+  final TextEditingController _middleInitialController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
@@ -33,7 +33,7 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _firstNameController.dispose();
-    _middleNameController.dispose();
+    _middleInitialController.dispose();
     _lastNameController.dispose();
     _phoneNumberController.dispose();
     _positionController.dispose();
@@ -45,7 +45,7 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
     });
 
     if (_firstNameController.text.trim().isEmpty ||
-        _middleNameController.text.trim().isEmpty ||
+        _middleInitialController.text.trim().isEmpty ||
         _lastNameController.text.trim().isEmpty ||
         _emailController.text.trim().isEmpty ||
         _phoneNumberController.text.trim().isEmpty ||
@@ -63,12 +63,12 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
     // Prepend '+63' to the phone number
     phoneNumber = '63$phoneNumber';
 
-    String fullname = '${_firstNameController.text.trim()} ${_middleNameController.text.trim()} ${_lastNameController.text.trim()}';
+    String fullname = '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}';
 
     model.Profile profile = model.Profile(
       fullName: fullname,
       firstName: _firstNameController.text.trim(),
-      middleName: _middleNameController.text.trim(),
+      middleInitial: _middleInitialController.text.trim(),
       lastName: _lastNameController.text.trim(),
       phoneNumber: phoneNumber,
       position: _positionController.text.trim(),
@@ -167,10 +167,10 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
                     textInputType: TextInputType.text,
                   ),
                   const SizedBox(height: 10,),
-                  // text field inpupt for middle name
+                  // text field inpupt for middle initial
                   TextFieldInput(
-                    textEditingController: _middleNameController,
-                    labelText: 'Enter your middle name*',
+                    textEditingController: _middleInitialController,
+                    labelText: 'Enter your middle initial*',
                     textInputType: TextInputType.text,
                   ),
                   const SizedBox(height: 10,),

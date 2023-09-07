@@ -21,7 +21,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
-  final TextEditingController _middleNameController = TextEditingController();
+  final TextEditingController _middleInitialController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   bool _isLoading = false;
@@ -32,7 +32,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
     _emailController.dispose();
     _passwordController.dispose();
     _firstNameController.dispose();
-    _middleNameController.dispose();
+    _middleInitialController.dispose();
     _lastNameController.dispose();
     _phoneNumberController.dispose();
   }
@@ -52,12 +52,12 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
     // Prepend '+63' to the phone number
     phoneNumber = '63$phoneNumber';
 
-    String fullname = '${_firstNameController.text.trim()} ${_middleNameController.text.trim()} ${_lastNameController.text.trim()}';
+    String fullname = '${_firstNameController.text.trim()} ${_lastNameController.text.trim()}';
 
     model.Profile profile = model.Profile(
       fullName: fullname,
       firstName: _firstNameController.text.trim(),
-      middleName: _middleNameController.text.trim(),
+      middleInitial: _middleInitialController.text.trim(),
       lastName: _lastNameController.text.trim(),
       phoneNumber: phoneNumber,
     );
@@ -201,8 +201,8 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
                 const SizedBox(width: 10.0),
                 Flexible(
                   child: TextFieldInput(
-                    textEditingController: _middleNameController,
-                    labelText: 'Enter your middle name',
+                    textEditingController: _middleInitialController,
+                    labelText: 'Enter your middle initial',
                     textInputType: TextInputType.text,
                   ),
                 ),
