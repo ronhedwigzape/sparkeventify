@@ -262,7 +262,7 @@ class EventDialogState extends State<EventDialog> {
                                 _showOpenDocumentMessage();
                               },
                               icon: const Icon(Icons.download_for_offline),
-                              label: Text('Open ${event.title} document')),
+                              label: const Text('Open document',)),
                           ],
                         ),
                   event.document == null || event.document == ''
