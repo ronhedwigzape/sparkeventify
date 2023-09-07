@@ -7,8 +7,11 @@ import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/screens/report_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/widgets/ongoing_events.dart';
+import 'package:student_event_calendar/widgets/upcoming_events.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'event_dialog.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class EventsCalendar extends StatefulWidget {
   const EventsCalendar({Key? key}) : super(key: key);
@@ -34,6 +37,13 @@ class EventsCalendarState extends State<EventsCalendar> {
 
   List<Event> _getEventsForDay(DateTime day) {
     return _events[DateTime(day.year, day.month, day.day)] ?? [];
+  }
+
+  Stream<DateTime> getCurrentTime() {
+    return Stream<DateTime>.periodic(
+      const Duration(seconds: 1),
+      (int _) => DateTime.now(),
+    );
   }
 
   @override
@@ -67,7 +77,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                       kIsWeb ? Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          TextButton(
+                          TextButton.icon(
                             onPressed: () async {
                               List<Event> currentMonthEvents = [];
                               _events.forEach((eventDate, eventList) {
@@ -82,7 +92,8 @@ class EventsCalendarState extends State<EventsCalendar> {
                                 MaterialPageRoute(builder: (context) => ReportScreen(events: currentMonthEvents, currentMonth: currentMonth,)),
                               );
                             },
-                            child: Text('Generate Report for $currentMonth',
+                            icon: Icon(Icons.report, color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor),
+                            label: Text('Generate Report for $currentMonth',
                               style: const TextStyle(color: lightModeIndigo),),
                           ),
                         ],
@@ -90,19 +101,58 @@ class EventsCalendarState extends State<EventsCalendar> {
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 10.0),
                         child: Center(
-                          child: Row(
+                          child: 
+                          !kIsWeb ? Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               Icon(Icons.event,
-                                color: darkModeOn ? lightColor : darkColor,
-                                size: 30,),
+                              color: darkModeOn ? lightColor : darkColor,
+                              size: 30,),
                               const SizedBox(width: 10),
                               Text('Calendar of Events',
-                                  style:
-                                  TextStyle(fontSize: kIsWeb ? 28.0 : 24.0,
-                                    fontWeight: FontWeight.bold,
+                                style:
+                                TextStyle(fontSize: kIsWeb ? 28.0 : 24.0,
+                                  fontWeight: FontWeight.bold,
+                                  color: darkModeOn ? lightColor : darkColor,
+                                )
+                              ),
+                            ]) 
+                          : Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Flexible(
+                                child: Row(
+                                  children: [
+                                    Icon(Icons.event,
                                     color: darkModeOn ? lightColor : darkColor,
-                                  )),
+                                    size: 30,),
+                                    const SizedBox(width: 10),
+                                    Text('Calendar of Events',
+                                      style:
+                                      TextStyle(fontSize: kIsWeb ? 28.0 : 24.0,
+                                        fontWeight: FontWeight.bold,
+                                        color: darkModeOn ? lightColor : darkColor,
+                                      )
+                                    ),
+                                  ],
+                                ) 
+                              ),
+                              Flexible(
+                                child: StreamBuilder<DateTime>(
+                                  stream: getCurrentTime(),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.active) {
+                                      final now = snapshot.data!;
+                                      final manila = tz.getLocation('Asia/Manila');
+                                      final localTime = tz.TZDateTime.from(now, manila);
+                                      final formattedDateNow = '${DateFormat('MMMM dd, yyyy').format(now)} ${DateFormat.jm().format(localTime)}';
+                                      return Text('Date & Time: $formattedDateNow');
+                                    } else {
+                                      return const Text('Loading...');
+                                    }
+                                  },
+                                )
+                              )
                             ],
                           ),
                         ),
@@ -224,6 +274,9 @@ class EventsCalendarState extends State<EventsCalendar> {
                           ),
                         ),
                       ),
+                      kIsWeb ? const SizedBox(height: 30) : const SizedBox.shrink(),     
+                      kIsWeb ? UpcomingEvents(_events) : const SizedBox.shrink(),
+                      kIsWeb ? OngoingEvents(_events) : const SizedBox.shrink(),
                     ],
                   ),
                 ),
