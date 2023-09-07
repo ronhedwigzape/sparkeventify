@@ -40,6 +40,12 @@ class AuthMethods {
     try {
       // Check if all necessary information provided
       if (email.isNotEmpty && password.isNotEmpty && userType.isNotEmpty && profile != null) {
+        // Check cspc email format based on userType
+        if ((userType == 'Admin' || userType == 'Staff') && !email.endsWith('@cspc.edu.ph')) {
+          return 'Invalid email format. Please use an email ending with @cspc.edu.ph';
+        } else if ((userType == 'Student' || userType == 'Officer') && !email.endsWith('@my.cspc.edu.ph')) {
+          return 'Invalid email format. Please use an email ending with @my.cspc.edu.ph';
+        }
         // Create user in Firebase Auth
         UserCredential credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
         // Create user object for storing credentials in Firebase Firestore
@@ -84,7 +90,6 @@ class AuthMethods {
     }
     return res;
   }
-
 
   // Sign in user (Admin, Student, SASO Staff, Organization Officer)
   Future<String> signIn({required String email, required String password}) async {
