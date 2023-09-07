@@ -17,6 +17,7 @@ class TextFieldInput extends StatefulWidget {
   final bool enabled;
   final double height;
   final double width;
+  final Widget? prefixIcon;
   final FormFieldValidator<String>? validator;
 
   const TextFieldInput({
@@ -32,6 +33,7 @@ class TextFieldInput extends StatefulWidget {
     required this.labelText,
     required this.textInputType,
     this.enabled = true,
+    this.prefixIcon,
     this.validator,
   }) : super(key: key);
 
@@ -85,7 +87,9 @@ class _TextFieldInputState extends State<TextFieldInput> {
                   }
                 },
               ),
-              const SizedBox(width: 10,),
+              const SizedBox(
+                width: 10,
+              ),
               _buildTextField(
                 controller: widget.endTextEditingController!,
                 labelText: 'End ${widget.isDateRange ? 'Date*' : 'Time*'}',
@@ -127,19 +131,20 @@ class _TextFieldInputState extends State<TextFieldInput> {
                 focusedBorder: inputBorder,
                 enabledBorder: inputBorder,
                 contentPadding: const EdgeInsets.all(8),
+                prefixIcon: widget.prefixIcon,
                 suffixIcon: widget.isPass
                     ? IconButton(
-                  icon: Icon(
-                    _isPasswordVisible
-                        ? Icons.visibility
-                        : Icons.visibility_off,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isPasswordVisible = !_isPasswordVisible;
-                    });
-                  },
-                )
+                        icon: Icon(
+                          _isPasswordVisible
+                              ? Icons.visibility
+                              : Icons.visibility_off,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _isPasswordVisible = !_isPasswordVisible;
+                          });
+                        },
+                      )
                     : null,
               ),
               validator: widget.validator,

@@ -149,15 +149,17 @@ class _LoginScreenState extends State<LoginScreen> {
                     )),
                 const SizedBox(height: 24.0),
                 TextFieldInput(
+                  prefixIcon: const Icon(Icons.email_outlined),
                   textEditingController: _emailController,
-                  labelText: 'Enter your email',
+                  labelText: 'Email',
                   textInputType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 16.0),
                 // text field input for password
                 TextFieldInput(
+                  prefixIcon: const Icon(Icons.lock_outline),
                   textEditingController: _passwordController,
-                  labelText: 'Enter your password',
+                  labelText: 'Password',
                   textInputType: TextInputType.visiblePassword,
                   isPass: true,
                 ),

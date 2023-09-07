@@ -24,10 +24,20 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
   final TextEditingController _middleInitialController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
-  final TextEditingController _departmentController = TextEditingController();
-  final TextEditingController _courseController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
   final TextEditingController _sectionController = TextEditingController();
+  final List<String> coursesAndDepartments = [
+    'BSCS - CCS - Computer Science',
+    'BSIT - CCS - Information Technology',
+    'BSN - CHS - Nursing',
+    'BSM - CHS - Midwifery',
+    'BSME - CEA - Mechanical Engineering',
+    'BSEE - CEA - Electrical Engineering',
+    'BSCE - CEA - Computer Engineering',
+  ];
+  late String selectedCourseAndDepartment = coursesAndDepartments[0];
+  late String course;
+  late String department;
   bool _isLoading = false;
 
   @override
@@ -39,8 +49,6 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
     _middleInitialController.dispose();
     _lastNameController.dispose();
     _phoneNumberController.dispose();
-    _departmentController.dispose();
-    _courseController.dispose();
     _yearController.dispose();
     _sectionController.dispose();
   }
@@ -55,11 +63,11 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
         _lastNameController.text.trim().isEmpty ||
         _emailController.text.trim().isEmpty ||
         _phoneNumberController.text.trim().isEmpty ||
-        _courseController.text.trim().isEmpty ||
-        _departmentController.text.trim().isEmpty ||
         _yearController.text.trim().isEmpty ||
         _sectionController.text.trim().isEmpty ||
-        _passwordController.text.trim().isEmpty
+        _passwordController.text.trim().isEmpty ||
+        course.isEmpty ||
+        department.isEmpty
     ) return onSignupFailure('Please complete all required fields.');
 
       // Validate the phone number
@@ -80,8 +88,8 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
       middleInitial: _middleInitialController.text.trim(),
       lastName: _lastNameController.text.trim(),
       phoneNumber: phoneNumber,
-      department: _departmentController.text.trim(),
-      course: _courseController.text.trim(),
+      department: department,
+      course: course,
       year: _yearController.text.trim(),
       section: _sectionController.text.trim(),
     );
@@ -178,8 +186,9 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                       // text field input for first name
                       Expanded(
                         child: TextFieldInput(
+                          prefixIcon: const Icon(Icons.person),
                           textEditingController: _firstNameController,
-                          labelText: 'Enter first name*',
+                          labelText: 'First name*',
                           textInputType: TextInputType.text
                         ),
                       ),
@@ -187,8 +196,9 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                       // text field input for middle initial
                       Expanded(
                         child: TextFieldInput(
+                          prefixIcon: const Icon(Icons.person),
                           textEditingController: _middleInitialController,
-                          labelText: 'Enter middle initial*',
+                          labelText: 'Middle Initial*',
                           textInputType: TextInputType.text
                         ),
                       ),
@@ -200,8 +210,9 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                       // text field input for last name
                       Expanded(
                         child: TextFieldInput(
+                          prefixIcon: const Icon(Icons.person),
                           textEditingController: _lastNameController,
-                          labelText: 'Enter last name*',
+                          labelText: 'Last name*',
                           textInputType: TextInputType.text
                         ),
                       ),
@@ -209,8 +220,9 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                       // text field input for email
                       Expanded(
                         child: TextFieldInput(
+                          prefixIcon: const Icon(Icons.email),
                           textEditingController: _emailController,
-                          labelText: 'Enter your email*',
+                          labelText: 'Email*',
                           textInputType: TextInputType.emailAddress
                         ),
                       )
@@ -232,6 +244,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                             const SizedBox(width: 5.0),
                             Expanded(
                               child: TextFieldInput(
+                                prefixIcon: const Icon(Icons.phone),
                                 textEditingController: _phoneNumberController,
                                 labelText: '9123456789*',
                                 textInputType: TextInputType.phone
@@ -240,53 +253,100 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                           ],
                         ),
                       ),
-                      const SizedBox(width: 10.0),
-                      Expanded(
-                        child: TextFieldInput(
-                          textEditingController: _courseController,
-                          labelText: 'Course (e.g. BSIT)',
-                          textInputType: TextInputType.text
-                        ),
-                      ),
                     ],
                   ),
                   const SizedBox(height: 10.0),
                   Row(
                     children: [
-                      Expanded(
-                        child: TextFieldInput(
-                          textEditingController: _departmentController,
-                          labelText: 'Department (e.g. CCS)*',
-                          textInputType: TextInputType.text
-                        ),
+                      Flexible(
+                        flex: 2,
+                        child: DropdownButtonFormField<String>(
+                          value: selectedCourseAndDepartment,
+                          style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                          decoration: InputDecoration(
+                            focusColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                            prefixIcon: const Icon(Icons.school),
+                            labelText: 'Course and Department*',
+                            border: OutlineInputBorder(
+                              borderSide: Divider.createBorderSide(
+                                context,
+                                color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
+                            ),
+                          ),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedCourseAndDepartment = newValue ?? coursesAndDepartments[0]; // Handle null selection
+
+                              // Split the selected value:
+                              List<String> splitValue = selectedCourseAndDepartment.split(' - ');
+                              course = splitValue[0];
+                              department = splitValue[1];
+                            });
+                          },
+                          items: coursesAndDepartments.map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value.isEmpty ? null : value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                        )
                       ),
                     ],
                   ),
-                  const SizedBox(height: 10.0),
+                  const SizedBox(height: 10,),
                   Row(
                     children: [
-                      Expanded(
-                        child: TextFieldInput(
-                          textEditingController: _yearController,
-                          labelText: 'Year (e.g. 1)*',
-                          textInputType: TextInputType.text,
-                        ),
+                      Flexible(
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderSide: Divider.createBorderSide(
+                                context,
+                                color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
+                            ),
+                            prefixIcon: const Icon(Icons.school),
+                            labelText: 'Year*',
+                          ),
+                          value: _yearController.text.isEmpty
+                              ? null
+                              : _yearController.text,
+                          items: <String>['1', '2', '3', '4']
+                              .map((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(value),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              _yearController.text = newValue!;
+                            });
+                          },
+                        )
                       ),
+                      // text field for section
                       const SizedBox(width: 10.0),
-                      Expanded(
+                      Flexible(
                         child: TextFieldInput(
+                          prefixIcon: const Icon(Icons.school),
                           textEditingController: _sectionController,
                           labelText: 'Section (e.g. A)*',
-                          textInputType: TextInputType.text,
+                          textInputType: TextInputType.text
                         ),
-                      ),
+                      )
                     ],
                   ),
                   const SizedBox(height: 10.0),
                   // text field input for password
                   TextFieldInput(
+                    prefixIcon: const Icon(Icons.lock),
                     textEditingController: _passwordController,
-                    labelText: 'Enter your password*',
+                    labelText: 'Password*',
                     textInputType: TextInputType.visiblePassword,
                     isPass: true,
                   ),

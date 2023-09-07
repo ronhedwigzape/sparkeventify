@@ -160,7 +160,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
                 Flexible(
                   child: TextFieldInput(
                     textEditingController: _emailController,
-                    labelText: 'Enter your email address',
+                    labelText: 'Email address',
                     textInputType: TextInputType.emailAddress,
                   ), 
                 ),
@@ -194,7 +194,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
                 Flexible(
                   child: TextFieldInput(
                     textEditingController: _firstNameController,
-                    labelText: 'Enter your first name*',
+                    labelText: 'First name*',
                     textInputType: TextInputType.text,
                   ),
                 ),
@@ -202,7 +202,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
                 Flexible(
                   child: TextFieldInput(
                     textEditingController: _middleInitialController,
-                    labelText: 'Enter your middle initial',
+                    labelText: 'Middle Initial',
                     textInputType: TextInputType.text,
                   ),
                 ),
@@ -214,7 +214,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
                 Flexible(
                   child:  TextFieldInput(
                     textEditingController: _lastNameController,
-                    labelText: 'Enter your last name*',
+                    labelText: 'Last name*',
                     textInputType: TextInputType.text,
                   ),
                 ), 
@@ -224,7 +224,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
             // text field input for password
             TextFieldInput(
               textEditingController: _passwordController,
-              labelText: 'Enter your password',
+              labelText: 'Password',
               textInputType: TextInputType.visiblePassword,
               isPass: true,
             ),

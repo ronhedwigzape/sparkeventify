@@ -160,72 +160,77 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
                     padding: EdgeInsets.symmetric(vertical: 10.0),
                     child: Divider(thickness: 1.0),
                   ),
-                  // text field input for first name
-                  TextFieldInput(
-                    textEditingController: _firstNameController,
-                    labelText: 'Enter your first name*',
-                    textInputType: TextInputType.text,
-                  ),
-                  const SizedBox(height: 10,),
-                  // text field inpupt for middle initial
-                  TextFieldInput(
-                    textEditingController: _middleInitialController,
-                    labelText: 'Enter your middle initial*',
-                    textInputType: TextInputType.text,
+                  Row(
+                    children: [
+                      Flexible(
+                        child: TextFieldInput(
+                          prefixIcon: const Icon(Icons.person),
+                          textEditingController: _firstNameController,
+                          labelText: 'First name*',
+                          textInputType: TextInputType.text,
+                        ),   
+                      ),
+                      const SizedBox(width: 10,),
+                      Flexible(
+                        child: TextFieldInput(
+                          prefixIcon: const Icon(Icons.person),
+                          textEditingController: _middleInitialController,
+                          labelText: 'Middle Initial*',
+                          textInputType: TextInputType.text,
+                        ),
+                      )
+                    ],
                   ),
                   const SizedBox(height: 10,),
                   // text field input for last name
                   TextFieldInput(
+                    prefixIcon: const Icon(Icons.person),
                     textEditingController: _lastNameController,
-                    labelText: 'Enter your last name*',
+                    labelText: 'Last name*',
                     textInputType: TextInputType.text,
                   ),
                   const SizedBox(height: 10.0),
                   Row(
                     children: [
-                      Expanded(
-                        child: Row(
-                          children: [
-                            const Text(
-                              '+63',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            const SizedBox(width: 5.0),
-                            Expanded(
-                              child: TextFieldInput(
-                                textEditingController: _phoneNumberController,
-                                labelText: '9123456789*',
-                                textInputType: TextInputType.phone,
-                              ),
-                            ),
-                          ],
+                      const Text(
+                        '+63',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      const SizedBox(width: 10.0),
-                      // text field input for email
+                      const SizedBox(width: 5.0),
                       Expanded(
                         child: TextFieldInput(
-                          textEditingController: _emailController,
-                          labelText: 'Enter your email*',
-                          textInputType: TextInputType.emailAddress,
+                          prefixIcon: const Icon(Icons.phone),
+                          textEditingController: _phoneNumberController,
+                          labelText: '9123456789*',
+                          textInputType: TextInputType.phone,
                         ),
-                      )
+                      ),
                     ],
                   ),
                   const SizedBox(height: 10.0),
+                  // text field input for email
                   TextFieldInput(
+                    prefixIcon: const Icon(Icons.email),
+                    textEditingController: _emailController,
+                    labelText: 'Email*',
+                    textInputType: TextInputType.emailAddress,
+                  ),
+                  const SizedBox(height: 10.0),
+                  TextFieldInput(
+                    prefixIcon: const Icon(Icons.person_2),
                     textEditingController: _positionController,
-                    labelText: 'Enter your position*',
+                    labelText: 'Position*',
                     textInputType: TextInputType.text,
                   ),
                   const SizedBox(height: 10.0),
                   // text field input for password
                   TextFieldInput(
+                    prefixIcon: const Icon(Icons.lock),
                     textEditingController: _passwordController,
-                    labelText: 'Enter your password*',
+                    labelText: 'Password*',
                     textInputType: TextInputType.visiblePassword,
                     isPass: true,
                   ),
