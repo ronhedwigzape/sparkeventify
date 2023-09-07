@@ -9,6 +9,7 @@ class Profile {
   String? year;
   String? section;
   String? position;
+  String? organization;
   String? profileImage;
 
   Profile({
@@ -22,6 +23,7 @@ class Profile {
     this.year,
     this.section,
     this.position,
+    this.organization,
     this.profileImage,
   });
 
@@ -37,6 +39,7 @@ class Profile {
         'year': year,
         'section': section,
         'position': position,
+        'organization': organization,
         'profileImage': profileImage,
       };
 
@@ -53,6 +56,7 @@ class Profile {
       year: map['year'],
       section: map['section'],
       position: map['position'],
+      organization: map['organization'],
       profileImage: map['profileImage'],
     );
   }

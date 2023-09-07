@@ -122,6 +122,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           String course = currentUser?.profile!.course ?? '';
           String year = currentUser?.profile!.year ?? '';
           String section = currentUser?.profile!.section ?? '';
+          String organization = currentUser?.profile!.organization ?? '';
+          String position = currentUser?.profile!.position ?? '';
 
           return LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
@@ -238,12 +240,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Text(
-                                userType.toUpperCase(), 
-                                style: TextStyle(
-                                  fontSize: 15.0, 
-                                  fontWeight: FontWeight.bold,
-                                  color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                              userType == 'Officer' ?
+                              Column(
+                                children: [
+                                  Text(
+                                  '${position.toUpperCase()} - ${organization.toUpperCase()}', 
+                                  style: TextStyle(
+                                    fontSize: 15.0, 
+                                    fontWeight: FontWeight.bold,
+                                    color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                  Text(
+                                  userType.toUpperCase(),
+                                  style: TextStyle(
+                                    fontSize: 12.0, 
+                                    fontWeight: FontWeight.bold,
+                                    color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor)),
+                                ],
+                              )
+                              : Text(
+                              userType.toUpperCase(), 
+                              style: TextStyle(
+                                fontSize: 15.0, 
+                                fontWeight: FontWeight.bold,
+                                color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                             ],
                           ),
                         ),

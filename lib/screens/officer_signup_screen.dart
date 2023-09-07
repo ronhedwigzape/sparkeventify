@@ -27,6 +27,8 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
   final TextEditingController _courseController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
   final TextEditingController _sectionController = TextEditingController();
+  final TextEditingController _organizationController = TextEditingController();
+  final TextEditingController _positionController = TextEditingController();
   bool _isLoading = false;
 
   @override
@@ -42,6 +44,8 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
     _courseController.dispose();
     _yearController.dispose();
     _sectionController.dispose();
+    _organizationController.dispose();
+    _positionController.dispose();
   }
 
   Future<void> signUpAsClient() async {
@@ -58,7 +62,9 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
         _departmentController.text.trim().isEmpty ||
         _yearController.text.trim().isEmpty ||
         _sectionController.text.trim().isEmpty ||
-        _passwordController.text.trim().isEmpty
+        _passwordController.text.trim().isEmpty ||
+        _organizationController.text.trim().isEmpty ||
+        _positionController.text.trim().isEmpty
     ) return onSignupFailure('Please complete all required fields.');
 
     // Validate the phone number
@@ -83,6 +89,8 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
       course: _courseController.text.trim(),
       year: _yearController.text.trim(),
       section: _sectionController.text.trim(),
+      organization: _organizationController.text.trim(),
+      position: _positionController.text.trim(),
     );
 
     String res = await AuthMethods().signUp(
@@ -280,6 +288,20 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
                             ),
                           ),
                         ],
+                      ),
+                      const SizedBox(height: 10.0),
+                      // text field input for organization
+                      TextFieldInput(
+                        textEditingController: _organizationController,
+                        labelText: 'Enter your organization (e.g. JPCS Chapter)*',
+                        textInputType: TextInputType.text,
+                      ),
+                      const SizedBox(height: 10.0),
+                      // text field input for organization position
+                      TextFieldInput(
+                        textEditingController: _positionController,
+                        labelText: 'Enter your organization position',
+                        textInputType: TextInputType.text,
                       ),
                       const SizedBox(height: 10.0),
                       // text field input for password
