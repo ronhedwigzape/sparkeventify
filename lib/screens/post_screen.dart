@@ -35,10 +35,21 @@ class _PostScreenState extends State<PostScreen> {
   Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
-  List<String> courseParticipants = ['BSCS', 'BSIT', 'BSCE', 'BSN', 'BSEE'];
-  List<String> departmentParticipants = ['CCS', 'CHS', 'CEA', 'CTHBM', 'CAS'];
-  List<String> staffParticipants = ['Faculty', 'Dean'];
+  List<String> courseParticipants = ['BSCS', 'BSIT', 'BSN', 'BSM', 'BSEE', 'BSME', 'BSCE'];
+  List<String> departmentParticipants = ['CCS', 'CHS', 'CEA',];
+  List<String> staffParticipants = ['Faculty'];
   Map<String, List<String>> selectedParticipants = {'course': [], 'department': [], 'staff': []};
+
+  // List all associated course for departments
+  Map<String, String> courseDepartmentMap = {
+    'BSCS': 'CCS',
+    'BSIT': 'CCS',
+    'BSN': 'CHS',
+    'BSM': 'CHS',
+    'BSME': 'CEA',
+    'BSEE': 'CEA',
+    'BSCE': 'CEA',
+  };
 
   void _selectImage(BuildContext context) async {
     return showDialog(
@@ -612,10 +623,40 @@ class _PostScreenState extends State<PostScreen> {
             value: selectedParticipants[type.toLowerCase()]?.contains(participant),
             onChanged: (bool? value) {
               setState(() {
+                String? dept = courseDepartmentMap[participant];
                 if (value!) {
                   selectedParticipants[type.toLowerCase()]?.add(participant);
+                  if (type.toLowerCase() == 'course'
+                      && !selectedParticipants['department']!.contains(dept)) {
+                    selectedParticipants['department']?.add(dept!);
+                  }
                 } else {
                   selectedParticipants[type.toLowerCase()]?.remove(participant);
+                  if (type.toLowerCase() == 'course'
+                      && selectedParticipants['course']!
+                        .where((course) => courseDepartmentMap[course] == dept)
+                        .isEmpty) {
+                    selectedParticipants['department']?.remove(dept);
+                  }
+                }
+                if (type.toLowerCase() == 'department') {
+                  var associatedCourses = courseDepartmentMap.entries
+                      .where((entry) => entry.value == participant)
+                      .map((entry) => entry.key)
+                      .toList();
+                  if (value) {
+                    for (var course in associatedCourses) {
+                      if (!selectedParticipants['course']!.contains(course)) {
+                        selectedParticipants['course']?.add(course);
+                      }
+                    }
+                  } else {
+                    for (var course in associatedCourses) {
+                      if (selectedParticipants['course']!.contains(course)) {
+                        selectedParticipants['course']?.remove(course);
+                      }
+                    }
+                  }
                 }
               });
             },
@@ -642,10 +683,40 @@ class _PostScreenState extends State<PostScreen> {
               value: selectedParticipants[type.toLowerCase()]?.contains(participant),
               onChanged: (bool? value) {
                 setState(() {
+                  String? dept = courseDepartmentMap[participant];
                   if (value!) {
                     selectedParticipants[type.toLowerCase()]?.add(participant);
+                    if (type.toLowerCase() == 'course'
+                        && !selectedParticipants['department']!.contains(dept)) {
+                      selectedParticipants['department']?.add(dept!);
+                    }
                   } else {
                     selectedParticipants[type.toLowerCase()]?.remove(participant);
+                    if (type.toLowerCase() == 'course'
+                        && selectedParticipants['course']!
+                          .where((course) => courseDepartmentMap[course] == dept)
+                          .isEmpty) {
+                      selectedParticipants['department']?.remove(dept);
+                    }
+                  }
+                  if (type.toLowerCase() == 'department') {
+                    var associatedCourses = courseDepartmentMap.entries
+                        .where((entry) => entry.value == participant)
+                        .map((entry) => entry.key)
+                        .toList();
+                    if (value) {
+                      for (var course in associatedCourses) {
+                        if (!selectedParticipants['course']!.contains(course)) {
+                          selectedParticipants['course']?.add(course);
+                        }
+                      }
+                    } else {
+                      for (var course in associatedCourses) {
+                        if (selectedParticipants['course']!.contains(course)) {
+                          selectedParticipants['course']?.remove(course);
+                        }
+                      }
+                    }
                   }
                 });
               },
