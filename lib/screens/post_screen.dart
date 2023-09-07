@@ -183,6 +183,7 @@ class _PostScreenState extends State<PostScreen> {
           _startTimeController.text.isNotEmpty &&
           _endTimeController.text.isNotEmpty &&
           _eventDescriptionsController.text.isNotEmpty &&
+          _eventVenueController.text.isNotEmpty &&
           selectedParticipants.isNotEmpty) {
         // Get the date and time from the text controllers
         String pickedStartDate = _startDateController.text;
@@ -446,10 +447,31 @@ class _PostScreenState extends State<PostScreen> {
                                           ),
                                           const SizedBox(width: 10.0),
                                           Flexible(
-                                            child: TextFieldInput(
-                                              textEditingController: _eventVenueController,
-                                              labelText: 'Venue (Optional)',
-                                              textInputType: TextInputType.text,
+                                            child: DropdownButtonFormField<String>(
+                                              decoration: const InputDecoration(
+                                                prefixIcon: Icon(Icons.location_pin),
+                                                labelText: '${kIsWeb ? 'Select venue' : 'Venue'}*',
+                                              ),
+                                              value: _eventVenueController.text.isEmpty
+                                                  ? null
+                                                  : _eventVenueController.text,
+                                              items: <String>['Gymnasium', 'Auditorium']
+                                                  .map((String value) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Text(value),
+                                                    ],
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              onChanged: (String? newValue) {
+                                                setState(() {
+                                                  _eventVenueController.text = newValue!;
+                                                });
+                                              },
                                             ),
                                           )
                                         ]),
