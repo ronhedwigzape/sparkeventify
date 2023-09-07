@@ -135,7 +135,7 @@ class UpcomingEventsState extends State<UpcomingEvents> {
                                     const Icon(Icons.error),
                               ),
                             ListTile(
-                              title: Center(child: Text('Event: ${event.title}', style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),
+                              title: Center(child: Text(event.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),
                               subtitle: Text(
                                 (startDate.day == event.endDate.day
                                     ? 'Date: ${DateFormat('MMM dd, yyyy').format(startDate)}\n'
