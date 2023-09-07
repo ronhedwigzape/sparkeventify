@@ -111,7 +111,12 @@ class OngoingEventsState extends State<OngoingEvents> {
                         fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
-                  ...ongoingEvents.map((event) {
+                  ...(ongoingEvents.isEmpty) ? [
+                    const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text('No ongoing events for now..', textAlign: TextAlign.center,),
+                  )]
+                  : ongoingEvents.map((event) {
                   return Card(
                     elevation: 0,
                     color: darkModeOn ? darkColor : lightColor,

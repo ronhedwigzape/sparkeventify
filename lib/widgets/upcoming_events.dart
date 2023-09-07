@@ -83,7 +83,12 @@ class UpcomingEventsState extends State<UpcomingEvents> {
                         fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
-                   ...upcomingEvents.map((event) {
+                  ...(upcomingEvents.isEmpty) ? [
+                    const Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: Text('No upcoming events for now..', textAlign: TextAlign.center,),
+                    )]
+                  : upcomingEvents.map((event) {
                     DateTime startDate = event.startDate.isBefore(now) ? now.add(const Duration(days: 1)) : event.startDate;
                     return Card(
                       elevation: 0,
