@@ -9,6 +9,12 @@ CollectionReference _eventRef = _db.collection('events');
 
 class FirestoreFeedbackMethods {
 
+  // Method to check if an event feedback collection is present
+  Future<bool> isEventFeedbackPresent(String eventId, String feedbackId) async {
+    DocumentSnapshot snapshot = await _eventRef.doc(eventId).collection('feedbacks').doc(feedbackId).get();
+    return snapshot.exists;
+  }
+
   // Method to add a feedback to a specific event
   Future<void> addEmptyFeedback(String eventId) {
     var uuid = const Uuid();
