@@ -1,4 +1,4 @@
-class Evaluator {
+class EvaluatorFeedback {
   String userUid;
   String userFullName;
   String userCourse;
@@ -6,8 +6,9 @@ class Evaluator {
   bool satisfactionStatus;
   String studentEvaluation;
   bool attendanceStatus;
+  bool isFeedbackDone;
 
-  Evaluator({
+  EvaluatorFeedback({
     required this.userUid,
     required this.userFullName,
     required this.userCourse,
@@ -15,6 +16,7 @@ class Evaluator {
     required this.satisfactionStatus,
     required this.studentEvaluation,
     required this.attendanceStatus,
+    required this.isFeedbackDone,
   });
 
   // Convert Evaluator object to JSON
@@ -26,11 +28,12 @@ class Evaluator {
         'satisfactionStatus': satisfactionStatus,
         'studentEvaluation': studentEvaluation,
         'attendanceStatus': attendanceStatus,
+        'isFeedbackDone': isFeedbackDone,
       };
 
   // Create Evaluator object from a map
-  static Evaluator fromMap(Map<String, dynamic> map) {
-    return Evaluator(
+  static EvaluatorFeedback fromMap(Map<String, dynamic> map) {
+    return EvaluatorFeedback(
       userUid: map['userUid'],
       userFullName: map['userFullName'],
       userCourse: map['userCourse'],
@@ -38,6 +41,7 @@ class Evaluator {
       satisfactionStatus: map['satisfactionStatus'],
       studentEvaluation: map['studentEvaluation'],
       attendanceStatus: map['attendanceStatus'],
+      isFeedbackDone: map['isFeedbackDone'],
     );
   }
 }
