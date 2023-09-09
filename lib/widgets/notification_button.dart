@@ -70,6 +70,7 @@ class _NotificationButtonState extends State<NotificationButton> {
       onPressed: () async {
       showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (BuildContext context) {
             final formKey = GlobalKey<FormState>();
             String title = '';
