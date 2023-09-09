@@ -164,21 +164,21 @@ class _FeedbackFormState extends State<FeedbackForm> {
                         title: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text(
+                            Text(
                               'Make Your Feedback for:',
                               style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 14),
+                                  fontWeight: FontWeight.bold, fontSize: 14,
+                                  color: darkModeOn
+                                    ? darkModeTertiaryColor
+                                    : lightModeTertiaryColor),
                             ),
                             const SizedBox(
                               height: 5,
                             ),
                             Text(
                               snapshot.data!.title,
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontWeight: FontWeight.w800,
-                                color: darkModeOn
-                                    ? darkModeTertiaryColor
-                                    : lightModeTertiaryColor,
                               ),
                             ),
                             const SizedBox(
