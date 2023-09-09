@@ -53,129 +53,137 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-    return Scaffold(
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-        elevation: 0.0,
-        title: Row(
-          children: [
-            const CSPCLogoWhite(height: 30.0),
-            const SizedBox(
-              width: 10.0,
-            ),
-            Text(
-              appName,
-              style: TextStyle(
-                color: lightColor,
-                fontSize: 20.0,
-                fontWeight: FontWeight.bold,
-                shadows: darkModeOn ? <Shadow>[
-                  const Shadow(
-                    offset: Offset(1.0, 1.0),
-                    blurRadius: 1.0,
-                    color: darkModePrimaryColor,
-                  ),
-                  const Shadow(
-                    offset: Offset(1.0, 1.0),
-                    blurRadius: 8.0,
-                    color: lightModeBlueColor,
-                  ),
-                ] : null,
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+          elevation: 0.0,
+          title: Row(
+            children: [
+              const CSPCLogoWhite(height: 30.0),
+              const SizedBox(
+                width: 10.0,
               ),
-            ),
+              Text(
+                appName,
+                style: TextStyle(
+                  color: lightColor,
+                  fontSize: 20.0,
+                  fontWeight: FontWeight.bold,
+                  shadows: darkModeOn ? <Shadow>[
+                    const Shadow(
+                      offset: Offset(1.0, 1.0),
+                      blurRadius: 1.0,
+                      color: darkModePrimaryColor,
+                    ),
+                    const Shadow(
+                      offset: Offset(1.0, 1.0),
+                      blurRadius: 8.0,
+                      color: lightModeBlueColor,
+                    ),
+                  ] : null,
+                ),
+              ),
+            ],
+          ),
+          actions: [
+            IconButton(
+              onPressed: () => navigationTapped(5),
+              icon: Stack(
+                children: <Widget>[
+                  const Icon(
+                    Icons.notifications,
+                    color: lightColor,
+                  ),
+                 StreamBuilder<int>(
+                  stream: notificationCount,
+                  builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
+                    if (!snapshot.hasData) {
+                      return const SizedBox.shrink();
+                    }
+                    final int count = snapshot.data!;
+                    return count == 0 ? const SizedBox.shrink() : 
+                    Positioned(
+                      right: 0,
+                      child: Container(
+                        padding: const EdgeInsets.all(1),
+                        decoration: BoxDecoration(
+                          color: red,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        constraints: const BoxConstraints(
+                          minWidth: 12,
+                          minHeight: 12,
+                        ),
+                        child: Text(
+                          count.toString(),
+                          style: const TextStyle(
+                            color: white,
+                            fontSize: 8,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                      ),
+                    );
+                  },
+                ),
+                ],
+              ),
+            )
           ],
         ),
-        actions: [
-          IconButton(
-            onPressed: () => navigationTapped(5),
-            icon: Stack(
-              children: <Widget>[
-                const Icon(
-                  Icons.notifications,
-                  color: lightColor,
-                ),
-               StreamBuilder<int>(
-                stream: notificationCount,
-                builder: (BuildContext context, AsyncSnapshot<int> snapshot) {
-                  if (!snapshot.hasData) {
-                    return const SizedBox.shrink();
-                  }
-                  final int count = snapshot.data!;
-                  return count == 0 ? const SizedBox.shrink() : 
-                  Positioned(
-                    right: 0,
-                    child: Container(
-                      padding: const EdgeInsets.all(1),
-                      decoration: BoxDecoration(
-                        color: red,
-                        borderRadius: BorderRadius.circular(6),
-                      ),
-                      constraints: const BoxConstraints(
-                        minWidth: 12,
-                        minHeight: 12,
-                      ),
-                      child: Text(
-                        count.toString(),
-                        style: const TextStyle(
-                          color: white,
-                          fontSize: 8,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                  );
-                },
-              ),
-              ],
-            ),
-          )
-        ],
+          body: FutureBuilder<List<Widget>>(
+            future: homeScreenItems(),
+            builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
+              }
+    
+              final List<Widget> homeScreenItems = snapshot.data!;
+              return PageView(
+                controller: pageController,
+                onPageChanged: onPageChanged,
+                physics: const NeverScrollableScrollPhysics(),
+                children: homeScreenItems,
+              );
+            },
+          ),
+          bottomNavigationBar: FutureBuilder<String>(
+            future: AuthMethods().getCurrentUserType(),
+            builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
+              String userType = snapshot.data ?? '';
+              return CupertinoTabBar(
+                onTap: navigationTapped,
+                backgroundColor: darkModeOn ? darkColor : lightColor,
+                activeColor: darkModeOn ? lightColor : darkColor,
+                items: userType == 'Staff' ? [
+                  buildBottomNavigationBarItem(Icons.calendar_month, 0),
+                  buildBottomNavigationBarItem(Icons.add_circle, 1),
+                  buildBottomNavigationBarItem(Icons.note_alt, 2),
+                  buildBottomNavigationBarItem(Icons.person, 3)
+                ] : userType == 'Officer' ? [
+                  buildBottomNavigationBarItem(Icons.calendar_month, 0),
+                  buildBottomNavigationBarItem(Icons.feedback, 1),
+                  buildBottomNavigationBarItem(Icons.add_circle, 2),
+                  buildBottomNavigationBarItem(Icons.note_alt, 3),
+                  buildBottomNavigationBarItem(Icons.person, 4)
+                ] : [
+                  buildBottomNavigationBarItem(Icons.calendar_month, 0),
+                  buildBottomNavigationBarItem(Icons.feedback, 1),
+                  buildBottomNavigationBarItem(Icons.note_alt, 2),
+                  buildBottomNavigationBarItem(Icons.person, 3)
+                ],
+              );
+            },
+          ),
       ),
-        body: FutureBuilder<List<Widget>>(
-          future: homeScreenItems(),
-          builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
-            if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
-            }
-
-            final List<Widget> homeScreenItems = snapshot.data!;
-            return PageView(
-              controller: pageController,
-              onPageChanged: onPageChanged,
-              physics: const NeverScrollableScrollPhysics(),
-              children: homeScreenItems,
-            );
-          },
-        ),
-        bottomNavigationBar: FutureBuilder<String>(
-          future: AuthMethods().getCurrentUserType(),
-          builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-            String userType = snapshot.data ?? '';
-            return CupertinoTabBar(
-              onTap: navigationTapped,
-              backgroundColor: darkModeOn ? darkColor : lightColor,
-              activeColor: darkModeOn ? lightColor : darkColor,
-              items: userType == 'Staff' ? [
-                buildBottomNavigationBarItem(Icons.calendar_month, 0),
-                buildBottomNavigationBarItem(Icons.add_circle, 1),
-                buildBottomNavigationBarItem(Icons.note_alt, 2),
-                buildBottomNavigationBarItem(Icons.person, 3)
-              ] : userType == 'Officer' ? [
-                buildBottomNavigationBarItem(Icons.calendar_month, 0),
-                buildBottomNavigationBarItem(Icons.feedback, 1),
-                buildBottomNavigationBarItem(Icons.add_circle, 2),
-                buildBottomNavigationBarItem(Icons.note_alt, 3),
-                buildBottomNavigationBarItem(Icons.person, 4)
-              ] : [
-                buildBottomNavigationBarItem(Icons.calendar_month, 0),
-                buildBottomNavigationBarItem(Icons.feedback, 1),
-                buildBottomNavigationBarItem(Icons.note_alt, 2),
-                buildBottomNavigationBarItem(Icons.person, 3)
-              ],
-            );
-          },
-        ),
     );
   }
 
