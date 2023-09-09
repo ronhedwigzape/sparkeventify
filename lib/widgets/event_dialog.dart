@@ -64,7 +64,7 @@ class EventDialogState extends State<EventDialog> {
                 : Text(
                     DateFormat('MMMM dd, yyyy')
                         .format(widget.adjustedSelectedDay),
-                    style: const TextStyle(fontSize: 24),
+                    style: const TextStyle(fontSize: 18),
                   ),
           ],
         ),
