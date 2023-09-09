@@ -282,7 +282,6 @@ class _FeedbackFormState extends State<FeedbackForm> {
                                 controller: _feedbackController,
                                 minLines: 4,
                                 maxLines: null,
-                                autofocus: true,
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
                                     return 'Please create your feedback.';
