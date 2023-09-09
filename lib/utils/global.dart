@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/screens/admin_dashboard_screen.dart';
+import 'package:student_event_calendar/screens/feedback_screen.dart';
 import 'package:student_event_calendar/screens/manage_events_screen.dart';
 import 'package:student_event_calendar/screens/manage_users_screen.dart';
 import 'package:student_event_calendar/screens/notification_screen.dart';
@@ -44,7 +45,7 @@ Future<List<Widget>> homeScreenItems() async {
     // Widgets for 'Officer'
     return [
       const EventsCalendar(),
-      const Center(child: Text('Feedbacks')),
+      const FeedbackScreen(),
       const PostScreen(),
       const ManageEventsScreen(),
       const ProfileScreen(),
@@ -54,7 +55,7 @@ Future<List<Widget>> homeScreenItems() async {
   // Widgets for Students
   return [
     const EventsCalendar(),
-    const Center(child: Text('Feedbacks')),
+    const FeedbackScreen(),
     const Center(child: Text('Personal Events')),
     const ProfileScreen(),
     const NotificationScreen(),
