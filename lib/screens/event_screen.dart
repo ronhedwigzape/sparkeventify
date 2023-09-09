@@ -1,13 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 
 class EventScreen extends StatefulWidget {
   const EventScreen({Key? key, required this.snap}) : super(key: key);
 
-  final snap;
+  final Event snap;
 
   @override
   State<EventScreen> createState() => _EventScreenState();
