@@ -489,18 +489,19 @@ class EditEventScreenState extends State<EditEventScreen> {
                                         ),
                                       ),
                                       Flexible(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(
-                                              vertical: 8.0),
-                                          child: Text(
-                                            'Instructions: Please fill up the required* details correctly and then edit the announcement.',
-                                            style: TextStyle(
-                                                fontSize: 15.0,
-                                                color: darkModeOn
-                                                    ? darkModeTertiaryColor
-                                                    : lightModeTertiaryColor),
-                                            textAlign: TextAlign.center,
-                                          ),
+                                        child: Row(
+                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          children: [
+                                            Text(
+                                              'Instructions: Please fill up the required* details correctly and then edit the announcement.',
+                                              style: TextStyle(
+                                                  fontSize: 15.0,
+                                                  color: darkModeOn
+                                                      ? darkModeTertiaryColor
+                                                      : lightModeTertiaryColor),
+                                              textAlign: TextAlign.center,
+                                            ),
+                                          ],
                                         ),
                                       ),
                                       const SizedBox(height: 10.0),
@@ -775,6 +776,8 @@ class EditEventScreenState extends State<EditEventScreen> {
                                       ),
                                       const SizedBox(height: 10.0),
                                       _isUpdated ? Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
                                         children: [
                                           Icon(
                                             Icons.info_outline,
@@ -783,9 +786,14 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                 : lightModeGrassColor,
                                           ),
                                           const SizedBox(width: 10.0),
-                                          Text('Event Updated', style: TextStyle(color:  darkModeOn ? darkModeGrassColor : lightModeGrassColor),)
+                                          Text(
+                                            'The event details are now up to date.', 
+                                            style: TextStyle(
+                                              fontWeight: FontWeight.bold, 
+                                              color: darkModeOn ? darkModeGrassColor : lightModeGrassColor),)
                                         ]
                                       ) : const SizedBox.shrink(),
+                                      _isUpdated ? const SizedBox(height: 10.0) : const SizedBox.shrink(),
                                       Center(
                                         child: InkWell(
                                           onTap: _update,
