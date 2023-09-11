@@ -76,12 +76,17 @@ class EditEventScreenState extends State<EditEventScreen> {
     _eventTitleController.text = widget.eventSnap.title;
     _eventDescriptionsController.text = widget.eventSnap.description;
     _eventVenueController.text = widget.eventSnap.venue!;
-    _startDateController.text = DateFormat('yyyy-MM-dd').format(widget.eventSnap.startDate);
-    _endDateController.text = DateFormat('yyyy-MM-dd').format(widget.eventSnap.endDate);
-    _startTimeController.text =  DateFormat('h:mm a').format(widget.eventSnap.startTime);
-    _endTimeController.text =  DateFormat('h:mm a').format(widget.eventSnap.endTime);
+    _startDateController.text =
+        DateFormat('yyyy-MM-dd').format(widget.eventSnap.startDate);
+    _endDateController.text =
+        DateFormat('yyyy-MM-dd').format(widget.eventSnap.endDate);
+    _startTimeController.text =
+        DateFormat('h:mm a').format(widget.eventSnap.startTime);
+    _endTimeController.text =
+        DateFormat('h:mm a').format(widget.eventSnap.endTime);
     selectedParticipants['course'] = widget.eventSnap.participants!['course'];
-    selectedParticipants['department'] = widget.eventSnap.participants!['department'];
+    selectedParticipants['department'] =
+        widget.eventSnap.participants!['department'];
     selectedParticipants['staff'] = widget.eventSnap.participants!['staff'];
   }
 
@@ -203,13 +208,7 @@ class EditEventScreenState extends State<EditEventScreen> {
 
   isEventCancelled(DateTime startDate, DateTime endDate) async {
     String response = await FireStoreEventMethods().updateEventStatus(
-      widget.eventSnap.id,
-      true,
-      null,
-      startDate,
-      endDate,
-      null
-      );
+        widget.eventSnap.id, true, null, startDate, endDate, null);
     if (response == 'Cancelled') {
       return true;
     } else {
@@ -217,9 +216,7 @@ class EditEventScreenState extends State<EditEventScreen> {
     }
   }
 
-  isEventMoved() async {
-
-  }
+  isEventMoved() async {}
 
   _update() async {
     if (kDebugMode) {
@@ -263,30 +260,34 @@ class EditEventScreenState extends State<EditEventScreen> {
         // If the image is not null, upload it to storage and get the URL
         String imageUrl = widget.eventSnap.image!;
         if (_imageFile != null && imageUrl.isEmpty) {
-          imageUrl = await StorageMethods().uploadImageToStorage('images', _imageFile!, true);
+          imageUrl = await StorageMethods()
+              .uploadImageToStorage('images', _imageFile!, true);
         }
 
         // Update the image if there is a image url already
-        if (imageUrl.startsWith('https://firebasestorage.googleapis.com') && 
-            _imageFile is Uint8List && 
-            _imageFile != Uint8List(0)&& 
+        if (imageUrl.startsWith('https://firebasestorage.googleapis.com') &&
+            _imageFile is Uint8List &&
+            _imageFile != Uint8List(0) &&
             _imageFile != null) {
-          imageUrl = await StorageMethods().uploadImageToStorage('images', _imageFile!, true);
+          imageUrl = await StorageMethods()
+              .uploadImageToStorage('images', _imageFile!, true);
           // create delete current image method here
         }
 
         // If the document is not null, upload it to storage and get the URL
         String documentUrl = widget.eventSnap.document!;
         if (_documentFile != null && documentUrl.isEmpty) {
-          documentUrl = await StorageMethods().uploadFileToStorage('documents', _documentFile!);
+          documentUrl = await StorageMethods()
+              .uploadFileToStorage('documents', _documentFile!);
         }
 
         // Update the document if there is a document url already
-        if (documentUrl.startsWith('https://firebasestorage.googleapis.com') && 
-            _documentFile is Uint8List && 
-            _documentFile!= Uint8List(0) && 
-            _documentFile!= null ) {
-          documentUrl = await StorageMethods().uploadFileToStorage('documents', _documentFile!);
+        if (documentUrl.startsWith('https://firebasestorage.googleapis.com') &&
+            _documentFile is Uint8List &&
+            _documentFile != Uint8List(0) &&
+            _documentFile != null) {
+          documentUrl = await StorageMethods()
+              .uploadFileToStorage('documents', _documentFile!);
           // create delete current document method here
         }
 
@@ -304,17 +305,17 @@ class EditEventScreenState extends State<EditEventScreen> {
           startTime: startTime12,
           endTime: endTime12,
           type: _eventTypeController.text,
-          status: widget.eventSnap.status, // change this 
+          status: widget.eventSnap.status, // change this
           datePublished: widget.eventSnap.datePublished,
         );
 
         // Add the event to the database
-        String response = await FireStoreEventMethods().updateEvent(
-            widget.eventSnap.id, event);
+        String response = await FireStoreEventMethods()
+            .updateEvent(widget.eventSnap.id, event);
 
         await FireStoreEventMethods().updateEventStatus(
-          widget.eventSnap.id, null, null, startDate, endDate, null);
-          
+            widget.eventSnap.id, null, null, startDate, endDate, null);
+
         if (kDebugMode) {
           print('Update Event Response: $response');
         }
@@ -441,9 +442,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                             color: darkModeOn ? white : black,
                           ),
                         ),
-                        backgroundColor: darkModeOn
-                            ? darkColor
-                            : lightColor,
+                        backgroundColor: darkModeOn ? darkColor : lightColor,
                         iconTheme: IconThemeData(
                           color: darkModeOn ? white : black,
                         ),
@@ -799,9 +798,9 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                                   Color>(
                                                               lightColor),
                                                     ))
-                                                  : const Text(
-                                                      'Create a New Announcement',
-                                                      style: TextStyle(
+                                                  : Text(
+                                                      'Update ${widget.eventSnap.type == 'Academic' ? 'Announcement' : 'Event'}',
+                                                      style: const TextStyle(
                                                         color: lightColor,
                                                         fontWeight:
                                                             FontWeight.bold,
