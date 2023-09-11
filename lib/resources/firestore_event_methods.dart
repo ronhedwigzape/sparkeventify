@@ -58,6 +58,10 @@ class FireStoreEventMethods {
       );
       // Add the event to the 'events' collection in Firestore
       _eventsCollection.doc(eventId).set(event.toJson());
+
+      await FireStoreEventMethods().updateEventStatus(
+        eventId, null, null, startDate, endDate, null);
+        
       response = 'Success';
     } on FirebaseException catch (err) {
       // Handle any errors that occur
@@ -164,8 +168,8 @@ class FireStoreEventMethods {
 
   Future<String> updateEventStatus(
       String eventId, 
-      bool isCancelled, 
-      bool isMoved, 
+      bool? isCancelled, 
+      bool? isMoved, 
       DateTime startDate, 
       DateTime endDate, 
       Event? movedEvent  // if event is moved, new event details should be provided here
@@ -175,26 +179,26 @@ class FireStoreEventMethods {
 
     try {
       // If the event is moved, update event's details using the supplied new event details
-      if (isMoved && movedEvent != null) {
+      if (isMoved! && movedEvent != null) {
         return await updateEvent(eventId, movedEvent);
       }
 
       // If the current date/time is before the start date/time, then the status is "Upcoming"
       if (startDate.isAfter(currentDateTime)) {
         await _eventsCollection.doc(eventId).set({
-            'status': isCancelled ? 'Cancelled' : 'Upcoming',
+            'status': isCancelled! ? 'Cancelled' : 'Upcoming',
         }, SetOptions(merge: true));
       } 
       // If the current date/time is after the end date/time, then the status is "Past"
       else if (endDate.isBefore(currentDateTime)) {
         await _eventsCollection.doc(eventId).set({
-            'status': isCancelled ? 'Cancelled' : 'Past',
+            'status': isCancelled! ? 'Cancelled' : 'Past',
         }, SetOptions(merge: true));
       } 
       // If the current date/time is between the start and end datetime, then the status is "Ongoing"
       else {
         await _eventsCollection.doc(eventId).set({
-            'status': isCancelled ? 'Cancelled' : 'Ongoing',
+            'status': isCancelled! ? 'Cancelled' : 'Ongoing',
         }, SetOptions(merge: true));
       }
 
