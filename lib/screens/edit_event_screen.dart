@@ -7,7 +7,6 @@ import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/resources/storage_methods.dart';
-import 'package:student_event_calendar/screens/manage_events_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
@@ -38,6 +37,7 @@ class EditEventScreenState extends State<EditEventScreen> {
   Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
+  bool _isUpdated = false;
   List<String> courseParticipants = [
     'BSCS',
     'BSIT',
@@ -209,8 +209,8 @@ class EditEventScreenState extends State<EditEventScreen> {
 
   setEventCancellation(DateTime startDate, DateTime endDate) async {
     try {
-       return await FireStoreEventMethods().updateEventStatus(
-        widget.eventSnap.id, true, null, startDate, endDate, null);
+      return await FireStoreEventMethods().updateEventStatus(
+          widget.eventSnap.id, true, null, startDate, endDate, null);
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -316,7 +316,7 @@ class EditEventScreenState extends State<EditEventScreen> {
             .updateEvent(widget.eventSnap.id, event);
 
         await FireStoreEventMethods().updateEventStatus(
-            widget.eventSnap.id, null, null, startDate, endDate, null);
+            widget.eventSnap.id, false, false, startDate, endDate, null);
 
         if (kDebugMode) {
           print('Update Event Response: $response');
@@ -324,6 +324,9 @@ class EditEventScreenState extends State<EditEventScreen> {
         // Check if the response is a success or a failure
         if (response == 'Success') {
           onPostSuccess();
+          setState(() {
+            _isUpdated = true;
+          });
         } else {
           onPostFailure(response);
         }
@@ -355,49 +358,19 @@ class EditEventScreenState extends State<EditEventScreen> {
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ManageEventsScreen(),
-      ),
-    );
     showSnackBar('Post updated successfully', context);
-    clearInputs();
   }
 
   void onPostFailure(String message) {
     setState(() {
       _isLoading = false;
     });
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (context) => const ManageEventsScreen(),
-      ),
-    );
     showSnackBar(message, context);
   }
 
   void showSnackBar(String message, BuildContext context) {
     final snackBar = SnackBar(content: Text(message));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  // Clears input field
-  void clearInputs() {
-    setState(() {
-      _imageFile = null;
-      _documentFile = null;
-      _eventTypeController.clear();
-      _eventTitleController.clear();
-      _eventDescriptionsController.clear();
-      _eventVenueController.clear();
-      _startDateController.clear();
-      _endDateController.clear();
-      _startTimeController.clear();
-      _endTimeController.clear();
-      selectedParticipants.forEach((key, value) {
-        selectedParticipants[key] = [];
-      });
-    });
   }
 
   // Disposing after changing
@@ -801,6 +774,18 @@ class EditEventScreenState extends State<EditEventScreen> {
                                         ),
                                       ),
                                       const SizedBox(height: 10.0),
+                                      _isUpdated ? Row(
+                                        children: [
+                                          Icon(
+                                            Icons.info_outline,
+                                            color: darkModeOn
+                                                ? darkModeGrassColor
+                                                : lightModeGrassColor,
+                                          ),
+                                          const SizedBox(width: 10.0),
+                                          Text('Event Updated', style: TextStyle(color:  darkModeOn ? darkModeGrassColor : lightModeGrassColor),)
+                                        ]
+                                      ) : const SizedBox.shrink(),
                                       Center(
                                         child: InkWell(
                                           onTap: _update,

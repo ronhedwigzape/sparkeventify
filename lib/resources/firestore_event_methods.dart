@@ -60,7 +60,7 @@ class FireStoreEventMethods {
       _eventsCollection.doc(eventId).set(event.toJson());
 
       await FireStoreEventMethods().updateEventStatus(
-        eventId, null, null, startDate, endDate, null);
+        eventId, false, false, startDate, endDate, null);
         
       response = 'Success';
     } on FirebaseException catch (err) {
