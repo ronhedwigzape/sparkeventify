@@ -40,7 +40,7 @@ class _UsersCardState extends State<UsersCard> {
                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                  children: [
                    Flexible(
-                     flex: 4,
+                     flex: 2,
                      child: Column(
                        children: [
                          CircleAvatar(
@@ -54,7 +54,7 @@ class _UsersCardState extends State<UsersCard> {
                      ),
                    ),
                    Flexible(
-                     flex: 4,
+                     flex: 3,
                      child: Row(
                        children: [
                          Expanded(
@@ -148,6 +148,39 @@ class _UsersCardState extends State<UsersCard> {
                          ),
                        ],
                      ),
+                   ),
+                   Flexible(
+                    fit: FlexFit.loose,
+                    child: TextButton.icon(
+                      onPressed: () {
+                        showDialog(
+                          context: context, 
+                          builder: (context) => AlertDialog(
+                            title: const Text('Edit user'),
+                            content: const Text('Are you sure you want to edit this user?'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                }, 
+                                child: const Text('Cancel')
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.pop(context);
+                                  Navigator.pushNamed(context, '/edit_user', arguments: widget.user);
+                                }, 
+                                child: const Text('Edit')
+                              ),
+                            ],
+                          )
+                        );
+                      }, 
+                      icon: Icon(Icons.edit, color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,), 
+                      label: Padding(
+                        padding: const EdgeInsets.all(10.0),
+                        child: Text('Edit', style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),),
+                      ),)
                    ),
                    Flexible(
                      flex: 2,
