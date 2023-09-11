@@ -2,18 +2,19 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
-import 'package:student_event_calendar/screens/event_screen.dart';
+import 'package:student_event_calendar/screens/edit_event_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class PostCard extends StatefulWidget {
   const PostCard({Key? key, required this.snap}) : super(key: key);
-  final snap;
+  final Event snap;
 
   @override
   State<PostCard> createState() => _PostCardState();
@@ -209,14 +210,14 @@ class _PostCardState extends State<PostCard> {
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => EventScreen(
-                              snap: widget.snap,
+                            builder: (context) => EditEventScreen(
+                              eventSnap: widget.snap,
                             ),
                           ),
                         );
                       },
                       icon: const Icon(Icons.view_agenda, size: 18),
-                      label: Text('View this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'}'),
+                      label: Text('Edit this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'}'),
                     ),
                   ],
                 ),
@@ -239,8 +240,7 @@ class _PostCardState extends State<PostCard> {
                                   fontWeight: FontWeight.bold),
                             ),
                             TextSpan(
-                              text:
-                                  '${widget.snap.description ?? 'default_description'}',
+                              text: widget.snap.description,
                             ),
                           ]),
                           overflow: TextOverflow.ellipsis,
@@ -412,14 +412,14 @@ class _PostCardState extends State<PostCard> {
                       onPressed: () {
                         Navigator.of(context).push(
                           MaterialPageRoute(
-                            builder: (context) => EventScreen(
-                              snap: widget.snap,
+                            builder: (context) => EditEventScreen(
+                              eventSnap: widget.snap,
                             ),
                           ),
                         );
                       },
                       icon: const Icon(Icons.view_agenda, size: 18),
-                      label: Text('View this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'}'),
+                      label: Text('Edit this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'}'),
                     ),
                   ],
                 ),
@@ -443,7 +443,7 @@ class _PostCardState extends State<PostCard> {
                             ),
                             TextSpan(
                               text:
-                                  '${widget.snap.description ?? 'default_description'}',
+                                  widget.snap.description,
                             ),
                           ]),
                           overflow: TextOverflow.ellipsis,
