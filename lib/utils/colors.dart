@@ -9,6 +9,7 @@ const lightModePrimaryColor = Color.fromARGB(255, 41, 56, 141);
 const lightModeSecondaryColor = Color.fromARGB(255, 126, 126, 126);
 const lightModeTertiaryColor = Color.fromARGB(255, 150, 150, 150);
 const lightModeIndigo = Color.fromARGB(255, 130, 144, 224);
+const lightModeGrassColor = Color.fromARGB(255, 0, 125, 31);
 
 // Dark mode colors
 const darkColor = Color.fromRGBO(38, 38, 38, 1);
