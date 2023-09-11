@@ -406,20 +406,23 @@ class _PostCardState extends State<PostCard> {
                   ],
                 ),
              
-                Row(
+                 Row(
                   children: [
-                    TextButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => EditEventScreen(
-                              eventSnap: widget.snap,
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: TextButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EditEventScreen(
+                                eventSnap: widget.snap,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.view_agenda, size: 18),
-                      label: Text('Edit this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'}'),
+                          );
+                        },
+                        icon: const Icon(Icons.view_agenda, size: 18),
+                        label: Text('Edit this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'}'),
+                      ),
                     ),
                   ],
                 ),

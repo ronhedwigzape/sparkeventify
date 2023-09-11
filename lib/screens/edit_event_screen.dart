@@ -7,6 +7,7 @@ import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/resources/storage_methods.dart';
+import 'package:student_event_calendar/screens/manage_events_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
@@ -136,7 +137,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                   if (file != null) {
                     _imageFile = file;
                     const SnackBar snackBar =
-                        SnackBar(content: Text('Image is uploaded!'));
+                        SnackBar(content: Text('New image is uploaded!'));
                     ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!)
                         .showSnackBar(snackBar);
                   }
@@ -182,7 +183,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                   if (file != null) {
                     _documentFile = file;
                     const SnackBar snackBar =
-                        SnackBar(content: Text('Document is uploaded!'));
+                        SnackBar(content: Text('New document is uploaded!'));
                     ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!)
                         .showSnackBar(snackBar);
                   }
@@ -206,13 +207,14 @@ class EditEventScreenState extends State<EditEventScreen> {
         });
   }
 
-  isEventCancelled(DateTime startDate, DateTime endDate) async {
-    String response = await FireStoreEventMethods().updateEventStatus(
+  setEventCancellation(DateTime startDate, DateTime endDate) async {
+    try {
+       return await FireStoreEventMethods().updateEventStatus(
         widget.eventSnap.id, true, null, startDate, endDate, null);
-    if (response == 'Cancelled') {
-      return true;
-    } else {
-      return false;
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
     }
   }
 
@@ -340,7 +342,7 @@ class EditEventScreenState extends State<EditEventScreen> {
       }
     } catch (err) {
       if (kDebugMode) {
-        print('Error caught: $err');
+        print('Error caught: ${err.toString() + err.runtimeType.toString()}');
       }
       setState(() {
         _isLoading = false;
@@ -353,7 +355,12 @@ class EditEventScreenState extends State<EditEventScreen> {
     setState(() {
       _isLoading = false;
     });
-    showSnackBar('Post uploaded successfully', context);
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ManageEventsScreen(),
+      ),
+    );
+    showSnackBar('Post updated successfully', context);
     clearInputs();
   }
 
@@ -361,6 +368,11 @@ class EditEventScreenState extends State<EditEventScreen> {
     setState(() {
       _isLoading = false;
     });
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) => const ManageEventsScreen(),
+      ),
+    );
     showSnackBar(message, context);
   }
 
@@ -482,15 +494,21 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                 size: kIsWeb ? 40 : 25,
                                               ),
                                               const SizedBox(width: 10),
-                                              Text(
-                                                'Update ${widget.eventSnap.title}',
-                                                style: TextStyle(
-                                                  fontSize:
-                                                      kIsWeb ? 32.0 : 24.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: darkModeOn
-                                                      ? lightColor
-                                                      : darkColor,
+                                              Expanded(
+                                                // Add this
+                                                child: Text(
+                                                  'Update ${widget.eventSnap.title}',
+                                                  style: TextStyle(
+                                                    fontSize:
+                                                        kIsWeb ? 32.0 : 24.0,
+                                                    fontWeight: FontWeight.bold,
+                                                    color: darkModeOn
+                                                        ? lightColor
+                                                        : darkColor,
+                                                  ),
+                                                  overflow:
+                                                      TextOverflow.ellipsis,
+                                                  maxLines: 3,
                                                 ),
                                               ),
                                             ],
@@ -561,8 +579,15 @@ class EditEventScreenState extends State<EditEventScreen> {
                                               child: IconButton(
                                                 onPressed: () =>
                                                     _selectImage(context),
-                                                icon: const Icon(
-                                                    Icons.add_a_photo),
+                                                icon: Icon(
+                                                  Icons.add_a_photo,
+                                                  color: widget.eventSnap.image!
+                                                          .isNotEmpty
+                                                      ? white
+                                                      : (darkModeOn
+                                                          ? darkModeSecondaryColor
+                                                          : lightModeSecondaryColor),
+                                                ),
                                                 tooltip: 'Add a photo',
                                               ),
                                             ),
@@ -573,8 +598,15 @@ class EditEventScreenState extends State<EditEventScreen> {
                                               child: IconButton(
                                                 onPressed: () =>
                                                     _selectDocument(context),
-                                                icon: const Icon(
-                                                    Icons.file_present_rounded),
+                                                icon: Icon(
+                                                  Icons.file_present_rounded,
+                                                  color: widget.eventSnap
+                                                          .document!.isNotEmpty
+                                                      ? white
+                                                      : (darkModeOn
+                                                          ? darkModeSecondaryColor
+                                                          : lightModeSecondaryColor),
+                                                ),
                                                 tooltip: 'Add a document',
                                               ),
                                             ),
