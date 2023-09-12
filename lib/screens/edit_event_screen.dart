@@ -493,7 +493,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                                           children: [
                                             Expanded(
                                               child: Text(
-                                                'Instructions: Please fill up the required* details correctly and then edit the announcement.',
+                                                'Instructions: Please edit the required* details correctly and then update the announcement.',
                                                 style: TextStyle(
                                                     fontSize: 15.0,
                                                     color: darkModeOn
