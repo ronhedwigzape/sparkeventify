@@ -210,4 +210,28 @@ class FireStoreUserMethods {
     return res;
   }
 
+  Future<String> updateUserProfile({
+    required String uid,
+    String? username,
+    required String userType,
+    model.Profile? profile
+  }) async {
+    String res = "Enter valid credentials";
+    try {
+      if (userType.isNotEmpty && profile != null) {
+        model.User user = model.User(
+          uid: uid,
+          username: username,
+          userType: userType,
+          profile: profile,
+        );
+        await _usersCollection.doc(uid).update(user.toJson());
+        res = "Success";
+      } 
+    } catch (err) {
+      res = err.toString();
+    }
+    return res;
+  }
+
 }
