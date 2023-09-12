@@ -5,8 +5,8 @@ class User {
   String uid;
   String userType;
   String? username;
-  String password;
-  String email;
+  String? password;
+  String? email;
   Map<String, String>? deviceTokens;
   Profile? profile;
 
@@ -14,8 +14,8 @@ class User {
     required this.uid,
     required this.userType,
     this.username,
-    required this.password,
-    required this.email,
+    this.password,
+    this.email,
     this.deviceTokens,
     this.profile, 
   });
