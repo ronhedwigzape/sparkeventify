@@ -468,7 +468,6 @@ class EditEventScreenState extends State<EditEventScreen> {
                                               ),
                                               const SizedBox(width: 10),
                                               Expanded(
-                                                // Add this
                                                 child: Text(
                                                   'Update ${widget.eventSnap.title}',
                                                   style: TextStyle(
@@ -492,14 +491,15 @@ class EditEventScreenState extends State<EditEventScreen> {
                                         child: Row(
                                           mainAxisAlignment: MainAxisAlignment.start,
                                           children: [
-                                            Text(
-                                              'Instructions: Please fill up the required* details correctly and then edit the announcement.',
-                                              style: TextStyle(
-                                                  fontSize: 15.0,
-                                                  color: darkModeOn
-                                                      ? darkModeTertiaryColor
-                                                      : lightModeTertiaryColor),
-                                              textAlign: TextAlign.center,
+                                            Expanded(
+                                              child: Text(
+                                                'Instructions: Please fill up the required* details correctly and then edit the announcement.',
+                                                style: TextStyle(
+                                                    fontSize: 15.0,
+                                                    color: darkModeOn
+                                                        ? darkModeTertiaryColor
+                                                        : lightModeTertiaryColor),
+                                              ),
                                             ),
                                           ],
                                         ),
@@ -557,7 +557,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                   Icons.add_a_photo,
                                                   color: widget.eventSnap.image!
                                                           .isNotEmpty
-                                                      ? white
+                                                      ? (darkModeOn ? white : black)
                                                       : (darkModeOn
                                                           ? darkModeSecondaryColor
                                                           : lightModeSecondaryColor),
@@ -576,7 +576,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                   Icons.file_present_rounded,
                                                   color: widget.eventSnap
                                                           .document!.isNotEmpty
-                                                      ? white
+                                                      ? (darkModeOn ? white : black)
                                                       : (darkModeOn
                                                           ? darkModeSecondaryColor
                                                           : lightModeSecondaryColor),
