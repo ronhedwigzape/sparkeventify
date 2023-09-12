@@ -206,18 +206,25 @@ class _PostCardState extends State<PostCard> {
                 ),
                 Row(
                   children: [
-                    TextButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (context) => EditEventScreen(
-                              eventSnap: widget.snap,
+                    Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: TextButton.icon(
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (context) => EditEventScreen(
+                                eventSnap: widget.snap,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.view_agenda, size: 18),
-                      label: Text('Edit this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'}'),
+                          );
+                        },
+                        icon: Icon(Icons.edit_calendar, size: 20, color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,),
+                        label: Text('Edit this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'}', 
+                        style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
+                          color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),),
+                      ),
                     ),
                   ],
                 ),
@@ -420,8 +427,12 @@ class _PostCardState extends State<PostCard> {
                             ),
                           );
                         },
-                        icon: const Icon(Icons.view_agenda, size: 18),
-                        label: Text('Edit this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'}'),
+                        icon: Icon(Icons.edit_calendar, size: 24, color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,),
+                        label: Text('Edit this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'}', 
+                          style: TextStyle(
+                            fontWeight: FontWeight.w700,
+                            fontSize: 16,
+                            color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),),
                       ),
                     ),
                   ],
