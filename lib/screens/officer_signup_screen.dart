@@ -96,7 +96,7 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
       department: department,
       course: course,
       year: _yearController.text.trim(),
-      section: _sectionController.text.trim(),
+      section: _sectionController.text.trim().toUpperCase(),
       organization: _organizationController.text.trim(),
       position: _positionController.text.trim(),
     );

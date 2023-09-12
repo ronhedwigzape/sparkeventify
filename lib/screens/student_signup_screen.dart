@@ -91,7 +91,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
       department: department,
       course: course,
       year: _yearController.text.trim(),
-      section: _sectionController.text.trim(),
+      section: _sectionController.text.trim().toUpperCase(),
     );
 
     String res = await AuthMethods().signUp(

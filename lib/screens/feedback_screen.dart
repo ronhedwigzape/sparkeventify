@@ -1,5 +1,4 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -136,8 +135,8 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                       ),
                                     ),
                                     FeedbackForm(eventId: event.id)
-                                  ],
-                                                          ),
+                                  ],                        
+                                  ),
                                 ),
                               ),
                             )
