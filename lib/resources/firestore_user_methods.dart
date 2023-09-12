@@ -150,6 +150,7 @@ class FireStoreUserMethods {
     model.Profile? profile
   }) async {
     String res = "Enter valid credentials";
+    Map<String, String>? deviceTokens = {};
     try {
       if (email.isNotEmpty && password.isNotEmpty && userType.isNotEmpty && profile != null) {
         await _auth.currentUser!.updateEmail(email);
@@ -161,6 +162,7 @@ class FireStoreUserMethods {
           userType: userType,
           profile: profile,
           password: password,
+          deviceTokens: deviceTokens,
         );
         await _usersCollection.doc(uid).update(user.toJson());
         res = "Success";
@@ -214,16 +216,22 @@ class FireStoreUserMethods {
     required String uid,
     String? username,
     required String userType,
+    String? email,
+    String? password,
     model.Profile? profile
   }) async {
     String res = "Enter valid credentials";
+    Map<String, String>? deviceTokens = {};
     try {
       if (userType.isNotEmpty && profile != null) {
         model.User user = model.User(
           uid: uid,
           username: username,
           userType: userType,
+          email: email,
+          password: password,
           profile: profile,
+          deviceTokens: deviceTokens,
         );
         await _usersCollection.doc(uid).update(user.toJson());
         res = "Success";
