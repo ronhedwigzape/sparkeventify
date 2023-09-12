@@ -61,21 +61,23 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
               appBar: AppBar(
                 automaticallyImplyLeading: false,
                 title: const Padding(
-                  padding: EdgeInsets.fromLTRB(30.0, 0, 0, 0),
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
                   child: Row(
                     children: [
                       CSPCLogoWhite(
                         height: 30.0,
                       ),
                       SizedBox(
-                        width: 10.0,
+                        width: 20.0,
                       ),
-                      Text(
-                        appName,
-                        style: TextStyle(
-                          color: lightModeSecondaryColor,
-                          fontSize: 20.0,
-                          fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Text(
+                          appName,
+                          style: TextStyle(
+                            color: lightModeSecondaryColor,
+                            fontSize: 20.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ],
@@ -84,140 +86,26 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                 elevation: 0.0,
                 backgroundColor: darkModeOn ? darkColor : lightColor,
                 actions: [
-                  TextButton.icon(
-                    onPressed: () => navigationTapped(0),
-                    icon: Icon(Icons.dashboard,
-                      color: _page == 0
-                          ? darkModeOn
-                          ? darkModePrimaryColor
-                          :  lightModePrimaryColor
-                          : darkModeOn
-                          ? darkModeSecondaryColor
-                          : lightModeSecondaryColor),
-                    label: Text(
-                      'Dashboard',
-                      style: TextStyle(
-                      color: _page == 0
-                          ? darkModeOn
-                          ? darkModePrimaryColor
-                          :  lightModePrimaryColor
-                          : darkModeOn
-                          ? darkModeSecondaryColor
-                          : lightModeSecondaryColor
-                        ),
-                    ),
-                  ),
-                  const SizedBox(width: 10.0,),
-                  TextButton.icon(
-                    onPressed: () => navigationTapped(1),
-                    icon: Icon(Icons.add_circle_sharp,
-                      color: _page == 1
-                          ? darkModeOn
-                          ? darkModePrimaryColor
-                          : lightModePrimaryColor
-                          : darkModeOn
-                          ? darkModeSecondaryColor
-                          : lightModeSecondaryColor),
-                    label: Text(
-                      'Post',
-                      style: TextStyle(
-                      color: _page == 1
-                          ? darkModeOn
-                          ? darkModePrimaryColor
-                          :  lightModePrimaryColor
-                          : darkModeOn
-                          ? darkModeSecondaryColor
-                          : lightModeSecondaryColor
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10.0,),
-                  TextButton.icon(
-                    onPressed: () => navigationTapped(2),
-                    icon: Icon(Icons.feed,
-                      color: _page == 2
-                          ? darkModeOn
-                          ? darkModePrimaryColor
-                          : lightModePrimaryColor
-                          : darkModeOn
-                          ? darkModeSecondaryColor
-                          : lightModeSecondaryColor),
-                    label: Text(
-                      'Events',
-                      style: TextStyle(
-                      color: _page == 2
-                          ? darkModeOn
-                          ? darkModePrimaryColor
-                          :  lightModePrimaryColor
-                          : darkModeOn
-                          ? darkModeSecondaryColor
-                          : lightModeSecondaryColor
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10.0,),
-                  TextButton.icon(
-                    onPressed: () => navigationTapped(3),
-                    icon: Icon(Icons.supervised_user_circle_sharp,
-                      color: _page == 3
-                          ? darkModeOn
-                          ? darkModePrimaryColor
-                          : lightModePrimaryColor
-                          : darkModeOn
-                          ? darkModeSecondaryColor
-                          : lightModeSecondaryColor),
-                    label: Text(
-                        'Users',
-                      style: TextStyle(
-                      color: _page == 3
-                          ? darkModeOn
-                          ? darkModePrimaryColor
-                          :  lightModePrimaryColor
-                          : darkModeOn
-                          ? darkModeSecondaryColor
-                          : lightModeSecondaryColor
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10.0,),
-                  TextButton.icon(
-                    onPressed: () => navigationTapped(4),
-                    icon: Icon(Icons.settings,
-                      color: _page == 4
-                          ? darkModeOn
-                          ? darkModePrimaryColor
-                          : lightModePrimaryColor
-                          : darkModeOn
-                          ? darkModeSecondaryColor
-                          : lightModeSecondaryColor),
-                    label: Text(
-                      'Settings',
-                      style: TextStyle(
-                      color: _page == 4
-                          ? darkModeOn
-                          ? darkModePrimaryColor
-                          :  lightModePrimaryColor
-                          : darkModeOn
-                          ? darkModeSecondaryColor
-                          : lightModeSecondaryColor
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 10.0,),
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(40.0, 0, 2.5, 0),
-                        child: CircleAvatar(
+                  buildAppBarButton(icon: Icons.dashboard, label: "Dashboard", pageIndex: 0, onTap: () => navigationTapped(0)),
+                  const SizedBox(width: 10.0),
+                  buildAppBarButton(icon: Icons.add_circle, label: "Post", pageIndex: 1, onTap: () => navigationTapped(1)),
+                  const SizedBox(width: 10.0),
+                  buildAppBarButton(icon: Icons.event, label: "Events", pageIndex: 2, onTap: () => navigationTapped(2)),
+                  const SizedBox(width: 10.0),
+                  buildAppBarButton(icon: Icons.group, label: "Users", pageIndex: 3, onTap: () => navigationTapped(3)),
+                  const SizedBox(width: 10.0),
+                  buildAppBarButton(icon: Icons.settings, label: "Settings", pageIndex: 4, onTap: () => navigationTapped(4)),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 30.0),
+                    child: Row(
+                      children: [
+                        CircleAvatar(
                           backgroundColor: darkModeOn ? lightColor : darkColor,
                           radius: 8.0,
                           child: Icon(Icons.person, color: darkModeOn ? darkColor : lightColor, size: 14,)
-                          ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                            2.5, 7.5, 5.0, 7.5),
-                        child: Text(
+                        ),
+                        const SizedBox(width: 10.0),
+                        Text(
                           currentUser?.profile?.fullName ?? '',
                           style: TextStyle(
                             color: darkModeOn ? lightColor : darkColor,
@@ -225,17 +113,14 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(
-                            5.0, 7.5, 50.0, 7.5),
-                        child: CircleAvatar(
+                        const SizedBox(width: 10.0),
+                        CircleAvatar(
                           radius: 13,
                           backgroundImage: NetworkImage(currentUser?.profile?.profileImage ?? 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
                           backgroundColor: transparent,
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   )
                 ],
               ),
@@ -261,4 +146,26 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
         }
     );
   }
+  // appBarButton Builder
+  Widget buildAppBarButton({required IconData icon, required String label, required int pageIndex, VoidCallback? onTap}){
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
+    final color = _page == pageIndex
+                ? darkModeOn
+                ? darkModePrimaryColor
+                :  lightModePrimaryColor
+                : darkModeOn
+                ? darkModeSecondaryColor
+                : lightModeSecondaryColor;
+
+    return TextButton.icon(
+      onPressed: onTap,
+      icon: Icon(icon, color: color),
+      label: Text(
+        label,
+        style: TextStyle(color: color),
+      ),
+    );
+  }
 }
+
+
