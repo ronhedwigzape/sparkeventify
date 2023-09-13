@@ -80,12 +80,10 @@ class _NotificationButtonState extends State<NotificationButton> {
                 borderRadius: BorderRadius.circular(15.0),
               ),
               elevation: 0,
-              backgroundColor: Colors.transparent,
               child: Container(
-                decoration: BoxDecoration(
-                  color: darkModeOn ? darkColor : lightColor,
+                decoration: const BoxDecoration(
                   shape: BoxShape.rectangle,
-                  borderRadius: const BorderRadius.all(Radius.circular(15)),
+                  borderRadius: BorderRadius.all(Radius.circular(15)),
                 ),
                 width: MediaQuery.of(context).size.width - 40,
                 child: Padding(
@@ -201,7 +199,7 @@ class _NotificationButtonState extends State<NotificationButton> {
         children: [
           const Icon(Icons.send, size: 13,),
           const SizedBox(width: 5.0,),
-          Text('Send Notifications (${widget.selectedUsers.length})'),
+          Text('Notify (${widget.selectedUsers.length})'),
         ],
       ),
     );
