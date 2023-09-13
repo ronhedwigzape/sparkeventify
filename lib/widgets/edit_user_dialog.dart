@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/profile.dart' as model;
@@ -5,6 +6,7 @@ import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/widgets/password_widget.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
 
 class EditUserDialog extends StatefulWidget {
@@ -22,13 +24,24 @@ class _EditUserDialogState extends State<EditUserDialog> {
   final TextEditingController middleInitialController = TextEditingController();
   final TextEditingController lastNameController = TextEditingController();
   final TextEditingController phoneNumberController = TextEditingController();
-  final TextEditingController departmentController = TextEditingController();
-  final TextEditingController courseController = TextEditingController();
   final TextEditingController yearController = TextEditingController();
   final TextEditingController sectionController = TextEditingController();
   final TextEditingController positionController = TextEditingController();
   final TextEditingController organizationController = TextEditingController();
   late String profileImage;
+  final _formKey = GlobalKey<FormState>();
+    final List<String> coursesAndDepartments = [
+    'BSCS - CCS - Computer Science',
+    'BSIT - CCS - Information Technology',
+    'BSN - CHS - Nursing',
+    'BSM - CHS - Midwifery',
+    'BSME - CEA - Mechanical Engineering',
+    'BSEE - CEA - Electrical Engineering',
+    'BSCE - CEA - Computer Engineering',
+  ];
+  late String selectedCourseAndDepartment = coursesAndDepartments[0];
+  late String course;
+  late String department;
 
   @override
   void initState() {
@@ -38,13 +51,22 @@ class _EditUserDialogState extends State<EditUserDialog> {
     middleInitialController.text = widget.user.profile!.middleInitial?? '';
     lastNameController.text = widget.user.profile!.lastName?? '';
     phoneNumberController.text = widget.user.profile!.phoneNumber?? '';
-    departmentController.text = widget.user.profile!.department?? '';
-    courseController.text = widget.user.profile!.course?? '';
+    department = widget.user.profile!.department?? '';
+    course = widget.user.profile!.course?? '';
     yearController.text = widget.user.profile!.year?? '';
     sectionController.text = widget.user.profile!.section?? '';
     positionController.text = widget.user.profile!.position?? '';
     organizationController.text = widget.user.profile!.organization?? '';
     profileImage = widget.user.profile!.profileImage ?? '';
+
+    // Set the default value for the dropdown
+    for (String courseAndDepartment in coursesAndDepartments) {
+      List<String> splitValue = courseAndDepartment.split(' - ');
+      if (splitValue[0] == course && splitValue[1] == department) {
+        selectedCourseAndDepartment = courseAndDepartment;
+        break;
+      }
+    }
   }
 
   updateUserDetails() async {
@@ -56,15 +78,16 @@ class _EditUserDialogState extends State<EditUserDialog> {
         middleInitial: middleInitialController.text,
         lastName: lastNameController.text,
         phoneNumber: phoneNumberController.text,
-        department: departmentController.text,
-        course: courseController.text,
+        department: department,
+        course: course,
         year: yearController.text,
         section: sectionController.text,
         position: positionController.text,
         organization: organizationController.text,
         profileImage: profileImage);
 
-    String response = await FireStoreUserMethods().updateUserProfile(
+    try {
+      String response = await FireStoreUserMethods().updateUserProfile(
         uid: widget.user.uid,
         userType: userTypeController.text,
         email: widget.user.email,
@@ -72,16 +95,19 @@ class _EditUserDialogState extends State<EditUserDialog> {
         deviceTokens: widget.user.deviceTokens,
         profile: profile);
 
-    if (response == 'Success') {
-      onUpdateSuccess();
-    } else {
-      onUpdateFailure(response);
+      if (response == 'Success') {
+        onUpdateSuccess();
+      } else {
+        onUpdateFailure(response);
+      }
+    } catch (e) {
+      onUpdateFailure(e.toString());
     }
   }
 
   void onUpdateSuccess() {
     Navigator.pop(context);
-    showSnackBar('User details updated successfully', context);
+    showSnackBar('User details updated successfully!', context);
   }
 
   void onUpdateFailure(String message) {
@@ -100,8 +126,6 @@ class _EditUserDialogState extends State<EditUserDialog> {
     middleInitialController.dispose();
     lastNameController.dispose();
     phoneNumberController.dispose();
-    departmentController.dispose();
-    courseController.dispose();
     yearController.dispose();
     sectionController.dispose();
     positionController.dispose();
@@ -128,192 +152,194 @@ class _EditUserDialogState extends State<EditUserDialog> {
               ),
               insetPadding: const EdgeInsets.symmetric(vertical: 80),
               content: Form(
+                key: _formKey,
                 child: SingleChildScrollView(
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    child: Column(
-                      children: [
-                        Text('Note: You can only edit the user\'s profile image in the user\'s profile page. ', 
-                        style: TextStyle(
-                          color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),),
-                        const SizedBox(height: 20),
-                        TextFieldInput(
-                          labelText: 'User Type',
-                          textEditingController: userTypeController, 
-                          textInputType: TextInputType.text,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter user type';
-                            }
-                            return null;
+                    child: Form(
+                      child: Column(
+                        children: [
+                          Text('Note: You can only edit the user\'s profile image in the user\'s profile page. ', 
+                          style: TextStyle(
+                            color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),),
+                          const SizedBox(height: 20),
+                          Row(
+                            children: [
+                              Flexible(
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                  const Icon(Icons.email),
+                                  const SizedBox(width: 10),
+                                  Text(widget.user.email ?? 'No email found')
+                                ]),
+                              ),
+                              PasswordWidget(password: widget.user.password ?? 'No password found')
+                            ],
+                          ),
+                          const SizedBox(height: 15),
+                          DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(Icons.location_pin),
+                              labelText: 'User Type',
+                              border: OutlineInputBorder(
+                              borderSide: Divider.createBorderSide(
+                                context,
+                                color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
+                            ),
+                            ),
+                            value: userTypeController.text.isEmpty ? widget.user.userType : userTypeController.text,
+                            items: <String>[
+                              'Student',
+                              'Officer',
+                              'Staff'
+                            ].map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(value),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                userTypeController.text = newValue!;
+                              });
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          TextFieldInput(
+                            labelText: 'First Name',
+                            textEditingController: firstNameController,
+                            textInputType: TextInputType.text,
+                            prefixIcon: const Icon(Icons.person),
+                          ),
+                          const SizedBox(height: 10),
+                          TextFieldInput(
+                            labelText: 'Middle Initial',
+                            textEditingController: middleInitialController,
+                            textInputType: TextInputType.text,
+                            prefixIcon: const Icon(Icons.person),
+                          ),
+                          const SizedBox(height: 10),
+                          TextFieldInput(
+                            labelText: 'Last Name',
+                            textEditingController: lastNameController,
+                            textInputType: TextInputType.text,
+                            prefixIcon: const Icon(Icons.person),
+                          ),
+                          const SizedBox(height: 10),
+                          TextFieldInput(
+                            labelText: 'Phone Number',
+                            textEditingController: phoneNumberController,
+                            textInputType: TextInputType.text,
+                            prefixIcon: const Icon(Icons.phone),
+                          ),
+                          widget.user.userType != 'Staff' ? const SizedBox(height: 10) : const SizedBox.shrink(),
+                          widget.user.userType != 'Staff' ? 
+                          DropdownButtonFormField<String>(
+                          value: selectedCourseAndDepartment,
+                          style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                          decoration: InputDecoration(
+                            focusColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                            prefixIcon: const Icon(Icons.school),
+                            labelText: 'Course and Department*',
+                            border: OutlineInputBorder(
+                              borderSide: Divider.createBorderSide(
+                                context,
+                                color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
+                            ),
+                          ),
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedCourseAndDepartment = newValue ?? coursesAndDepartments[0]; // Handle null selection
+
+                              // Split the selected value:
+                              List<String> splitValue = selectedCourseAndDepartment.split(' - ');
+                              course = splitValue[0];
+                              department = splitValue[1];
+                            });
                           },
-                          prefixIcon: const Icon(Icons.account_box),
-                        ),
-                        const SizedBox(height: 10),
-                        TextFieldInput(
-                          labelText: 'First Name',
-                          textEditingController: firstNameController,
-                          textInputType: TextInputType.text,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter first name';
-                            }
-                            return null;
-                          },
-                          prefixIcon: const Icon(Icons.person),
-                        ),
-                        const SizedBox(height: 10),
-                        TextFieldInput(
-                          labelText: 'Middle Initial',
-                          textEditingController: middleInitialController,
-                          textInputType: TextInputType.text,
-                          validator: (value) {
-                            if (value!.isEmpty) return 'Please enter your section';
-                            if (!RegExp(r"^[A-Z]$")
-                                .hasMatch(value)) {
-                              return 'Please enter your middle initial (A-Z)';
-                            }
-                            return null;
-                          },
-                          prefixIcon: const Icon(Icons.person),
-                        ),
-                        const SizedBox(height: 10),
-                        TextFieldInput(
-                          labelText: 'Last Name',
-                          textEditingController: lastNameController,
-                          textInputType: TextInputType.text,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter last name';
-                            }
-                            return null;
-                          },
-                          prefixIcon: const Icon(Icons.person),
-                        ),
-                        const SizedBox(height: 10),
-                        TextFieldInput(
-                          labelText: 'Phone Number',
-                          textEditingController: phoneNumberController,
-                          textInputType: TextInputType.text,
-                          validator: (value) {
-                            if (value!.isEmpty) return 'Please enter your phone number';
-                            if (!RegExp(r"^639\d{9}$").hasMatch(value)) return 'Please enter a valid phone number. (e.g. 639123456789)';
-                            return null;
-                          },
-                          prefixIcon: const Icon(Icons.phone),
-                        ),
-                        widget.user.userType != 'Staff' ? const SizedBox(height: 10) : const SizedBox.shrink(),
-                        widget.user.userType != 'Staff' ? TextFieldInput(
-                          labelText: 'Department',
-                          textEditingController: departmentController,
-                          textInputType: TextInputType.text,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter department';
-                            }
-                            return null;
-                          },
-                          prefixIcon: const Icon(Icons.school),
+                          items: coursesAndDepartments.map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value.isEmpty ? null : value,
+                              child: Text(value),
+                            );
+                          }).toList(),
                         ) : const SizedBox.shrink(),
-                        widget.user.userType != 'Staff' ? const SizedBox(height: 10) : const SizedBox.shrink(),
-                        widget.user.userType != 'Staff' ? TextFieldInput(
-                          labelText: 'Course',
-                          textEditingController: courseController,
-                          textInputType: TextInputType.text,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter course';
-                            }
-                            return null;
-                          },
-                          prefixIcon: const Icon(Icons.school),
-                        ) : const SizedBox.shrink(),
-                        widget.user.userType != 'Staff' ? const SizedBox(height: 10) : const SizedBox.shrink(),
-                        widget.user.userType != 'Staff' ? TextFieldInput(
-                          labelText: 'Year',
-                          textEditingController: yearController,
-                          textInputType: TextInputType.text,
-                          validator: (value) {
-                            if (value!.isEmpty) return 'Please enter your year';
-                            if (int.tryParse(value) == null ||
-                                int.tryParse(value)! < 1 ||
-                                int.tryParse(value)! > 4) {
-                              return 'Please enter a valid year (1-4)';
-                            }
-                            return null;
-                          },
-                          prefixIcon: const Icon(Icons.school),
-                        ) : const SizedBox.shrink(),
-                        widget.user.userType != 'Staff' ? const SizedBox(height: 10) : const SizedBox.shrink(),
-                        widget.user.userType != 'Staff' ? TextFieldInput(
-                          labelText: 'Section',
-                          textEditingController: sectionController,
-                          textInputType: TextInputType.text,
-                          validator: (value) {
-                            if (value!.isEmpty) return 'Please enter your section';
-                            if (!RegExp(r"^[A-Z]$").hasMatch(value)) {
-                              return 'Please enter a valid section (A-Z)';
-                            }
-                            return null;
-                          },
-                          prefixIcon: const Icon(Icons.school),
-                        ) : const SizedBox.shrink(),
-                        widget.user.userType != 'Student' ? const SizedBox(height: 10) : const SizedBox.shrink(),
-                        widget.user.userType != 'Student' ? TextFieldInput(
-                          labelText: 'Position',
-                          textEditingController: positionController,
-                          textInputType: TextInputType.text,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter position';
-                            }
-                            return null;
-                          },
-                          prefixIcon: const Icon(Icons.star_border),
-                        ) : const SizedBox.shrink(),
-                        const SizedBox(height: 10),
-                        widget.user.userType == 'Officer' ? TextFieldInput(
-                          labelText: 'Organization',
-                          textEditingController: organizationController,
-                          textInputType: TextInputType.text,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter organization';
-                            }
-                            return null;
-                          },
-                          prefixIcon: const Icon(Icons.group),
-                        ) : const SizedBox.shrink(),
-                      ],
+                          widget.user.userType != 'Staff' ? const SizedBox(height: 10) : const SizedBox.shrink(),
+                          widget.user.userType != 'Staff' ? TextFieldInput(
+                            labelText: 'Year',
+                            textEditingController: yearController,
+                            textInputType: TextInputType.text,
+                            prefixIcon: const Icon(Icons.school),
+                          ) : const SizedBox.shrink(),
+                          widget.user.userType != 'Staff' ? const SizedBox(height: 10) : const SizedBox.shrink(),
+                          widget.user.userType != 'Staff' ? TextFieldInput(
+                            labelText: 'Section',
+                            textEditingController: sectionController,
+                            textInputType: TextInputType.text,
+                            prefixIcon: const Icon(Icons.school),
+                          ) : const SizedBox.shrink(),
+                          widget.user.userType != 'Student' ? const SizedBox(height: 10) : const SizedBox.shrink(),
+                          widget.user.userType != 'Student' ? TextFieldInput(
+                            labelText: 'Position',
+                            textEditingController: positionController,
+                            textInputType: TextInputType.text,
+                            prefixIcon: const Icon(Icons.star_border),
+                          ) : const SizedBox.shrink(),
+                          const SizedBox(height: 10),
+                          widget.user.userType == 'Officer' ? TextFieldInput(
+                            labelText: 'Organization',
+                            textEditingController: organizationController,
+                            textInputType: TextInputType.text,
+                            prefixIcon: const Icon(Icons.group),
+                          ) : const SizedBox.shrink(),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Flexible(
+                                  child: TextButton.icon(
+                                    onPressed: () {
+                                      Navigator.pop(context);
+                                    },
+                                    icon: Icon(Icons.cancel, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
+                                    label: Text('Cancel',
+                                    style: TextStyle(
+                                      color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),)),
+                                ),
+                                Flexible(
+                                  child: TextButton.icon(
+                                  onPressed: () async {
+                                     try {
+                                      await updateUserDetails();
+                                    } catch (e) {
+                                      if (kDebugMode) {
+                                        print('Failed to update user details: $e');
+                                      }
+                                    }
+                                  },
+                                  icon: Icon(Icons.update, color: darkModeOn ? darkModeGrassColor : lightModeGrassColor),
+                                  label: Text('Update', 
+                                  style: TextStyle(
+                                    color: darkModeOn ? darkModeGrassColor : lightModeGrassColor,
+                                    fontWeight: FontWeight.bold),)),
+                                ),
+                              ],
+                            ),
+                          ),
+                          
+                        ],
+                      ),
                     ),
                   ),
-                ),
+                ), 
               ),
-              actions: [
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextButton.icon(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(Icons.cancel, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
-                    label: Text('Cancel',
-                    style: TextStyle(
-                      color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),)),
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextButton.icon(
-                    onPressed: () async {
-                      await updateUserDetails();
-                    },
-                    icon: Icon(Icons.update, color: darkModeOn ? darkModeGrassColor : lightModeGrassColor),
-                    label: Text('Update', 
-                    style: TextStyle(
-                      color: darkModeOn ? darkModeGrassColor : lightModeGrassColor,
-                      fontWeight: FontWeight.bold),)),
-                ),
-              ],
             ),
           )
         );
