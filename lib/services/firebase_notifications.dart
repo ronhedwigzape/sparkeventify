@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_info_plus/device_info_plus.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -25,6 +26,8 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 }
 
 class FirebaseNotificationService {
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users');
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
 
   void init() async {
@@ -184,6 +187,27 @@ class FirebaseNotificationService {
         print('Error unregistering device: $e');
       }
     }
+  }
+
+  void manageTokenRegistrations() async {
+    _auth.userChanges().listen((User? user) async {
+      if (user != null) {
+        // user signed in, register token
+        String? token = await _firebaseMessaging.getToken();
+        if (token != null) await registerDevice(user.uid, token);
+      } else {
+        // user signed out, unregister token
+        String? deviceId = await getDeviceId();
+        var userDocumentSnapshot = await _usersCollection.doc(user?.uid).get();
+        
+        if (userDocumentSnapshot.exists) {
+          Map<String, dynamic> tokenMap = userDocumentSnapshot.get('deviceTokens');
+          if (tokenMap.isNotEmpty) {
+            await unregisterDevice(deviceId!);
+          }
+        }
+      }
+    });
   }
 
   Future<String?> sendNotificationToUser(String senderId, String userId, String title, String body) async {

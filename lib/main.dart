@@ -23,6 +23,7 @@ void main() async {
   await dotenv.load();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const App());
+  FirebaseNotificationService().manageTokenRegistrations();
 }
 
 class App extends StatefulWidget {
