@@ -61,6 +61,26 @@ class FireStoreUserMethods {
     return user;
   }
 
+  Future<Map<String, String>?> getUserDeviceTokens(String uid) async {
+    try {
+      DocumentSnapshot docSnapshot = await _usersCollection.doc(uid).get();
+
+      if (docSnapshot.exists) {
+        var data = docSnapshot.data() as Map<String, dynamic>;
+
+        if (data.containsKey('deviceTokens')) {
+          return Map<String, String>.from(data['deviceTokens']);
+        }
+      }
+      return null;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error getting device tokens: $e');
+      }
+      return null;
+    }
+  }
+
   // Future<void> deleteUser(String uid) async {
   //   try {
   //     final HttpsCallable callable = functions.httpsCallable('deleteUser');
@@ -218,10 +238,10 @@ class FireStoreUserMethods {
     required String userType,
     String? email,
     String? password,
+    Map<String, String>? deviceTokens,
     model.Profile? profile
   }) async {
     String res = "Enter valid credentials";
-    Map<String, String>? deviceTokens = {};
     try {
       if (userType.isNotEmpty && profile != null) {
         model.User user = model.User(
