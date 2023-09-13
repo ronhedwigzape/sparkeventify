@@ -85,7 +85,6 @@ class _NotificationButtonState extends State<NotificationButton> {
                   shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.all(Radius.circular(15)),
                 ),
-                width: MediaQuery.of(context).size.width - 40,
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
                   child: Form(

@@ -180,7 +180,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                           const SizedBox(height: 15),
                           DropdownButtonFormField<String>(
                             decoration: InputDecoration(
-                              prefixIcon: Icon(Icons.location_pin),
+                              prefixIcon: const Icon(Icons.account_box),
                               labelText: 'User Type',
                               border: OutlineInputBorder(
                               borderSide: Divider.createBorderSide(

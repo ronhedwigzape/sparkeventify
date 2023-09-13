@@ -56,7 +56,15 @@ class _UsersCardState extends State<UsersCard> {
                                backgroundColor: darkColor,
                              ),
                              const SizedBox(height: 10.0),
-                             Text(currentProfile.fullName ?? 'N/A'),
+                             RichText(
+                              text: TextSpan(
+                                style: DefaultTextStyle.of(context).style,
+                                children: <TextSpan>[
+                                  TextSpan(text: '${currentProfile.fullName ?? 'N/A'} - '),
+                                  TextSpan(text: widget.user.userType, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                ],
+                              ),
+                            )
                            ],
                          ),
                        ),
