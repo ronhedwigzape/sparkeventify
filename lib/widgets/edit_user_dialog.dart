@@ -69,6 +69,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
         userType: userTypeController.text,
         email: widget.user.email,
         password: widget.user.password,
+        deviceTokens: widget.user.deviceTokens,
         profile: profile);
 
     if (response == 'Success') {
@@ -132,7 +133,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     child: Column(
                       children: [
-                        Text('Note: This user will also be signed out after updating account details.', 
+                        Text('Note: You can only edit the user\'s profile image in the user\'s profile page. ', 
                         style: TextStyle(
                           color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),),
                         const SizedBox(height: 20),
