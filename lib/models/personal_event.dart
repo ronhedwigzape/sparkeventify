@@ -15,6 +15,7 @@ class PersonalEvent {
   String? venue;
   String type;
   String status;
+  DateTime? dateUpdated;
   DateTime? datePublished;
 
   PersonalEvent({
@@ -32,6 +33,7 @@ class PersonalEvent {
     this.venue,
     required this.type,
     required this.status,
+    this.dateUpdated,
     this.datePublished,
   });
 
@@ -51,6 +53,7 @@ class PersonalEvent {
         'venue': venue,
         'type': type,
         'status': status,
+        'dateUpdated': dateUpdated,
         'datePublished': datePublished,
       };
 
@@ -72,6 +75,7 @@ class PersonalEvent {
       venue: snapshot['venue'],
       type: snapshot['type'],
       status: snapshot['status'],
+      dateUpdated: (snapshot['dateUpdated'] as Timestamp).toDate().toUtc(),
       datePublished: (snapshot['datePublished'] as Timestamp).toDate().toUtc()
     );
   }
