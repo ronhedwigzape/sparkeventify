@@ -48,7 +48,11 @@ class _UsersCardState extends State<UsersCard> {
                            children: [
                              CircleAvatar(
                                radius: 30,
-                               backgroundImage: NetworkImage(currentProfile.profileImage ?? 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
+                               backgroundImage: NetworkImage(
+                              (currentProfile.profileImage == null || currentProfile.profileImage!.isEmpty)
+                                    ? 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'
+                                    : currentProfile.profileImage!
+                                ),
                                backgroundColor: darkColor,
                              ),
                              const SizedBox(height: 10.0),
