@@ -5,6 +5,7 @@ import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/widgets/text_field_input.dart';
 
 class EditUserDialog extends StatefulWidget {
   const EditUserDialog({super.key, required this.user});
@@ -16,54 +17,56 @@ class EditUserDialog extends StatefulWidget {
 }
 
 class _EditUserDialogState extends State<EditUserDialog> {
-  late String firstName,
-      middleInitial,
-      lastName,
-      phoneNumber,
-      department,
-      course,
-      year,
-      section,
-      position,
-      organization,
-      profileImage;
+  final TextEditingController userTypeController = TextEditingController();
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController middleInitialController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController phoneNumberController = TextEditingController();
+  final TextEditingController departmentController = TextEditingController();
+  final TextEditingController courseController = TextEditingController();
+  final TextEditingController yearController = TextEditingController();
+  final TextEditingController sectionController = TextEditingController();
+  final TextEditingController positionController = TextEditingController();
+  final TextEditingController organizationController = TextEditingController();
+  late String profileImage;
 
   @override
   void initState() {
     super.initState();
-    firstName = widget.user.profile!.firstName ?? '';
-    middleInitial = widget.user.profile!.middleInitial ?? '';
-    lastName = widget.user.profile!.lastName ?? '';
-    phoneNumber = widget.user.profile!.phoneNumber ?? '';
-    department = widget.user.profile!.department ?? '';
-    course = widget.user.profile!.course ?? '';
-    year = widget.user.profile!.year ?? '';
-    section = widget.user.profile!.section ?? '';
-    position = widget.user.profile!.position ?? '';
-    organization = widget.user.profile!.organization ?? '';
-    profileImage = widget.user.profile!.profileImage?? 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png';
+    userTypeController.text = widget.user.userType;
+    firstNameController.text = widget.user.profile!.firstName ?? '';
+    middleInitialController.text = widget.user.profile!.middleInitial?? '';
+    lastNameController.text = widget.user.profile!.lastName?? '';
+    phoneNumberController.text = widget.user.profile!.phoneNumber?? '';
+    departmentController.text = widget.user.profile!.department?? '';
+    courseController.text = widget.user.profile!.course?? '';
+    yearController.text = widget.user.profile!.year?? '';
+    sectionController.text = widget.user.profile!.section?? '';
+    positionController.text = widget.user.profile!.position?? '';
+    organizationController.text = widget.user.profile!.organization?? '';
+    profileImage = widget.user.profile!.profileImage ?? '';
   }
 
   updateUserDetails() async {
-    String fullname = '$firstName $lastName';
-    
+    String fullname = '${firstNameController.text} ${lastNameController.text}';
+
     model.Profile profile = model.Profile(
         fullName: fullname,
-        firstName: firstName,
-        middleInitial: middleInitial,
-        lastName: lastName,
-        phoneNumber: phoneNumber,
-        department: department,
-        course: course,
-        year: year,
-        section: section,
-        position: position,
-        organization: organization,
+        firstName: firstNameController.text,
+        middleInitial: middleInitialController.text,
+        lastName: lastNameController.text,
+        phoneNumber: phoneNumberController.text,
+        department: departmentController.text,
+        course: courseController.text,
+        year: yearController.text,
+        section: sectionController.text,
+        position: positionController.text,
+        organization: organizationController.text,
         profileImage: profileImage);
 
     String response = await FireStoreUserMethods().updateUserProfile(
-        uid: widget.user.uid, 
-        userType: widget.user.userType,
+        uid: widget.user.uid,
+        userType: userTypeController.text,
         email: widget.user.email,
         password: widget.user.password,
         profile: profile);
@@ -90,185 +93,229 @@ class _EditUserDialogState extends State<EditUserDialog> {
   }
 
   @override
+  void dispose() {
+    userTypeController.dispose();
+    firstNameController.dispose();
+    middleInitialController.dispose();
+    lastNameController.dispose();
+    phoneNumberController.dispose();
+    departmentController.dispose();
+    courseController.dispose();
+    yearController.dispose();
+    sectionController.dispose();
+    positionController.dispose();
+    organizationController.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return TextButton.icon(
       onPressed: () {
         showDialog(
-            context: context,
-            builder: (context) => Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                  child: AlertDialog(
-                    title: Row(
+          context: context,
+          builder: (context) => Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: AlertDialog(
+              title: Row(
+                children: [
+                  const Icon(Icons.person),
+                  const SizedBox(width: 10),
+                  Text('Edit ${widget.user.profile!.firstName}\'s profile'),
+                ],
+              ),
+              insetPadding: const EdgeInsets.symmetric(vertical: 80),
+              content: Form(
+                child: SingleChildScrollView(
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                    child: Column(
                       children: [
-                        const Icon(Icons.person),
-                        const SizedBox(width: 10),
-                        Text(
-                            'Edit ${widget.user.profile!.firstName}\'s profile'),
+                        Text('Note: This user will also be signed out after updating account details.', 
+                        style: TextStyle(
+                          color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),),
+                        const SizedBox(height: 20),
+                        TextFieldInput(
+                          labelText: 'User Type',
+                          textEditingController: userTypeController, 
+                          textInputType: TextInputType.text,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter user type';
+                            }
+                            return null;
+                          },
+                          prefixIcon: const Icon(Icons.account_box),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFieldInput(
+                          labelText: 'First Name',
+                          textEditingController: firstNameController,
+                          textInputType: TextInputType.text,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter first name';
+                            }
+                            return null;
+                          },
+                          prefixIcon: const Icon(Icons.person),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFieldInput(
+                          labelText: 'Middle Initial',
+                          textEditingController: middleInitialController,
+                          textInputType: TextInputType.text,
+                          validator: (value) {
+                            if (value!.isEmpty) return 'Please enter your section';
+                            if (!RegExp(r"^[A-Z]$")
+                                .hasMatch(value)) {
+                              return 'Please enter your middle initial (A-Z)';
+                            }
+                            return null;
+                          },
+                          prefixIcon: const Icon(Icons.person),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFieldInput(
+                          labelText: 'Last Name',
+                          textEditingController: lastNameController,
+                          textInputType: TextInputType.text,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter last name';
+                            }
+                            return null;
+                          },
+                          prefixIcon: const Icon(Icons.person),
+                        ),
+                        const SizedBox(height: 10),
+                        TextFieldInput(
+                          labelText: 'Phone Number',
+                          textEditingController: phoneNumberController,
+                          textInputType: TextInputType.text,
+                          validator: (value) {
+                            if (value!.isEmpty) return 'Please enter your phone number';
+                            if (!RegExp(r"^639\d{9}$").hasMatch(value)) return 'Please enter a valid phone number. (e.g. 639123456789)';
+                            return null;
+                          },
+                          prefixIcon: const Icon(Icons.phone),
+                        ),
+                        widget.user.userType != 'Staff' ? const SizedBox(height: 10) : const SizedBox.shrink(),
+                        widget.user.userType != 'Staff' ? TextFieldInput(
+                          labelText: 'Department',
+                          textEditingController: departmentController,
+                          textInputType: TextInputType.text,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter department';
+                            }
+                            return null;
+                          },
+                          prefixIcon: const Icon(Icons.school),
+                        ) : const SizedBox.shrink(),
+                        widget.user.userType != 'Staff' ? const SizedBox(height: 10) : const SizedBox.shrink(),
+                        widget.user.userType != 'Staff' ? TextFieldInput(
+                          labelText: 'Course',
+                          textEditingController: courseController,
+                          textInputType: TextInputType.text,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter course';
+                            }
+                            return null;
+                          },
+                          prefixIcon: const Icon(Icons.school),
+                        ) : const SizedBox.shrink(),
+                        widget.user.userType != 'Staff' ? const SizedBox(height: 10) : const SizedBox.shrink(),
+                        widget.user.userType != 'Staff' ? TextFieldInput(
+                          labelText: 'Year',
+                          textEditingController: yearController,
+                          textInputType: TextInputType.text,
+                          validator: (value) {
+                            if (value!.isEmpty) return 'Please enter your year';
+                            if (int.tryParse(value) == null ||
+                                int.tryParse(value)! < 1 ||
+                                int.tryParse(value)! > 4) {
+                              return 'Please enter a valid year (1-4)';
+                            }
+                            return null;
+                          },
+                          prefixIcon: const Icon(Icons.school),
+                        ) : const SizedBox.shrink(),
+                        widget.user.userType != 'Staff' ? const SizedBox(height: 10) : const SizedBox.shrink(),
+                        widget.user.userType != 'Staff' ? TextFieldInput(
+                          labelText: 'Section',
+                          textEditingController: sectionController,
+                          textInputType: TextInputType.text,
+                          validator: (value) {
+                            if (value!.isEmpty) return 'Please enter your section';
+                            if (!RegExp(r"^[A-Z]$").hasMatch(value)) {
+                              return 'Please enter a valid section (A-Z)';
+                            }
+                            return null;
+                          },
+                          prefixIcon: const Icon(Icons.school),
+                        ) : const SizedBox.shrink(),
+                        widget.user.userType != 'Student' ? const SizedBox(height: 10) : const SizedBox.shrink(),
+                        widget.user.userType != 'Student' ? TextFieldInput(
+                          labelText: 'Position',
+                          textEditingController: positionController,
+                          textInputType: TextInputType.text,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter position';
+                            }
+                            return null;
+                          },
+                          prefixIcon: const Icon(Icons.star_border),
+                        ) : const SizedBox.shrink(),
+                        const SizedBox(height: 10),
+                        widget.user.userType == 'Officer' ? TextFieldInput(
+                          labelText: 'Organization',
+                          textEditingController: organizationController,
+                          textInputType: TextInputType.text,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter organization';
+                            }
+                            return null;
+                          },
+                          prefixIcon: const Icon(Icons.group),
+                        ) : const SizedBox.shrink(),
                       ],
                     ),
-                    insetPadding: const EdgeInsets.symmetric(vertical: 80),
-                    content: Form(
-                      child: SingleChildScrollView(
-                        child: Container(
-                          child: Column(
-                            children: [
-                              // Repeat TextFormField modification for all fields
-                              TextFormField(
-                                initialValue: firstName,
-                                decoration: const InputDecoration(
-                                    labelText: 'First Name'),
-                                validator: (value) {
-                                  if (value!.isEmpty)
-                                    return 'Please enter your first name';
-                                  return null;
-                                },
-                                onSaved: (value) => firstName = value!,
-                              ),
-                              TextFormField(
-                                initialValue: middleInitial,
-                                decoration: const InputDecoration(
-                                    labelText: 'Middle Initial'),
-                                validator: (value) {
-                                  if (value!.isEmpty)
-                                    return 'Please enter your middle initial';
-                                  return null;
-                                },
-                                onSaved: (value) => middleInitial = value!,
-                              ),
-                              TextFormField(
-                                initialValue: lastName,
-                                decoration: const InputDecoration(
-                                    labelText: 'Last Name'),
-                                validator: (value) {
-                                  if (value!.isEmpty)
-                                    return 'Please enter your last name';
-                                  return null;
-                                },
-                                onSaved: (value) => lastName = value!,
-                              ),
-                              TextFormField(
-                                initialValue: phoneNumber,
-                                decoration: const InputDecoration(
-                                    labelText: 'Phone Number'),
-                                validator: (value) {
-                                  if (value!.isEmpty)
-                                    return 'Please enter your phone number';
-                                  if (!RegExp(r"^639\d{9}$").hasMatch(value)) {
-                                    return 'Please enter a valid phone number. (e.g. 639123456789)';
-                                  }
-                                  return null;
-                                },
-                                onSaved: (value) => phoneNumber = value!,
-                              ),
-                              widget.user.userType != 'Staff'
-                                  ? TextFormField(
-                                      initialValue: department,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Department'),
-                                      validator: (value) {
-                                        if (value!.isEmpty)
-                                          return 'Please enter your department';
-                                        return null;
-                                      },
-                                      onSaved: (value) => department = value!,
-                                    )
-                                  : const SizedBox.shrink(),
-                              widget.user.userType != 'Staff'
-                                  ? TextFormField(
-                                      initialValue: course,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Course'),
-                                      validator: (value) {
-                                        if (value!.isEmpty)
-                                          return 'Please enter your course';
-                                        return null;
-                                      },
-                                      onSaved: (value) => course = value!,
-                                    )
-                                  : const SizedBox.shrink(),
-                              widget.user.userType != 'Staff'
-                                  ? TextFormField(
-                                      initialValue: year,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Year'),
-                                      validator: (value) {
-                                        if (value!.isEmpty)
-                                          return 'Please enter your year';
-                                        int? valueAsInt = int.tryParse(value);
-                                        if (valueAsInt == null ||
-                                            valueAsInt < 1 ||
-                                            valueAsInt > 4) {
-                                          return 'Please enter a valid year (1-4)';
-                                        }
-                                        return null;
-                                      },
-                                      onSaved: (value) => year = value!,
-                                    )
-                                  : const SizedBox.shrink(),
-                              widget.user.userType != 'Staff'
-                                  ? TextFormField(
-                                      initialValue: section,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Section'),
-                                      validator: (value) {
-                                        if (value!.isEmpty)
-                                          return 'Please enter your section';
-                                        if (!RegExp(r"^[A-Z]$")
-                                            .hasMatch(value)) {
-                                          return 'Please enter a valid section (A-Z)';
-                                        }
-                                        return null;
-                                      },
-                                      onSaved: (value) => section = value!,
-                                    )
-                                  : const SizedBox.shrink(),
-                              widget.user.userType != 'Student'
-                                  ? TextFormField(
-                                      initialValue: position,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Position'),
-                                      validator: (value) {
-                                        if (value!.isEmpty)
-                                          return 'Please enter your position';
-                                        return null;
-                                      },
-                                      onSaved: (value) => position = value!,
-                                    )
-                                  : const SizedBox.shrink(),
-                              widget.user.userType == 'Officer'
-                                  ? TextFormField(
-                                      initialValue: organization,
-                                      decoration: const InputDecoration(
-                                          labelText: 'Organization'),
-                                      validator: (value) {
-                                        if (value!.isEmpty)
-                                          return 'Please enter your organization';
-                                        return null;
-                                      },
-                                      onSaved: (value) => organization = value!,
-                                      maxLines: 1,
-                                    )
-                                  : const SizedBox.shrink(),
-                            ],
-                          ),
-                        ),
-                      ),
-                    ),
-                    actions: [
-                      TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Cancel')),
-                      TextButton(
-                          onPressed: () async {
-                            await updateUserDetails();
-                          },
-                          child: const Text('Update')),
-                    ],
                   ),
-                ));
+                ),
+              ),
+              actions: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextButton.icon(
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    icon: Icon(Icons.cancel, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
+                    label: Text('Cancel',
+                    style: TextStyle(
+                      color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),)),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: TextButton.icon(
+                    onPressed: () async {
+                      await updateUserDetails();
+                    },
+                    icon: Icon(Icons.update, color: darkModeOn ? darkModeGrassColor : lightModeGrassColor),
+                    label: Text('Update', 
+                    style: TextStyle(
+                      color: darkModeOn ? darkModeGrassColor : lightModeGrassColor,
+                      fontWeight: FontWeight.bold),)),
+                ),
+              ],
+            ),
+          )
+        );
       },
       icon: Icon(
         Icons.edit,
