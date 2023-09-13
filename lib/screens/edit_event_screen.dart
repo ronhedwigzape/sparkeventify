@@ -307,7 +307,8 @@ class EditEventScreenState extends State<EditEventScreen> {
           startTime: startTime12,
           endTime: endTime12,
           type: _eventTypeController.text,
-          status: widget.eventSnap.status, // change this
+          status: widget.eventSnap.status, // TODO: change this
+          dateUpdated: DateTime.now(),
           datePublished: widget.eventSnap.datePublished,
         );
 
@@ -358,7 +359,7 @@ class EditEventScreenState extends State<EditEventScreen> {
     setState(() {
       _isLoading = false;
     });
-    showSnackBar('Post updated successfully', context);
+    showSnackBar('Post updated successfully!', context);
   }
 
   void onPostFailure(String message) {

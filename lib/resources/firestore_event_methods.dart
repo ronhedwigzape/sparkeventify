@@ -54,6 +54,7 @@ class FireStoreEventMethods {
         endTime: endTime,
         type: type,
         status: status,
+        dateUpdated: DateTime.now(),
         datePublished: DateTime.now(),
       );
       // Add the event to the 'events' collection in Firestore
