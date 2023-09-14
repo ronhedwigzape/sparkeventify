@@ -5,6 +5,7 @@ import 'package:student_event_calendar/screens/feedback_screen.dart';
 import 'package:student_event_calendar/screens/manage_events_screen.dart';
 import 'package:student_event_calendar/screens/manage_users_screen.dart';
 import 'package:student_event_calendar/screens/notification_screen.dart';
+import 'package:student_event_calendar/screens/personal_events_screen.dart';
 import 'package:student_event_calendar/screens/post_screen.dart';
 import 'package:student_event_calendar/screens/profile_screen.dart';
 import 'package:student_event_calendar/widgets/events_calendar.dart';
@@ -56,7 +57,7 @@ Future<List<Widget>> homeScreenItems() async {
   return [
     const EventsCalendar(),
     const FeedbackScreen(),
-    const Center(child: Text('Personal Events')),
+    const PersonalEventsScreen(),
     const ProfileScreen(),
     const NotificationScreen(),
   ];

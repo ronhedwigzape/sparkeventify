@@ -6,10 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student_event_calendar/firebase_options.dart';
 import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
 import 'package:student_event_calendar/layouts/client_screen_layout.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
+import 'package:student_event_calendar/providers/dialog_provider.dart';
 import 'package:student_event_calendar/providers/user_provider.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/services/firebase_notifications.dart';
@@ -24,6 +26,8 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const App());
   FirebaseNotificationService().manageTokenRegistrations();
+  final prefs = await SharedPreferences.getInstance();
+  prefs.setBool('dialogShown', false);
 }
 
 class App extends StatefulWidget {
@@ -49,6 +53,7 @@ class _AppState extends State<App> {
       providers: [
         ChangeNotifierProvider(create: (_) => UserProvider()),
         ChangeNotifierProvider(create: (_) => DarkModeProvider()),
+        ChangeNotifierProvider(create: (_) => DialogProvider()),
       ],
       child: Builder(builder: (context) {
         final darkMode = Provider.of<DarkModeProvider>(context).darkMode;

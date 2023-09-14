@@ -390,9 +390,14 @@ class _PostScreenState extends State<PostScreen> {
                                             children: [
                                               Expanded(
                                                 child: DropdownButtonFormField<String>(
-                                                  decoration: const InputDecoration(
-                                                    prefixIcon: Icon(Icons.event),
+                                                  decoration: InputDecoration(
+                                                    prefixIcon: const Icon(Icons.event),
                                                     labelText: '${kIsWeb ? 'Select announcement type' : 'Type'}*',
+                                                    border: OutlineInputBorder(
+                                                      borderSide: Divider.createBorderSide(
+                                                        context,
+                                                        color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
+                                                    ),
                                                   ),
                                                   value: _eventTypeController.text.isEmpty
                                                       ? null
@@ -448,9 +453,14 @@ class _PostScreenState extends State<PostScreen> {
                                           const SizedBox(width: 10.0),
                                           Flexible(
                                             child: DropdownButtonFormField<String>(
-                                              decoration: const InputDecoration(
-                                                prefixIcon: Icon(Icons.location_pin),
+                                              decoration: InputDecoration(
+                                                prefixIcon: const Icon(Icons.location_pin),
                                                 labelText: '${kIsWeb ? 'Select venue' : 'Venue'}*',
+                                                border: OutlineInputBorder(
+                                                  borderSide: Divider.createBorderSide(
+                                                    context,
+                                                    color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
+                                                ),
                                               ),
                                               value: _eventVenueController.text.isEmpty
                                                   ? null
