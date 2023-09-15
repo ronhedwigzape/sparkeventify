@@ -96,7 +96,28 @@ class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
               ),
             ));
 
-            return const Center(child: Text('Create your first personal event!'));
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(50.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.event_available, size: 25.0, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
+                        const SizedBox(width: 10.0,),
+                        const Flexible(
+                          child: Text(
+                            'Create your first personal event!',
+                            textAlign: TextAlign.center,
+                          )),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ); 
           }
 
           return ListView.builder(
