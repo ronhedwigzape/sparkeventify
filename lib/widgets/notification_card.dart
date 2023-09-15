@@ -1,15 +1,17 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student_event_calendar/models/notification.dart' as model;
 import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
+import 'package:student_event_calendar/services/firebase_notifications.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class NotificationCard extends StatefulWidget {
   const NotificationCard({Key? key, required this.snap}) : super(key: key);
 
-  final dynamic snap;
+  final model.Notification snap;
 
   @override
   State<NotificationCard> createState() => _NotificationCardState();
@@ -41,79 +43,106 @@ class _NotificationCardState extends State<NotificationCard> {
       });
     });
   }
+
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     final currentUserUid = FirebaseAuth.instance.currentUser?.uid;
-    final recipientUid = recipientData?.uid; 
+    final recipientUid = recipientData?.uid;
 
-   return recipientUid == currentUserUid
-    ? Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            color: darkModeOn ? secondaryDarkColor : lightColor,
-          ),
-          color: darkModeOn ? darkColor : lightColor,
-        ),
-        padding: const EdgeInsets.fromLTRB(10, 15, 20, 15),
-        child: Row(
-          children: [
-            Container(
-              padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
-              child: CircleAvatar(
-                radius: 30,
-                backgroundImage: NetworkImage(
-                  senderData?.profile?.profileImage ??
-                      'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png',
+    return recipientUid == currentUserUid
+    ? StreamBuilder<bool>(
+        stream: widget.snap.id != null
+            ? FirebaseNotificationService().getUnreadStatus(widget.snap.id!)
+            : Stream<bool>.value(false),
+        builder: (BuildContext context, AsyncSnapshot<bool> snapshot) {
+          if (snapshot.data == null) {
+            return const SizedBox.shrink(); // fixes the error on Null check operator used on a null value
+          }
+          return InkWell(
+            onTap: () {
+              if (widget.snap.id != null) {
+                FirebaseNotificationService().markAsRead(widget.snap.id!);
+              }
+            },
+            onDoubleTap: () {
+              if (widget.snap.id != null) {
+                FirebaseNotificationService().markAsUnread(widget.snap.id!);
+              }
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: darkModeOn ? secondaryDarkColor : lightColor,
                 ),
+                color: darkModeOn ? (snapshot.data! ? darkColor : black) : (snapshot.data! ? lightColor : white),
               ),
-            ),
-            const SizedBox(width: 10),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              padding: const EdgeInsets.fromLTRB(10, 15, 20, 15),
+              child: Row(
                 children: [
-                  Text(
-                    '${widget.snap.title}',
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 15.0,
-                    ),
-                  ),
                   Container(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: RichText(
-                      text: TextSpan(
-                        text: '${widget.snap.message ?? ''}',
-                        style: TextStyle(
-                          fontSize: 13.0,
-                          color: darkModeOn ? lightColor : darkColor,
-                        ),
+                    padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+                    child: CircleAvatar(
+                      radius: 30,
+                      backgroundColor: darkModeOn ? darkColor : lightColor,
+                      backgroundImage: NetworkImage(
+                        senderData?.profile?.profileImage ??
+                            'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png',
                       ),
-                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
-                  Text(
-                    timeago.format(widget.snap.timestamp.toDate()),
-                    style: TextStyle(
-                      color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
-                      fontSize: 11.0,
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${widget.snap.title}',
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 15.0,
+                          ),
+                        ),
+                        Container(
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                          child: RichText(
+                            text: TextSpan(
+                              text: '${widget.snap.message ?? ''}',
+                              style: TextStyle(
+                                fontSize: 13.0,
+                                color: darkModeOn ? lightColor : darkColor,
+                              ),
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        Text(
+                          timeago.format(widget.snap.timestamp!.toDate()),
+                          style: TextStyle(
+                            color: darkModeOn
+                                ? darkModeTertiaryColor
+                                : lightModeTertiaryColor,
+                            fontSize: 11.0,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
+                  Visibility(
+                    visible: snapshot.data ?? false,
+                    child: CircleAvatar(
+                      radius: 5,
+                      backgroundColor: darkModeOn
+                          ? darkModePrimaryColor
+                          : lightModePrimaryColor,
+                    ),
+                  )
                 ],
               ),
             ),
-            Visibility(
-              visible: widget.snap.unread,  //toggle this based on your unread logic
-              child: CircleAvatar(
-                radius: 5,
-                backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-              ),
-            )
-          ],
-        ),
-      )
+          );
+        })
     : const SizedBox.shrink();
   }
 }
