@@ -26,7 +26,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   void initState() {
     super.initState();
     pageController = PageController();
-    notificationCount = firestoreNotification.getNotificationCount(
+    notificationCount = firestoreNotification.getUnreadNotificationCount(
       FirebaseAuth.instance.currentUser?.uid ?? '',
     );
   }
