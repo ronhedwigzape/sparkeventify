@@ -221,7 +221,6 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
         DateTime endTime12 = time12Format.parse(pickedEndTime);
         // Add the personal event to the database
         String response = await FireStorePersonalEventMethods().postPersonalEvent(
-            FirebaseAuth.instance.currentUser!.uid,
             _personalEventTitleController.text,
             _imageFile,
             _personalEventDescriptionsController.text,

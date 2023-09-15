@@ -67,7 +67,7 @@ class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
           // Snapshot contains the list of personal events
           List<PersonalEvent>? personalEvents = snapshot.data;
           final String currentUserUid = FirebaseAuth.instance.currentUser!.uid;
-          personalEvents = personalEvents!.where((event) => event.studentUid == 
+          personalEvents = personalEvents!.where((event) => event.createdBy == 
           currentUserUid).toList();
 
           if (personalEvents.isEmpty) {
