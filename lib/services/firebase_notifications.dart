@@ -284,12 +284,36 @@ class FirebaseNotificationService {
     }
   }
 
-  Stream<int> getNotificationCount(String userId) {
+  Stream<int> getUnreadNotificationCount(String userId) {
     return FirebaseFirestore.instance
         .collection('notifications')
         .where('recipient', isEqualTo: FirebaseFirestore.instance.doc('users/$userId'))
+        .where('unread', isEqualTo: true) 
         .snapshots()
         .map((snapshot) => snapshot.docs.length);
   }
+
+  Future<void> markAsRead(String notificationId) {
+    return FirebaseFirestore.instance
+      .collection('notifications')
+      .doc(notificationId)
+      .update({'unread': false});
+  }
+
+  Future<void> markAsUnread(String notificationId) {
+    return FirebaseFirestore.instance
+      .collection('notifications')
+      .doc(notificationId)
+      .update({'unread': true});
+  }
+
+  Stream<bool> getUnreadStatus(String notificationId) {
+    return FirebaseFirestore.instance
+      .collection('notifications')
+      .doc(notificationId)
+      .snapshots()
+      .map((snapshot) => snapshot.data()?['unread'] ?? false);
+  }
+
 
 }
