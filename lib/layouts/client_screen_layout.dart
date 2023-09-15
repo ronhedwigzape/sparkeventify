@@ -22,6 +22,17 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   final firestoreNotification = FirebaseNotificationService();
   late Stream<int> notificationCount;
 
+  // Define app names for each user type
+  final List<String> appNamesForStaff = ['Calendar', 'Post Announcement', 'Manage Events', 'Profile', '', 'Notifications'];
+  final List<String> appNamesForOfficer = ['Calendar', 'Feedbacks', 'Post Announcement', 'Manage Events', 'Profile', 'Notifications'];
+  final List<String> appNamesForStudent = ['Calendar', 'Feedbacks', 'Personal Events', 'Profile', '', 'Notifications'];
+  
+  String currentAppName = 'Calendar'; // Set initial app name
+  
+  Future<String> getUserType() async {
+    return await AuthMethods().getCurrentUserType();
+  }
+
   @override
   void initState() {
     super.initState();
@@ -37,12 +48,22 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
     pageController.dispose();
   }
 
-  void navigationTapped(int page) {
+  Future navigationTapped(int page) async {
+    String userType = await getUserType();
+    // Update current app name when navigation item is clicked
     setState(() {
       _page = page;
+      if (userType == 'Staff') {
+          currentAppName = appNamesForStaff[page];
+      } else if (userType == 'Officer') {
+          currentAppName = appNamesForOfficer[page];
+      } else {
+          currentAppName = appNamesForStudent[page];
+      }
     });
     pageController.jumpToPage(page);
   }
+
 
   void onPageChanged(int page) {
     setState(() {
@@ -72,7 +93,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
                 width: 10.0,
               ),
               Text(
-                appName,
+                currentAppName,
                 style: TextStyle(
                   color: lightColor,
                   fontSize: 20.0,
@@ -90,7 +111,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
                     ),
                   ] : null,
                 ),
-              ),
+              )
             ],
           ),
           actions: [
