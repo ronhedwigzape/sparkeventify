@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -104,8 +105,11 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                       if (snapshot.connectionState == ConnectionState.waiting) {
                         return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
                       }
-                      if (snapshot.hasError) {
+                      else if (snapshot.hasError) {
                         return const Center(child: Text('Something went wrong'));
+                      }
+                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                        return const Center(child: Text('No events found.'));
                       }
 
                       List<Event> allEvents = snapshot.data!;
@@ -117,8 +121,36 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                       List<Event> searchTermFilteredEvents =
                           filterEvents(filteredEvents, searchTerm);
 
+                      List<Event> eventsUserType = allEvents.where((event) => event.createdBy == 
+                      FirebaseAuth.instance.currentUser!.uid).toList();
+
                       if (searchTermFilteredEvents.isEmpty) {
                         return const Text('No events match your search.');
+                      }
+
+                      if (eventsUserType.isEmpty) {
+                       return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(50.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.event_busy, size: 25.0, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
+                                  const SizedBox(width: 10),
+                                  const Flexible(
+                                    child: Text(
+                                    'You haven\'t made any events yet.',
+                                    textAlign: TextAlign.center,
+                                  )),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ); 
                       }
 
                       return Column(
@@ -126,28 +158,37 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                         children: [
                         Padding(
                           padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
-                          child: kIsWeb ? Row(
+                          child: Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Flexible(
-                                  child: Row(
-                                    children: [
-                                      Icon(
-                                        Icons.edit,
-                                        color: darkModeOn ? lightColor : darkColor,
-                                        size: 40,
+                              kIsWeb ? Flexible(
+                                child: Row(
+                                  children: [
+                                    Icon(
+                                      Icons.edit,
+                                      color: darkModeOn ? lightColor : darkColor,
+                                      size: 40,
+                                    ),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                  'Manage Events',
+                                  style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 32.0,
+                                      color: darkModeOn ? lightColor : darkColor,
                                       ),
-                                      const SizedBox(width: 10),
-                                      Text(
-                                    'Manage Events',
-                                    style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 32.0,
-                                        color: darkModeOn ? lightColor : darkColor,
-                                        ),
-                                      ),
-                                    ],
-                                  )),
+                                    ),
+                                  ],
+                                )) : const SizedBox.shrink(),
+                              !kIsWeb ? Expanded(
+                                child: Text(
+                                'Event Type',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  fontSize: 18.0,
+                                  color: darkModeOn ? lightColor : darkColor,
+                                ),
+                              )) : const SizedBox.shrink(),
                               Flexible(
                                 child: DropdownButton<String>(
                                   value: dropdownEventType,
@@ -169,63 +210,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                                 ),
                               )
                             ],
-                          ) : SingleChildScrollView(
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Flexible(
-                                  child: Row(
-                                  children: [
-                                    Flexible(
-                                      flex: 1,
-                                      child: Icon(
-                                        Icons.edit,
-                                        color: darkModeOn ? lightColor : darkColor,
-                                        size: 24,
-                                      ),
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      flex: 1,
-                                      child: Text(
-                                        'Manage Your Events',
-                                        style: TextStyle(
-                                          fontWeight: FontWeight.bold,
-                                          fontSize: 24.0,
-                                          color: darkModeOn ? lightColor : darkColor,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                )),
-                                Flexible(
-                                  child: Row(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      DropdownButton<String>(
-                                        value: dropdownEventType,
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            dropdownEventType = newValue!;
-                                          });
-                                        },
-                                        items: <String>[
-                                          'All',
-                                          'Non-academic',
-                                          'Academic'
-                                        ].map<DropdownMenuItem<String>>((String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        }).toList(),
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
+                          )
                         ),
                         Container(
                           padding: const EdgeInsets.symmetric(vertical: 10),
