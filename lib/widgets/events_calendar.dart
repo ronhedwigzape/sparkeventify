@@ -109,22 +109,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                           padding: const EdgeInsets.symmetric(vertical: 10.0),
                           child: Center(
                             child: 
-                            !kIsWeb ? Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.event,
-                                color: darkModeOn ? lightColor : darkColor,
-                                size: 30,),
-                                const SizedBox(width: 10),
-                                Text('Calendar of Events',
-                                  style:
-                                  TextStyle(fontSize: kIsWeb ? 28.0 : 24.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: darkModeOn ? lightColor : darkColor,
-                                  )
-                                ),
-                              ]) 
-                            : Row(
+                            kIsWeb ? Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Flexible(
@@ -161,7 +146,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                                   )
                                 )
                               ],
-                            ),
+                            ) : const SizedBox.shrink(),
                           ),
                         ),
                         Padding(

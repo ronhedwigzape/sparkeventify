@@ -346,7 +346,7 @@ class _PostScreenState extends State<PostScreen> {
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Flexible(
+                                      kIsWeb ? Flexible(
                                         child: Padding(
                                           padding: const EdgeInsets.symmetric(vertical: 16.0),
                                           child: Row(
@@ -369,7 +369,8 @@ class _PostScreenState extends State<PostScreen> {
                                             ],
                                           ),
                                         ),
-                                      ),
+                                      ) : const SizedBox.shrink(),
+                                    !kIsWeb ? const SizedBox(height: 10) : const SizedBox.shrink(),
                                      Flexible(
                                          child: Padding(
                                            padding: const EdgeInsets.symmetric(vertical: 8.0),
