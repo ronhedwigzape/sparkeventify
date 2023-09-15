@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class PersonalEvent {
   String id;
+  String studentUid;
   String title;
   DateTime startDate;
   DateTime endDate;
@@ -20,6 +21,7 @@ class PersonalEvent {
 
   PersonalEvent({
     required this.id, 
+    required this.studentUid,
     required this.title,
     required this.startDate,
     required this.endDate,
@@ -40,6 +42,7 @@ class PersonalEvent {
   // Convert Event object to JSON
   Map<String, dynamic> toJson() => {
         'id': id,
+        'studentUid': studentUid,
         'title': title,
         'startDate': startDate,
         'endDate': endDate,
@@ -62,6 +65,7 @@ class PersonalEvent {
     var snapshot = snap.data() as Map<String, dynamic>;
     return PersonalEvent(
       id: snapshot['id'],
+      studentUid: snapshot['studentUid'],
       title: snapshot['title'],
       startDate: (snapshot['startDate'] as Timestamp).toDate().toLocal(),
       endDate: (snapshot['endDate'] as Timestamp).toDate().toLocal(),

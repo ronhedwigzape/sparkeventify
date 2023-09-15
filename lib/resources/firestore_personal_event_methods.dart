@@ -10,6 +10,7 @@ class FireStorePersonalEventMethods {
 
   // Method to add a new event to the 'personal_events' collection
   Future<String> postPersonalEvent(
+    String studentUid,
     String title,
     Uint8List? image,
     String description,
@@ -41,6 +42,7 @@ class FireStorePersonalEventMethods {
       // Create a new Event object
       PersonalEvent event = PersonalEvent(
         id: eventId,
+        studentUid: studentUid,
         title: title,
         image: imageUrl,
         description: description,
