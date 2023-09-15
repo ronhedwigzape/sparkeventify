@@ -23,11 +23,11 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   late Stream<int> notificationCount;
 
   // Define app names for each user type
-  final List<String> appNamesForStaff = ['Calendar', 'Post Announcement', 'Manage Events', 'Profile', '', 'Notifications'];
-  final List<String> appNamesForOfficer = ['Calendar', 'Feedbacks', 'Post Announcement', 'Manage Events', 'Profile', 'Notifications'];
-  final List<String> appNamesForStudent = ['Calendar', 'Feedbacks', 'Personal Events', 'Profile', '', 'Notifications'];
+  final List<String> appNamesForStaff = ['Calendar of Events', 'Post Announcement', 'Manage Events', 'Profile', '', 'Notifications'];
+  final List<String> appNamesForOfficer = ['Calendar of Events', 'Feedbacks', 'Post Announcement', 'Manage Events', 'Profile', 'Notifications'];
+  final List<String> appNamesForStudent = ['Calendar of Events', 'Feedbacks', 'Personal Events', 'Profile', '', 'Notifications'];
   
-  String currentAppName = 'Calendar'; // Set initial app name
+  String currentAppName = 'Calendar of Events'; // Set initial app name
   
   Future<String> getUserType() async {
     return await AuthMethods().getCurrentUserType();
