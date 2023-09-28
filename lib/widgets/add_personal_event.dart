@@ -500,8 +500,11 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                                 ),
                                 const SizedBox(height: 10.0),
                                 Flexible(
-                                  child: Row(children: [
-                                    Flexible(
+                                  fit: FlexFit.loose,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                    Expanded(
                                       child: TextFieldInput(
                                         textEditingController:
                                             _personalEventTitleController,
@@ -509,8 +512,16 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                                         textInputType: TextInputType.text,
                                       ),
                                     ),
-                                    const SizedBox(width: 10.0),
-                                    Flexible(
+                                  ]),
+                                ),
+                                const SizedBox(height: 10.0),
+                                Flexible(
+                                  fit: FlexFit.loose,
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Expanded(
+                                      flex: 2,
                                       child: DropdownButtonFormField<String>(
                                         decoration: InputDecoration(
                                           prefixIcon:
@@ -551,8 +562,8 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                                           });
                                         },
                                       ),
-                                    )
-                                  ]),
+                                    )],
+                                  ),
                                 ),
                                 const SizedBox(height: 10.0),
                                 Flexible(
@@ -587,18 +598,21 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                                         textInputType: TextInputType.datetime,
                                       ),
                                     ),
-                                    const SizedBox(width: 10.0),
-                                    Flexible(
-                                      child: TextFieldInput(
-                                        startTextEditingController:
-                                            _startTimeController,
-                                        endTextEditingController:
-                                            _endTimeController,
-                                        isTimeRange: true,
-                                        labelText: 'Personal Event Time',
-                                        textInputType: TextInputType.datetime,
-                                      ),
-                                    )
+                                  ]),
+                                ),
+                                const SizedBox(height: 10.0),
+                                Flexible(
+                                child: Row(children: [ 
+                                  Flexible(
+                                    child: TextFieldInput(
+                                      startTextEditingController:
+                                          _startTimeController,
+                                      endTextEditingController:
+                                          _endTimeController,
+                                      isTimeRange: true,
+                                      labelText: 'Personal Event Time',
+                                      textInputType: TextInputType.datetime,
+                                    ))
                                   ]),
                                 ),
                                 const SizedBox(height: 10.0),

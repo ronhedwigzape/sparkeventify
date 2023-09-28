@@ -442,7 +442,7 @@ class _PostScreenState extends State<PostScreen> {
                                           ),
                                       ),
                                       const SizedBox(height: 10.0),
-                                      Flexible(
+                                      kIsWeb ? Flexible(
                                         child: Row(children: [
                                           Flexible(
                                             child: TextFieldInput(
@@ -456,7 +456,7 @@ class _PostScreenState extends State<PostScreen> {
                                             child: DropdownButtonFormField<String>(
                                               decoration: InputDecoration(
                                                 prefixIcon: const Icon(Icons.location_pin),
-                                                labelText: '${kIsWeb ? 'Select venue' : 'Venue'}*',
+                                                labelText: 'Select venue',
                                                 border: OutlineInputBorder(
                                                   borderSide: Divider.createBorderSide(
                                                     context,
@@ -486,7 +486,72 @@ class _PostScreenState extends State<PostScreen> {
                                             ),
                                           )
                                         ]),
+                                      ): Flexible(
+                                        fit: FlexFit.loose,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                          Expanded(
+                                            child: TextFieldInput(
+                                              textEditingController:
+                                                  _eventVenueController,
+                                              labelText: 'Title*',
+                                              textInputType: TextInputType.text,
+                                            ),
+                                          ),
+                                        ]),
                                       ),
+                                      !kIsWeb ? const SizedBox(height: 10.0) : const SizedBox.shrink(),
+                                      !kIsWeb ? Flexible(
+                                        fit: FlexFit.loose,
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Expanded(
+                                            flex: 2,
+                                            child: DropdownButtonFormField<String>(
+                                              decoration: InputDecoration(
+                                                prefixIcon:
+                                                    const Icon(Icons.location_pin),
+                                                labelText:
+                                                    '${kIsWeb ? 'Select venue' : 'Venue'}*',
+                                                border: OutlineInputBorder(
+                                                    borderSide:
+                                                        Divider.createBorderSide(
+                                                  context,
+                                                  color: darkModeOn
+                                                      ? darkModeTertiaryColor
+                                                      : lightModeTertiaryColor,
+                                                )),
+                                              ),
+                                              value:
+                                                  _eventVenueController.text.isEmpty
+                                                      ? null
+                                                      : _eventVenueController.text,
+                                              items: <String>[
+                                                'Gymnasium',
+                                                'Auditorium'
+                                              ].map((String value) {
+                                                return DropdownMenuItem<String>(
+                                                  value: value,
+                                                  child: Row(
+                                                    mainAxisSize: MainAxisSize.min,
+                                                    children: [
+                                                      Text(value),
+                                                    ],
+                                                  ),
+                                                );
+                                              }).toList(),
+                                              onChanged: (String? newValue) {
+                                                setState(() {
+                                                  _eventVenueController.text =
+                                                      newValue!;
+                                                });
+                                              },
+                                            ),
+                                          )],
+                                        ),
+                                      ) : const SizedBox.shrink(),
                                       const SizedBox(height: 10.0),
                                       Flexible(
                                         child: TextFormField(
@@ -517,7 +582,11 @@ class _PostScreenState extends State<PostScreen> {
                                               textInputType: TextInputType.datetime,
                                             ),
                                           ),
-                                          const SizedBox(width: 10.0),
+                                        ]),
+                                      ), 
+                                      const SizedBox(height: 10.0),
+                                      Flexible(
+                                        child: Row(children: [
                                           Flexible(
                                             child: TextFieldInput(
                                               startTextEditingController: _startTimeController,
