@@ -123,6 +123,7 @@ class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
 
           return ListView.builder(
             itemCount: personalEvents.length,
+            padding: const EdgeInsets.all(10.0),
             itemBuilder: (context, index) {
               return PersonalEventNote(
                 personalEvent: personalEvents?[index],

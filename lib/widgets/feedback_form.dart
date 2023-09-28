@@ -112,12 +112,12 @@ class _FeedbackFormState extends State<FeedbackForm> {
         return TextButton.icon(
           icon: Icon(
             eventFeedbackStatus ? Icons.check : Icons.feedback,
-            color: eventFeedbackStatus ? darkModeGrassColor : white,
+            color: eventFeedbackStatus ? darkModeGrassColor : (darkModeOn ? white : black),
           ),
           label: Text(
             eventFeedbackStatus ? 'Feedback Submitted' : 'Add Feedback',
             style: TextStyle(
-              color: eventFeedbackStatus ? darkModeGrassColor : white,
+              color: eventFeedbackStatus ? darkModeGrassColor : (darkModeOn ? white : black),
               fontWeight: eventFeedbackStatus ? FontWeight.bold : null,  
             ),
           ),
@@ -239,7 +239,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
                                       context,
                                       color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
                                   ),
-                                  prefixIcon: const Icon(Icons.star),
+                                  prefixIcon: const Icon(Icons.thumb_up_alt),
                                   labelText: 'Rating*',
                                 ),
                                 value: _ratingController.text.isEmpty

@@ -21,90 +21,87 @@ class _PersonalEventNoteState extends State<PersonalEventNote> {
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
 
-    return Padding(
-      padding: const EdgeInsets.all(6.0),
-      child: Card(
-        clipBehavior: Clip.antiAliasWithSaveLayer,
-        margin: const EdgeInsets.all(10),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-        ),
-        child: Stack(
-          alignment: Alignment.center,
-          children: <Widget>[
-            // Parallax image
-            Positioned.fill(
-              child: (widget.personalEvent?.image == null || widget.personalEvent!.image!.isEmpty)
-                ? Image.asset('assets/images/cspc_background.jpg', fit: BoxFit.cover)
-                : CachedNetworkImage(
-                    imageUrl: widget.personalEvent!.image!,
-                    fit: BoxFit.cover,
-                    placeholder: (context, url) => CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
-                    errorWidget: (context, url, error) => Image.asset('assets/images/cspc_background.jpg', fit: BoxFit.cover),
-                  ),
-            ),
-            // Dark gradient
-            Positioned.fill(
-              child: DecoratedBox(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
-                    begin: Alignment.center,
-                    end: Alignment.bottomCenter,
-                  ),
+    return Card(
+      clipBehavior: Clip.antiAliasWithSaveLayer,
+      margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Stack(
+        alignment: Alignment.center,
+        children: <Widget>[
+          // Parallax image
+          Positioned.fill(
+            child: (widget.personalEvent?.image == null || widget.personalEvent!.image!.isEmpty)
+              ? Image.asset('assets/images/cspc_background.jpg', fit: BoxFit.cover)
+              : CachedNetworkImage(
+                  imageUrl: widget.personalEvent!.image!,
+                  fit: BoxFit.cover,
+                  placeholder: (context, url) => CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                  errorWidget: (context, url, error) => Image.asset('assets/images/cspc_background.jpg', fit: BoxFit.cover),
+                ),
+          ),
+          // Dark gradient
+          Positioned.fill(
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Colors.transparent, Colors.black.withOpacity(0.7)],
+                  begin: Alignment.center,
+                  end: Alignment.bottomCenter,
                 ),
               ),
             ),
-            // Event details
-            Padding(
-              padding: const EdgeInsets.all(10.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: <Widget>[
-                  Text(
-                    widget.personalEvent!.title,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+          ),
+          // Event details
+          Padding(
+            padding: const EdgeInsets.all(10.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: <Widget>[
+                Text(
+                  widget.personalEvent!.title,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
                   ),
-                  Text(
-                    widget.personalEvent!.description,
-                    overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                    ),
+                ),
+                Text(
+                  widget.personalEvent!.description,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
                   ),
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          timeago.format(widget.personalEvent!.dateUpdated!),
-                          style: const TextStyle(
-                            color: light,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                      Text(
-                        'Start Date: ${DateFormat('MMMM dd, yyyy').format(widget.personalEvent!.startDate)}',
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        timeago.format(widget.personalEvent!.dateUpdated!),
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: light,
                           fontSize: 12,
                         ),
                       ),
-                    ],
-                  )
-                  
-                ],
-              ),
+                    ),
+                    Text(
+                      'Start Date: ${DateFormat('MMMM dd, yyyy').format(widget.personalEvent!.startDate)}',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                )
+                
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
