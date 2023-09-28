@@ -7,6 +7,7 @@ import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/firestore_personal_event_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/add_personal_event.dart';
+import 'package:student_event_calendar/widgets/personal_event_note.dart';
 
 class PersonalEventsScreen extends StatefulWidget {
   const PersonalEventsScreen({super.key});
@@ -123,12 +124,8 @@ class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
           return ListView.builder(
             itemCount: personalEvents.length,
             itemBuilder: (context, index) {
-              return Card(
-                child: ListTile(
-                  title: Text(personalEvents![index].title),
-                  /* Make customized personal event card here */
-                  // ... Other ListTile properties like subtitle, trailing etc.
-                ),
+              return PersonalEventNote(
+                personalEvent: personalEvents?[index],
               );
             },
           );

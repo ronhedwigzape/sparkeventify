@@ -28,4 +28,5 @@ const transparent = Colors.transparent;
 // Other colors
 const black = Colors.black;
 const white = Colors.white;
+const light = Color.fromRGBO(190, 190, 190, 1);
 const red = Colors.red;

@@ -68,98 +68,82 @@ class FeedbackScreenState extends State<FeedbackScreen> {
           ) : null,
         ),
         child: SingleChildScrollView(
-          child: Card(
-            elevation: 0,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              child: Column(
-                children: [
-                  ...pastEvents.map((event) {
-                    DateTime endDate = event.endDate.isAfter(now) ? now.subtract(const Duration(days: 1)) : event.endDate;
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 3.0),
-                      child: Card( 
-                        elevation: 1,
-                        shadowColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Row(
-                            children: [
-                              Flexible(
-                                child: Column(
-                                children: [
-                                  (event.image?.isEmpty ?? true)
-                                    ? Container(
-                                      decoration: BoxDecoration(border: Border.all(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor)),
-                                      child: CachedNetworkImage(
-                                        imageUrl: 'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
-                                        width: 120,
-                                        placeholder: (context, url) => Center(
-                                          child: SizedBox(
-                                            child: Center(
-                                              child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor)),
-                                            ),
-                                          ),
-                                        errorWidget: (context, url, error) =>
-                                            const Icon(Icons.error),
-                                        ),
-                                    )
-                                  : CachedNetworkImage(
-                                    imageUrl: event.image!,
-                                    width: 120,
-                                    placeholder: (context, url) => Center(
-                                      child: SizedBox(
-                                        child: Center(
-                                          child: CircularProgressIndicator(
-                                          color: darkModeOn
-                                          ? darkModePrimaryColor
-                                          : lightModePrimaryColor)),
-                                      ),
-                                    ),
-                                    errorWidget: (context, url, error) =>
-                                        const Icon(Icons.error),
-                                    ),
-                                  ],
-                                )
-                              ),
-                              Flexible(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
+            child: Column(
+              children: [
+                ...pastEvents.map((event) {
+                  DateTime endDate = event.endDate.isAfter(now) ? now.subtract(const Duration(days: 1)) : event.endDate;
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 3.0),
+                    child: Card( 
+                      elevation: 1,
+                      shadowColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: <Widget>[
+                          // Parallax image with opacity
+                          Positioned.fill(
+                            child: Opacity(
+                              opacity: 0.2,
+                              child: CachedNetworkImage(
+                                imageUrl: event.image ?? 'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Center(
                                   child: SizedBox(
-                                    width: 100 * 6,
-                                    child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Text(event.title, style: const TextStyle(fontSize: 16), overflow: TextOverflow.ellipsis,),
-                                      Text(
-                                        (event.startDate.day == endDate.day
-                                            ? '${DateFormat('MMM dd, yyyy').format(event.startDate)}\n'
-                                            : '${DateFormat('MMM dd, yyyy').format(event.startDate)} - ${DateFormat('MMM dd, yyyy').format(endDate)}\n')
-                                            + (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
-                                            ? DateFormat.jm().format(event.startTime)
-                                            : '${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
-                                        style: const TextStyle(
-                                            height: 1.5,
-                                            fontSize: 10
-                                        ),
-                                      ),
-                                      FeedbackForm(eventId: event.id)
-                                    ],                        
+                                    child: Center(
+                                      child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor)),
                                     ),
                                   ),
-                                ),
-                              )
-                            ],
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                              ),
+                            ),
                           ),
-                        ),
+                          // Event details
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              children: [
+                                Flexible(
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                    child: SizedBox(
+                                      width: 100 * 6,
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          Text(event.title, style: const TextStyle(fontSize: 16), overflow: TextOverflow.ellipsis,),
+                                          Text(
+                                            (event.startDate.day == endDate.day
+                                                ? '${DateFormat('MMM dd, yyyy').format(event.startDate)}\n'
+                                                : '${DateFormat('MMM dd, yyyy').format(event.startDate)} - ${DateFormat('MMM dd, yyyy').format(endDate)}\n')
+                                                + (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
+                                                ? DateFormat.jm().format(event.startTime)
+                                                : '${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
+                                            style: const TextStyle(
+                                                height: 1.5,
+                                                fontSize: 10
+                                            ),
+                                          ),
+                                          FeedbackForm(eventId: event.id)
+                                        ],                        
+                                      ),
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
-                    );
-                  }).toList(),
-                ],
-              ),
+                    ),
+                  );
+                }).toList(),
+              ],
             ),
           ),
-        ),
+        )
       ),
     );
   }
