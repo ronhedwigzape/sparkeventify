@@ -67,6 +67,7 @@ dependencies:
   flutter_file_saver: ^0.6.2
   timeago: ^3.5.0
   shared_preferences: ^2.2.1
+  connectivity_plus: ^4.0.2
 
 dev_dependencies:
   flutter_test:

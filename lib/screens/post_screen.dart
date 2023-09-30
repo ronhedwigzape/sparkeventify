@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
+import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
@@ -661,7 +662,20 @@ class _PostScreenState extends State<PostScreen> {
                                       const SizedBox(height: 10.0),
                                       Center(
                                         child: InkWell(
-                                          onTap: _post,
+                                          onTap: () async {
+                                            bool isConnected = await ConnectivityService().isConnected();
+                                            if (isConnected) {
+                                              await _post();
+                                            } else {
+                                              // Show a message to the user
+                                              mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text('No internet connection. Please check your connection and try again.'),
+                                                  duration: Duration(seconds: 5),
+                                                ),
+                                              ) : '';
+                                            }
+                                          },
                                           child: Container(
                                             width: double.infinity,
                                             alignment: Alignment.center,

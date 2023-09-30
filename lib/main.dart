@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -14,6 +16,7 @@ import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/providers/dialog_provider.dart';
 import 'package:student_event_calendar/providers/user_provider.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
+import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/services/firebase_notifications.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/unknown_user.dart';
@@ -38,6 +41,10 @@ class App extends StatefulWidget {
 }
 
 class _AppState extends State<App> {
+  final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+  SnackBar? snackbar;
+  bool isDialogMounted = false; // Track the mount status of the dialog
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription;
 
   @override
   void initState() {
@@ -45,6 +52,86 @@ class _AppState extends State<App> {
     FirebaseNotificationService().init();
     FirebaseNotificationService().configure();
     FirebaseNotificationService().getDeviceToken();
+    _connectivitySubscription = ConnectivityService().connectivityStream.listen(_updateConnectionStatus);
+  }
+
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
+
+  void _updateConnectionStatus(ConnectivityResult result) {
+    if (result == ConnectivityResult.none) {
+      // No internet connection
+      if (!isDialogMounted) {
+        // Only show the dialog if it is not already mounted
+        showInternetConnectionDialog(
+            'No internet connection. Please check your connection and try again.');
+        isDialogMounted = true; // Set the dialog mount status to true
+      }
+    } else {
+      // Internet connection is available
+      showSnackbar(Icons.wifi, 'Internet connection is available.');
+      if (isDialogMounted) {
+        // If the dialog is mounted, dismiss it
+        Navigator.of(navigatorKey.currentState!.context).pop();
+        isDialogMounted = false; // Set the dialog mount status to false
+      }
+    }
+  }
+
+  void showSnackbar(IconData icon, String message) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
+    final iconColor = darkModeOn ? white : black;
+    ScaffoldMessenger.of(navigatorKey.currentState!.context).showSnackBar(
+      SnackBar(
+        content: Row(
+          children: [
+            Icon(
+              icon,
+              color: iconColor,
+            ),
+            const SizedBox(width: 8),
+            Text(message),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void showInternetConnectionDialog(String message) {
+    showDialog(
+      context: navigatorKey.currentState!.context,
+      barrierDismissible: false, // user must tap button to close dialog!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.wifi_off,
+                color: Colors.red,
+                size: 30,
+              ),
+              SizedBox(width: 10),
+              Flexible(child: Text('Internet Connection Status')),
+            ],
+          ),
+          content: Text(message),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('Dismiss'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                isDialogMounted =
+                    false; // Set the dialog mount status to false when dismissed
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override
@@ -61,6 +148,7 @@ class _AppState extends State<App> {
 
         return OverlaySupport(
           child: MaterialApp(
+            navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
             theme: theme,
             title: 'Student Event Calendar',
@@ -85,50 +173,50 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
+    final darkModeOn = Provider.of<DarkModeProvider>(context, listen: false).darkMode;
     return StreamBuilder(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (ctx, userSnapshot) {
         if (userSnapshot.hasData) {
           return FutureBuilder(
-          future: FirebaseFirestore.instance
-              .collection('users')
-              .doc(FirebaseAuth.instance.currentUser?.uid)
-              .get(),
-          builder: (ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(
-                child: CircularProgressIndicator(
-                  color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor
-                ),
-              );
-            }
-            // Check if document exists
-            if (snapshot.hasData && snapshot.data!.exists) {
-              final String userType = snapshot.data!.get('userType');
-              
-              if (userType == 'Admin' && runningOnWeb()) {
-                return const AdminScreenLayout();
-              } else if ((userType == 'Student' && runningOnMobile()) ||
-                  (userType == 'Staff' && runningOnMobile()) ||
-                  (userType == 'Officer' && runningOnMobile())) {
-                return const ClientScreenLayout();
-              } else {
-                return const UnknownUser();
-              }
-            } else {
-              // Handle case when the document does not exist
-              if (runningOnMobile() || runningOnWeb()) {
-                return const LoginScreen();
-              } else {
-                return const Center(
-                  child: Text('Unsupported Platform'),
+            future: FirebaseFirestore.instance
+                .collection('users')
+                .doc(FirebaseAuth.instance.currentUser?.uid)
+                .get(),
+            builder: (ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(
+                  child: CircularProgressIndicator(
+                      color: darkModeOn
+                          ? darkModePrimaryColor
+                          : lightModePrimaryColor),
                 );
               }
-            }
-          },
-        );
+              // Check if document exists
+              if (snapshot.hasData && snapshot.data!.exists) {
+                final String userType = snapshot.data!.get('userType');
 
+                if (userType == 'Admin' && runningOnWeb()) {
+                  return const AdminScreenLayout();
+                } else if ((userType == 'Student' && runningOnMobile()) ||
+                    (userType == 'Staff' && runningOnMobile()) ||
+                    (userType == 'Officer' && runningOnMobile())) {
+                  return const ClientScreenLayout();
+                } else {
+                  return const UnknownUser();
+                }
+              } else {
+                // Handle case when the document does not exist
+                if (runningOnMobile() || runningOnWeb()) {
+                  return const LoginScreen();
+                } else {
+                  return const Center(
+                    child: Text('Unsupported Platform'),
+                  );
+                }
+              }
+            },
+          );
         }
         if (runningOnMobile() || runningOnWeb()) {
           return const LoginScreen();
