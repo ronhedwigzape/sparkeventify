@@ -494,8 +494,7 @@ class _PostScreenState extends State<PostScreen> {
                                           children: [
                                           Expanded(
                                             child: TextFieldInput(
-                                              textEditingController:
-                                                  _eventVenueController,
+                                              textEditingController: _eventTitleController,
                                               labelText: 'Title*',
                                               textInputType: TextInputType.text,
                                             ),
