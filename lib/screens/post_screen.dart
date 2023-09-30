@@ -3,6 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
+import 'package:student_event_calendar/layouts/client_screen_layout.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
@@ -255,6 +257,13 @@ class _PostScreenState extends State<PostScreen> {
       _isLoading = false;
     });
     showSnackBar('Post uploaded successfully', context);
+    if (!kIsWeb) {
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const ClientScreenLayout()));
+    } else {
+      Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const AdminScreenLayout()));
+    }
     clearInputs();
   }
 
