@@ -8,6 +8,7 @@ import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/resources/firestore_feedback_methods.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
+import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 
 class FeedbackForm extends StatefulWidget {
@@ -112,12 +113,12 @@ class _FeedbackFormState extends State<FeedbackForm> {
         return TextButton.icon(
           icon: Icon(
             eventFeedbackStatus ? Icons.check : Icons.feedback,
-            color: eventFeedbackStatus ? darkModeGrassColor : (darkModeOn ? white : black),
+            color: eventFeedbackStatus ? darkModeGrassColor : white,
           ),
           label: Text(
             eventFeedbackStatus ? 'Feedback Submitted' : 'Add Feedback',
             style: TextStyle(
-              color: eventFeedbackStatus ? darkModeGrassColor : (darkModeOn ? white : black),
+              color: eventFeedbackStatus ? darkModeGrassColor : white,
               fontWeight: eventFeedbackStatus ? FontWeight.bold : null,  
             ),
           ),
@@ -275,7 +276,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
                               const SizedBox(height: 10),
                               TextFormField(
                                 decoration: const InputDecoration(
-                                    labelText: 'Your Comment',
+                                    labelText: 'Your Comment*',
                                     alignLabelWithHint: true,
                                     border: OutlineInputBorder()),
                                 keyboardType: TextInputType.multiline,
@@ -305,10 +306,22 @@ class _FeedbackFormState extends State<FeedbackForm> {
                               ],
                             ),
                             onPressed: () async {
-                              print('Button pressed');
                               if (_formKey.currentState!.validate()) {
-                                await createFeedback(context, snapshot.data!.title);
-                                Navigator.of(context).pop();
+                                if (mounted) {
+                                  Future<bool> Function() isConnected = ConnectivityService().isConnected;
+                                  if (await isConnected()) {
+                                    await createFeedback(context, snapshot.data!.title);
+                                  } else {
+                                    // Show a message to the user
+                                    mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                                      const SnackBar(
+                                        content: Text('No internet connection. Please check your connection and try again.'),
+                                        duration: Duration(seconds: 5),
+                                      ),
+                                    ) : '';
+                                  }
+                                  mounted ? Navigator.of(context).pop() : '';
+                                }
                               }
                             },
                           ),

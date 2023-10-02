@@ -77,7 +77,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                         // Parallax image with opacity
                         Positioned.fill(
                           child: Opacity(
-                            opacity: 0.2,
+                            opacity: 0.4,
                             child: CachedNetworkImage(
                               imageUrl: event.image ?? 'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
                               fit: BoxFit.cover,
@@ -89,6 +89,17 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                 ),
                               errorWidget: (context, url, error) =>
                                   const Icon(Icons.error),
+                            ),
+                          ),
+                        ),
+                        Positioned.fill(
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                colors: [Colors.transparent, black.withOpacity(0.8)],
+                                begin: Alignment.topCenter,
+                                end: Alignment.bottomCenter,
+                              ),
                             ),
                           ),
                         ),
@@ -105,7 +116,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(event.title, style: const TextStyle(fontSize: 16), overflow: TextOverflow.ellipsis,),
+                                        Text(event.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis,),
                                         Text(
                                           (event.startDate.day == endDate.day
                                               ? '${DateFormat('MMM dd, yyyy').format(event.startDate)}\n'
@@ -115,7 +126,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                               : '${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
                                           style: const TextStyle(
                                               height: 1.5,
-                                              fontSize: 10
+                                              fontSize: 10,
                                           ),
                                         ),
                                         FeedbackForm(eventId: event.id)

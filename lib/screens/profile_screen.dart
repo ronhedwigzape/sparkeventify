@@ -48,12 +48,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
       builder: (context) {
         final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
         return SimpleDialog(
-          title: Text(
-            'Log Out Confirmation',
-            style: TextStyle(
-              color: Colors.red[900],
-              fontWeight: FontWeight.bold,
-            ),
+          title: Row(
+            children: [
+              Icon(Icons.logout, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
+              const SizedBox(width: 10),
+              Flexible(
+                child: Text(
+                  'Sign Out Confirmation',
+                  style: TextStyle(
+                    color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
           ),
           children: [
             const Padding(

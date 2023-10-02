@@ -72,7 +72,7 @@ class _AppState extends State<App> {
       }
     } else {
       // Internet connection is available
-      showSnackbar(Icons.wifi, 'Internet connection is available.');
+      showSnackbar('Internet connection is available.');
       if (isDialogMounted) {
         // If the dialog is mounted, dismiss it
         Navigator.of(navigatorKey.currentState!.context).pop();
@@ -81,16 +81,14 @@ class _AppState extends State<App> {
     }
   }
 
-  void showSnackbar(IconData icon, String message) {
-    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-    final iconColor = darkModeOn ? white : black;
+  void showSnackbar(String message) {
     ScaffoldMessenger.of(navigatorKey.currentState!.context).showSnackBar(
       SnackBar(
         content: Row(
           children: [
-            Icon(
-              icon,
-              color: iconColor,
+            const Icon(
+              Icons.wifi,
+              color: darkModeGrassColor,
             ),
             const SizedBox(width: 8),
             Text(message),
@@ -151,7 +149,7 @@ class _AppState extends State<App> {
             navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
             theme: theme,
-            title: 'Student Event Calendar',
+            title: 'CSPC Student Event Calendar',
             home: const AuthScreen(),
           ),
         );
@@ -173,7 +171,7 @@ class AuthScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final darkModeOn = Provider.of<DarkModeProvider>(context, listen: false).darkMode;
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return StreamBuilder(
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (ctx, userSnapshot) {

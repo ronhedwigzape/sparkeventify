@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -9,6 +10,7 @@ import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/screens/edit_event_screen.dart';
+import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:timezone/timezone.dart' as tz;
 
@@ -27,6 +29,17 @@ class _PostCardState extends State<PostCard> {
   void initState() {
     super.initState();
     userDetails = FireStoreUserMethods().getUserByEventsCreatedBy(widget.snap.createdBy);
+  }
+
+  String formatParticipants(Map<String, dynamic>? participants) {
+    List<String> formattedList = [];
+    participants?.removeWhere((key, value) => (value as List).isEmpty);
+    participants?.forEach((key, value) {
+      String formattedString =
+          '${key[0].toUpperCase()}${key.substring(1)}: ${(value as List).join(', ')}';
+      formattedList.add(formattedString);
+    });
+    return formattedList.join('\n');
   }
 
   void showSnackBar(String message, BuildContext context) {
@@ -127,55 +140,73 @@ class _PostCardState extends State<PostCard> {
                         IconButton(
                       onPressed: () {
                         showDialog(
-                            context: context,
-                            builder: (context) => SimpleDialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              title: Text(
-                                  'Are you sure you want to delete this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'} forever?',
-                                  style: TextStyle(
-                                      fontSize: 18,
+                          context: context,
+                          builder: (context) {
+                            return SimpleDialog(
+                              title: Row(
+                                children: [
+                                  Icon(Icons.delete_forever,
+                                    color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    'Delete Event',
+                                    style: TextStyle(
+                                      color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,
                                       fontWeight: FontWeight.bold,
-                                      color: darkModeOn ? lightColor : darkColor
-                                  )
+                                    ),
+                                  ),
+                                ],
                               ),
-                              children: <Widget>[
-                                Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                                  child: Column(
-                                    children: <Widget>[
-                                      InkWell(
-                                        onTap: () async {
-                                          await FireStoreEventMethods().removeEvent(widget.snap.id);
-                                            Navigator.of(context).pop();
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Icon(Icons.delete_forever,
-                                                color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
-                                            const SizedBox(width: 16),
-                                            Text('Delete Forever',
-                                                style: TextStyle(
-                                                  color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,
-                                                  fontWeight: FontWeight.bold,
-                                                )
-                                            ),
-                                          ],
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                                  child: Text(
+                                    'Are you sure you want to delete "${widget.snap.title}"?',
+                                    style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                                    ),
+                                ),
+                                SimpleDialogOption(
+                                  padding: const EdgeInsets.all(20),
+                                  onPressed: () async {
+                                    bool isConnected = await ConnectivityService().isConnected();
+                                    if (isConnected) {
+                                      await FireStoreEventMethods().removeEvent(widget.snap.id);
+                                    } else {
+                                      // Show a message to the user
+                                      mounted ? Navigator.of(context).pop() : '';
+                                      mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('No internet connection. Please check your connection and try again.'),
+                                          duration: Duration(seconds: 5),
                                         ),
-                                      ),
+                                      ) : '';
+                                    }
+                                  },
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(Icons.check_circle, 
+                                      color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
+                                      const SizedBox(width: 10),
+                                      Text('Yes', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                                     ],
                                   ),
                                 ),
-                                TextButton(
-                                  child: const Text("Close"),
+                                SimpleDialogOption(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(Icons.cancel, color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                                      const SizedBox(width: 10),
+                                      Text('No', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
+                                    ],
+                                  ),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
                                 ),
                               ],
-                            )
+                            );
+                          }
                         );
                       },
                         icon: const Icon(Icons.delete_forever, color: darkModeMaroonColor),
@@ -206,24 +237,32 @@ class _PostCardState extends State<PostCard> {
                 ),
                 Row(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: TextButton.icon(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => EditEventScreen(
-                                eventSnap: widget.snap,
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => EditEventScreen(
+                                  eventSnap: widget.snap,
+                                ),
                               ),
+                            );
+                          },
+                          icon: const Icon(Icons.edit_calendar, size: 20, color: lightColor,),
+                          label: Text('Edit ${widget.snap.title}', 
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: lightColor),),
+                            style: ButtonStyle(
+                              alignment: Alignment.centerLeft, 
+                              backgroundColor: MaterialStateProperty.all<Color>(darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                              foregroundColor: MaterialStateProperty.all<Color>(lightColor)
                             ),
-                          );
-                        },
-                        icon: Icon(Icons.edit_calendar, size: 20, color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,),
-                        label: Text('Edit this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'}', 
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w700,
-                          color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),),
+                        ),
                       ),
                     ),
                   ],
@@ -237,21 +276,52 @@ class _PostCardState extends State<PostCard> {
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                          child: RichText(
-                            text: TextSpan(
-                              style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                            const TextSpan(
-                              text: 'Description: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            TextSpan(
-                              text: widget.snap.description,
-                            ),
-                          ]),
-                          overflow: TextOverflow.ellipsis,
-                          ),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.location_pin,
+                                      color: darkModeOn
+                                          ? darkModeSecondaryColor
+                                          : lightModeSecondaryColor,
+                                      size: kIsWeb ? 21 : 18,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Flexible(child: Text(widget.snap.venue ?? '', textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: kIsWeb ? 14 : 11),)),
+                                  ],
+                                ), 
+                                const SizedBox(height: 10,),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.group,
+                                      color: darkModeOn
+                                          ? darkModeSecondaryColor
+                                          : lightModeSecondaryColor,
+                                      size: kIsWeb ? 21 : 18,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Flexible(child: Text(formatParticipants(widget.snap.participants), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: kIsWeb ? 14 : 11),)),
+                                  ],
+                                ), 
+                                const SizedBox(height: 10,),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.description,
+                                      color: darkModeOn
+                                          ? darkModeSecondaryColor
+                                          : lightModeSecondaryColor,
+                                      size: kIsWeb ? 21 : 18,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Flexible(child: Text(widget.snap.description, textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: kIsWeb ? 14 : 11),)),
+                                  ],
+                                ),    
+                                                            
+                            ]),
                         ),
                       ]),
                 )
@@ -334,57 +404,74 @@ class _PostCardState extends State<PostCard> {
                         IconButton(
                       onPressed: () {
                         showDialog(
-                            context: context,
-                            builder: (context) => SimpleDialog(
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              title: Text(
-                                  'Are you sure you want to delete this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'} forever?',
-                                  style: TextStyle(
-                                      fontSize: 18,
+                          context: context,
+                          builder: (context) {
+                            return SimpleDialog(
+                              title: Row(
+                                children: [
+                                  Icon(Icons.delete_forever,
+                                    color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,),
+                                  const SizedBox(width: 10),
+                                  Text(
+                                    'Delete Event',
+                                    style: TextStyle(
+                                      color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,
                                       fontWeight: FontWeight.bold,
-                                      color: darkModeOn ? lightColor : darkColor
-                                  )
+                                    ),
+                                  ),
+                                ],
                               ),
-                              children: <Widget>[
-                                Container(
-                                  padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
-                                  child: Column(
-                                    children: <Widget>[
-                                      InkWell(
-                                        onTap: () async {
-                                          await FireStoreEventMethods().removeEvent(widget.snap.id);
-                                            Navigator.of(context).pop();
-                                        },
-                                        child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                            Icon(Icons.delete_forever,
-                                                color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
-                                            const SizedBox(width: 16),
-                                            Text('Delete Forever',
-                                                style: TextStyle(
-                                                  color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,
-                                                  fontWeight: FontWeight.bold,
-                                                )
-                                            ),
-                                          ],
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+                                  child: Text(
+                                    'Are you sure you want to delete "${widget.snap.title}"?',
+                                    style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                                    ),
+                                ),
+                                SimpleDialogOption(
+                                  padding: const EdgeInsets.all(20),
+                                  onPressed: () async {
+                                    bool isConnected = await ConnectivityService().isConnected();
+                                    if (isConnected) {
+                                      await FireStoreEventMethods().removeEvent(widget.snap.id);
+                                    } else {
+                                      // Show a message to the user
+                                      mounted ? Navigator.of(context).pop() : '';
+                                      mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text('No internet connection. Please check your connection and try again.'),
+                                          duration: Duration(seconds: 5),
                                         ),
-                                      ),
+                                      ) : '';
+                                    }
+                                  },
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(Icons.check_circle, 
+                                      color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
+                                      const SizedBox(width: 10),
+                                      Text('Yes', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                                     ],
                                   ),
                                 ),
-                                TextButton(
-                                  child: const Text("Close"),
+                                SimpleDialogOption(
+                                  padding: const EdgeInsets.all(20),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Icon(Icons.cancel, color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                                      const SizedBox(width: 10),
+                                      Text('No', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
+                                    ],
+                                  ),
                                   onPressed: () {
                                     Navigator.of(context).pop();
                                   },
                                 ),
                               ],
-                            )
+                            );
+                          }
                         );
-
                       },
                         icon: const Icon(Icons.delete_forever, color: darkModeMaroonColor),
                         tooltip: 'Delete event',
@@ -428,11 +515,13 @@ class _PostCardState extends State<PostCard> {
                           );
                         },
                         icon: Icon(Icons.edit_calendar, size: 24, color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,),
-                        label: Text('Edit this ${widget.snap.type == 'Academic' ? 'announcement' : 'event'}', 
+                        label: Text('Edit ${widget.snap.title}', 
                           style: TextStyle(
                             fontWeight: FontWeight.w700,
                             fontSize: 16,
-                            color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),),
+                            color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                            overflow: TextOverflow.ellipsis,  
+                          ),
                       ),
                     ),
                   ],
