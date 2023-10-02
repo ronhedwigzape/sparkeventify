@@ -23,6 +23,7 @@ class FireStorePersonalEventMethods {
     String venue,
     String type,
     String status,
+    bool isEdited
   ) async {
     String response = 'Some error occurred';
     try {
@@ -56,6 +57,7 @@ class FireStorePersonalEventMethods {
         status: status,
         dateUpdated: DateTime.now(),
         datePublished: DateTime.now(),
+        isEdited: isEdited
       );
       // Add the event to the 'personal_events' collection in Firestore
       _personalEventsCollection.doc(eventId).set(event.toJson());

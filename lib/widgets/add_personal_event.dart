@@ -233,7 +233,8 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
             selectedParticipants,
             _personalEventVenueController.text,
             _personalEventTypeController.text,
-            'Upcoming');
+            'Upcoming',
+            false);
         if (kDebugMode) {
           print('Add Personal Event Response: $response');
         }

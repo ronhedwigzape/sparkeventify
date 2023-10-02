@@ -17,9 +17,10 @@ class PersonalEvent {
   String status;
   DateTime? dateUpdated;
   DateTime? datePublished;
+  bool isEdited;
 
   PersonalEvent({
-    required this.id, 
+    required this.id,
     required this.title,
     required this.startDate,
     required this.endDate,
@@ -35,6 +36,7 @@ class PersonalEvent {
     required this.status,
     this.dateUpdated,
     this.datePublished,
+    this.isEdited = false,
   });
 
   // Convert Event object to JSON
@@ -55,29 +57,30 @@ class PersonalEvent {
         'status': status,
         'dateUpdated': dateUpdated,
         'datePublished': datePublished,
+        'isEdited': isEdited,
       };
 
   // Create Event object from DocumentSnapshot
   static Future<PersonalEvent> fromSnap(DocumentSnapshot snap) async {
     var snapshot = snap.data() as Map<String, dynamic>;
     return PersonalEvent(
-      id: snapshot['id'],
-      title: snapshot['title'],
-      startDate: (snapshot['startDate'] as Timestamp).toDate().toLocal(),
-      endDate: (snapshot['endDate'] as Timestamp).toDate().toLocal(),
-      startTime: (snapshot['startTime'] as Timestamp).toDate().toLocal(),
-      endTime: (snapshot['endTime'] as Timestamp).toDate().toLocal(),
-      description: snapshot['description'],
-      createdBy: snapshot['createdBy'],
-      image: snapshot['image'],
-      document: snapshot['document'],
-      participants: Map<String, List<dynamic>>.from(snapshot['participants']),
-      venue: snapshot['venue'],
-      type: snapshot['type'],
-      status: snapshot['status'],
-      dateUpdated: (snapshot['dateUpdated'] as Timestamp).toDate().toUtc(),
-      datePublished: (snapshot['datePublished'] as Timestamp).toDate().toUtc()
-    );
+        id: snapshot['id'],
+        title: snapshot['title'],
+        startDate: (snapshot['startDate'] as Timestamp).toDate().toLocal(),
+        endDate: (snapshot['endDate'] as Timestamp).toDate().toLocal(),
+        startTime: (snapshot['startTime'] as Timestamp).toDate().toLocal(),
+        endTime: (snapshot['endTime'] as Timestamp).toDate().toLocal(),
+        description: snapshot['description'],
+        createdBy: snapshot['createdBy'],
+        image: snapshot['image'],
+        document: snapshot['document'],
+        participants: Map<String, List<dynamic>>.from(snapshot['participants']),
+        venue: snapshot['venue'],
+        type: snapshot['type'],
+        status: snapshot['status'],
+        dateUpdated: (snapshot['dateUpdated'] as Timestamp).toDate().toUtc(),
+        datePublished:(snapshot['datePublished'] as Timestamp).toDate().toUtc(),
+        isEdited: snapshot['isEdited']
+      );        
   }
-
 }

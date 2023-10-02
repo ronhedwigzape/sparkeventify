@@ -305,6 +305,7 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
           status: widget.eventSnap.status, // TODO: change this
           dateUpdated: DateTime.now(),
           datePublished: widget.eventSnap.datePublished,
+          isEdited: true
         );
 
         // Add the event to the database

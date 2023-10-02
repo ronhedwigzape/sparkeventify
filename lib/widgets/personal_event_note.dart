@@ -111,7 +111,6 @@ class _PersonalEventNoteState extends State<PersonalEventNote> {
                     child: CachedNetworkImage(
                         imageUrl: widget.personalEvent!.image!,
                         fit: BoxFit.cover,
-                        placeholder: (context, url) => CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
                         errorWidget: (context, url, error) => Image.asset('assets/images/cspc_background.jpg', fit: BoxFit.cover),
                       ),
                   ),
@@ -122,7 +121,7 @@ class _PersonalEventNoteState extends State<PersonalEventNote> {
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [Colors.transparent, black.withOpacity(0.9)],
-                      begin: Alignment.center,
+                      begin: Alignment.topCenter,
                       end: Alignment.bottomCenter,
                     ),
                   ),
@@ -170,8 +169,8 @@ class _PersonalEventNoteState extends State<PersonalEventNote> {
                     ),
                     Row(
                       children: [
-                          Icon(Icons.location_on, color: light, size: 12,),
-                          SizedBox(width: 5),
+                          const Icon(Icons.location_on, color: light, size: 12,),
+                          const SizedBox(width: 5),
                           Text(
                             widget.personalEvent!.venue ?? '',
                             style: const TextStyle(
@@ -198,7 +197,7 @@ class _PersonalEventNoteState extends State<PersonalEventNote> {
                               const Icon(Icons.access_time, color: light, size: 12,),
                               const SizedBox(width: 5),
                               Text(
-                                'Created ${timeago.format(widget.personalEvent!.dateUpdated!)}',
+                                '${widget.personalEvent!.isEdited ? 'Updated' : 'Created' } ${timeago.format(widget.personalEvent!.dateUpdated!)}',
                                 style: const TextStyle(
                                   color: light,
                                   fontSize: 12,
