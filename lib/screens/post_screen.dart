@@ -40,8 +40,7 @@ class _PostScreenState extends State<PostScreen> {
   bool _isLoading = false;
   List<String> courseParticipants = ['BSCS', 'BSIT', 'BSN', 'BSM', 'BSEE', 'BSME', 'BSCE'];
   List<String> departmentParticipants = ['CCS', 'CHS', 'CEA',];
-  List<String> staffParticipants = ['Faculty'];
-  Map<String, List<String>> selectedParticipants = {'course': [], 'department': [], 'staff': []};
+  Map<String, List<String>> selectedParticipants = {'course': [], 'department': []};
 
   // List all associated course for departments
   Map<String, String> courseDepartmentMap = {
@@ -646,7 +645,6 @@ class _PostScreenState extends State<PostScreen> {
                                                     children: [
                                                       Expanded(child: _buildParticipant('Course', courseParticipants)),
                                                       Expanded(child: _buildParticipant('Department', departmentParticipants)),
-                                                      Expanded(child: _buildParticipant('Staff', staffParticipants)),
                                                     ],
                                                   ),
                                                 ) : Flexible(
@@ -657,7 +655,6 @@ class _PostScreenState extends State<PostScreen> {
                                                       children: [
                                                         _buildParticipant('Course', courseParticipants),
                                                         _buildParticipant('Department', departmentParticipants),
-                                                        _buildParticipant('Staff', staffParticipants),
                                                       ],
                                                     ),
                                                   ),
@@ -703,13 +700,21 @@ class _PostScreenState extends State<PostScreen> {
                                                       AlwaysStoppedAnimation<Color>(
                                                           lightColor),
                                                 ))
-                                              : const Text(
-                                                  'Create a New Announcement',
-                                                  style: TextStyle(
-                                                    color: lightColor,
-                                                    fontWeight: FontWeight.bold,
-                                                  ),
-                                                )),
+                                              : const Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(Icons.post_add, color: lightColor),
+                                                  SizedBox(width: 10),
+                                                  Text(
+                                                      'Create a New Announcement',
+                                                      style: TextStyle(
+                                                        color: lightColor,
+                                                        fontWeight: FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                ],
+                                              )),
                                         ),
                                       ),
                                     ],
