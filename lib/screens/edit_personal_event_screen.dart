@@ -2,10 +2,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:student_event_calendar/models/event.dart';
+import 'package:student_event_calendar/models/personal_event.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
-import 'package:student_event_calendar/resources/firestore_event_methods.dart';
+import 'package:student_event_calendar/resources/firestore_personal_event_methods.dart';
 import 'package:student_event_calendar/resources/storage_methods.dart';
 import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/utils/colors.dart';
@@ -15,23 +15,23 @@ import 'package:student_event_calendar/widgets/text_field_input.dart';
 import '../providers/darkmode_provider.dart';
 import '../utils/global.dart';
 
-class EditEventScreen extends StatefulWidget {
-  const EditEventScreen({Key? key, required this.eventSnap}) : super(key: key);
+class EditPersonalEventScreen extends StatefulWidget {
+  const EditPersonalEventScreen({Key? key, required this.eventSnap}) : super(key: key);
 
-  final Event eventSnap;
+  final PersonalEvent eventSnap;
   @override
-  State<EditEventScreen> createState() => EditEventScreenState();
+  State<EditPersonalEventScreen> createState() => EditPersonalEventScreenState();
 }
 
-class EditEventScreenState extends State<EditEventScreen> {
-  final _eventTypeController = TextEditingController();
-  final _eventTitleController = TextEditingController();
-  final _eventDescriptionsController = TextEditingController();
-  final _eventVenueController = TextEditingController();
-  final _startDateController = TextEditingController();
-  final _endDateController = TextEditingController();
-  final _startTimeController = TextEditingController();
-  final _endTimeController = TextEditingController();
+class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
+  final _personalEventTypeController = TextEditingController();
+  final _personalEventTitleController = TextEditingController();
+  final _personalEventDescriptionsController = TextEditingController();
+  final _personalEventVenueController = TextEditingController();
+  final _personalStartDateController = TextEditingController();
+  final _personalEndDateController = TextEditingController();
+  final _personalStartTimeController = TextEditingController();
+  final _personalEndTimeController = TextEditingController();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
   Future<model.User?> currentUser = AuthMethods().getCurrentUserDetails();
@@ -71,17 +71,17 @@ class EditEventScreenState extends State<EditEventScreen> {
   @override
   void initState() {
     super.initState();
-    _eventTypeController.text = widget.eventSnap.type;
-    _eventTitleController.text = widget.eventSnap.title;
-    _eventDescriptionsController.text = widget.eventSnap.description;
-    _eventVenueController.text = widget.eventSnap.venue!;
-    _startDateController.text =
+    _personalEventTypeController.text = widget.eventSnap.type;
+    _personalEventTitleController.text = widget.eventSnap.title;
+    _personalEventDescriptionsController.text = widget.eventSnap.description;
+    _personalEventVenueController.text = widget.eventSnap.venue!;
+    _personalStartDateController.text =
         DateFormat('yyyy-MM-dd').format(widget.eventSnap.startDate);
-    _endDateController.text =
+    _personalEndDateController.text =
         DateFormat('yyyy-MM-dd').format(widget.eventSnap.endDate);
-    _startTimeController.text =
+    _personalStartTimeController.text =
         DateFormat('h:mm a').format(widget.eventSnap.startTime);
-    _endTimeController.text =
+    _personalEndTimeController.text =
         DateFormat('h:mm a').format(widget.eventSnap.endTime);
     selectedParticipants['course'] = widget.eventSnap.participants!['course'];
     selectedParticipants['department'] =
@@ -204,9 +204,9 @@ class EditEventScreenState extends State<EditEventScreen> {
         });
   }
 
-  setEventCancellation(DateTime startDate, DateTime endDate) async {
+  setPersonalEventCancellation(DateTime startDate, DateTime endDate) async {
     try {
-      return await FireStoreEventMethods().updateEventStatus(
+      return await FireStorePersonalEventMethods().updatePersonalEventStatus(
           widget.eventSnap.id, true, null, startDate, endDate, null);
     } catch (e) {
       if (kDebugMode) {
@@ -214,8 +214,6 @@ class EditEventScreenState extends State<EditEventScreen> {
       }
     }
   }
-
-  isEventMoved() async {}
 
   _update() async {
     if (kDebugMode) {
@@ -226,23 +224,23 @@ class EditEventScreenState extends State<EditEventScreen> {
     });
     try {
       if (kDebugMode) {
-        print('Trying to update event...');
+        print('Trying to update personal event...');
       }
       // Check if all required parameters are not null
-      if (_eventTypeController.text.isNotEmpty &&
-          _eventTitleController.text.isNotEmpty &&
-          _startDateController.text.isNotEmpty &&
-          _endDateController.text.isNotEmpty &&
-          _startTimeController.text.isNotEmpty &&
-          _endTimeController.text.isNotEmpty &&
-          _eventDescriptionsController.text.isNotEmpty &&
-          _eventVenueController.text.isNotEmpty &&
+      if (_personalEventTypeController.text.isNotEmpty &&
+          _personalEventTitleController.text.isNotEmpty &&
+          _personalStartDateController.text.isNotEmpty &&
+          _personalEndDateController.text.isNotEmpty &&
+          _personalStartTimeController.text.isNotEmpty &&
+          _personalEndTimeController.text.isNotEmpty &&
+          _personalEventDescriptionsController.text.isNotEmpty &&
+          _personalEventVenueController.text.isNotEmpty &&
           selectedParticipants.isNotEmpty) {
         // Get the date and time from the text controllers
-        String pickedStartDate = _startDateController.text;
-        String pickedEndDate = _endDateController.text;
-        String pickedStartTime = _startTimeController.text;
-        String pickedEndTime = _endTimeController.text;
+        String pickedStartDate = _personalStartDateController.text;
+        String pickedEndDate = _personalEndDateController.text;
+        String pickedStartTime = _personalStartTimeController.text;
+        String pickedEndTime = _personalEndTimeController.text;
         // Convert picked date (yyyy-mm-dd) to DateTime
         DateTime startDate = DateTime.parse(pickedStartDate);
         DateTime endDate = DateTime.parse(pickedEndDate);
@@ -290,31 +288,31 @@ class EditEventScreenState extends State<EditEventScreen> {
           // create delete current document method here
         }
 
-        Event event = Event(
+        PersonalEvent event = PersonalEvent(
           id: widget.eventSnap.id,
-          title: _eventTitleController.text,
+          title: _personalEventTitleController.text,
           image: imageUrl,
-          description: _eventDescriptionsController.text,
+          description: _personalEventDescriptionsController.text,
           createdBy: widget.eventSnap.createdBy,
           document: documentUrl,
           participants: selectedParticipants,
-          venue: _eventVenueController.text,
+          venue: _personalEventVenueController.text,
           startDate: startDatePart,
           endDate: endDatePart,
           startTime: startTime12,
           endTime: endTime12,
-          type: _eventTypeController.text,
+          type: _personalEventTypeController.text,
           status: widget.eventSnap.status, // TODO: change this
           dateUpdated: DateTime.now(),
           datePublished: widget.eventSnap.datePublished,
         );
 
         // Add the event to the database
-        String response = await FireStoreEventMethods()
-            .updateEvent(widget.eventSnap.id, event);
+        String response = await FireStorePersonalEventMethods()
+        .updatePersonalEvent(widget.eventSnap.id, event);
 
-        await FireStoreEventMethods().updateEventStatus(
-            widget.eventSnap.id, false, false, startDate, endDate, null);
+        await FireStorePersonalEventMethods().updatePersonalEventStatus(
+          widget.eventSnap.id, false, false, startDate, endDate, null);
 
         if (kDebugMode) {
           print('Update Event Response: $response');
@@ -322,6 +320,7 @@ class EditEventScreenState extends State<EditEventScreen> {
         // Check if the response is a success or a failure
         if (response == 'Success') {
           onPostSuccess();
+         
         } else {
           onPostFailure(response);
         }
@@ -354,7 +353,7 @@ class EditEventScreenState extends State<EditEventScreen> {
       _isLoading = false;
     });
     Navigator.pop(context);
-    showSnackBar('Event updated successfully!', context);
+    showSnackBar('Your event updated successfully!', context);
   }
 
   void onPostFailure(String message) {
@@ -373,14 +372,14 @@ class EditEventScreenState extends State<EditEventScreen> {
   @override
   void dispose() {
     super.dispose();
-    _eventTypeController.dispose();
-    _eventTitleController.dispose();
-    _eventDescriptionsController.dispose();
-    _eventVenueController.dispose();
-    _startDateController.dispose();
-    _endDateController.dispose();
-    _startTimeController.dispose();
-    _endTimeController.dispose();
+    _personalEventTypeController.dispose();
+    _personalEventTitleController.dispose();
+    _personalEventDescriptionsController.dispose();
+    _personalEventVenueController.dispose();
+    _personalStartDateController.dispose();
+    _personalEndDateController.dispose();
+    _personalStartTimeController.dispose();
+    _personalEndTimeController.dispose();
   }
 
   @override
@@ -405,7 +404,7 @@ class EditEventScreenState extends State<EditEventScreen> {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {
           model.User? currentUser = snapshot.data;
-          return currentUser?.userType != 'Student'
+          return currentUser?.userType == 'Student'
               ? ScaffoldMessenger(
                   key: _scaffoldMessengerKey,
                   child: GestureDetector(
@@ -417,11 +416,23 @@ class EditEventScreenState extends State<EditEventScreen> {
                     },
                     child: Scaffold(
                       appBar: AppBar(
-                        title: Text(
-                          'Edit ${widget.eventSnap.type == 'Academic' ? 'Announcement' : 'Event'}',
-                          style: TextStyle(
-                            color: darkModeOn ? white : black,
-                          ),
+                        title: Row(
+                          children: [
+                            Icon(
+                              Icons.edit,
+                              color: darkModeOn
+                                  ? lightColor
+                                  : darkColor,
+                              size: kIsWeb ? 40 : 25,
+                            ),
+                            const SizedBox(width: 10),
+                            Text(
+                              'Edit Personal Event',
+                              style: TextStyle(
+                                color: darkModeOn ? white : black,
+                              ),
+                            ),
+                          ],
                         ),
                         backgroundColor: darkModeOn ? darkColor : lightColor,
                         iconTheme: IconThemeData(
@@ -454,18 +465,11 @@ class EditEventScreenState extends State<EditEventScreen> {
                                           child: Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                Icons.edit,
-                                                color: darkModeOn
-                                                    ? lightColor
-                                                    : darkColor,
-                                                size: kIsWeb ? 40 : 25,
-                                              ),
-                                              const SizedBox(width: 10),
-                                              Expanded(
+                                            children: [                                              
+                                              Flexible(
                                                 child: Text(
                                                   'Update "${widget.eventSnap.title}"',
+                                                  textAlign: TextAlign.center,
                                                   style: TextStyle(
                                                     fontSize:
                                                         kIsWeb ? 32.0 : 24.0,
@@ -485,11 +489,12 @@ class EditEventScreenState extends State<EditEventScreen> {
                                       ),
                                       Flexible(
                                         child: Row(
-                                          mainAxisAlignment: MainAxisAlignment.start,
+                                          mainAxisAlignment: MainAxisAlignment.center,
                                           children: [
                                             Expanded(
                                               child: Text(
-                                                'Instructions: Please edit the required* details correctly and then update the announcement.',
+                                                'Instructions: Please edit the required* details correctly and then update your event.',
+                                                textAlign: TextAlign.center,
                                                 style: TextStyle(
                                                     fontSize: 15.0,
                                                     color: darkModeOn
@@ -514,10 +519,10 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                   labelText:
                                                       '${kIsWeb ? 'Select announcement type' : 'Type'}*',
                                                 ),
-                                                value: _eventTypeController
+                                                value: _personalEventTypeController
                                                         .text.isEmpty
                                                     ? widget.eventSnap.type
-                                                    : _eventTypeController.text,
+                                                    : _personalEventTypeController.text,
                                                 items: <String>[
                                                   'Academic',
                                                   'Non-academic'
@@ -536,7 +541,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                 }).toList(),
                                                 onChanged: (String? newValue) {
                                                   setState(() {
-                                                    _eventTypeController.text =
+                                                    _personalEventTypeController.text =
                                                         newValue!;
                                                   });
                                                 },
@@ -589,7 +594,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                                           Flexible(
                                             child: TextFieldInput(
                                               textEditingController:
-                                                  _eventTitleController,
+                                                  _personalEventTitleController,
                                               labelText: 'Title*',
                                               textInputType: TextInputType.text,
                                             ),
@@ -604,10 +609,10 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                 labelText:
                                                     '${kIsWeb ? 'Select venue' : 'Venue'}*',
                                               ),
-                                              value: _eventVenueController
+                                              value: _personalEventVenueController
                                                       .text.isEmpty
                                                   ? widget.eventSnap.venue
-                                                  : _eventVenueController.text,
+                                                  : _personalEventVenueController.text,
                                               items: <String>[
                                                 'Gymnasium',
                                                 'Auditorium'
@@ -625,7 +630,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                                               }).toList(),
                                               onChanged: (String? newValue) {
                                                 setState(() {
-                                                  _eventVenueController.text =
+                                                  _personalEventVenueController.text =
                                                       newValue!;
                                                 });
                                               },
@@ -637,7 +642,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                                       Flexible(
                                         child: TextFormField(
                                           controller:
-                                              _eventDescriptionsController,
+                                              _personalEventDescriptionsController,
                                           decoration: InputDecoration(
                                             labelText: 'Description*',
                                             alignLabelWithHint: true,
@@ -660,9 +665,9 @@ class EditEventScreenState extends State<EditEventScreen> {
                                           Flexible(
                                             child: TextFieldInput(
                                               startTextEditingController:
-                                                  _startDateController,
+                                                  _personalStartDateController,
                                               endTextEditingController:
-                                                  _endDateController,
+                                                  _personalEndDateController,
                                               isDateRange: true,
                                               labelText: 'Event Date',
                                               textInputType:
@@ -673,9 +678,9 @@ class EditEventScreenState extends State<EditEventScreen> {
                                           Flexible(
                                             child: TextFieldInput(
                                               startTextEditingController:
-                                                  _startTimeController,
+                                                  _personalStartTimeController,
                                               endTextEditingController:
-                                                  _endTimeController,
+                                                  _personalEndTimeController,
                                               isTimeRange: true,
                                               labelText: 'Event Time',
                                               textInputType:
@@ -807,24 +812,24 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                                   Color>(
                                                               lightColor),
                                                     ))
-                                                  : Row(
+                                                  : const Row(
                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
-                                                      const Icon(
+                                                      Icon(
                                                         Icons.update,
                                                         color: lightColor,
                                                       ),
-                                                      const SizedBox(width: 10.0),
+                                                      SizedBox(width: 10.0),
                                                       Text(
-                                                          'Update ${widget.eventSnap.type == 'Academic' ? 'announcement' : 'event'}',
-                                                          style: const TextStyle(
+                                                          'Update your personal event',
+                                                          style: TextStyle(
                                                             color: lightColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                           ),
                                                         ),
-                                                    ],
-                                                  )),
+                                                  ],
+                                                )),
                                         ),
                                       ),
                                     ],

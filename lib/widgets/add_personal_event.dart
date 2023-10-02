@@ -271,7 +271,8 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
     setState(() {
       _isLoading = false;
     });
-    showSnackBar('Post uploaded successfully', context);
+    Navigator.pop(context);
+    showSnackBar('Your event uploaded successfully', context);
     clearInputs();
   }
 
@@ -353,11 +354,23 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
               },
               child: Scaffold(
                 appBar: AppBar(
-                  title: Text(
-                    'Add Personal Event',
-                    style: TextStyle(
-                      color: darkModeOn ? lightColor : darkColor,
-                    ),
+                  title: Row(
+                    children: [
+                      Icon(
+                        Icons.post_add,
+                        color: darkModeOn
+                            ? lightColor
+                            : darkColor,
+                        size: kIsWeb ? 40 : 25,
+                      ),
+                      const SizedBox(width: 10.0),
+                      Text(
+                        'Add Personal Event',
+                        style: TextStyle(
+                          color: darkModeOn ? lightColor : darkColor,
+                        ),
+                      ),
+                    ],
                   ),
                   backgroundColor:
                       darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,
@@ -391,14 +404,6 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
                                       children: [
-                                        Icon(
-                                          Icons.post_add,
-                                          color: darkModeOn
-                                              ? lightColor
-                                              : darkColor,
-                                          size: kIsWeb ? 40 : 25,
-                                        ),
-                                        const SizedBox(width: 10),
                                         Text(
                                           'Make your own event',
                                           style: TextStyle(
@@ -714,13 +719,23 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                                                     AlwaysStoppedAnimation<
                                                         Color>(lightColor),
                                               ))
-                                            : Text(
-                                                'Create your event',
-                                                style: TextStyle(
+                                            : Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Icon(
+                                                  Icons.add_circle,
                                                   color: darkModeOn ? darkColor : lightColor,
-                                                  fontWeight: FontWeight.bold,
                                                 ),
-                                              )),
+                                                const SizedBox(width: 10.0),
+                                                Text(
+                                                    'Create your personal event',
+                                                    style: TextStyle(
+                                                      color: darkModeOn ? darkColor : lightColor,
+                                                      fontWeight: FontWeight.bold,
+                                                    ),
+                                                  ),
+                                              ],
+                                            )),
                                   ),
                                 ),
                               ],

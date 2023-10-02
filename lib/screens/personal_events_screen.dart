@@ -75,11 +75,17 @@ class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
             Future.delayed(Duration.zero, () => showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                title: const Text('No personal events found'),
+                title: Row(
+                  children: [
+                    Icon(Icons.event_note),
+                    const SizedBox(width: 10.0,),
+                    Flexible(child: Text('No personal events found')),
+                  ],
+                ),
                 content: const Text('Would you like to create a new one?'),
                 actions: <Widget>[
                   TextButton(
-                    child: const Text('Yes'),
+                    child: Text('Yes', style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),),
                     onPressed: () {
                       Future.delayed(Duration.zero, () {
                         Navigator.pop(context);
@@ -88,7 +94,7 @@ class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
                     },
                   ),
                   TextButton(
-                    child: const Text('No'),
+                    child: Text('No', style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor)),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
@@ -121,9 +127,12 @@ class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
             ); 
           }
 
+          // Sort the personalEvents list in descending order of dateUpdated
+          personalEvents.sort((a, b) => b.dateUpdated!.compareTo(a.dateUpdated!));
+
           return ListView.builder(
             itemCount: personalEvents.length,
-            padding: const EdgeInsets.all(10.0),
+            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
             itemBuilder: (context, index) {
               return PersonalEventNote(
                 personalEvent: personalEvents?[index],
