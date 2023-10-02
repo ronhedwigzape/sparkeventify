@@ -113,12 +113,12 @@ class _FeedbackFormState extends State<FeedbackForm> {
         return TextButton.icon(
           icon: Icon(
             eventFeedbackStatus ? Icons.check : Icons.feedback,
-            color: eventFeedbackStatus ? darkModeGrassColor : white,
+            color: eventFeedbackStatus ? darkModeGrassColor : lightColor,
           ),
           label: Text(
             eventFeedbackStatus ? 'Feedback Submitted' : 'Add Feedback',
             style: TextStyle(
-              color: eventFeedbackStatus ? darkModeGrassColor : white,
+              color: eventFeedbackStatus ? darkModeGrassColor : lightColor,
               fontWeight: eventFeedbackStatus ? FontWeight.bold : null,  
             ),
           ),

@@ -75,10 +75,10 @@ class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
             Future.delayed(Duration.zero, () => showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                title: Row(
+                title: const Row(
                   children: [
                     Icon(Icons.event_note),
-                    const SizedBox(width: 10.0,),
+                    SizedBox(width: 10.0,),
                     Flexible(child: Text('No personal events found')),
                   ],
                 ),

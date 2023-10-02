@@ -96,8 +96,8 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                           child: DecoratedBox(
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
-                                colors: [Colors.transparent, black.withOpacity(0.8)],
-                                begin: Alignment.topCenter,
+                                colors: [Colors.transparent, black.withOpacity(0.6)],
+                                begin: Alignment.bottomCenter,
                                 end: Alignment.bottomCenter,
                               ),
                             ),
@@ -116,7 +116,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(event.title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis,),
+                                        Text(event.title, style: const TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis,),
                                         Text(
                                           (event.startDate.day == endDate.day
                                               ? '${DateFormat('MMM dd, yyyy').format(event.startDate)}\n'
@@ -126,6 +126,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                               : '${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
                                           style: const TextStyle(
                                               height: 1.5,
+                                              color: white,
                                               fontSize: 10,
                                           ),
                                         ),
