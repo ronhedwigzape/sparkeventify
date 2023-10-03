@@ -177,6 +177,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                         padding: const EdgeInsets.all(10.0),
                           child: Container(
                             decoration: BoxDecoration(
+                                color: darkModeOn ? darkColor : lightColor,
                                 border: Border.all(
                                     color: darkModeOn ? lightColor : darkColor)),
                             child: TableCalendar(
