@@ -248,14 +248,18 @@ class FireStoreUserMethods {
         if (!RegExp(r"^639\d{9}$").hasMatch(profile.phoneNumber ?? '')) {
           return 'Please enter a valid phone number. (e.g. 639123456789)';
         }
-        // Check if section is a single letter A-Z
-        if (!RegExp(r"^[A-Z]$").hasMatch(profile.section ?? '')) {
-          return 'Section should be a single letter A-Z';
+
+        if (userType != "Staff") {
+          // Check if section is a single letter A-Z
+          if (!RegExp(r"^[A-Z]$").hasMatch(profile.section ?? '')) {
+            return 'Section should be a single letter A-Z';
+          }
+          // Check if year is 1-4
+          if (!RegExp(r"^[1-4]$").hasMatch(profile.year ?? '')) {
+            return 'Year should be 1-4';
+          }
         }
-        // Check if year is 1-4
-        if (!RegExp(r"^[1-4]$").hasMatch(profile.year ?? '')) {
-          return 'Year should be 1-4';
-        }
+        
         model.User user = model.User(
           uid: uid,
           username: username,

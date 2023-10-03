@@ -24,7 +24,18 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
-  final TextEditingController _positionController = TextEditingController();
+  final List<String> staffPositions = [
+    'Director - Student Affairs and Services - SASO',
+    'Administrative Aide VI - Head of Staff - SASO',
+    'Administrative Aide III - Support Staff - Student Development',
+    'Administrative Aide III - Support Staff - Scholarships(TES) & Financial Assist.',
+    'Administrative Aide II - Support Staff - Scholarships(CSP/TDP) & Financial Assist.',
+    'Administrative Aide II - Support Staff - Information Services',
+  ];
+  late String selectedStaffPositions = staffPositions[0];
+  late String position;
+  late String staffType;
+  late String staffDescription;
   bool _isLoading = false;
 
   @override
@@ -36,7 +47,6 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
     _middleInitialController.dispose();
     _lastNameController.dispose();
     _phoneNumberController.dispose();
-    _positionController.dispose();
   }
 
   Future<void> signUpAsClient() async {
@@ -50,7 +60,9 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
         _emailController.text.trim().isEmpty ||
         _phoneNumberController.text.trim().isEmpty ||
         _passwordController.text.trim().isEmpty ||
-        _positionController.text.trim().isEmpty
+        position.isEmpty ||
+        staffType.isEmpty ||
+        staffDescription.isEmpty
     ) return onSignupFailure('Please complete all required fields.');
 
     // Validate the phone number
@@ -71,7 +83,9 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
       middleInitial: _middleInitialController.text.trim(),
       lastName: _lastNameController.text.trim(),
       phoneNumber: phoneNumber,
-      position: _positionController.text.trim(),
+      staffPosition: position,
+      staffType: staffType,
+      staffDescription: staffDescription,
     );
 
     String res = await AuthMethods().signUp(
@@ -219,11 +233,49 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
                     textInputType: TextInputType.emailAddress,
                   ),
                   const SizedBox(height: 10.0),
-                  TextFieldInput(
-                    prefixIcon: const Icon(Icons.person_2),
-                    textEditingController: _positionController,
-                    labelText: 'Position*',
-                    textInputType: TextInputType.text,
+                  Row(
+                    children: [
+                      Flexible(
+                        child: FormField<String>(
+                          builder: (FormFieldState<String> state) {
+                            return InputDecorator(
+                              decoration: InputDecoration(
+                                prefixIcon: const Icon(Icons.person_4),
+                                labelText: 'Position*',
+                                border: OutlineInputBorder(
+                                  borderSide: BorderSide(
+                                    color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
+                                  ),
+                                ),
+                              ),
+                              child: DropdownButtonHideUnderline(
+                                child: DropdownButton<String>(
+                                  isExpanded: true,
+                                  value: selectedStaffPositions,
+                                  style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      selectedStaffPositions = newValue ?? staffPositions[0]; // handle null selection
+
+                                      List<String> splitValue = selectedStaffPositions.split(' - ');
+                                      position = splitValue[0];
+                                      staffType = splitValue[1];
+                                      staffDescription = splitValue[2];
+                                    });
+                                  },
+                                  items: staffPositions.map<DropdownMenuItem<String>>((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value.isEmpty ? null : value,
+                                      child: Text(value),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
+                            );
+                          },
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 10.0),
                   // text field input for password

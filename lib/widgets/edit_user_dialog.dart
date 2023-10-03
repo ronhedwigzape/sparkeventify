@@ -26,11 +26,18 @@ class _EditUserDialogState extends State<EditUserDialog> {
   final TextEditingController phoneNumberController = TextEditingController();
   final TextEditingController yearController = TextEditingController();
   final TextEditingController sectionController = TextEditingController();
-  final TextEditingController positionController = TextEditingController();
   final TextEditingController organizationController = TextEditingController();
-  late String profileImage;
+  final TextEditingController officerPositionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-    final List<String> programsAndDepartments = [
+  final List<String> staffPositions = [
+    'Director - Student Affairs and Services - SASO',
+    'Administrative Aide VI - Head of Staff - SASO',
+    'Administrative Aide III - Support Staff - Student Development',
+    'Administrative Aide III - Support Staff - Scholarships(TES) & Financial Assist.',
+    'Administrative Aide II - Support Staff - Scholarships(CSP/TDP) & Financial Assist.',
+    'Administrative Aide II - Support Staff - Information Services',
+  ];
+  final List<String> programsAndDepartments = [
     'BSCS - CCS - Computer Science',
     'BSIT - CCS - Information Technology',
     'BSN - CHS - Nursing',
@@ -40,8 +47,13 @@ class _EditUserDialogState extends State<EditUserDialog> {
     'BSCE - CEA - Computer Engineering',
   ];
   late String selectedProgramAndDepartment = programsAndDepartments[0];
+  late String selectedStaffPosition = staffPositions[0];
+  late String profileImage;
   late String program;
   late String department;
+  late String staffPosition;
+  late String staffType;
+  late String staffDescription;
 
   @override
   void initState() {
@@ -55,15 +67,26 @@ class _EditUserDialogState extends State<EditUserDialog> {
     program = widget.user.profile!.program?? '';
     yearController.text = widget.user.profile!.year?? '';
     sectionController.text = widget.user.profile!.section?? '';
-    positionController.text = widget.user.profile!.position?? '';
+    officerPositionController.text = widget.user.profile!.officerPosition?? '';
     organizationController.text = widget.user.profile!.organization?? '';
     profileImage = widget.user.profile!.profileImage ?? '';
+    staffPosition = widget.user.profile!.staffPosition?? '';
+    staffType = widget.user.profile!.staffType?? '';
+    staffDescription = widget.user.profile!.staffDescription?? '';
 
     // Set the default value for the dropdown
     for (String programAndDepartment in programsAndDepartments) {
       List<String> splitValue = programAndDepartment.split(' - ');
       if (splitValue[0] == program && splitValue[1] == department) {
         selectedProgramAndDepartment = programAndDepartment;
+        break;
+      }
+    }
+
+    for (String staff in staffPositions) {
+      List<String> splitValue = staff.split(' - ');
+      if (splitValue[0] == staffPosition && splitValue[1] == staffType && splitValue[2] == staffDescription) {
+        selectedStaffPosition = staff;
         break;
       }
     }
@@ -78,12 +101,15 @@ class _EditUserDialogState extends State<EditUserDialog> {
         middleInitial: middleInitialController.text,
         lastName: lastNameController.text,
         phoneNumber: phoneNumberController.text,
-        department: department,
-        program: program,
-        year: yearController.text,
-        section: sectionController.text,
-        position: positionController.text,
-        organization: organizationController.text,
+        department: widget.user.userType != 'Staff' ? department : '',
+        program: widget.user.userType != 'Staff' ? program : '',
+        year: widget.user.userType != 'Staff' ? yearController.text : '',
+        section: widget.user.userType != 'Staff' ? sectionController.text : '',
+        officerPosition: widget.user.userType == 'Officer' ? officerPositionController.text : '',
+        staffPosition: widget.user.userType == 'Staff' ?  staffPosition : '',
+        staffType: widget.user.userType == 'Staff' ? staffType : '',
+        staffDescription: widget.user.userType == 'Staff' ? staffDescription : '',
+        organization: widget.user.userType == 'Officer' ? organizationController.text : '',
         profileImage: profileImage);
 
     try {
@@ -128,7 +154,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
     phoneNumberController.dispose();
     yearController.dispose();
     sectionController.dispose();
-    positionController.dispose();
+    officerPositionController.dispose();
     organizationController.dispose();
     super.dispose();
   }
@@ -285,11 +311,43 @@ class _EditUserDialogState extends State<EditUserDialog> {
                             prefixIcon: const Icon(Icons.school),
                           ) : const SizedBox.shrink(),
                           widget.user.userType != 'Student' ? const SizedBox(height: 10) : const SizedBox.shrink(),
-                          widget.user.userType != 'Student' ? TextFieldInput(
-                            labelText: 'Position',
-                            textEditingController: positionController,
+                          widget.user.userType == 'Officer' ? TextFieldInput(
+                            labelText: 'Officer Position',
+                            textEditingController: officerPositionController,
                             textInputType: TextInputType.text,
                             prefixIcon: const Icon(Icons.star_border),
+                          ) : const SizedBox.shrink(),
+                          widget.user.userType == 'Staff' ? 
+                          DropdownButtonFormField<String>(
+                            value: selectedStaffPosition,
+                            style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                            decoration: InputDecoration(
+                              focusColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                              prefixIcon: const Icon(Icons.school),
+                              labelText: 'Staff Positions*',
+                              border: OutlineInputBorder(
+                                borderSide: Divider.createBorderSide(
+                                  context,
+                                  color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
+                              ),
+                            ),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                selectedStaffPosition = newValue ?? staffPositions[0]; // Handle null selection
+
+                                // Split the selected value:
+                                List<String> splitValue = selectedStaffPosition.split(' - ');
+                                staffPosition = splitValue[0];
+                                staffType = splitValue[1];
+                                staffDescription = splitValue[2];
+                              });
+                            },
+                            items: staffPositions.map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value.isEmpty ? null : value,
+                                child: Text(value),
+                              );
+                            }).toList(),
                           ) : const SizedBox.shrink(),
                           const SizedBox(height: 10),
                           widget.user.userType == 'Officer' ? TextFieldInput(

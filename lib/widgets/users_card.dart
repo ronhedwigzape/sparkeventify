@@ -110,7 +110,7 @@ class _UsersCardState extends State<UsersCard> {
                                child: Column(
                                  crossAxisAlignment: CrossAxisAlignment.start,
                                  children: [
-                                   if (widget.user.userType == 'Student' || widget.user.userType == 'Officer')
+                                   if (widget.user.userType == 'Student')
                                      ...[
                                        Row(
                                          children: [
@@ -145,13 +145,73 @@ class _UsersCardState extends State<UsersCard> {
                                          ],
                                        ),
                                      ],
-                                   if (widget.user.userType == 'Staff')
+
+                                  if (widget.user.userType == 'Officer')
+                                    ...[
+                                       Row(
+                                         children: [
+                                           const Text('Department:'),
+                                           const SizedBox(width: 10.0,),
+                                           Text(currentProfile.department ?? 'N/A', 
+                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                         ],
+                                       ),
+                                       Row(
+                                         children: [
+                                           const Text('Year:'),
+                                           const SizedBox(width: 10.0,),
+                                           Text(currentProfile.year ?? 'N/A', 
+                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                         ],
+                                       ),
+                                       Row(
+                                         children: [
+                                           const Text('Section:'),
+                                           const SizedBox(width: 10.0,),
+                                           Text(currentProfile.section ?? 'N/A', 
+                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                         ],
+                                       ),
+                                       Row(
+                                         children: [
+                                           const Text('Program:'),
+                                           const SizedBox(width: 10.0,),
+                                           Text(currentProfile.program ?? 'N/A',
+                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                         ],
+                                       ),
+                                       Row(
+                                         children: [
+                                           const Text('Officer Position:'),
+                                           const SizedBox(width: 10.0,),
+                                           Text(currentProfile.officerPosition ?? 'N/A', 
+                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                         ],
+                                       ),
+                                    ],
+                                  if (widget.user.userType == 'Staff')
                                      ...[
                                       Row(
                                          children: [
-                                           const Text('Position:'),
+                                           const Flexible(child: Text('SASO Staff Position:')),
                                            const SizedBox(width: 10.0,),
-                                           Text(currentProfile.position ?? 'N/A', 
+                                           Text(currentProfile.staffPosition ?? 'N/A', 
+                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                         ],
+                                       ),
+                                       Row(
+                                         children: [
+                                           const Flexible(child: Text('Staff Type:')),
+                                           const SizedBox(width: 10.0,),
+                                           Text(currentProfile.staffType ?? 'N/A', 
+                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                         ],
+                                       ),
+                                       Row(
+                                         children: [
+                                           const Flexible(child: Text('Staff Description:')),
+                                           const SizedBox(width: 10.0,),
+                                           Text(currentProfile.staffDescription ?? 'N/A', 
                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                                          ],
                                        ),
@@ -165,12 +225,10 @@ class _UsersCardState extends State<UsersCard> {
                          ),
                        ),
                        Flexible(
-                        flex: 1,
                         fit: FlexFit.loose,
                         child: EditUserDialog(user: widget.user)
                        ),
                        Flexible(
-                         flex: 1,
                          child: CheckboxListTile(
                            activeColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
                            checkColor: darkModeOn ? darkColor : lightColor,

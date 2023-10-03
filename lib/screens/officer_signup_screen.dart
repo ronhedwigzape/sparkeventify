@@ -98,7 +98,7 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
       year: _yearController.text.trim(),
       section: _sectionController.text.trim().toUpperCase(),
       organization: _organizationController.text.trim(),
-      position: _positionController.text.trim(),
+      officerPosition: _positionController.text.trim(),
     );
 
     String res = await AuthMethods().signUp(

@@ -8,7 +8,10 @@ class Profile {
   String? program;
   String? year;
   String? section;
-  String? position;
+  String? officerPosition;
+  String? staffPosition;
+  String? staffType;
+  String? staffDescription;
   String? organization;
   String? profileImage;
 
@@ -22,7 +25,10 @@ class Profile {
     this.program,
     this.year,
     this.section,
-    this.position,
+    this.officerPosition,
+    this.staffPosition,
+    this.staffType,
+    this.staffDescription,
     this.organization,
     this.profileImage,
   });
@@ -38,7 +44,10 @@ class Profile {
         'program': program,
         'year': year,
         'section': section,
-        'position': position,
+        'officerPosition': officerPosition,
+        'staffPosition': staffPosition,
+        'staffType': staffType,
+        'staffDescription': staffDescription,
         'organization': organization,
         'profileImage': profileImage,
       };
@@ -55,7 +64,10 @@ class Profile {
       program: map['program'],
       year: map['year'],
       section: map['section'],
-      position: map['position'],
+      officerPosition: map['officerPosition'],
+      staffPosition: map['staffPosition'],
+      staffType: map['staffType'],
+      staffDescription: map['staffDescription'],
       organization: map['organization'],
       profileImage: map['profileImage'],
     );

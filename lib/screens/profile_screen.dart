@@ -149,7 +149,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
           String year = currentUser?.profile!.year ?? '';
           String section = currentUser?.profile!.section ?? '';
           String organization = currentUser?.profile!.organization ?? '';
-          String position = currentUser?.profile!.position ?? '';
+          String officerPosition = currentUser?.profile!.officerPosition ?? '';
+          String staffPosition = currentUser?.profile!.staffPosition ?? '';
 
           return LayoutBuilder(
             builder: (BuildContext context, BoxConstraints constraints) {
@@ -289,7 +290,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 Column(
                                   children: [
                                     Text(
-                                    '${position.toUpperCase()} - ${organization.toUpperCase()}', 
+                                    '${officerPosition.toUpperCase()} - ${organization.toUpperCase()}', 
                                     style: TextStyle(
                                       fontSize: 15.0, 
                                       fontWeight: FontWeight.bold,
@@ -309,7 +310,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     fontWeight: FontWeight.bold,
                                     color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor))
                                 : userType == 'Staff' ? Text(
-                                  '${position.toUpperCase()} - ${userType.toUpperCase()}', 
+                                  '${staffPosition.toUpperCase()} - ${userType.toUpperCase()}', 
                                   style: TextStyle(
                                     fontSize: 15.0, 
                                     fontWeight: FontWeight.bold,
@@ -413,7 +414,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             children: [
                               const Icon(Icons.work),
                               const SizedBox(width: 20),
-                              Text(currentUser?.profile?.position ?? 'Staff',
+                              Text(currentUser?.profile?.staffPosition ?? 'Staff',
                               style: const TextStyle(fontSize: 16.0)),
                             ],
                           ) : const SizedBox.shrink(),
