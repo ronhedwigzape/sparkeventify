@@ -535,22 +535,52 @@ class _PostCardState extends State<PostCard> {
                         Container(
                           width: double.infinity,
                           padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                          child: RichText(
-                            text: TextSpan(
-                              style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                          child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                            const TextSpan(
-                              text: 'Description: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold),
-                            ),
-                            TextSpan(
-                              text:
-                                  widget.snap.description,
-                            ),
-                          ]),
-                          overflow: TextOverflow.ellipsis,
-                          ),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.location_pin,
+                                      color: darkModeOn
+                                          ? darkModeSecondaryColor
+                                          : lightModeSecondaryColor,
+                                      size: kIsWeb ? 21 : 18,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Flexible(child: Text(widget.snap.venue ?? '', textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: kIsWeb ? 14 : 11),)),
+                                  ],
+                                ), 
+                                const SizedBox(height: 10,),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.group,
+                                      color: darkModeOn
+                                          ? darkModeSecondaryColor
+                                          : lightModeSecondaryColor,
+                                      size: kIsWeb ? 21 : 18,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Flexible(child: Text(formatParticipants(widget.snap.participants), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: kIsWeb ? 14 : 11),)),
+                                  ],
+                                ), 
+                                const SizedBox(height: 10,),
+                                Row(
+                                  children: [
+                                    Icon(
+                                      Icons.description,
+                                      color: darkModeOn
+                                          ? darkModeSecondaryColor
+                                          : lightModeSecondaryColor,
+                                      size: kIsWeb ? 21 : 18,
+                                    ),
+                                    const SizedBox(width: 5),
+                                    Flexible(child: Text(widget.snap.description, textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: kIsWeb ? 14 : 11),)),
+                                  ],
+                                ),    
+                                                            
+                            ]),
                         ),
                       ]),
                 )
