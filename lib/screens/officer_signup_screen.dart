@@ -266,37 +266,44 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
                       Row(
                         children: [
                           Flexible(
-                            flex: 2,
-                            child: DropdownButtonFormField<String>(
-                              value: selectedProgramAndDepartment,
-                              style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
-                              decoration: InputDecoration(
-                                focusColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-                                prefixIcon: const Icon(Icons.school),
-                                labelText: 'Program and Department*',
-                                border: OutlineInputBorder(
-                                  borderSide: Divider.createBorderSide(
-                                    context,
-                                    color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
-                                ),
-                              ),
-                              onChanged: (String? newValue) {
-                                setState(() {
-                                  selectedProgramAndDepartment = newValue ?? programsAndDepartments[0]; // Handle null selection
+                            child: FormField<String>(
+                              builder: (FormFieldState<String> state) {
+                                return InputDecorator(
+                                  decoration: InputDecoration(
+                                    prefixIcon: const Icon(Icons.school),
+                                    labelText: 'Program and Department*',
+                                    border: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                        color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
+                                      ),
+                                    ),
+                                  ),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<String>(
+                                      isExpanded: true,
+                                      value: selectedProgramAndDepartment,
+                                      style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          selectedProgramAndDepartment = newValue ?? programsAndDepartments[0]; // handle null selection
 
-                                  // Split the selected value:
-                                  List<String> splitValue = selectedProgramAndDepartment.split(' - ');
-                                  program = splitValue[0];
-                                  department = splitValue[1];
-                                });
-                              },
-                              items: programsAndDepartments.map<DropdownMenuItem<String>>((String value) {
-                                return DropdownMenuItem<String>(
-                                  value: value.isEmpty ? null : value,
-                                  child: Text(value),
+                                          // split the selected value:
+                                          List<String> splitValue = selectedProgramAndDepartment.split(' - ');
+                                          program = splitValue[0];
+                                          department = splitValue[1];
+                                        });
+                                      },
+                                      items: programsAndDepartments.map<DropdownMenuItem<String>>((String value) {
+                                        return DropdownMenuItem<String>(
+                                          value: value.isEmpty ? null : value,
+                                          child: Text(value),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
                                 );
-                              }).toList(),
-                            )
+                              },
+                            ),
                           ),
                         ],
                       ),
