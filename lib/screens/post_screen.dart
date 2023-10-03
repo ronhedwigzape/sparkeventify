@@ -38,12 +38,12 @@ class _PostScreenState extends State<PostScreen> {
   Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
-  List<String> courseParticipants = ['BSCS', 'BSIT', 'BSN', 'BSM', 'BSEE', 'BSME', 'BSCE'];
+  List<String> programParticipants = ['BSCS', 'BSIT', 'BSN', 'BSM', 'BSEE', 'BSME', 'BSCE'];
   List<String> departmentParticipants = ['CCS', 'CHS', 'CEA',];
-  Map<String, List<String>> selectedParticipants = {'course': [], 'department': []};
+  Map<String, List<String>> selectedParticipants = {'program': [], 'department': []};
 
-  // List all associated course for departments
-  Map<String, String> courseDepartmentMap = {
+  // List all associated program for departments
+  Map<String, String> programDepartmentMap = {
     'BSCS': 'CCS',
     'BSIT': 'CCS',
     'BSN': 'CHS',
@@ -643,7 +643,7 @@ class _PostScreenState extends State<PostScreen> {
                                                     crossAxisAlignment: CrossAxisAlignment.start,
                                                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                     children: [
-                                                      Expanded(child: _buildParticipant('Course', courseParticipants)),
+                                                      Expanded(child: _buildParticipant('Program', programParticipants)),
                                                       Expanded(child: _buildParticipant('Department', departmentParticipants)),
                                                     ],
                                                   ),
@@ -653,7 +653,7 @@ class _PostScreenState extends State<PostScreen> {
                                                     child: Column(
                                                       mainAxisSize: MainAxisSize.min,
                                                       children: [
-                                                        _buildParticipant('Course', courseParticipants),
+                                                        _buildParticipant('Program', programParticipants),
                                                         _buildParticipant('Department', departmentParticipants),
                                                       ],
                                                     ),
@@ -752,37 +752,37 @@ class _PostScreenState extends State<PostScreen> {
             value: selectedParticipants[type.toLowerCase()]?.contains(participant),
             onChanged: (bool? value) {
               setState(() {
-                String? dept = courseDepartmentMap[participant];
+                String? dept = programDepartmentMap[participant];
                 if (value!) {
                   selectedParticipants[type.toLowerCase()]?.add(participant);
-                  if (type.toLowerCase() == 'course'
+                  if (type.toLowerCase() == 'program'
                       && !selectedParticipants['department']!.contains(dept)) {
                     selectedParticipants['department']?.add(dept!);
                   }
                 } else {
                   selectedParticipants[type.toLowerCase()]?.remove(participant);
-                  if (type.toLowerCase() == 'course'
-                      && selectedParticipants['course']!
-                        .where((course) => courseDepartmentMap[course] == dept)
+                  if (type.toLowerCase() == 'program'
+                      && selectedParticipants['program']!
+                        .where((program) => programDepartmentMap[program] == dept)
                         .isEmpty) {
                     selectedParticipants['department']?.remove(dept);
                   }
                 }
                 if (type.toLowerCase() == 'department') {
-                  var associatedCourses = courseDepartmentMap.entries
+                  var associatedPrograms = programDepartmentMap.entries
                       .where((entry) => entry.value == participant)
                       .map((entry) => entry.key)
                       .toList();
                   if (value) {
-                    for (var course in associatedCourses) {
-                      if (!selectedParticipants['course']!.contains(course)) {
-                        selectedParticipants['course']?.add(course);
+                    for (var program in associatedPrograms) {
+                      if (!selectedParticipants['program']!.contains(program)) {
+                        selectedParticipants['program']?.add(program);
                       }
                     }
                   } else {
-                    for (var course in associatedCourses) {
-                      if (selectedParticipants['course']!.contains(course)) {
-                        selectedParticipants['course']?.remove(course);
+                    for (var program in associatedPrograms) {
+                      if (selectedParticipants['program']!.contains(program)) {
+                        selectedParticipants['program']?.remove(program);
                       }
                     }
                   }
@@ -812,37 +812,37 @@ class _PostScreenState extends State<PostScreen> {
               value: selectedParticipants[type.toLowerCase()]?.contains(participant),
               onChanged: (bool? value) {
                 setState(() {
-                  String? dept = courseDepartmentMap[participant];
+                  String? dept = programDepartmentMap[participant];
                   if (value!) {
                     selectedParticipants[type.toLowerCase()]?.add(participant);
-                    if (type.toLowerCase() == 'course'
+                    if (type.toLowerCase() == 'program'
                         && !selectedParticipants['department']!.contains(dept)) {
                       selectedParticipants['department']?.add(dept!);
                     }
                   } else {
                     selectedParticipants[type.toLowerCase()]?.remove(participant);
-                    if (type.toLowerCase() == 'course'
-                        && selectedParticipants['course']!
-                          .where((course) => courseDepartmentMap[course] == dept)
+                    if (type.toLowerCase() == 'program'
+                        && selectedParticipants['program']!
+                          .where((program) => programDepartmentMap[program] == dept)
                           .isEmpty) {
                       selectedParticipants['department']?.remove(dept);
                     }
                   }
                   if (type.toLowerCase() == 'department') {
-                    var associatedCourses = courseDepartmentMap.entries
+                    var associatedPrograms = programDepartmentMap.entries
                         .where((entry) => entry.value == participant)
                         .map((entry) => entry.key)
                         .toList();
                     if (value) {
-                      for (var course in associatedCourses) {
-                        if (!selectedParticipants['course']!.contains(course)) {
-                          selectedParticipants['course']?.add(course);
+                      for (var program in associatedPrograms) {
+                        if (!selectedParticipants['program']!.contains(program)) {
+                          selectedParticipants['program']?.add(program);
                         }
                       }
                     } else {
-                      for (var course in associatedCourses) {
-                        if (selectedParticipants['course']!.contains(course)) {
-                          selectedParticipants['course']?.remove(course);
+                      for (var program in associatedPrograms) {
+                        if (selectedParticipants['program']!.contains(program)) {
+                          selectedParticipants['program']?.remove(program);
                         }
                       }
                     }

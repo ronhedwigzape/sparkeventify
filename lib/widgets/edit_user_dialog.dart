@@ -30,7 +30,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
   final TextEditingController organizationController = TextEditingController();
   late String profileImage;
   final _formKey = GlobalKey<FormState>();
-    final List<String> coursesAndDepartments = [
+    final List<String> programsAndDepartments = [
     'BSCS - CCS - Computer Science',
     'BSIT - CCS - Information Technology',
     'BSN - CHS - Nursing',
@@ -39,8 +39,8 @@ class _EditUserDialogState extends State<EditUserDialog> {
     'BSEE - CEA - Electrical Engineering',
     'BSCE - CEA - Computer Engineering',
   ];
-  late String selectedCourseAndDepartment = coursesAndDepartments[0];
-  late String course;
+  late String selectedProgramAndDepartment = programsAndDepartments[0];
+  late String program;
   late String department;
 
   @override
@@ -52,7 +52,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
     lastNameController.text = widget.user.profile!.lastName?? '';
     phoneNumberController.text = widget.user.profile!.phoneNumber?? '';
     department = widget.user.profile!.department?? '';
-    course = widget.user.profile!.course?? '';
+    program = widget.user.profile!.program?? '';
     yearController.text = widget.user.profile!.year?? '';
     sectionController.text = widget.user.profile!.section?? '';
     positionController.text = widget.user.profile!.position?? '';
@@ -60,10 +60,10 @@ class _EditUserDialogState extends State<EditUserDialog> {
     profileImage = widget.user.profile!.profileImage ?? '';
 
     // Set the default value for the dropdown
-    for (String courseAndDepartment in coursesAndDepartments) {
-      List<String> splitValue = courseAndDepartment.split(' - ');
-      if (splitValue[0] == course && splitValue[1] == department) {
-        selectedCourseAndDepartment = courseAndDepartment;
+    for (String programAndDepartment in programsAndDepartments) {
+      List<String> splitValue = programAndDepartment.split(' - ');
+      if (splitValue[0] == program && splitValue[1] == department) {
+        selectedProgramAndDepartment = programAndDepartment;
         break;
       }
     }
@@ -79,7 +79,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
         lastName: lastNameController.text,
         phoneNumber: phoneNumberController.text,
         department: department,
-        course: course,
+        program: program,
         year: yearController.text,
         section: sectionController.text,
         position: positionController.text,
@@ -241,12 +241,12 @@ class _EditUserDialogState extends State<EditUserDialog> {
                           widget.user.userType != 'Staff' ? const SizedBox(height: 10) : const SizedBox.shrink(),
                           widget.user.userType != 'Staff' ? 
                           DropdownButtonFormField<String>(
-                          value: selectedCourseAndDepartment,
+                          value: selectedProgramAndDepartment,
                           style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
                           decoration: InputDecoration(
                             focusColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
                             prefixIcon: const Icon(Icons.school),
-                            labelText: 'Course and Department*',
+                            labelText: 'Program and Department*',
                             border: OutlineInputBorder(
                               borderSide: Divider.createBorderSide(
                                 context,
@@ -255,15 +255,15 @@ class _EditUserDialogState extends State<EditUserDialog> {
                           ),
                           onChanged: (String? newValue) {
                             setState(() {
-                              selectedCourseAndDepartment = newValue ?? coursesAndDepartments[0]; // Handle null selection
+                              selectedProgramAndDepartment = newValue ?? programsAndDepartments[0]; // Handle null selection
 
                               // Split the selected value:
-                              List<String> splitValue = selectedCourseAndDepartment.split(' - ');
-                              course = splitValue[0];
+                              List<String> splitValue = selectedProgramAndDepartment.split(' - ');
+                              program = splitValue[0];
                               department = splitValue[1];
                             });
                           },
-                          items: coursesAndDepartments.map<DropdownMenuItem<String>>((String value) {
+                          items: programsAndDepartments.map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value.isEmpty ? null : value,
                               child: Text(value),

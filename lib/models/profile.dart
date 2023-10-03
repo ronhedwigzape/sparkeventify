@@ -5,7 +5,7 @@ class Profile {
   String? lastName;
   String? phoneNumber;
   String? department;
-  String? course;
+  String? program;
   String? year;
   String? section;
   String? position;
@@ -19,7 +19,7 @@ class Profile {
     this.lastName,
     this.phoneNumber,
     this.department,
-    this.course,
+    this.program,
     this.year,
     this.section,
     this.position,
@@ -35,7 +35,7 @@ class Profile {
         'lastName': lastName,
         'phoneNumber': phoneNumber,
         'department': department,
-        'course': course,
+        'program': program,
         'year': year,
         'section': section,
         'position': position,
@@ -52,7 +52,7 @@ class Profile {
       lastName: map['lastName'],
       phoneNumber: map['phoneNumber'],
       department: map['department'],
-      course: map['course'],
+      program: map['program'],
       year: map['year'],
       section: map['section'],
       position: map['position'],

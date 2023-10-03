@@ -1,7 +1,7 @@
 class EvaluatorFeedback {
   String userUid;
   String userFullName;
-  String userCourse;
+  String userProgram;
   String userDepartment;
   bool satisfactionStatus;
   String studentEvaluation;
@@ -11,7 +11,7 @@ class EvaluatorFeedback {
   EvaluatorFeedback({
     required this.userUid,
     required this.userFullName,
-    required this.userCourse,
+    required this.userProgram,
     required this.userDepartment,
     required this.satisfactionStatus,
     required this.studentEvaluation,
@@ -23,7 +23,7 @@ class EvaluatorFeedback {
   Map<String, dynamic> toJson() => {
         'userUid': userUid,
         'userFullName': userFullName,
-        'userCourse': userCourse,
+        'userProgram': userProgram,
         'userDepartment': userDepartment,
         'satisfactionStatus': satisfactionStatus,
         'studentEvaluation': studentEvaluation,
@@ -36,7 +36,7 @@ class EvaluatorFeedback {
     return EvaluatorFeedback(
       userUid: map['userUid'],
       userFullName: map['userFullName'],
-      userCourse: map['userCourse'],
+      userProgram: map['userProgram'],
       userDepartment: map['userDepartment'],
       satisfactionStatus: map['satisfactionStatus'],
       studentEvaluation: map['studentEvaluation'],

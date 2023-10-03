@@ -20,7 +20,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   String dropdownUserType = 'All';
   String dropdownYear = 'All';
   String dropdownDepartment = 'All';
-  String dropdownCourse = 'All';
+  String dropdownProgram = 'All';
   String dropdownSection = 'All';
   List<String> selectedUsers = [];
   List<model.User> allUsers = [];
@@ -47,7 +47,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           (dropdownUserType == 'All' || user.userType == dropdownUserType) &&
           (dropdownYear == 'All' || (user.profile?.year ?? 'All') == dropdownYear) &&
           (dropdownDepartment == 'All' || (user.profile?.department ?? 'All') == dropdownDepartment) &&
-          (dropdownCourse == 'All' || (user.profile?.course ?? 'All') == dropdownCourse) &&
+          (dropdownProgram == 'All' || (user.profile?.program ?? 'All') == dropdownProgram) &&
           (dropdownSection == 'All' || (user.profile?.section ?? 'All') == dropdownSection);
     }).toList();
     var filteredUserIds = filteredUsers.map((u) => u.uid).toSet();
@@ -102,7 +102,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
               (dropdownUserType == 'All' || user.userType == dropdownUserType) &&
               (dropdownYear == 'All' || (user.profile?.year ?? 'All') == dropdownYear) &&
               (dropdownDepartment == 'All' || (user.profile?.department ?? 'All') == dropdownDepartment) &&
-              (dropdownCourse == 'All' || (user.profile?.course ?? 'All') == dropdownCourse) &&
+              (dropdownProgram == 'All' || (user.profile?.program ?? 'All') == dropdownProgram) &&
               (dropdownSection == 'All' || (user.profile?.section ?? 'All') == dropdownSection) &&
               (searchQuery.isEmpty || (user.profile?.fullName != null && user.profile!.fullName!.toLowerCase().startsWith(searchQuery.toLowerCase())));
         }).toList();
@@ -195,10 +195,10 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                           }).toList(),
                         ),
                         DropdownButton<String>(
-                          value: dropdownCourse,
+                          value: dropdownProgram,
                           onChanged: (String? newValue) {
                             setState(() {
-                              dropdownCourse = newValue!;
+                              dropdownProgram = newValue!;
                             });
                           },
                           items: <String>['All', 'BSIT', 'BSN', 'BSCS']

@@ -138,9 +138,9 @@ class _UsersCardState extends State<UsersCard> {
                                        ),
                                        Row(
                                          children: [
-                                           const Text('Course:'),
+                                           const Text('Program:'),
                                            const SizedBox(width: 10.0,),
-                                           Text(currentProfile.course ?? 'N/A', 
+                                           Text(currentProfile.program ?? 'N/A',
                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                                          ],
                                        ),

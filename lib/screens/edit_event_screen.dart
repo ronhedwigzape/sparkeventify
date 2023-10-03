@@ -38,7 +38,7 @@ class EditEventScreenState extends State<EditEventScreen> {
   Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
-  List<String> courseParticipants = [
+  List<String> programParticipants = [
     'BSCS',
     'BSIT',
     'BSN',
@@ -53,12 +53,12 @@ class EditEventScreenState extends State<EditEventScreen> {
     'CEA',
   ];
   Map<String, dynamic> selectedParticipants = {
-    'course': [],
+    'program': [],
     'department': [],
   };
 
-  // List all associated course for departments
-  Map<String, String> courseDepartmentMap = {
+  // List all associated program for departments
+  Map<String, String> programDepartmentMap = {
     'BSCS': 'CCS',
     'BSIT': 'CCS',
     'BSN': 'CHS',
@@ -83,7 +83,7 @@ class EditEventScreenState extends State<EditEventScreen> {
         DateFormat('h:mm a').format(widget.eventSnap.startTime);
     _endTimeController.text =
         DateFormat('h:mm a').format(widget.eventSnap.endTime);
-    selectedParticipants['course'] = widget.eventSnap.participants!['course'];
+    selectedParticipants['program'] = widget.eventSnap.participants!['program'];
     selectedParticipants['department'] =
         widget.eventSnap.participants!['department'];
   }
@@ -730,8 +730,8 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                           children: [
                                                             Expanded(
                                                                 child: _buildParticipant(
-                                                                    'Course',
-                                                                    courseParticipants)),
+                                                                    'Program',
+                                                                    programParticipants)),
                                                             Expanded(
                                                                 child: _buildParticipant(
                                                                     'Department',
@@ -749,8 +749,8 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                                     .min,
                                                             children: [
                                                               _buildParticipant(
-                                                                  'Course',
-                                                                  courseParticipants),
+                                                                  'Program',
+                                                                  programParticipants),
                                                               _buildParticipant(
                                                                   'Department',
                                                                   departmentParticipants),
@@ -869,11 +869,11 @@ class EditEventScreenState extends State<EditEventScreen> {
                           ?.contains(participant),
                       onChanged: (bool? value) {
                         setState(() {
-                          String? dept = courseDepartmentMap[participant];
+                          String? dept = programDepartmentMap[participant];
                           if (value!) {
                             selectedParticipants[type.toLowerCase()]
                                 ?.add(participant);
-                            if (type.toLowerCase() == 'course' &&
+                            if (type.toLowerCase() == 'program' &&
                                 !selectedParticipants['department']!
                                     .contains(dept)) {
                               selectedParticipants['department']?.add(dept!);
@@ -881,32 +881,32 @@ class EditEventScreenState extends State<EditEventScreen> {
                           } else {
                             selectedParticipants[type.toLowerCase()]
                                 ?.remove(participant);
-                            if (type.toLowerCase() == 'course' &&
-                                selectedParticipants['course']!
-                                    .where((course) =>
-                                        courseDepartmentMap[course] == dept)
+                            if (type.toLowerCase() == 'program' &&
+                                selectedParticipants['program']!
+                                    .where((program) =>
+                                        programDepartmentMap[program] == dept)
                                     .isEmpty) {
                               selectedParticipants['department']?.remove(dept);
                             }
                           }
                           if (type.toLowerCase() == 'department') {
-                            var associatedCourses = courseDepartmentMap.entries
+                            var associatedPrograms = programDepartmentMap.entries
                                 .where((entry) => entry.value == participant)
                                 .map((entry) => entry.key)
                                 .toList();
                             if (value) {
-                              for (var course in associatedCourses) {
-                                if (!selectedParticipants['course']!
-                                    .contains(course)) {
-                                  selectedParticipants['course']?.add(course);
+                              for (var program in associatedPrograms) {
+                                if (!selectedParticipants['program']!
+                                    .contains(program)) {
+                                  selectedParticipants['program']?.add(program);
                                 }
                               }
                             } else {
-                              for (var course in associatedCourses) {
-                                if (selectedParticipants['course']!
-                                    .contains(course)) {
-                                  selectedParticipants['course']
-                                      ?.remove(course);
+                              for (var program in associatedPrograms) {
+                                if (selectedParticipants['program']!
+                                    .contains(program)) {
+                                  selectedParticipants['program']
+                                      ?.remove(program);
                                 }
                               }
                             }
@@ -943,11 +943,11 @@ class EditEventScreenState extends State<EditEventScreen> {
                             ?.contains(participant),
                         onChanged: (bool? value) {
                           setState(() {
-                            String? dept = courseDepartmentMap[participant];
+                            String? dept = programDepartmentMap[participant];
                             if (value!) {
                               selectedParticipants[type.toLowerCase()]
                                   ?.add(participant);
-                              if (type.toLowerCase() == 'course' &&
+                              if (type.toLowerCase() == 'program' &&
                                   !selectedParticipants['department']!
                                       .contains(dept)) {
                                 selectedParticipants['department']?.add(dept!);
@@ -955,34 +955,34 @@ class EditEventScreenState extends State<EditEventScreen> {
                             } else {
                               selectedParticipants[type.toLowerCase()]
                                   ?.remove(participant);
-                              if (type.toLowerCase() == 'course' &&
-                                  selectedParticipants['course']!
-                                      .where((course) =>
-                                          courseDepartmentMap[course] == dept)
+                              if (type.toLowerCase() == 'program' &&
+                                  selectedParticipants['program']!
+                                      .where((program) =>
+                                          programDepartmentMap[program] == dept)
                                       .isEmpty) {
                                 selectedParticipants['department']
                                     ?.remove(dept);
                               }
                             }
                             if (type.toLowerCase() == 'department') {
-                              var associatedCourses = courseDepartmentMap
+                              var associatedPrograms = programDepartmentMap
                                   .entries
                                   .where((entry) => entry.value == participant)
                                   .map((entry) => entry.key)
                                   .toList();
                               if (value) {
-                                for (var course in associatedCourses) {
-                                  if (!selectedParticipants['course']!
-                                      .contains(course)) {
-                                    selectedParticipants['course']?.add(course);
+                                for (var program in associatedPrograms) {
+                                  if (!selectedParticipants['program']!
+                                      .contains(program)) {
+                                    selectedParticipants['program']?.add(program);
                                   }
                                 }
                               } else {
-                                for (var course in associatedCourses) {
-                                  if (selectedParticipants['course']!
-                                      .contains(course)) {
-                                    selectedParticipants['course']
-                                        ?.remove(course);
+                                for (var program in associatedPrograms) {
+                                  if (selectedParticipants['program']!
+                                      .contains(program)) {
+                                    selectedParticipants['program']
+                                        ?.remove(program);
                                   }
                                 }
                               }

@@ -58,7 +58,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
       EvaluatorFeedback evaluatorFeedback = EvaluatorFeedback(
         userUid: user.uid,
         userFullName: user.profile?.fullName ?? '',
-        userCourse: user.profile?.course ?? '',
+        userProgram: user.profile?.program ?? '',
         userDepartment: user.profile?.department ?? '',
         satisfactionStatus: _ratingController.text.isNotEmpty ? (_ratingController.text == 'Satisfied' ? true : false) : false,
         studentEvaluation: _feedbackController.text.isNotEmpty ? _feedbackController.text : 'No evaluation provided',
@@ -84,7 +84,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
       EvaluatorFeedback evaluatorFeedback = EvaluatorFeedback(
         userUid: user.uid,
         userFullName: user.profile?.fullName ?? '',
-        userCourse: user.profile?.course ?? '',
+        userProgram: user.profile?.program ?? '',
         userDepartment: user.profile?.department ?? '',
         satisfactionStatus: _ratingController.text.isNotEmpty ? (_ratingController.text == 'Satisfied' ? true : false) : false,
         studentEvaluation: _feedbackController.text.isNotEmpty ? _feedbackController.text : 'No evaluation provided',

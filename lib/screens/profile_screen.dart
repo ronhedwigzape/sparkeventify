@@ -145,7 +145,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
           String phoneNumber = currentUser?.profile!.phoneNumber ?? '';
           String fullName = currentUser?.profile!.fullName ?? '';
           String department = currentUser?.profile!.department ?? '';
-          String course = currentUser?.profile!.course ?? '';
+          String program = currentUser?.profile!.program ?? '';
           String year = currentUser?.profile!.year ?? '';
           String section = currentUser?.profile!.section ?? '';
           String organization = currentUser?.profile!.organization ?? '';
@@ -303,7 +303,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   ],
                                 )
                                 : userType == 'Student' ? Text(
-                                  '${course.toUpperCase()} ${userType.toUpperCase()}', 
+                                  '${program.toUpperCase()} ${userType.toUpperCase()}',
                                   style: TextStyle(
                                     fontSize: 15.0, 
                                     fontWeight: FontWeight.bold,
@@ -374,7 +374,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   children: [
                                     const Icon(Icons.school),
                                     const SizedBox(width: 20),
-                                    Text('Course: $course', style: const TextStyle(fontSize: 16.0))
+                                    Text('Program: $program', style: const TextStyle(fontSize: 16.0))
                                   ],
                                 )
                               ),

@@ -26,7 +26,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
   final TextEditingController _sectionController = TextEditingController();
-  final List<String> coursesAndDepartments = [
+  final List<String> programsAndDepartments = [
     'BSCS - CCS - Computer Science',
     'BSIT - CCS - Information Technology',
     'BSN - CHS - Nursing',
@@ -35,8 +35,8 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
     'BSEE - CEA - Electrical Engineering',
     'BSCE - CEA - Computer Engineering',
   ];
-  late String selectedCourseAndDepartment = coursesAndDepartments[0];
-  late String course;
+  late String selectedProgramAndDepartment = programsAndDepartments[0];
+  late String program;
   late String department;
   bool _isLoading = false;
 
@@ -66,7 +66,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
         _yearController.text.trim().isEmpty ||
         _sectionController.text.trim().isEmpty ||
         _passwordController.text.trim().isEmpty ||
-        course.isEmpty ||
+        program.isEmpty ||
         department.isEmpty
     ) return onSignupFailure('Please complete all required fields.');
 
@@ -89,7 +89,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
       lastName: _lastNameController.text.trim(),
       phoneNumber: phoneNumber,
       department: department,
-      course: course,
+      program: program,
       year: _yearController.text.trim(),
       section: _sectionController.text.trim().toUpperCase(),
     );
@@ -261,12 +261,12 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                       Flexible(
                         flex: 2,
                         child: DropdownButtonFormField<String>(
-                          value: selectedCourseAndDepartment,
+                          value: selectedProgramAndDepartment,
                           style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
                           decoration: InputDecoration(
                             focusColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
                             prefixIcon: const Icon(Icons.school),
-                            labelText: 'Course and Department*',
+                            labelText: 'Program and Department*',
                             border: OutlineInputBorder(
                               borderSide: Divider.createBorderSide(
                                 context,
@@ -275,15 +275,15 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                           ),
                           onChanged: (String? newValue) {
                             setState(() {
-                              selectedCourseAndDepartment = newValue ?? coursesAndDepartments[0]; // Handle null selection
+                              selectedProgramAndDepartment = newValue ?? programsAndDepartments[0]; // Handle null selection
 
                               // Split the selected value:
-                              List<String> splitValue = selectedCourseAndDepartment.split(' - ');
-                              course = splitValue[0];
+                              List<String> splitValue = selectedProgramAndDepartment.split(' - ');
+                              program = splitValue[0];
                               department = splitValue[1];
                             });
                           },
-                          items: coursesAndDepartments.map<DropdownMenuItem<String>>((String value) {
+                          items: programsAndDepartments.map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value.isEmpty ? null : value,
                               child: Text(value),

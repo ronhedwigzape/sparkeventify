@@ -27,7 +27,7 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
   final TextEditingController _sectionController = TextEditingController();
   final TextEditingController _organizationController = TextEditingController();
   final TextEditingController _positionController = TextEditingController();
-  final List<String> coursesAndDepartments = [
+  final List<String> programsAndDepartments = [
   'BSCS - CCS - Computer Science',
   'BSIT - CCS - Information Technology',
   'BSN - CHS - Nursing',
@@ -36,8 +36,8 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
   'BSEE - CEA - Electrical Engineering',
   'BSCE - CEA - Computer Engineering',
   ];
-  late String selectedCourseAndDepartment = coursesAndDepartments[0];
-  late String course;
+  late String selectedProgramAndDepartment = programsAndDepartments[0];
+  late String program;
   late String department;
   bool _isLoading = false;
 
@@ -71,7 +71,7 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
         _passwordController.text.trim().isEmpty ||
         _organizationController.text.trim().isEmpty ||
         _positionController.text.trim().isEmpty ||
-        course.isEmpty ||
+        program.isEmpty ||
         department.isEmpty
     ) return onSignupFailure('Please complete all required fields.');
 
@@ -94,7 +94,7 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
       lastName: _lastNameController.text.trim(),
       phoneNumber: phoneNumber,
       department: department,
-      course: course,
+      program: program,
       year: _yearController.text.trim(),
       section: _sectionController.text.trim().toUpperCase(),
       organization: _organizationController.text.trim(),
@@ -268,12 +268,12 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
                           Flexible(
                             flex: 2,
                             child: DropdownButtonFormField<String>(
-                              value: selectedCourseAndDepartment,
+                              value: selectedProgramAndDepartment,
                               style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
                               decoration: InputDecoration(
                                 focusColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
                                 prefixIcon: const Icon(Icons.school),
-                                labelText: 'Course and Department*',
+                                labelText: 'Program and Department*',
                                 border: OutlineInputBorder(
                                   borderSide: Divider.createBorderSide(
                                     context,
@@ -282,15 +282,15 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
                               ),
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  selectedCourseAndDepartment = newValue ?? coursesAndDepartments[0]; // Handle null selection
+                                  selectedProgramAndDepartment = newValue ?? programsAndDepartments[0]; // Handle null selection
 
                                   // Split the selected value:
-                                  List<String> splitValue = selectedCourseAndDepartment.split(' - ');
-                                  course = splitValue[0];
+                                  List<String> splitValue = selectedProgramAndDepartment.split(' - ');
+                                  program = splitValue[0];
                                   department = splitValue[1];
                                 });
                               },
-                              items: coursesAndDepartments.map<DropdownMenuItem<String>>((String value) {
+                              items: programsAndDepartments.map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value.isEmpty ? null : value,
                                   child: Text(value),
