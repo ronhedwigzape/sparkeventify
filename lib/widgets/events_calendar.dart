@@ -276,7 +276,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                                       alignment: Alignment.center,
                                       child: Text(
                                         dateTime.day.toString(),
-                                        style: TextStyle(color: darkModeOn ? darkColor : lightColor),
+                                        style: TextStyle(color: darkModeOn ? darkColor : lightColor, fontWeight: FontWeight.bold),
                                       ),
                                     );
                                   }
@@ -285,6 +285,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                                     alignment: Alignment.center,
                                     child: Text(
                                       dateTime.day.toString(),
+                                      style: const TextStyle(fontWeight: FontWeight.bold),
                                     ),
                                   );
                                 },
