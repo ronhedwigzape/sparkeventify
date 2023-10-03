@@ -219,7 +219,7 @@ class _NotificationCardState extends State<NotificationCard> {
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               child: RichText(
                                 text: TextSpan(
-                                  text: '${widget.snap.message ?? ''}',
+                                  text: widget.snap.message ?? '',
                                   style: TextStyle(
                                     fontSize: 13.0,
                                     color: darkModeOn ? lightColor : darkColor,

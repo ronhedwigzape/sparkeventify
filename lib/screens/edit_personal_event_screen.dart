@@ -38,35 +38,6 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
   Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
-  List<String> courseParticipants = [
-    'BSCS',
-    'BSIT',
-    'BSN',
-    'BSM',
-    'BSEE',
-    'BSME',
-    'BSCE'
-  ];
-  List<String> departmentParticipants = [
-    'CCS',
-    'CHS',
-    'CEA',
-  ];
-  Map<String, dynamic> selectedParticipants = {
-    'course': [],
-    'department': [],
-  };
-
-  // List all associated course for departments
-  Map<String, String> courseDepartmentMap = {
-    'BSCS': 'CCS',
-    'BSIT': 'CCS',
-    'BSN': 'CHS',
-    'BSM': 'CHS',
-    'BSME': 'CEA',
-    'BSEE': 'CEA',
-    'BSCE': 'CEA',
-  };
 
   @override
   void initState() {
@@ -83,9 +54,6 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
         DateFormat('h:mm a').format(widget.eventSnap.startTime);
     _personalEndTimeController.text =
         DateFormat('h:mm a').format(widget.eventSnap.endTime);
-    selectedParticipants['course'] = widget.eventSnap.participants!['course'];
-    selectedParticipants['department'] =
-        widget.eventSnap.participants!['department'];
   }
 
   void _selectImage(BuildContext context) async {
@@ -234,8 +202,7 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
           _personalStartTimeController.text.isNotEmpty &&
           _personalEndTimeController.text.isNotEmpty &&
           _personalEventDescriptionsController.text.isNotEmpty &&
-          _personalEventVenueController.text.isNotEmpty &&
-          selectedParticipants.isNotEmpty) {
+          _personalEventVenueController.text.isNotEmpty) {
         // Get the date and time from the text controllers
         String pickedStartDate = _personalStartDateController.text;
         String pickedEndDate = _personalEndDateController.text;
@@ -295,7 +262,6 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
           description: _personalEventDescriptionsController.text,
           createdBy: widget.eventSnap.createdBy,
           document: documentUrl,
-          participants: selectedParticipants,
           venue: _personalEventVenueController.text,
           startDate: startDatePart,
           endDate: endDatePart,
@@ -417,27 +383,28 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
                     },
                     child: Scaffold(
                       appBar: AppBar(
+                        elevation: 0,
                         title: Row(
                           children: [
                             Icon(
                               Icons.edit,
                               color: darkModeOn
-                                  ? lightColor
-                                  : darkColor,
+                                  ? darkColor : lightColor,
                               size: kIsWeb ? 40 : 25,
                             ),
                             const SizedBox(width: 10),
                             Text(
                               'Edit Personal Event',
                               style: TextStyle(
-                                color: darkModeOn ? white : black,
+                                color: darkModeOn ? darkColor : lightColor,
                               ),
                             ),
                           ],
                         ),
-                        backgroundColor: darkModeOn ? darkColor : lightColor,
+                        backgroundColor:
+                          darkModeOn ? darkModeGrassColor : lightModeGrassColor,
                         iconTheme: IconThemeData(
-                          color: darkModeOn ? white : black,
+                          color: darkModeOn ? darkColor : lightColor,
                         ),
                       ),
                       body: Center(
@@ -675,7 +642,10 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
                                                   TextInputType.datetime,
                                             ),
                                           ),
-                                          const SizedBox(width: 10.0),
+                                        ])),
+                                        const SizedBox(height: 10.0),
+                                        Flexible(
+                                        child: Row(children: [
                                           Flexible(
                                             child: TextFieldInput(
                                               startTextEditingController:
@@ -690,86 +660,7 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
                                           )
                                         ]),
                                       ),
-                                      const SizedBox(height: 10.0),
-                                      Flexible(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(20.0),
-                                          child: SingleChildScrollView(
-                                            child: Column(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                const Flexible(
-                                                    child: Center(
-                                                        child: Padding(
-                                                  padding: EdgeInsets.all(10.0),
-                                                  child: Text('Participants*',
-                                                      style: TextStyle(
-                                                          fontSize:
-                                                              kIsWeb ? 28 : 24,
-                                                          fontWeight:
-                                                              FontWeight.bold)),
-                                                ))),
-                                                Flexible(
-                                                    child: Center(
-                                                        child: Padding(
-                                                  padding:
-                                                      const EdgeInsets.all(8.0),
-                                                  child: Text(
-                                                      'Check all the type of participants that will be involved.',
-                                                      style: TextStyle(
-                                                          fontSize: 15,
-                                                          color: darkModeOn
-                                                              ? darkModeTertiaryColor
-                                                              : lightModeTertiaryColor)),
-                                                ))),
-                                                // participants (Checkbox that adds to a local array of participants)
-                                                kIsWeb
-                                                    ? Flexible(
-                                                        fit: FlexFit.loose,
-                                                        child: Row(
-                                                          crossAxisAlignment:
-                                                              CrossAxisAlignment
-                                                                  .start,
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceEvenly,
-                                                          children: [
-                                                            Expanded(
-                                                                child: _buildParticipant(
-                                                                    'Course',
-                                                                    courseParticipants)),
-                                                            Expanded(
-                                                                child: _buildParticipant(
-                                                                    'Department',
-                                                                    departmentParticipants)),
-                                                          ],
-                                                        ),
-                                                      )
-                                                    : Flexible(
-                                                        fit: FlexFit.loose,
-                                                        child:
-                                                            SingleChildScrollView(
-                                                          child: Column(
-                                                            mainAxisSize:
-                                                                MainAxisSize
-                                                                    .min,
-                                                            children: [
-                                                              _buildParticipant(
-                                                                  'Course',
-                                                                  courseParticipants),
-                                                              _buildParticipant(
-                                                                  'Department',
-                                                                  departmentParticipants),
-                                                            ],
-                                                          ),
-                                                        ),
-                                                      ),
-                                              ],
-                                            ),
-                                          ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10.0),
+                                      const SizedBox(height: 20.0),
                                       Center(
                                         child: InkWell(
                                           onTap: () async {
@@ -780,9 +671,9 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
                                               // Show a message to the user
                                               mounted ? Navigator.of(context).pop() : '';
                                               mounted ? ScaffoldMessenger.of(context).showSnackBar(
-                                                const SnackBar(
-                                                  content: Text('No internet connection. Please check your connection and try again.'),
-                                                  duration: Duration(seconds: 5),
+                                                SnackBar(
+                                                  content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
+                                                  duration: const Duration(seconds: 5),
                                                 ),
                                               ) : '';
                                             }
@@ -800,31 +691,29 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
                                                       BorderRadius.all(
                                                           Radius.circular(5.0)),
                                                 ),
-                                                color: darkModeOn
-                                                    ? darkModePrimaryColor
-                                                    : lightModePrimaryColor,
+                                                color: darkModeOn ? lightColor : darkColor,
                                               ),
                                               child: _isLoading
-                                                  ? const Center(
+                                                  ? Center(
                                                       child:
                                                           CircularProgressIndicator(
                                                       valueColor:
                                                           AlwaysStoppedAnimation<
                                                                   Color>(
-                                                              lightColor),
+                                                              darkModeOn ? darkColor : lightColor),
                                                     ))
-                                                  : const Row(
+                                                  : Row(
                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
                                                       Icon(
                                                         Icons.update,
-                                                        color: lightColor,
+                                                        color: darkModeOn ? darkColor : lightColor,
                                                       ),
-                                                      SizedBox(width: 10.0),
+                                                      const SizedBox(width: 10.0),
                                                       Text(
                                                           'Update your personal event',
                                                           style: TextStyle(
-                                                            color: lightColor,
+                                                            color: darkModeOn ? darkColor : lightColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                           ),
@@ -833,6 +722,7 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
                                                 )),
                                         ),
                                       ),
+                                      const SizedBox(height: 20.0),
                                     ],
                                   ),
                                 ),
@@ -848,158 +738,5 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
         }
       },
     );
-  }
-
-  _buildParticipant(String type, List<String> participants) {
-    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-    return kIsWeb
-        ? Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  type,
-                  style: const TextStyle(
-                      fontSize: kIsWeb ? 20 : 12, fontWeight: FontWeight.bold),
-                ),
-              ),
-              ...participants
-                  .map(
-                    (participant) => CheckboxListTile(
-                      activeColor: darkModeOn
-                          ? darkModePrimaryColor
-                          : lightModePrimaryColor,
-                      checkColor: darkModeOn ? darkColor : lightColor,
-                      title: Text(participant),
-                      value: selectedParticipants[type.toLowerCase()]
-                          ?.contains(participant),
-                      onChanged: (bool? value) {
-                        setState(() {
-                          String? dept = courseDepartmentMap[participant];
-                          if (value!) {
-                            selectedParticipants[type.toLowerCase()]
-                                ?.add(participant);
-                            if (type.toLowerCase() == 'course' &&
-                                !selectedParticipants['department']!
-                                    .contains(dept)) {
-                              selectedParticipants['department']?.add(dept!);
-                            }
-                          } else {
-                            selectedParticipants[type.toLowerCase()]
-                                ?.remove(participant);
-                            if (type.toLowerCase() == 'course' &&
-                                selectedParticipants['course']!
-                                    .where((course) =>
-                                        courseDepartmentMap[course] == dept)
-                                    .isEmpty) {
-                              selectedParticipants['department']?.remove(dept);
-                            }
-                          }
-                          if (type.toLowerCase() == 'department') {
-                            var associatedCourses = courseDepartmentMap.entries
-                                .where((entry) => entry.value == participant)
-                                .map((entry) => entry.key)
-                                .toList();
-                            if (value) {
-                              for (var course in associatedCourses) {
-                                if (!selectedParticipants['course']!
-                                    .contains(course)) {
-                                  selectedParticipants['course']?.add(course);
-                                }
-                              }
-                            } else {
-                              for (var course in associatedCourses) {
-                                if (selectedParticipants['course']!
-                                    .contains(course)) {
-                                  selectedParticipants['course']
-                                      ?.remove(course);
-                                }
-                              }
-                            }
-                          }
-                        });
-                      },
-                    ),
-                  )
-                  .toList(),
-            ],
-          )
-        : Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  type,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: participants
-                    .map(
-                      (participant) => CheckboxListTile(
-                        activeColor: darkModeOn
-                            ? darkModePrimaryColor
-                            : lightModePrimaryColor,
-                        checkColor: darkModeOn ? darkColor : lightColor,
-                        title: Text(participant),
-                        value: selectedParticipants[type.toLowerCase()]
-                            ?.contains(participant),
-                        onChanged: (bool? value) {
-                          setState(() {
-                            String? dept = courseDepartmentMap[participant];
-                            if (value!) {
-                              selectedParticipants[type.toLowerCase()]
-                                  ?.add(participant);
-                              if (type.toLowerCase() == 'course' &&
-                                  !selectedParticipants['department']!
-                                      .contains(dept)) {
-                                selectedParticipants['department']?.add(dept!);
-                              }
-                            } else {
-                              selectedParticipants[type.toLowerCase()]
-                                  ?.remove(participant);
-                              if (type.toLowerCase() == 'course' &&
-                                  selectedParticipants['course']!
-                                      .where((course) =>
-                                          courseDepartmentMap[course] == dept)
-                                      .isEmpty) {
-                                selectedParticipants['department']
-                                    ?.remove(dept);
-                              }
-                            }
-                            if (type.toLowerCase() == 'department') {
-                              var associatedCourses = courseDepartmentMap
-                                  .entries
-                                  .where((entry) => entry.value == participant)
-                                  .map((entry) => entry.key)
-                                  .toList();
-                              if (value) {
-                                for (var course in associatedCourses) {
-                                  if (!selectedParticipants['course']!
-                                      .contains(course)) {
-                                    selectedParticipants['course']?.add(course);
-                                  }
-                                }
-                              } else {
-                                for (var course in associatedCourses) {
-                                  if (selectedParticipants['course']!
-                                      .contains(course)) {
-                                    selectedParticipants['course']
-                                        ?.remove(course);
-                                  }
-                                }
-                              }
-                            }
-                          });
-                        },
-                      ),
-                    )
-                    .toList(),
-              ),
-            ],
-          );
   }
 }

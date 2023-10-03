@@ -10,6 +10,7 @@ import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
+import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
 import '../services/firebase_notifications.dart';
@@ -70,13 +71,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ),
             SimpleDialogOption(
               padding: const EdgeInsets.all(20),
-              onPressed: () async {
-                await FirebaseNotificationService().unregisterDevice(FirebaseAuth.instance.currentUser!.uid);
-                await AuthMethods().signOut();
-                if (mounted) {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const LoginScreen()));
+              onPressed:() async {
+                bool isConnected = await ConnectivityService().isConnected();
+                if (isConnected) {
+                  await FirebaseNotificationService().unregisterDevice(FirebaseAuth.instance.currentUser!.uid);
+                  await AuthMethods().signOut();
+                  if (mounted) {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => const LoginScreen()));
+                  }
+                } else {
+                  // Show a message to the user
+                  mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Row(
+                        children: [
+                          Icon(Icons.wifi_off, color: darkModeOn ? black : white),
+                          const SizedBox(width: 10,),
+                          const Flexible(child: Text('No internet connection. Please check your connection and try again.')),
+                        ],
+                      ),
+                      duration: const Duration(seconds: 5),
+                    ),
+                  ) : '';
                 }
               },
               child: Row(
@@ -229,12 +247,23 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   children: [
                                     IconButton(
                                       onPressed: () async {
-                                        await FireStoreUserMethods().updateProfileImage(_pickedImage!, uid!); 
-                                        setState(() {
-                                          _isImageUpdated = true;
-                                        });
-                                        _showSuccessMessage();
-                                      }, 
+                                        bool isConnected = await ConnectivityService().isConnected();
+                                        if (isConnected) {
+                                          await FireStoreUserMethods().updateProfileImage(_pickedImage!, uid!); 
+                                          setState(() {
+                                            _isImageUpdated = true;
+                                          });
+                                          _showSuccessMessage();
+                                        } else {
+                                          // Show a message to the user
+                                          mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                                            SnackBar(
+                                              content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
+                                              duration: const Duration(seconds: 5),
+                                            ),
+                                          ) : '';
+                                        }
+                                      },
                                       icon: const Icon(Icons.check_circle, color: darkModeGrassColor,)
                                     ),
                                     IconButton(
@@ -438,9 +467,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                                 ),
                                                 SimpleDialogOption(
                                                   padding: const EdgeInsets.all(20),
-                                                  onPressed: () {
-                                                    Provider.of<DarkModeProvider>(context, listen: false).toggleTheme();
-                                                    Navigator.of(context).pop();
+                                                  onPressed:() async {
+                                                    bool isConnected = await ConnectivityService().isConnected();
+                                                    if (isConnected) {
+                                                        mounted ? Provider.of<DarkModeProvider>(context, listen: false).toggleTheme() : '';
+                                                        mounted ? Navigator.of(context).pop() : '';
+                                                    } else {
+                                                      // Show a message to the user
+                                                      mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                                                        SnackBar(
+                                                          content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
+                                                          duration: const Duration(seconds: 5),
+                                                        ),
+                                                      ) : '';
+                                                    }
                                                   },
                                                   child: Row(
                                                     children: <Widget>[

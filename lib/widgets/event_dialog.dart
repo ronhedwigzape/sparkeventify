@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart' as model;
+import 'package:student_event_calendar/services/connectivity_service.dart';
 import '../models/user.dart' as model;
 import '../providers/darkmode_provider.dart';
 import '../resources/firestore_user_methods.dart';
@@ -257,9 +258,20 @@ class EventDialogState extends State<EventDialog> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             TextButton.icon(
-                              onPressed: () { 
-                                downloadAndOpenFile(event.document ?? '', event.title);
-                                _showOpenDocumentMessage();
+                              onPressed: () async {
+                                bool isConnected = await ConnectivityService().isConnected();
+                                if (isConnected) {
+                                  downloadAndOpenFile(event.document ?? '', event.title);
+                                  _showOpenDocumentMessage();
+                                } else {
+                                  // Show a message to the user
+                                  mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                                    SnackBar(
+                                      content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
+                                      duration: const Duration(seconds: 5),
+                                    ),
+                                  ) : '';
+                                }
                               },
                               icon: const Icon(Icons.download_for_offline),
                               label: const Text('Open document',)),

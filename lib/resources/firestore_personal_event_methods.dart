@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:student_event_calendar/models/personal_event.dart';
+import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/resources/storage_methods.dart';
 import 'package:uuid/uuid.dart';
 
@@ -19,7 +20,6 @@ class FireStorePersonalEventMethods {
     DateTime endDate,
     DateTime startTime,
     DateTime endTime,
-    Map<String, List<dynamic>> participants,
     String venue,
     String type,
     String status,
@@ -47,7 +47,6 @@ class FireStorePersonalEventMethods {
         description: description,
         createdBy: createdBy,
         document: documentUrl,
-        participants: participants,
         venue: venue,
         startDate: startDate,
         endDate: endDate,
@@ -211,6 +210,37 @@ class FireStorePersonalEventMethods {
     }
     // Return the response
     return response;
+  }
+
+  Stream<model.User> getUserDetailsByEventsCreatedBy(String createdBy) {
+    return Stream.fromFuture(getUserByEventsCreatedBy(createdBy));
+  }
+
+  Future<model.User> getUserByEventsCreatedBy(String createdBy) async {
+    // Query the events collection for events created by the user
+    QuerySnapshot eventQuerySnapshot = await FirebaseFirestore.instance
+        .collection('personalEvents')
+        .where('createdBy', isEqualTo: createdBy)
+        .get();
+    // If no events were found, return null
+    if (eventQuerySnapshot.docs.isEmpty) {
+      throw Exception('No personal events found created by user $createdBy');
+    }
+    // Get the first event document
+    DocumentSnapshot eventDocument = eventQuerySnapshot.docs.first;
+    // Get the 'createdBy' field from the event document
+    String userId = eventDocument['createdBy'];
+    // Query the users collection for the user with the obtained 'createdBy' (userId)
+    DocumentSnapshot userSnapshot =
+        await FirebaseFirestore.instance.collection('users').doc(userId).get();
+    // If no user was found, return null
+    if (!userSnapshot.exists) {
+      throw Exception('No user found with id $userId');
+    }
+    // Create a User object from the document snapshot
+    model.User user = model.User.fromSnap(userSnapshot);
+    // Return the User object
+    return user;
   }
 
 }

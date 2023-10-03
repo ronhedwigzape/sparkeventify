@@ -175,9 +175,9 @@ class _PostCardState extends State<PostCard> {
                                       // Show a message to the user
                                       mounted ? Navigator.of(context).pop() : '';
                                       mounted ? ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('No internet connection. Please check your connection and try again.'),
-                                          duration: Duration(seconds: 5),
+                                        SnackBar(
+                                          content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
+                                          duration: const Duration(seconds: 5),
                                         ),
                                       ) : '';
                                     }
@@ -439,9 +439,9 @@ class _PostCardState extends State<PostCard> {
                                       // Show a message to the user
                                       mounted ? Navigator.of(context).pop() : '';
                                       mounted ? ScaffoldMessenger.of(context).showSnackBar(
-                                        const SnackBar(
-                                          content: Text('No internet connection. Please check your connection and try again.'),
-                                          duration: Duration(seconds: 5),
+                                        SnackBar(
+                                          content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
+                                          duration: const Duration(seconds: 5),
                                         ),
                                       ) : '';
                                     }

@@ -314,9 +314,9 @@ class _FeedbackFormState extends State<FeedbackForm> {
                                   } else {
                                     // Show a message to the user
                                     mounted ? ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('No internet connection. Please check your connection and try again.'),
-                                        duration: Duration(seconds: 5),
+                                      SnackBar(
+                                        content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
+                                        duration: const Duration(seconds: 5),
                                       ),
                                     ) : '';
                                   }

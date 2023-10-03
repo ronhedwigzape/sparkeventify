@@ -35,36 +35,7 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
   Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
-  List<String> courseParticipants = [
-    'BSCS',
-    'BSIT',
-    'BSN',
-    'BSM',
-    'BSEE',
-    'BSME',
-    'BSCE'
-  ];
-  List<String> departmentParticipants = [
-    'CCS',
-    'CHS',
-    'CEA',
-  ];
-  Map<String, List<String>> selectedParticipants = {
-    'course': [],
-    'department': [],
-  };
-
-  // List all associated course for departments
-  Map<String, String> courseDepartmentMap = {
-    'BSCS': 'CCS',
-    'BSIT': 'CCS',
-    'BSN': 'CHS',
-    'BSM': 'CHS',
-    'BSME': 'CEA',
-    'BSEE': 'CEA',
-    'BSCE': 'CEA',
-  };
-
+  
   void _selectImage(BuildContext context) async {
     return showDialog(
         context: context,
@@ -200,8 +171,7 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
           _startTimeController.text.isNotEmpty &&
           _endTimeController.text.isNotEmpty &&
           _personalEventDescriptionsController.text.isNotEmpty &&
-          _personalEventVenueController.text.isNotEmpty &&
-          selectedParticipants.isNotEmpty) {
+          _personalEventVenueController.text.isNotEmpty) {
         // Get the date and time from the text controllers
         String pickedStartDate = _startDateController.text;
         String pickedEndDate = _endDateController.text;
@@ -230,7 +200,6 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
             endDatePart,
             startTime12,
             endTime12,
-            selectedParticipants,
             _personalEventVenueController.text,
             _personalEventTypeController.text,
             'Upcoming',
@@ -302,9 +271,6 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
       _endDateController.clear();
       _startTimeController.clear();
       _endTimeController.clear();
-      selectedParticipants.forEach((key, value) {
-        selectedParticipants[key] = [];
-      });
     });
   }
 
@@ -355,6 +321,7 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
               },
               child: Scaffold(
                 appBar: AppBar(
+                  elevation: 0,
                   title: Row(
                     children: [
                       Icon(
@@ -374,7 +341,7 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                     ],
                   ),
                   backgroundColor:
-                      darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,
+                      darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
                   iconTheme: IconThemeData(
                     color: darkModeOn ? lightColor : darkColor,
                   ),
@@ -621,82 +588,7 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                                     ))
                                   ]),
                                 ),
-                                const SizedBox(height: 10.0),
-                                Flexible(
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(20.0),
-                                    child: SingleChildScrollView(
-                                      child: Column(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          const Flexible(
-                                              child: Center(
-                                                  child: Padding(
-                                            padding: EdgeInsets.all(10.0),
-                                            child: Text('Participants*',
-                                                style: TextStyle(
-                                                    fontSize: kIsWeb ? 28 : 24,
-                                                    fontWeight:
-                                                        FontWeight.bold)),
-                                          ))),
-                                          Flexible(
-                                              child: Center(
-                                                  child: Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Text(
-                                                'Check all the type of participants that will be involved.',
-                                                style: TextStyle(
-                                                    fontSize: 15,
-                                                    color: darkModeOn
-                                                        ? darkModeTertiaryColor
-                                                        : lightModeTertiaryColor)),
-                                          ))),
-                                          // participants (Checkbox that adds to a local array of participants)
-                                          kIsWeb
-                                              ? Flexible(
-                                                  fit: FlexFit.loose,
-                                                  child: Row(
-                                                    crossAxisAlignment:
-                                                        CrossAxisAlignment
-                                                            .start,
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceEvenly,
-                                                    children: [
-                                                      Expanded(
-                                                          child: _buildParticipant(
-                                                              'Course',
-                                                              courseParticipants)),
-                                                      Expanded(
-                                                          child: _buildParticipant(
-                                                              'Department',
-                                                              departmentParticipants)),
-                                                    ],
-                                                  ),
-                                                )
-                                              : Flexible(
-                                                  fit: FlexFit.loose,
-                                                  child: SingleChildScrollView(
-                                                    child: Column(
-                                                      mainAxisSize:
-                                                          MainAxisSize.min,
-                                                      children: [
-                                                        _buildParticipant(
-                                                            'Course',
-                                                            courseParticipants),
-                                                        _buildParticipant(
-                                                            'Department',
-                                                            departmentParticipants),
-                                                      ],
-                                                    ),
-                                                  ),
-                                                ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(height: 10.0),
+                                const SizedBox(height: 20.0),
                                 Center(
                                   child: InkWell(
                                     onTap: _post,
@@ -713,12 +605,12 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                                           color: darkModeOn ? lightColor : darkColor,
                                         ),
                                         child: _isLoading
-                                            ? const Center(
+                                            ? Center(
                                                 child:
                                                     CircularProgressIndicator(
                                                 valueColor:
                                                     AlwaysStoppedAnimation<
-                                                        Color>(lightColor),
+                                                        Color>(darkModeOn ? darkColor : lightColor),
                                               ))
                                             : Row(
                                               mainAxisAlignment: MainAxisAlignment.center,
@@ -739,6 +631,7 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                                             )),
                                   ),
                                 ),
+                                const SizedBox(height: 20.0)
                               ],
                             ),
                           ),
@@ -753,158 +646,5 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
         }
       },
     );
-  }
-
-  _buildParticipant(String type, List<String> participants) {
-    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-    return kIsWeb
-        ? Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  type,
-                  style: const TextStyle(
-                      fontSize: kIsWeb ? 20 : 12, fontWeight: FontWeight.bold),
-                ),
-              ),
-              ...participants
-                  .map(
-                    (participant) => CheckboxListTile(
-                      activeColor: darkModeOn
-                          ? darkModePrimaryColor
-                          : lightModePrimaryColor,
-                      checkColor: darkModeOn ? darkColor : lightColor,
-                      title: Text(participant),
-                      value: selectedParticipants[type.toLowerCase()]
-                          ?.contains(participant),
-                      onChanged: (bool? value) {
-                        setState(() {
-                          String? dept = courseDepartmentMap[participant];
-                          if (value!) {
-                            selectedParticipants[type.toLowerCase()]
-                                ?.add(participant);
-                            if (type.toLowerCase() == 'course' &&
-                                !selectedParticipants['department']!
-                                    .contains(dept)) {
-                              selectedParticipants['department']?.add(dept!);
-                            }
-                          } else {
-                            selectedParticipants[type.toLowerCase()]
-                                ?.remove(participant);
-                            if (type.toLowerCase() == 'course' &&
-                                selectedParticipants['course']!
-                                    .where((course) =>
-                                        courseDepartmentMap[course] == dept)
-                                    .isEmpty) {
-                              selectedParticipants['department']?.remove(dept);
-                            }
-                          }
-                          if (type.toLowerCase() == 'department') {
-                            var associatedCourses = courseDepartmentMap.entries
-                                .where((entry) => entry.value == participant)
-                                .map((entry) => entry.key)
-                                .toList();
-                            if (value) {
-                              for (var course in associatedCourses) {
-                                if (!selectedParticipants['course']!
-                                    .contains(course)) {
-                                  selectedParticipants['course']?.add(course);
-                                }
-                              }
-                            } else {
-                              for (var course in associatedCourses) {
-                                if (selectedParticipants['course']!
-                                    .contains(course)) {
-                                  selectedParticipants['course']
-                                      ?.remove(course);
-                                }
-                              }
-                            }
-                          }
-                        });
-                      },
-                    ),
-                  )
-                  .toList(),
-            ],
-          )
-        : Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  type,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
-                ),
-              ),
-              ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: participants
-                    .map(
-                      (participant) => CheckboxListTile(
-                        activeColor: darkModeOn
-                            ? darkModePrimaryColor
-                            : lightModePrimaryColor,
-                        checkColor: darkModeOn ? darkColor : lightColor,
-                        title: Text(participant),
-                        value: selectedParticipants[type.toLowerCase()]
-                            ?.contains(participant),
-                        onChanged: (bool? value) {
-                          setState(() {
-                            String? dept = courseDepartmentMap[participant];
-                            if (value!) {
-                              selectedParticipants[type.toLowerCase()]
-                                  ?.add(participant);
-                              if (type.toLowerCase() == 'course' &&
-                                  !selectedParticipants['department']!
-                                      .contains(dept)) {
-                                selectedParticipants['department']?.add(dept!);
-                              }
-                            } else {
-                              selectedParticipants[type.toLowerCase()]
-                                  ?.remove(participant);
-                              if (type.toLowerCase() == 'course' &&
-                                  selectedParticipants['course']!
-                                      .where((course) =>
-                                          courseDepartmentMap[course] == dept)
-                                      .isEmpty) {
-                                selectedParticipants['department']
-                                    ?.remove(dept);
-                              }
-                            }
-                            if (type.toLowerCase() == 'department') {
-                              var associatedCourses = courseDepartmentMap
-                                  .entries
-                                  .where((entry) => entry.value == participant)
-                                  .map((entry) => entry.key)
-                                  .toList();
-                              if (value) {
-                                for (var course in associatedCourses) {
-                                  if (!selectedParticipants['course']!
-                                      .contains(course)) {
-                                    selectedParticipants['course']?.add(course);
-                                  }
-                                }
-                              } else {
-                                for (var course in associatedCourses) {
-                                  if (selectedParticipants['course']!
-                                      .contains(course)) {
-                                    selectedParticipants['course']
-                                        ?.remove(course);
-                                  }
-                                }
-                              }
-                            }
-                          });
-                        },
-                      ),
-                    )
-                    .toList(),
-              ),
-            ],
-          );
   }
 }
