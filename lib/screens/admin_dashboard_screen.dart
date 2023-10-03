@@ -36,7 +36,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
       } else {
         return LayoutBuilder(
           builder: (BuildContext context, BoxConstraints constraints) {
-            final maxWidth = min(1250, constraints.maxWidth).toDouble();
+            final maxWidth = min(900, constraints.maxWidth).toDouble();
             return Scaffold(
               body: Center(
                 child: ConstrainedBox(
