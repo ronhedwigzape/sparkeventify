@@ -229,8 +229,21 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   left: 42,
                                   child: IconButton(
                                     onPressed: _pickedImage == null ? selectImage : () {},
-                                    icon: const Icon(
-                                      Icons.add_a_photo,
+                                    icon: Container(
+                                      decoration: const BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: light,
+                                            spreadRadius: 1,
+                                            blurRadius: 8,
+                                            offset: Offset(1, 1), // changes position of shadow
+                                          ),
+                                        ],
+                                      ),
+                                      child: const Icon(
+                                        Icons.add_a_photo,
+                                      ),
                                     ),
                                     tooltip: 'Change profile picture',
                                   )
