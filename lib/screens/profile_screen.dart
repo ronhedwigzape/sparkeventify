@@ -13,6 +13,7 @@ import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
+import 'package:student_event_calendar/widgets/dark_mode_dialog.dart';
 import '../services/firebase_notifications.dart';
 import 'package:another_flushbar/flushbar.dart';
 
@@ -230,14 +231,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   child: IconButton(
                                     onPressed: _pickedImage == null ? selectImage : () {},
                                     icon: Container(
-                                      decoration: const BoxDecoration(
+                                      decoration: BoxDecoration(
                                         shape: BoxShape.circle,
                                         boxShadow: [
                                           BoxShadow(
-                                            color: light,
+                                            color: darkModeOn ? darkColor : lightColor,
                                             spreadRadius: 1,
                                             blurRadius: 8,
-                                            offset: Offset(1, 1), // changes position of shadow
+                                            offset: const Offset(1, 1), // changes position of shadow
                                           ),
                                         ],
                                       ),
@@ -433,99 +434,51 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ) : const SizedBox.shrink(),
                           const SizedBox(height: 20),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                                  child: SizedBox(
-                                    height: kIsWeb ? 40 : null,
-                                    child: ElevatedButton.icon(
-                                      style: ElevatedButton.styleFrom(
-                                        backgroundColor: darkModeOn ? lightModePrimaryColor : darkModePrimaryColor,
-                                      ),
-                                      label: Text(
-                                        darkModeOn ? 'Switch to Light Mode' : 'Switch to Dark Mode',
-                                        style: TextStyle(
-                                          color: darkModeOn ? lightColor : darkColor,
-                                          fontSize: 16.0,
-                                        ),
-                                      ),
-                                      icon: Icon(darkModeOn ? Icons.light_mode : Icons.dark_mode,
-                                        color: darkModeOn ? lightColor : darkColor,),
-                                      onPressed: () {
-                                        showDialog(
-                                          context: context,
-                                          builder: (context) {
-                                            return SimpleDialog(
-                                              title: Row(
-                                                children: [
-                                                  Icon(darkModeOn ? Icons.light_mode : Icons.dark_mode,
-                                                    color: darkModeOn ? lightColor : darkColor,),
-                                                  const SizedBox(width: 10),
-                                                  Text(
-                                                    'Switch to ${darkModeOn ? 'Light' : 'Dark'} Mode',
-                                                    style: TextStyle(
-                                                      color: darkModeOn ? lightColor : darkColor,
-                                                      fontWeight: FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ],
-                                              ),
-                                              children: [
-                                                Padding(
-                                                  padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-                                                  child: Text(
-                                                    'Are you sure you want to switch to ${darkModeOn ? 'Light' : 'Dark'} Mode? This will reload the app.',
-                                                    style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),
-                                                    ),
-                                                ),
-                                                SimpleDialogOption(
-                                                  padding: const EdgeInsets.all(20),
-                                                  onPressed:() async {
-                                                    bool isConnected = await ConnectivityService().isConnected();
-                                                    if (isConnected) {
-                                                        mounted ? Provider.of<DarkModeProvider>(context, listen: false).toggleTheme() : '';
-                                                        mounted ? Navigator.of(context).pop() : '';
-                                                    } else {
-                                                      // Show a message to the user
-                                                      mounted ? ScaffoldMessenger.of(context).showSnackBar(
-                                                        SnackBar(
-                                                          content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
-                                                          duration: const Duration(seconds: 5),
-                                                        ),
-                                                      ) : '';
-                                                    }
-                                                  },
-                                                  child: Row(
-                                                    children: <Widget>[
-                                                      Icon(Icons.check_circle, 
-                                                      color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
-                                                      const SizedBox(width: 10),
-                                                      const Text('Yes'),
-                                                    ],
-                                                  ),
-                                                ),
-                                                SimpleDialogOption(
-                                                  padding: const EdgeInsets.all(20),
-                                                  child: Row(
-                                                    children: <Widget>[
-                                                      Icon(Icons.cancel, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
-                                                      const SizedBox(width: 10),
-                                                      const Text('No'),
-                                                    ],
-                                                  ),
-                                                  onPressed: () {
-                                                    Navigator.of(context).pop();
-                                                  },
-                                                ),
-                                              ],
-                                            );
-                                          }
-                                        );
-                                      },
+                              Flexible(
+                                child: SizedBox(
+                                  height: kIsWeb ? 40 : null,
+                                  child: ElevatedButton.icon(
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: darkModeOn ? lightColor : darkColor,
                                     ),
+                                    label: Text(
+                                      darkModeOn ? 'Light Mode' : 'Dark Mode',
+                                      style: TextStyle(
+                                        color: darkModeOn ? darkColor : lightColor,
+                                        fontSize: 16.0,
+                                      ),
+                                    ),
+                                    icon: Icon(darkModeOn ? Icons.light_mode : Icons.dark_mode,
+                                      color: darkModeOn ? darkColor : lightColor,),
+                                    onPressed: () {
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) {
+                                          return const DarkModeDialog();
+                                        }
+                                      );
+                                    },
                                   ),
                                 ),
+                              ),
+                              Flexible(
+                                child: ElevatedButton.icon(
+                                  icon: Icon(Icons.edit, color: darkModeOn ? darkColor : lightColor,),
+                                  style: ElevatedButton.styleFrom(
+                                      backgroundColor: darkModeOn ? darkModeGrassColor : lightModeGrassColor,
+                                    ),
+                                  onPressed: () {
+                                    // Navigator.of(context).push(MaterialPageRoute(
+                                  },
+                                  label: Text(
+                                    'Edit Profile',
+                                    style: TextStyle(
+                                      color: darkModeOn ? darkColor : lightColor,
+                                      fontSize: 16.0,
+                                    ),),
+                                )
                               ),
                             ],
                           ),
@@ -533,27 +486,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           Row(                    
                             children: [
                               Expanded(
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 15.0),
-                                  child: SizedBox(
-                                    height: kIsWeb ? 40 : null,
-                                    child: TextButton.icon(
-                                      onPressed: _signOut,
-                                      style: TextButton.styleFrom(
-                                        backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-                                      ),
-                                      icon: Icon(
-                                          Icons.logout,
-                                          color: darkModeOn ? darkColor : lightColor,
-                                      ),
-                                      label: Text(
-                                        'Sign out',
-                                        style: TextStyle(
-                                          color: darkModeOn ? darkColor : lightColor,
-                                          fontSize: 16.0,
-                                        ),
-                                      )
+                                child: SizedBox(
+                                  height: kIsWeb ? 40 : null,
+                                  child: TextButton.icon(
+                                    onPressed: _signOut,
+                                    style: TextButton.styleFrom(
+                                      backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
                                     ),
+                                    icon: Icon(
+                                        Icons.logout,
+                                        color: darkModeOn ? darkColor : lightColor,
+                                    ),
+                                    label: Text(
+                                      'Sign out',
+                                      style: TextStyle(
+                                        color: darkModeOn ? darkColor : lightColor,
+                                        fontSize: 16.0,
+                                      ),
+                                    )
                                   ),
                                 ),
                               ),
