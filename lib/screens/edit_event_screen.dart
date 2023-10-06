@@ -38,35 +38,7 @@ class EditEventScreenState extends State<EditEventScreen> {
   Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
-  List<String> programParticipants = [
-    'BSCS',
-    'BSIT',
-    'BSN',
-    'BSM',
-    'BSEE',
-    'BSME',
-    'BSCE'
-  ];
-  List<String> departmentParticipants = [
-    'CCS',
-    'CHS',
-    'CEA',
-  ];
-  Map<String, dynamic> selectedParticipants = {
-    'program': [],
-    'department': [],
-  };
 
-  // List all associated program for departments
-  Map<String, String> programDepartmentMap = {
-    'BSCS': 'CCS',
-    'BSIT': 'CCS',
-    'BSN': 'CHS',
-    'BSM': 'CHS',
-    'BSME': 'CEA',
-    'BSEE': 'CEA',
-    'BSCE': 'CEA',
-  };
 
   @override
   void initState() {

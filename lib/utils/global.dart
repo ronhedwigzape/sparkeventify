@@ -20,6 +20,118 @@ const schoolLogoBlack = 'assets/icon/monochrome_cspc_launcher_icon_black.png';
 const schoolLogo = 'assets/images/cspc_logo.png';
 const appName = 'Announce';
 
+// Global Programs and Departments
+final List<String> programsAndDepartments = [
+  'BSCS - CCS - Computer Science',
+  'BSIT - CCS - Information Technology',
+  'BSIS - CCS - Information Systems',
+  'BLIS - CCS - Information Science',
+  'BSN - CHS - Nursing',
+  'BSM - CHS - Midwifery',
+  'BSME - CEA - Mechanical Engineering',
+  'BSEE - CEA - Electronics Engineering',
+  'BSCoE - CEA - Computer Engineering',
+  'BSCiE - CEA - Civil Engineering',
+  'BSA - CEA - Architecture',
+  'BSOA - CTHBM - Office Administration',
+  'BSHM - CTHBM - Hospitality Management',
+  'BSTM - CTHBM - Tourism Management',
+  'BSE - CTHBM - Entreprenuership',
+  'BSBA - CTHBM - Business Administration Major in Financial Management',
+  'BAEL - CAS - English Language Studies',
+  'BSMa - CAS - Mathematics',
+  'BSAM - CAS - Applied Mathematics',
+  'BSDC - CAS - Development Communication',
+  'BPA - CAS - Public Administration',
+  'BHS - CAS - Human Services',
+  'BTVTEFP - CTDE - Major in Fish Processing',
+  'BTVTEFS - CTDE - Major in Food Service Management',
+  'BTVTEET - CTDE - Major in Electronics Technology',
+  'BPE - CTDE - Physical Education',
+  'BCAE - CTDE - Culture and Arts Education',
+  'BSNE - CTDE - Special Needs Education'
+];
+
+// Programs
+List<String> programParticipants = [
+  'BSCS',
+  'BSIT',
+  'BSIS',
+  'BLIS',
+  'BSN',
+  'BSM',
+  'BSME',
+  'BSEE',
+  'BSCoE',
+  'BSCiE',
+  'BSA',
+  'BSOA',
+  'BSHM',
+  'BSTM',
+  'BSE',
+  'BSBA',
+  'BAEL',
+  'BSMa',
+  'BSAM',
+  'BSDC',
+  'BPA',
+  'BHS',
+  'BTVTEFP',
+  'BTVTEFS',
+  'BTVTEET',
+  'BPE',
+  'BCAE',
+  'BSNE'
+];
+
+// Departments
+List<String> departmentParticipants = [
+  'CCS',
+  'CHS',
+  'CEA',
+  'CTHBM',
+  'CAS',
+  'CTDE'
+];
+
+// Selected Participants
+Map<String, List<String>> selectedParticipants = {
+  'program': [],
+  'department': []
+};
+
+// List all associated program for departments
+Map<String, String> programDepartmentMap = {
+  'BSCS':'CCS',
+  'BSIT':'CCS',
+  'BSIS':'CCS',
+  'BLIS':'CCS',
+  'BSN':'CHS',
+  'BSM':'CHS',
+  'BSME':'CEA',
+  'BSEE':'CEA',
+  'BSCoE':'CEA',
+  'BSCiE':'CEA',
+  'BSA':'CEA',
+  'BSOA':'CTHBM',
+  'BSHM':'CTHBM',
+  'BSTM':'CTHBM',
+  'BSE':'CTHBM',
+  'BSBA':'CTHBM',
+  'BAEL':'CAS',
+  'BSMa':'CAS',
+  'BSAM':'CAS',
+  'BSDC':'CAS',
+  'BPA':'CAS',
+  'BHS':'CAS',
+  'BTVTEFP':'CTDE',
+  'BTVTEFS':'CTDE',
+  'BTVTEET':'CTDE',
+  'BPE':'CTDE',
+  'BCAE':'CTDE',
+  'BSNE':'CTDE'
+};
+
 // Global key for the events calendar
 Future<List<Widget>> homeScreenItems() async {
   final String userType = await AuthMethods().getCurrentUserType();

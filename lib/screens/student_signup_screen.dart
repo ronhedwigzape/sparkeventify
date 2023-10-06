@@ -5,9 +5,9 @@ import 'package:student_event_calendar/models/profile.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
-
 import '../providers/darkmode_provider.dart';
 
 class StudentSignupScreen extends StatefulWidget {
@@ -26,15 +26,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
   final TextEditingController _sectionController = TextEditingController();
-  final List<String> programsAndDepartments = [
-    'BSCS - CCS - Computer Science',
-    'BSIT - CCS - Information Technology',
-    'BSN - CHS - Nursing',
-    'BSM - CHS - Midwifery',
-    'BSME - CEA - Mechanical Engineering',
-    'BSEE - CEA - Electrical Engineering',
-    'BSCE - CEA - Computer Engineering',
-  ];
+
   late String selectedProgramAndDepartment = programsAndDepartments[0];
   late String program;
   late String department;
