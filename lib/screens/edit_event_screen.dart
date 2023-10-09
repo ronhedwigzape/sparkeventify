@@ -39,6 +39,10 @@ class EditEventScreenState extends State<EditEventScreen> {
   Uint8List? _imageFile;
   bool _isLoading = false;
 
+  Map<String, dynamic> selectParticipants = {
+    'program': [],
+    'department': []
+  };
 
   @override
   void initState() {
@@ -55,9 +59,8 @@ class EditEventScreenState extends State<EditEventScreen> {
         DateFormat('h:mm a').format(widget.eventSnap.startTime);
     _endTimeController.text =
         DateFormat('h:mm a').format(widget.eventSnap.endTime);
-    selectedParticipants['program'] = widget.eventSnap.participants!['program'];
-    selectedParticipants['department'] =
-        widget.eventSnap.participants!['department'];
+    selectParticipants['program'] = widget.eventSnap.participants!['program'];
+    selectParticipants['department'] = widget.eventSnap.participants!['department'];
   }
 
   void _selectImage(BuildContext context) async {
