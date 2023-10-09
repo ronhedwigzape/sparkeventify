@@ -170,11 +170,11 @@ class _NotificationCardState extends State<NotificationCard> {
                     _viewNotification(context);
                   }
                 },
-                onLongPress: () {
+                onLongPress: snapshot.data == false ?  () {
                   if (widget.snap.id != null) {
                     _manageNotification(context);
                   }
-                },
+                } : () {},
                 child: Container(
                   decoration: BoxDecoration(
                     border: Border.all(
