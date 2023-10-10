@@ -132,6 +132,15 @@ Map<String, String> programDepartmentMap = {
   'BSNE':'CTDE'
 };
 
+final List<String> staffPositions = [
+  'Director - Student Affairs and Services - SASO',
+  'Administrative Aide VI - Head of Staff - SASO',
+  'Administrative Aide III - Support Staff - Student Development',
+  'Administrative Aide III - Support Staff - Scholarships(TES) & Financial Assist.',
+  'Administrative Aide II - Support Staff - Scholarships(CSP/TDP) & Financial Assist.',
+  'Administrative Aide II - Support Staff - Information Services',
+];
+
 // Global key for the events calendar
 Future<List<Widget>> homeScreenItems() async {
   final String userType = await AuthMethods().getCurrentUserType();

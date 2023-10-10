@@ -6,6 +6,7 @@ import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/password_widget.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
 
@@ -29,23 +30,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
   final TextEditingController organizationController = TextEditingController();
   final TextEditingController officerPositionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final List<String> staffPositions = [
-    'Director - Student Affairs and Services - SASO',
-    'Administrative Aide VI - Head of Staff - SASO',
-    'Administrative Aide III - Support Staff - Student Development',
-    'Administrative Aide III - Support Staff - Scholarships(TES) & Financial Assist.',
-    'Administrative Aide II - Support Staff - Scholarships(CSP/TDP) & Financial Assist.',
-    'Administrative Aide II - Support Staff - Information Services',
-  ];
-  final List<String> programsAndDepartments = [
-    'BSCS - CCS - Computer Science',
-    'BSIT - CCS - Information Technology',
-    'BSN - CHS - Nursing',
-    'BSM - CHS - Midwifery',
-    'BSME - CEA - Mechanical Engineering',
-    'BSEE - CEA - Electrical Engineering',
-    'BSCE - CEA - Computer Engineering',
-  ];
+
   late String selectedProgramAndDepartment = programsAndDepartments[0];
   late String selectedStaffPosition = staffPositions[0];
   late String profileImage;
