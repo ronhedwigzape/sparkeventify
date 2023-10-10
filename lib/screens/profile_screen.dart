@@ -1,21 +1,18 @@
 import 'dart:math';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
+import 'package:student_event_calendar/screens/edit_profile_screen.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/utils/colors.dart';
-import 'package:student_event_calendar/utils/file_pickers.dart';
 import 'package:student_event_calendar/widgets/dark_mode_dialog.dart';
 import '../services/firebase_notifications.dart';
-import 'package:another_flushbar/flushbar.dart';
 
 class ProfileScreen extends StatefulWidget {
   const ProfileScreen({super.key});
@@ -26,23 +23,12 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   Future<model.User?> currentUser = FireStoreUserMethods().getCurrentUserData();
-  Uint8List? _pickedImage;
-  bool _isImageUpdated = false;
-  bool _isError = false;
 
-  void _showSuccessMessage() {
-    Flushbar(
-      message: "Profile image updated successfully!",
-      duration: const Duration(seconds: 5),
-    ).show(context);
-  }
 
-  void selectImage() async {
-    Uint8List image = await pickImage(ImageSource.gallery);
-    setState(() {
-      _pickedImage = image;
-    });
-  }
+
+
+
+
 
   _signOut() async {
     return showDialog(
@@ -139,7 +125,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
         } else {
           model.User? currentUser = snapshot.data;
           String? profileImage = currentUser?.profile?.profileImage ?? '';
-          String? uid = currentUser?.uid;
           String email = currentUser?.email ?? '';
           // String password = currentUser?.password ?? '';
           String userType = currentUser?.userType ?? '';
@@ -188,113 +173,22 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             child: Stack(
                               alignment: AlignmentDirectional.center,
                               children: [
-                                // if _pickedImage is not null, display the _pickedImage
-                                _pickedImage != null
-                                  ? CircleAvatar(
-                                      radius: 40,
-                                      backgroundImage: MemoryImage(_pickedImage!),
-                                      onBackgroundImageError: (exception, stackTrace) {
-                                        setState(() {
-                                          _isError = true;
-                                        });
-                                      },
-                                      backgroundColor: darkColor,
-                                      child: _isError ? const Icon(Icons.error, color: lightColor,) : null,)
-                                  // else if _pickedImage is null, display the profileImage
-                                  : profileImage.isNotEmpty
+                                  // _pickedImage is null, display the profileImage
+                                  profileImage.isNotEmpty
                                   ? CircleAvatar(
                                       radius: 40,
                                       backgroundImage: NetworkImage(profileImage),
-                                      onBackgroundImageError: (exception, stackTrace) {
-                                        setState(() {
-                                          _isError = true;
-                                        });
-                                      },
                                       backgroundColor: darkColor,
-                                      child: _isError ? const Icon(Icons.error, color: lightColor,) : null,
                                     )
                                   // else display the default profile image
-                                  : CircleAvatar(
+                                  : const CircleAvatar(
                                       radius: 40,
                                       backgroundColor: darkColor,
-                                      backgroundImage: const NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
-                                      onBackgroundImageError: (exception, stackTrace) {
-                                        setState(() {
-                                          _isError = true;
-                                        });
-                                      },
-                                      child: _isError ? const Icon(Icons.error, color: lightColor,) : null,
-                                    ),
-                                Positioned(
-                                  bottom: -10,
-                                  left: 42,
-                                  child: IconButton(
-                                    onPressed: _pickedImage == null ? selectImage : () {},
-                                    icon: Container(
-                                      decoration: BoxDecoration(
-                                        shape: BoxShape.circle,
-                                        boxShadow: [
-                                          BoxShadow(
-                                            color: darkModeOn ? darkColor : lightColor,
-                                            spreadRadius: 1,
-                                            blurRadius: 8,
-                                            offset: const Offset(1, 1), // changes position of shadow
-                                          ),
-                                        ],
-                                      ),
-                                      child: const Icon(
-                                        Icons.add_a_photo,
-                                      ),
-                                    ),
-                                    tooltip: 'Change profile picture',
-                                  )
-                                ),  
+                                      backgroundImage: NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
+                                  ),  
                               ],
                             ), 
                           ),
-                         _pickedImage != null && !_isImageUpdated ? Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Text('Update profile picture?'),
-                              Flexible(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    IconButton(
-                                      onPressed: () async {
-                                        bool isConnected = await ConnectivityService().isConnected();
-                                        if (isConnected) {
-                                          await FireStoreUserMethods().updateProfileImage(_pickedImage!, uid!); 
-                                          setState(() {
-                                            _isImageUpdated = true;
-                                          });
-                                          _showSuccessMessage();
-                                        } else {
-                                          // Show a message to the user
-                                          mounted ? ScaffoldMessenger.of(context).showSnackBar(
-                                            SnackBar(
-                                              content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
-                                              duration: const Duration(seconds: 5),
-                                            ),
-                                          ) : '';
-                                        }
-                                      },
-                                      icon: const Icon(Icons.check_circle, color: darkModeGrassColor,)
-                                    ),
-                                    IconButton(
-                                      onPressed: () {
-                                        setState(() {
-                                          _pickedImage = null;
-                                          _isImageUpdated = false;
-                                        });
-                                      }, 
-                                      icon: const Icon(Icons.cancel, color: darkModeMaroonColor,)
-                                    ),  
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ) : const SizedBox.shrink(),
                           Container(
                             padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
                             child: Row(
@@ -464,20 +358,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                               ),
                               Flexible(
-                                child: ElevatedButton.icon(
-                                  icon: Icon(Icons.edit, color: darkModeOn ? darkColor : lightColor,),
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: darkModeOn ? darkModeGrassColor : lightModeGrassColor,
-                                    ),
-                                  onPressed: () {
-                                    // Navigator.of(context).push(MaterialPageRoute(
-                                  },
-                                  label: Text(
-                                    'Edit Profile',
-                                    style: TextStyle(
-                                      color: darkModeOn ? darkColor : lightColor,
-                                      fontSize: 16.0,
-                                    ),),
+                                child: SizedBox(
+                                  height: kIsWeb ? 40 : null,
+                                  child: ElevatedButton.icon(
+                                    icon: Icon(Icons.edit, color: darkModeOn ? darkColor : lightColor,),
+                                    style: ElevatedButton.styleFrom(
+                                        backgroundColor: darkModeOn ? darkModeGrassColor : lightModeGrassColor,
+                                      ),
+                                    onPressed: () {
+                                      Navigator.of(context).push(MaterialPageRoute(
+                                        builder: (context) =>  EditProfileScreen(user: currentUser!)));
+                                    },
+                                    label: Text(
+                                      'Edit Profile',
+                                      style: TextStyle(
+                                        color: darkModeOn ? darkColor : lightColor,
+                                        fontSize: 16.0,
+                                      )),
+                                  ),
                                 )
                               ),
                             ],

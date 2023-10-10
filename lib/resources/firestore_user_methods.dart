@@ -173,8 +173,29 @@ class FireStoreUserMethods {
     Map<String, String>? deviceTokens = {};
     try {
       if (email.isNotEmpty && password.isNotEmpty && userType.isNotEmpty && profile != null) {
-        await _auth.currentUser!.updateEmail(email);
-        await _auth.currentUser!.updatePassword(password);
+
+        // Check cspc email format based on userType
+        if ((userType == 'Admin' || userType == 'Staff') && !email.endsWith('@cspc.edu.ph')) {
+          return 'Invalid email format. Please use an email ending with @cspc.edu.ph';
+        } else if ((userType == 'Student' || userType == 'Officer') && !email.endsWith('@my.cspc.edu.ph')) {
+          return 'Invalid email format. Please use an email ending with @my.cspc.edu.ph';
+        }
+         // Check if phone number starts with 639 and has length of 12 digits
+        if (!RegExp(r"^639\d{9}$").hasMatch(profile.phoneNumber ?? '')) {
+          return 'Please enter a valid phone number. (e.g. 639123456789)';
+        }
+
+        if (userType != "Staff") {
+          // Check if section is a single letter A-Z
+          if (!RegExp(r"^[A-Z]$").hasMatch(profile.section ?? '')) {
+            return 'Section should be a single letter A-Z';
+          }
+          // Check if year is 1-4
+          if (!RegExp(r"^[1-4]$").hasMatch(profile.year ?? '')) {
+            return 'Year should be 1-4';
+          }
+        }
+
         model.User user = model.User(
           uid: uid,
           email: email,
@@ -184,7 +205,11 @@ class FireStoreUserMethods {
           password: password,
           deviceTokens: deviceTokens,
         );
+
+        await _auth.currentUser!.updateEmail(email);
+        await _auth.currentUser!.updatePassword(password);
         await _usersCollection.doc(uid).update(user.toJson());
+        
         res = "Success";
       } 
     } catch (err) {
