@@ -23,13 +23,7 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   Future<model.User?> currentUser = FireStoreUserMethods().getCurrentUserData();
-
-
-
-
-
-
-
+  
   _signOut() async {
     return showDialog(
       context: context,

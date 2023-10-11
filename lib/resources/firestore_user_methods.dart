@@ -172,7 +172,7 @@ class FireStoreUserMethods {
     String res = "Enter valid credentials";
     Map<String, String>? deviceTokens = {};
     try {
-      if (email.isNotEmpty && password.isNotEmpty && userType.isNotEmpty && profile != null) {
+      if (email.isNotEmpty && password.isNotEmpty && userType.isNotEmpty) {
 
         // Check cspc email format based on userType
         if ((userType == 'Admin' || userType == 'Staff') && !email.endsWith('@cspc.edu.ph')) {
@@ -181,17 +181,17 @@ class FireStoreUserMethods {
           return 'Invalid email format. Please use an email ending with @my.cspc.edu.ph';
         }
          // Check if phone number starts with 639 and has length of 12 digits
-        if (!RegExp(r"^639\d{9}$").hasMatch(profile.phoneNumber ?? '')) {
+        if (!RegExp(r"^639\d{9}$").hasMatch(profile?.phoneNumber ?? '')) {
           return 'Please enter a valid phone number. (e.g. 639123456789)';
         }
 
         if (userType != "Staff") {
           // Check if section is a single letter A-Z
-          if (!RegExp(r"^[A-Z]$").hasMatch(profile.section ?? '')) {
+          if (!RegExp(r"^[A-Z]$").hasMatch(profile?.section ?? '')) {
             return 'Section should be a single letter A-Z';
           }
           // Check if year is 1-4
-          if (!RegExp(r"^[1-4]$").hasMatch(profile.year ?? '')) {
+          if (!RegExp(r"^[1-4]$").hasMatch(profile?.year ?? '')) {
             return 'Year should be 1-4';
           }
         }

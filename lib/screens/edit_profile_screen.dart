@@ -23,7 +23,6 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-  final TextEditingController _userTypeController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _firstNameController = TextEditingController();
@@ -51,7 +50,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
-    _userTypeController.text = widget.user.userType;
     _emailController.text = widget.user.email!;
     _passwordController.text = widget.user.password!;
     _firstNameController.text = widget.user.profile!.firstName ?? '';
@@ -99,18 +97,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _lastNameController.text.trim().isEmpty ||
       _emailController.text.trim().isEmpty ||
       _passwordController.text.trim().isEmpty ||
-      _phoneNumberController.text.trim().isEmpty ||
-      _yearController.text.trim().isEmpty ||
-      _sectionController.text.trim().isEmpty ||
-      _organizationController.text.trim().isEmpty ||
-      _officerPositionController.text.trim().isEmpty ||
-      selectedProgramAndDepartment.isEmpty ||
-      selectedStaffPosition.isEmpty ||
-      program.isEmpty ||
-      department.isEmpty ||
-      staffPosition.isEmpty ||
-      staffType.isEmpty ||
-      staffDescription.isEmpty
+      _phoneNumberController.text.trim().isEmpty
     ) return onSignupFailure('Please complete all required fields.');
 
       // Validate the phone number
@@ -131,23 +118,23 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       middleInitial: _middleInitialController.text.trim(),
       lastName: _lastNameController.text.trim(),
       phoneNumber: phoneNumber,
-      department: department,
-      program: program,
-      year: _yearController.text.trim(),
-      section: _sectionController.text.trim().toUpperCase(),
-      organization: _organizationController.text.trim(),
-      officerPosition: _officerPositionController.text.trim(),
+      department: widget.user.userType != 'Staff' ?  department : '',
+      program: widget.user.userType != 'Staff' ? program : '',
+      year: widget.user.userType != 'Staff' ? _yearController.text.trim() : '',
+      section: widget.user.userType != 'Staff' ?  _sectionController.text.trim().toUpperCase() : '',
+      organization: widget.user.userType == 'Officer' ?  _organizationController.text.trim() : '',
+      officerPosition: widget.user.userType == 'Officer' ?  _officerPositionController.text.trim() : '',
       profileImage: profileImage,
-      staffPosition: staffPosition,
-      staffType: staffType,
-      staffDescription: staffDescription,
+      staffPosition: widget.user.userType == 'Staff' ? staffPosition : '',
+      staffType: widget.user.userType == 'Staff' ? staffType : '',
+      staffDescription: widget.user.userType == 'Staff' ? staffDescription : '',
     );
 
     String res = await FireStoreUserMethods().updateUser(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
         profile: profile,
-        userType: _userTypeController.text.trim(), 
+        userType: widget.user.userType, 
         uid: widget.user.uid);
 
     if (res == 'Success') {
@@ -195,7 +182,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
     void dispose() {
     super.dispose();
-    _userTypeController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _firstNameController.dispose();
@@ -294,21 +280,9 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   left: 42,
                   child: IconButton(
                     onPressed: _pickedImage == null ? selectImage : () {},
-                    icon: Container(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        boxShadow: [
-                          BoxShadow(
-                            color: darkModeOn ? darkColor : lightColor,
-                            spreadRadius: 1,
-                            blurRadius: 8,
-                            offset: const Offset(1, 1), // changes position of shadow
-                          ),
-                        ],
-                      ),
-                      child: const Icon(
-                        Icons.add_a_photo,
-                      ),
+                    icon: Icon(
+                      Icons.add_a_photo,
+                      color: darkModeOn ? white : black,
                     ),
                     tooltip: 'Change profile picture',
                   )
@@ -441,7 +415,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ],
           ),
           const SizedBox(height: 10.0),
-          widget.user.userType != 'Staff' ? Row(
+          widget.user.userType != 'Staff' && 
+          widget.user.userType != 'Admin'  ? Row(
             children: [
               Flexible(
                 child: FormField<String>(
@@ -485,8 +460,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ),
             ],
           ) : const SizedBox.shrink(),
-          widget.user.userType != 'Staff' ? const SizedBox(height: 10,) : const SizedBox.shrink(),
-          widget.user.userType != 'Staff' ? Row(
+          widget.user.userType != 'Staff' && 
+          widget.user.userType != 'Admin'  ? const SizedBox(height: 10,) : const SizedBox.shrink(),
+          widget.user.userType != 'Staff' && 
+          widget.user.userType != 'Admin'  ? Row(
             children: [
               Flexible(
                 child: DropdownButtonFormField<String>(

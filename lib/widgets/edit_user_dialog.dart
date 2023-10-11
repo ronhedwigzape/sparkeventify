@@ -82,19 +82,19 @@ class _EditUserDialogState extends State<EditUserDialog> {
 
     model.Profile profile = model.Profile(
         fullName: fullname,
-        firstName: firstNameController.text,
-        middleInitial: middleInitialController.text,
-        lastName: lastNameController.text,
-        phoneNumber: phoneNumberController.text,
+        firstName: firstNameController.text.trim(),
+        middleInitial: middleInitialController.text.trim(),
+        lastName: lastNameController.text.trim(),
+        phoneNumber: phoneNumberController.text.trim(),
         department: widget.user.userType != 'Staff' ? department : '',
         program: widget.user.userType != 'Staff' ? program : '',
-        year: widget.user.userType != 'Staff' ? yearController.text : '',
-        section: widget.user.userType != 'Staff' ? sectionController.text : '',
-        officerPosition: widget.user.userType == 'Officer' ? officerPositionController.text : '',
+        year: widget.user.userType != 'Staff' ? yearController.text.trim() : '',
+        section: widget.user.userType != 'Staff' ? sectionController.text.trim().toUpperCase() : '',
+        officerPosition: widget.user.userType == 'Officer' ? officerPositionController.text.trim() : '',
         staffPosition: widget.user.userType == 'Staff' ?  staffPosition : '',
         staffType: widget.user.userType == 'Staff' ? staffType : '',
         staffDescription: widget.user.userType == 'Staff' ? staffDescription : '',
-        organization: widget.user.userType == 'Officer' ? organizationController.text : '',
+        organization: widget.user.userType == 'Officer' ? organizationController.text.trim() : '',
         profileImage: profileImage);
 
     try {
