@@ -39,7 +39,7 @@ class EditEventScreenState extends State<EditEventScreen> {
   Uint8List? _imageFile;
   bool _isLoading = false;
 
-  Map<String, dynamic> selectParticipants = {
+  Map<String, dynamic> selectedParticipants = {
     'program': [],
     'department': []
   };
@@ -59,8 +59,8 @@ class EditEventScreenState extends State<EditEventScreen> {
         DateFormat('h:mm a').format(widget.eventSnap.startTime);
     _endTimeController.text =
         DateFormat('h:mm a').format(widget.eventSnap.endTime);
-    selectParticipants['program'] = widget.eventSnap.participants!['program'];
-    selectParticipants['department'] = widget.eventSnap.participants!['department'];
+    selectedParticipants['program'] = widget.eventSnap.participants!['program'];
+    selectedParticipants['department'] = widget.eventSnap.participants!['department'];
   }
 
   void _selectImage(BuildContext context) async {
@@ -330,6 +330,7 @@ class EditEventScreenState extends State<EditEventScreen> {
     });
     Navigator.pop(context);
     showSnackBar('Event updated successfully!', context);
+    clearInputs();
   }
 
   void onPostFailure(String message) {
@@ -344,6 +345,24 @@ class EditEventScreenState extends State<EditEventScreen> {
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 
+  void clearInputs() {
+    setState(() {
+      _imageFile = null;
+      _documentFile = null;
+      _eventTypeController.clear();
+      _eventTitleController.clear();
+      _eventDescriptionsController.clear();
+      _eventVenueController.clear();
+      _startDateController.clear();
+      _endDateController.clear();
+      _startTimeController.clear();
+      _endTimeController.clear();
+      selectedParticipants.forEach((key, value) {
+        selectedParticipants[key] = [];
+      });
+    });
+  }
+
   // Disposing after changing
   @override
   void dispose() {
@@ -356,6 +375,7 @@ class EditEventScreenState extends State<EditEventScreen> {
     _endDateController.dispose();
     _startTimeController.dispose();
     _endTimeController.dispose();
+
   }
 
   @override
@@ -841,7 +861,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                       checkColor: darkModeOn ? darkColor : lightColor,
                       title: Text(participant),
                       value: selectedParticipants[type.toLowerCase()]
-                          ?.contains(participant),
+                          ?.contains(participant) ?? [],
                       onChanged: (bool? value) {
                         setState(() {
                           String? dept = programDepartmentMap[participant];
@@ -915,7 +935,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                         checkColor: darkModeOn ? darkColor : lightColor,
                         title: Text(participant),
                         value: selectedParticipants[type.toLowerCase()]
-                            ?.contains(participant),
+                            ?.contains(participant) ?? [],
                         onChanged: (bool? value) {
                           setState(() {
                             String? dept = programDepartmentMap[participant];
