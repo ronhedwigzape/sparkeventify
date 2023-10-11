@@ -192,9 +192,7 @@ class EventDialogState extends State<EventDialog> {
                       const SizedBox(width: 10),
                       SizedBox(
                         height: 30,
-                        width: kIsWeb
-                            ? (event.type == 'Academic' ? 80 : 100)
-                            : (event.type == 'Academic' ? 60 : 80),
+                        width:,
                         child: Chip(
                           label: Text(
                             event.status,
