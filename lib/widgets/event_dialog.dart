@@ -197,18 +197,28 @@ class EventDialogState extends State<EventDialog> {
                             : (event.type == 'Academic' ? 60 : 80),
                         child: Chip(
                           label: Text(
-                            event.type,
+                            event.status,
                             style: const TextStyle(
                                 color: lightColor, fontSize: kIsWeb ? 12 : 8),
                           ),
                           padding: const EdgeInsets.all(2.0),
-                          backgroundColor: event.type == 'Academic'
+                          backgroundColor: event.status == 'Cancelled'
+                            ? (darkModeOn
+                                ? darkModeMaroonColor
+                                : lightModeMaroonColor)
+                            : event.status == 'Upcoming'
+                            ? (darkModeOn
+                                ? darkModePrimaryColor
+                                : lightModePrimaryColor)
+                            : event.status == 'Moved'
                               ? (darkModeOn
-                                  ? darkModeMaroonColor
-                                  : lightModeMaroonColor)
-                              : (darkModeOn
-                                  ? darkModePrimaryColor
-                                  : lightModePrimaryColor),
+                              ? darkModeSecondaryColor
+                              : lightModeSecondaryColor)
+                            : event.status == 'Past'
+                              ? black
+                            : (darkModeOn
+                              ? darkModeGrassColor
+                              : lightModeGrassColor),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0),
                           ),
