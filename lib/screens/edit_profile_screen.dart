@@ -96,7 +96,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
     if (
       _firstNameController.text.trim().isEmpty ||
-      _middleInitialController.text.trim().isEmpty ||
+      _lastNameController.text.trim().isEmpty ||
       _emailController.text.trim().isEmpty ||
       _passwordController.text.trim().isEmpty ||
       _phoneNumberController.text.trim().isEmpty
@@ -194,6 +194,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _sectionController.dispose();
     _organizationController.dispose();
     _officerPositionController.dispose();
+    
   }
   @override
   Widget build(BuildContext context) {
