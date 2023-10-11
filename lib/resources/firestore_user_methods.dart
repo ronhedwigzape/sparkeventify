@@ -185,7 +185,7 @@ class FireStoreUserMethods {
           return 'Please enter a valid phone number. (e.g. 639123456789)';
         }
 
-        if (userType != "Staff") {
+        if (userType != "Staff" && userType != "Admin") {
           // Check if section is a single letter A-Z
           if (!RegExp(r"^[A-Z]$").hasMatch(profile?.section ?? '')) {
             return 'Section should be a single letter A-Z';

@@ -48,7 +48,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Uint8List? _pickedImage;
   bool _isImageUpdated = false;
   bool _isLoading = false;
-
   bool _isError = false;
 
   @override
@@ -98,7 +97,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (
       _firstNameController.text.trim().isEmpty ||
       _middleInitialController.text.trim().isEmpty ||
-      _lastNameController.text.trim().isEmpty ||
       _emailController.text.trim().isEmpty ||
       _passwordController.text.trim().isEmpty ||
       _phoneNumberController.text.trim().isEmpty
@@ -122,10 +120,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       middleInitial: _middleInitialController.text.trim(),
       lastName: _lastNameController.text.trim(),
       phoneNumber: phoneNumber,
-      department: widget.user.userType != 'Staff' ?  department : '',
-      program: widget.user.userType != 'Staff' ? program : '',
-      year: widget.user.userType != 'Staff' ? _yearController.text.trim() : '',
-      section: widget.user.userType != 'Staff' ?  _sectionController.text.trim().toUpperCase() : '',
+      department: widget.user.userType != 'Staff' && widget.user.userType != 'Admin' ? department : '',
+      program: widget.user.userType != 'Staff' && widget.user.userType != 'Admin' ? program : '',
+      year: widget.user.userType != 'Staff' && widget.user.userType != 'Admin' ? _yearController.text.trim() : '',
+      section: widget.user.userType != 'Staff' && widget.user.userType != 'Admin' ?  _sectionController.text.trim().toUpperCase() : '',
       organization: widget.user.userType == 'Officer' ?  _organizationController.text.trim() : '',
       officerPosition: widget.user.userType == 'Officer' ?  _officerPositionController.text.trim() : '',
       profileImage: profileImage,
