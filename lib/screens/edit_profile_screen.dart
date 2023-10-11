@@ -14,8 +14,6 @@ import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/delete_user_dialog.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
 
-import 'login_screen.dart';
-
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key, required this.user});
 
@@ -194,7 +192,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _sectionController.dispose();
     _organizationController.dispose();
     _officerPositionController.dispose();
-    
+
   }
   @override
   Widget build(BuildContext context) {

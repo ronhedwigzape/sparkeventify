@@ -296,6 +296,47 @@ class EventDialogState extends State<EventDialog> {
                       Row(
                         children: [
                           Icon(
+                            Icons.school,
+                            color: darkModeOn
+                                ? darkModeSecondaryColor
+                                : lightModeSecondaryColor,
+                            size: kIsWeb ? 18 : 15,
+                          ),
+                          Text(
+                            ' Type',
+                            style: TextStyle(
+                                color: darkModeOn ? lightColor : darkColor,
+                                fontSize: kIsWeb ? 18 : 15),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          Text(
+                            event.type,
+                            style: TextStyle(
+                              color: darkModeOn
+                                  ? darkModeSecondaryColor
+                                  : lightModeSecondaryColor,
+                              fontSize: kIsWeb ? 16.0 : 13,
+                            ),
+                          textAlign: TextAlign.start,
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8.0),
+                    ],
+                  ),
+                  Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
                             Icons.description,
                             color: darkModeOn
                                 ? darkModeSecondaryColor
