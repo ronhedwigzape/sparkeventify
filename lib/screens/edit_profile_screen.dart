@@ -11,7 +11,10 @@ import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
 import 'package:student_event_calendar/utils/global.dart';
+import 'package:student_event_calendar/widgets/delete_user_dialog.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
+
+import 'login_screen.dart';
 
 class EditProfileScreen extends StatefulWidget {
   const EditProfileScreen({super.key, required this.user});
@@ -45,6 +48,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Uint8List? _pickedImage;
   bool _isImageUpdated = false;
   bool _isLoading = false;
+
   bool _isError = false;
 
   @override
@@ -98,12 +102,12 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       _emailController.text.trim().isEmpty ||
       _passwordController.text.trim().isEmpty ||
       _phoneNumberController.text.trim().isEmpty
-    ) return onSignupFailure('Please complete all required fields.');
+    ) return onUpdateFailure('Please complete all required fields.');
 
       // Validate the phone number
     String phoneNumber = _phoneNumberController.text.trim();
     if (!RegExp(r'^9[0-9]{9}$').hasMatch(phoneNumber)) {
-      onSignupFailure('Please enter your last 10 digits of the phone number.');
+      onUpdateFailure('Please enter your last 10 digits of the phone number.');
       return;
     }
 
@@ -138,13 +142,13 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         uid: widget.user.uid);
 
     if (res == 'Success') {
-      onSignupSuccess();
+      onUpdateSuccess();
     } else {
-      onSignupFailure(res);
+      onUpdateFailure(res);
     }
   }
 
-  void onSignupSuccess() {
+  void onUpdateSuccess() {
     setState(() {
       _isLoading = false;
     });
@@ -155,7 +159,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     )) : '';
   }
 
-  void onSignupFailure(String message) {
+  void onUpdateFailure(String message) {
     setState(() {
       _isLoading = false;
     });
@@ -629,6 +633,57 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
+                    ],
+                  )),
+            ),
+          ),
+          const SizedBox(height: 10.0),
+          Center(
+            child: InkWell(
+              onTap: () {
+                showDialog(
+                    context: context,
+                    builder: (context) {
+                      return DeleteUserDialog(
+                        uid: widget.user.uid,
+                        email: _emailController.text.trim(),
+                        password: _passwordController.text.trim(),
+                      );
+                    }
+                );
+              },
+              child: Container(
+                  width: double.infinity,
+                  alignment: Alignment.center,
+                  padding: const EdgeInsets.symmetric(
+                      vertical: 16.0),
+                  decoration: ShapeDecoration(
+                    shape: const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(
+                          Radius.circular(5.0)),
+                    ),
+                    color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,
+                  ),
+                  child: _isLoading
+                      ? const Center(
+                      child: CircularProgressIndicator(
+                        valueColor:
+                        AlwaysStoppedAnimation<Color>(
+                            lightColor),
+                      ))
+                      : const Row(
+                    mainAxisAlignment:
+                    MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.delete_forever, color: lightColor),
+                      SizedBox(width: 10),
+                      Text(
+                        'Delete Your Account',
+                        style: TextStyle(
+                          color: lightColor,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ],
                   )),
             ),
