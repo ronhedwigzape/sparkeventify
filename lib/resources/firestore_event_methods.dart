@@ -181,7 +181,10 @@ class FireStoreEventMethods {
     try {
       // If the event is moved, update event's details using the supplied new event details
       if (isMoved! && movedEvent != null) {
-        return await updateEvent(eventId, movedEvent);
+        await updateEvent(eventId, movedEvent);
+        await _eventsCollection.doc(eventId).set({
+            'status': isCancelled! ? 'Cancelled' : 'Moved',
+        }, SetOptions(merge: true));
       }
 
       // If the current date/time is before the start date/time, then the status is "Upcoming"

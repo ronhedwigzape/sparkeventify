@@ -190,7 +190,16 @@ class EditEventScreenState extends State<EditEventScreen> {
     }
   }
 
-  isEventMoved() async {}
+  setEventMoved(DateTime startDate, DateTime endDate) async {
+    try {
+      return await FireStoreEventMethods()
+          .updateEventStatus(widget.eventSnap.id, null, true, startDate, endDate, null);
+    } catch (e) {
+      if (kDebugMode) {
+        print(e);
+      }
+    }
+  }
 
   _update() async {
     if (kDebugMode) {
