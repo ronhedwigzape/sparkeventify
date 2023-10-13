@@ -195,7 +195,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   flex: 2,
                   child: Container(),
                 ),
-                Row(
+                !kIsWeb ? Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Container(
@@ -219,8 +219,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                     )
                   ],
-                )
-                // transitioning to signing up
+                ) : const SizedBox.shrink(),
               ],
             ),
           ),
