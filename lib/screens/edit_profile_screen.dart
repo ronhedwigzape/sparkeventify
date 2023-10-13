@@ -661,14 +661,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,
                   ),
-                  child: _isLoading
-                      ? const Center(
-                      child: CircularProgressIndicator(
-                        valueColor:
-                        AlwaysStoppedAnimation<Color>(
-                            lightColor),
-                      ))
-                      : const Row(
+                  child: const Row(
                     mainAxisAlignment:
                     MainAxisAlignment.center,
                     children: [
