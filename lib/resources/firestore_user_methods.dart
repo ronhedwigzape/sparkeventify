@@ -3,14 +3,12 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:student_event_calendar/models/profile.dart' as model;
 import 'package:student_event_calendar/models/user.dart' as model;
-import 'package:cloud_functions/cloud_functions.dart';
 import 'package:student_event_calendar/resources/storage_methods.dart';
 
 class FireStoreUserMethods {
   // Reference to the 'users' collection in Firestore
   final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users');
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  final FirebaseFunctions functions = FirebaseFunctions.instance;
 
   Future<model.User?> getCurrentUserData() async {
     model.User? user;
