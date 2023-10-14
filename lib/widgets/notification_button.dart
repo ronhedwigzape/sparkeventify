@@ -19,24 +19,25 @@ class NotificationButton extends StatefulWidget {
 class _NotificationButtonState extends State<NotificationButton> {
 
   Future<String?> sendNotifications(List<String> selectedUsers, String title, String message) async {
-    List<String> messages = [];
     String currentUser = FirebaseAuth.instance.currentUser!.uid;
-    String? response = '';
 
-    for (String user in selectedUsers) {
+    // Map each user ID to a Future by calling sendNotificationToUser
+    List<Future<String?>> futures = selectedUsers.map((user) {
       if (kDebugMode) {
         print("Notification is sending to User $user...");
         print("Title: $title");
         print("Message: $message");
       }
-      response = await FirebaseNotificationService().sendNotificationToUser(
+      return FirebaseNotificationService().sendNotificationToUser(
           currentUser,
           user,
           title,
           message
       );
-      messages.add(response!);
-    }
+    }).toList();
+
+    // Wait for all Futures to complete
+    List<String?> messages = await Future.wait(futures);
 
     if (messages.every((message) => message == 'Notification sent successfully')) {
       widget.clearSelectedUsers();
@@ -48,15 +49,20 @@ class _NotificationButtonState extends State<NotificationButton> {
     } else {
       // todo: refactor this
       widget.clearSelectedUsers();
-      for(String m in messages) {
+      // Filter out any null values from the messages list
+      List<String> nonNullMessages = messages.where((message) => message != null).map((message) => message!).toList();
+
+      for(String m in nonNullMessages) {
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(content: Text(m)));
         }
       }
+
     }
-    return response;
+    return 'Notifications sent';
   }
+
 
 
   @override
