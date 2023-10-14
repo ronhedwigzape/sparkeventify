@@ -229,18 +229,23 @@ class _UsersCardState extends State<UsersCard> {
                         child: EditUserDialog(user: widget.user)
                        ),
                        Flexible(
-                         child: CheckboxListTile(
-                           activeColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-                           checkColor: darkModeOn ? darkColor : lightColor,
-                           title: Text(widget.user.deviceTokens!.isNotEmpty ? 'User is signed in' : 'User not signed in',
-                             style: TextStyle(
-                               fontSize: 14,
-                               color: widget.user.deviceTokens!.isNotEmpty ? darkModeGrassColor : darkModeSecondaryColor
-                           )),
-                           value: widget.selectedUsers.contains(widget.user.uid),
-                           onChanged: (bool? value) {
-                             widget.onSelectedChanged(widget.user.uid);
-                           },
+                         child: Tooltip(
+                           message: widget.user.deviceTokens!.isNotEmpty ? 'Can receive notifications' : 'Cannot receive notifications',
+                           child: CheckboxListTile(
+                             activeColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                             checkColor: darkModeOn ? darkColor : lightColor,
+                             title: Text(
+                               widget.user.deviceTokens!.isNotEmpty ? 'User is signed in' : 'User not signed in',
+                               style: TextStyle(
+                                 fontSize: 14,
+                                 color: widget.user.deviceTokens!.isNotEmpty ? darkModeGrassColor : darkModeSecondaryColor,
+                               ),
+                             ),
+                             value: widget.selectedUsers.contains(widget.user.uid),
+                             onChanged: (bool? value) {
+                               widget.onSelectedChanged(widget.user.uid);
+                             },
+                           ),
                          ),
                        )
                      ],
