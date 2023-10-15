@@ -36,7 +36,7 @@ class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
             }
             return Center(child: Text('Error: ${snapshot.error}'));
           } 
-          if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          if (!snapshot.hasData && snapshot.data!.isEmpty) {
               Future.delayed(Duration.zero, () => showDialog(
                 context: context,
                 builder: (context) => AlertDialog(

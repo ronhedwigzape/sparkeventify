@@ -27,7 +27,8 @@ class _PersonalEventNoteState extends State<PersonalEventNote> {
     try {
       String response = await FireStorePersonalEventMethods().removePersonalEvent(personalEventId);
       if (response == "Success") {
-        mounted ? Navigator.of(context).pop() : '';
+        // Pop all dialogs
+        mounted ? Navigator.of(context).popUntil((route) => route.isFirst) : '';
         mounted ? ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Your event was deleted successfully.'),
@@ -63,9 +64,9 @@ class _PersonalEventNoteState extends State<PersonalEventNote> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
-                Icon(Icons.delete, color: Colors.white, size: 20,),
+                Icon(Icons.delete, color: white, size: 20,),
                 SizedBox(width: 5),
-                Text("Delete", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 20),),
+                Text("Delete", style: TextStyle(color: white, fontWeight: FontWeight.w700, fontSize: 20),),
               ],
             ),
           ),
@@ -80,9 +81,9 @@ class _PersonalEventNoteState extends State<PersonalEventNote> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
-                Icon(Icons.edit, color: Colors.white, size: 20,),
+                Icon(Icons.edit, color: white, size: 20,),
                 SizedBox(width: 5),
-                Text("Edit", style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 20),),
+                Text("Edit", style: TextStyle(color: white, fontWeight: FontWeight.w700, fontSize: 20),),
               ],
             ),
           ),
@@ -267,6 +268,7 @@ class _PersonalEventNoteState extends State<PersonalEventNote> {
                     onPressed: () async {
                       bool isConnected = await ConnectivityService().isConnected();
                       if (isConnected) {
+                        mounted ? Navigator.of(context).pop() : '';
                         await removePersonalEvent(widget.personalEvent!.id);
                       } else {
                         // Show a message to the user
