@@ -17,6 +17,7 @@ class Event {
   String status;
   DateTime? dateUpdated;
   DateTime? datePublished;
+  bool? hasFeedback;
 
   Event({
     required this.id,
@@ -35,6 +36,7 @@ class Event {
     required this.status,
     this.dateUpdated,
     this.datePublished,
+    this.hasFeedback = false
   });
 
   // Convert Event object to JSON
@@ -55,6 +57,7 @@ class Event {
         'status': status,
         'dateUpdated': dateUpdated,
         'datePublished': datePublished,
+        'hasFeedback': hasFeedback
       };
 
   // Create Event object from DocumentSnapshot
@@ -75,6 +78,7 @@ class Event {
         venue: snapshot['venue'],
         type: snapshot['type'],
         status: snapshot['status'],
+        hasFeedback: snapshot['hasFeedback'],
         dateUpdated:
             (snapshot['dateUpdated'] as Timestamp).toDate().toUtc(),
         datePublished:
