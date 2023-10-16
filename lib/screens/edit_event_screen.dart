@@ -179,10 +179,10 @@ class EditEventScreenState extends State<EditEventScreen> {
         });
   }
 
-  setEventCancellation(DateTime startDate, DateTime endDate) async {
+  setEventCancellation(DateTime startDate, DateTime endDate, DateTime startTime, DateTime endTime) async {
     try {
       return await FireStoreEventMethods().updateEventStatus(
-          widget.eventSnap.id, true, null, startDate, endDate, null);
+          widget.eventSnap.id, true, null, startDate, endDate, startTime, endTime, null);
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -190,10 +190,10 @@ class EditEventScreenState extends State<EditEventScreen> {
     }
   }
 
-  setEventMoved(DateTime startDate, DateTime endDate) async {
+  setEventMoved(DateTime startDate, DateTime endDate, DateTime startTime, DateTime endTime) async {
     try {
       return await FireStoreEventMethods()
-          .updateEventStatus(widget.eventSnap.id, null, true, startDate, endDate, null);
+          .updateEventStatus(widget.eventSnap.id, null, true, startDate, endDate, startTime, endTime, null);
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -298,7 +298,7 @@ class EditEventScreenState extends State<EditEventScreen> {
             .updateEvent(widget.eventSnap.id, event);
 
         await FireStoreEventMethods().updateEventStatus(
-            widget.eventSnap.id, false, false, startDate, endDate, null);
+            widget.eventSnap.id, false, false, startDatePart, endDatePart, startTime12, endTime12, null);
 
         if (kDebugMode) {
           print('Update Event Response: $response');
