@@ -94,7 +94,9 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                   const SizedBox(width: 10.0),
                   buildAppBarButton(icon: Icons.group, label: "Users", pageIndex: 3, onTap: () => navigationTapped(3)),
                   const SizedBox(width: 10.0),
-                  buildAppBarButton(icon: Icons.settings, label: "Settings", pageIndex: 4, onTap: () => navigationTapped(4)),
+                  buildAppBarButton(icon: Icons.feedback, label: "Feedbacks", pageIndex: 4, onTap: () => navigationTapped(4)),
+                  const SizedBox(width: 10.0),
+                  buildAppBarButton(icon: Icons.settings, label: "Settings", pageIndex: 5, onTap: () => navigationTapped(5)),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0),
                     child: Row(

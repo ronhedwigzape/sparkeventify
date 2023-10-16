@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
+import 'package:student_event_calendar/resources/firestore_feedback_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/feedback_form.dart';
 import '../providers/darkmode_provider.dart';
@@ -17,7 +18,7 @@ class FeedbackScreen extends StatefulWidget {
 }
 
 class FeedbackScreenState extends State<FeedbackScreen> {
-  final Future<Map<DateTime, List<Event>>> _events = FireStoreEventMethods().getEventsByDate();
+  final Future<Map<DateTime, List<Event>>> _events = FirestoreFeedbackMethods().getEventsWithFeedbackByDate();
   Set<Event> pastEvents = {};
 
   @override
