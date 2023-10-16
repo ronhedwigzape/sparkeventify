@@ -161,7 +161,7 @@ Future<List<Widget>> homeScreenItems() async {
       const PostScreen(),
       const ManageEventsScreen(),
       const ManageUsersScreen(),
-      const Center(child: Text('Feedbacks')),
+      const FeedbackScreen(),
       const ProfileScreen(),
     ];
   } else if (userType == 'Officer') {

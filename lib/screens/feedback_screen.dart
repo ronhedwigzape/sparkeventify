@@ -8,6 +8,7 @@ import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/resources/firestore_feedback_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/feedback_form.dart';
+import 'package:student_event_calendar/widgets/feedback_summary_button.dart';
 import '../providers/darkmode_provider.dart';
 
 class FeedbackScreen extends StatefulWidget {
@@ -20,6 +21,7 @@ class FeedbackScreen extends StatefulWidget {
 class FeedbackScreenState extends State<FeedbackScreen> {
   final Future<Map<DateTime, List<Event>>> _events = FirestoreFeedbackMethods().getEventsWithFeedbackByDate();
   Set<Event> pastEvents = {};
+  Event? selectedEvent;
 
   @override
   void initState() {
@@ -65,6 +67,32 @@ class FeedbackScreenState extends State<FeedbackScreen> {
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           child: Column(
             children: [
+              FutureBuilder<List<Event>>(
+                future: FirestoreFeedbackMethods().getEventsWithoutFeedback(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return LinearProgressIndicator();
+                  } else if (snapshot.hasError) {
+                    return Text('Error: ${snapshot.error}');
+                  } else {
+                    List<Event> events = snapshot.data!;
+                    return DropdownButton<Event>(
+                      value: selectedEvent,
+                      onChanged: (Event? newValue) {
+                        setState(() {
+                          selectedEvent = newValue;
+                        });
+                      },
+                      items: events.map<DropdownMenuItem<Event>>((Event event) {
+                        return DropdownMenuItem<Event>(
+                          value: event,
+                          child: Text(event.title),
+                        );
+                      }).toList(),
+                    );
+                  }
+                },
+              ),
               ...pastEvents.map((event) {
                 DateTime endDate = event.endDate.isAfter(now) ? now.subtract(const Duration(days: 1)) : event.endDate;
                 return Padding(
@@ -131,7 +159,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                               fontSize: 10,
                                           ),
                                         ),
-                                        FeedbackForm(eventId: event.id)
+                                        !kIsWeb ? FeedbackForm(eventId: event.id) : FeedbackSummaryButton(eventId: event.id)
                                       ],                        
                                     ),
                                   ),

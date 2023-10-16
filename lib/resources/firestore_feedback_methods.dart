@@ -258,4 +258,67 @@ class FirestoreFeedbackMethods {
     // Return the map of events.
     return events;
   }
+
+  Future<Map<String, dynamic>> getEventFeedbackSummary(String eventId) async {
+    List<EventFeedbacks> allFeedbacks = await getAllFeedbacks(eventId);
+
+    int totalEvaluators = 0;
+    int satisfiedEvaluators = 0;
+    int dissatisfiedEvaluators = 0;
+    Map<String, int> programs = {};
+    Map<String, int> departments = {};
+
+    for (var feedback in allFeedbacks) {
+      for (var evaluatorFeedback in feedback.evaluatorFeedbacks) {
+        totalEvaluators++;
+
+        // Count satisfied and dissatisfied evaluators
+        if (evaluatorFeedback.satisfactionStatus) {
+          satisfiedEvaluators++;
+        } else {
+          dissatisfiedEvaluators++;
+        }
+
+        // Count programs
+        if (programs.containsKey(evaluatorFeedback.userProgram)) {
+          programs[evaluatorFeedback.userProgram] = programs[evaluatorFeedback.userProgram]! + 1;
+        } else {
+          programs[evaluatorFeedback.userProgram] = 1;
+        }
+
+        // Count departments
+        if (departments.containsKey(evaluatorFeedback.userDepartment)) {
+          departments[evaluatorFeedback.userDepartment] = departments[evaluatorFeedback.userDepartment]! + 1;
+        } else {
+          departments[evaluatorFeedback.userDepartment] = 1;
+        }
+      }
+    }
+
+    return {
+      'totalEvaluators': totalEvaluators,
+      'satisfiedEvaluators': satisfiedEvaluators,
+      'dissatisfiedEvaluators': dissatisfiedEvaluators,
+      'programs': programs,
+      'departments': departments,
+    };
+  }
+
+  Future<List<model.Event>> getEventsWithoutFeedback() async {
+    QuerySnapshot snapshot = await FirebaseFirestore.instance
+        .collection('events')
+        .where('hasFeedback', isEqualTo: false)
+        .get();
+
+    List<model.Event> events = [];
+    for (var doc in snapshot.docs) {
+      model.Event event = await model.Event.fromSnap(doc);
+      events.add(event);
+    }
+
+    return events;
+  }
+
+
+
 }
