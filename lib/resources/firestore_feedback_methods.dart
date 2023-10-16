@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_event_calendar/models/evaluator_feedback.dart';
 import 'package:student_event_calendar/models/event_feedbacks.dart';
 import 'package:uuid/uuid.dart';
+import 'package:student_event_calendar/models/event.dart' as model;
 
 // Reference to the 'events' collection in Firestore
 final FirebaseFirestore _db = FirebaseFirestore.instance;
@@ -58,6 +59,9 @@ class FirestoreFeedbackMethods {
         'eventFeedbackUid': feedbackId,
         'evaluatorFeedbacks': []
       });
+
+    // Update hasFeedback field in the event document
+    await _eventRef.doc(eventId).update({'hasFeedback': true});
 
     return feedbackId;
   }
@@ -203,9 +207,55 @@ class FirestoreFeedbackMethods {
   // Method to remove all event feedbacks
   Future<void> removeAllEventFeedbacks(String eventId) async {
     QuerySnapshot snapshot =
-        await _eventRef.doc(eventId).collection('feedbacks').get();
+      await _eventRef.doc(eventId).collection('feedbacks').get();
     for (QueryDocumentSnapshot doc in snapshot.docs) {
       doc.reference.delete();
     }
+
+    // Update hasFeedback field in the event document
+    await _eventRef.doc(eventId).update({'hasFeedback': false});
+  }
+
+  Future<Map<DateTime, List<model.Event>>> getEventsWithFeedbackByDate() async {
+    // Initialize an empty map to store the events.
+    Map<DateTime, List<model.Event>> events = {};
+
+    // Get all documents from the events collection where 'hasFeedback' is true.
+    QuerySnapshot snapshot = await _eventRef.where('hasFeedback', isEqualTo: true).get();
+
+    // Check if the snapshot contains any documents.
+    if (snapshot.docs.isNotEmpty) {
+      // Loop through each document in the snapshot.
+      for (var doc in snapshot.docs) {
+        // Convert the document snapshot to an Event object.
+        model.Event event = await model.Event.fromSnap(doc);
+
+        // Get the start and end dates of the event and adjust the time to the start and end of the day respectively.
+        DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+            .toLocal();
+        DateTime endDate = DateTime(event.endDate.year, event.endDate.month, event.endDate.day, 23, 59, 59)
+            .toLocal();
+
+        // Loop through each day between the start and end dates.
+        for (var day = startDate; day.isBefore(endDate) || day.isAtSameMomentAs(endDate);
+        day = day.add(const Duration(days: 1))) {
+          // Adjust the time of the day to the start of the day.
+          DateTime adjustedDay = DateTime(day.year, day.month, day.day, 0, 0, 0)
+              .toLocal();
+
+          // Check if the events map already contains the adjusted day as a key.
+          if (events.containsKey(adjustedDay)) {
+            // If the key exists, add the event to the list of events for that day.
+            events[adjustedDay]!.add(event);
+          } else {
+            // If the key does not exist, create a new list with the event and add it to the map.
+            events[adjustedDay] = [event];
+          }
+        }
+      }
+    }
+
+    // Return the map of events.
+    return events;
   }
 }
