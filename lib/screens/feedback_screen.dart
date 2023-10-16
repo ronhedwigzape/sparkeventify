@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart';
-import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/resources/firestore_feedback_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/feedback_form.dart';
@@ -67,11 +66,11 @@ class FeedbackScreenState extends State<FeedbackScreen> {
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           child: Column(
             children: [
-              FutureBuilder<List<Event>>(
+              kIsWeb ? FutureBuilder<List<Event>>(
                 future: FirestoreFeedbackMethods().getEventsWithoutFeedback(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return LinearProgressIndicator();
+                    return const LinearProgressIndicator();
                   } else if (snapshot.hasError) {
                     return Text('Error: ${snapshot.error}');
                   } else {
@@ -92,7 +91,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                     );
                   }
                 },
-              ),
+              ) : const SizedBox.shrink(),
               ...pastEvents.map((event) {
                 DateTime endDate = event.endDate.isAfter(now) ? now.subtract(const Duration(days: 1)) : event.endDate;
                 return Padding(
