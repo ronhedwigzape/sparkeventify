@@ -19,8 +19,8 @@ class _FeedbackSummaryButtonState extends State<FeedbackSummaryButton> {
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return TextButton.icon(
-      icon: Icon(Icons.feedback),
-      label: Text('Show Feedback Summary'),
+      icon: const Icon(Icons.feedback),
+      label: const Text('Show Feedback Summary'),
       onPressed: () {
         showDialog(
           context: context,
@@ -41,7 +41,7 @@ class _FeedbackSummaryButtonState extends State<FeedbackSummaryButton> {
                 } else {
                   Map<String, dynamic> summary = snapshot.data!;
                   return AlertDialog(
-                    title: Text('Feedback Summary'),
+                    title: const Text('Feedback Summary'),
                     content: SingleChildScrollView(
                       child: ListBody(
                         children: <Widget>[
@@ -55,7 +55,7 @@ class _FeedbackSummaryButtonState extends State<FeedbackSummaryButton> {
                     ),
                     actions: <Widget>[
                       TextButton(
-                        child: Text('Close'),
+                        child: const Text('Close'),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
