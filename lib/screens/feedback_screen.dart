@@ -18,7 +18,7 @@ class FeedbackScreen extends StatefulWidget {
 }
 
 class FeedbackScreenState extends State<FeedbackScreen> {
-  final Future<Map<DateTime, List<Event>>> _events = FirestoreFeedbackMethods().getEventsWithFeedbackByDate();
+  final Stream<Map<DateTime, List<Event>>> _events = FirestoreFeedbackMethods().getEventsWithFeedbackByDate();
   Set<Event> pastEvents = {};
   Event? selectedEvent;
 
@@ -26,8 +26,10 @@ class FeedbackScreenState extends State<FeedbackScreen> {
   void initState() {
     super.initState();
 
-    // Create then() method to wait for the _events Future to complete
-    _events.then((events) {
+    _events.listen((events) {
+      // Clear previous state
+      pastEvents.clear();
+
       DateTime now = DateTime.now();
 
       // Get past events
@@ -66,8 +68,8 @@ class FeedbackScreenState extends State<FeedbackScreen> {
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
           child: Column(
             children: [
-              kIsWeb ? FutureBuilder<List<Event>>(
-                future: FirestoreFeedbackMethods().getEventsWithoutFeedback(),
+              kIsWeb ? StreamBuilder<List<Event>>(
+                stream: FirestoreFeedbackMethods().getEventsWithoutFeedback(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const LinearProgressIndicator();
@@ -75,19 +77,29 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                     return Text('Error: ${snapshot.error}');
                   } else {
                     List<Event> events = snapshot.data!;
-                    return DropdownButton<Event>(
-                      value: selectedEvent,
-                      onChanged: (Event? newValue) {
-                        setState(() {
-                          selectedEvent = newValue;
-                        });
-                      },
-                      items: events.map<DropdownMenuItem<Event>>((Event event) {
-                        return DropdownMenuItem<Event>(
-                          value: event,
-                          child: Text(event.title),
-                        );
-                      }).toList(),
+                    selectedEvent = events.contains(selectedEvent) ? selectedEvent : null;
+                    return Row(
+                      children: [
+                        const Flexible(child: Text('Select an event to add feedback: ')),
+                        DropdownButton<Event>(
+                          value: selectedEvent,
+                          onChanged: (Event? newValue) {
+                            setState(() {
+                              selectedEvent = newValue;
+                            });
+                                            
+                            if (selectedEvent != null) {
+                              FirestoreFeedbackMethods().addEmptyFeedback(selectedEvent!.id);
+                            }
+                          },
+                          items: events.map<DropdownMenuItem<Event>>((Event event) {
+                            return DropdownMenuItem<Event>(
+                              value: event,
+                              child: Text(event.title),
+                            );
+                          }).toList(),
+                        ),
+                      ],
                     );
                   }
                 },
@@ -105,16 +117,39 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                         // Parallax image with opacity
                         Positioned.fill(
                           child: Opacity(
-                            opacity: 0.4,
-                            child: CachedNetworkImage(
-                              imageUrl: event.image ?? 'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
+                            opacity: 0.6,
+                            child:
+                            (event.image?.isEmpty ?? true)
+                            ? CachedNetworkImage(
+                                imageUrl:
+                                    'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
+                                fit: BoxFit.cover,
+                                placeholder: (context, url) => Center(
+                                  child: SizedBox(
+                                    height: kIsWeb ? 250.0 : 100,
+                                    child: Center(
+                                        child: CircularProgressIndicator(
+                                            color: darkModeOn
+                                                ? darkModePrimaryColor
+                                                : lightModePrimaryColor)),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
+                              )
+                            : CachedNetworkImage(
+                              imageUrl: event.image!,
                               fit: BoxFit.cover,
                               placeholder: (context, url) => Center(
                                 child: SizedBox(
+                                  height: kIsWeb ? 250.0 : 100,
                                   child: Center(
-                                    child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor)),
-                                  ),
+                                      child: CircularProgressIndicator(
+                                          color: darkModeOn
+                                              ? darkModePrimaryColor
+                                              : lightModePrimaryColor)),
                                 ),
+                              ),
                               errorWidget: (context, url, error) =>
                                   const Icon(Icons.error),
                             ),
@@ -146,7 +181,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                       children: [
                                         Text(event.title, style: const TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis,),
                                         Text(
-                                          (event.startDate.day == endDate.day
+                                            (event.startDate.day == endDate.day
                                               ? '${DateFormat('MMM dd, yyyy').format(event.startDate)}\n'
                                               : '${DateFormat('MMM dd, yyyy').format(event.startDate)} - ${DateFormat('MMM dd, yyyy').format(endDate)}\n')
                                               + (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
@@ -163,7 +198,14 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                     ),
                                   ),
                                 ),
-                              )
+                              ),
+                              // remove all event feedback
+                              kIsWeb ? TextButton.icon(
+                                onPressed: () async {
+                                  await FirestoreFeedbackMethods().removeAllEventFeedbacks(event.id);
+                                },
+                                icon: const Icon(Icons.delete), 
+                                label: const Text('Remove All Feedback')) : const SizedBox.shrink(),
                             ],
                           ),
                         ),
