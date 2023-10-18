@@ -9,6 +9,7 @@ import 'package:student_event_calendar/models/event.dart' as model;
 // Reference to the 'events' collection in Firestore
 final FirebaseFirestore _db = FirebaseFirestore.instance;
 CollectionReference _eventRef = _db.collection('events');
+StreamSubscription<DocumentSnapshot>? _eventStreamSubscription;
 
 class FirestoreFeedbackMethods {
   // Method to get eventFeedbackUid by eventId
@@ -323,7 +324,18 @@ class FirestoreFeedbackMethods {
     yield* controller.stream;
   }
 
+  void toggleEventFeedbackStream(String eventId) {
+    _eventStreamSubscription = _eventRef.doc(eventId).snapshots().listen((snapshot) {
+      if (snapshot.exists) {
+        Map<String, dynamic> data = snapshot.data() as Map<String, dynamic>;
+        bool currentHasFeedback = data['hasFeedback'] ?? false;
+        _eventRef.doc(eventId).update({'hasFeedback': !currentHasFeedback});
+      }
+    });
+  }
 
-
+  void stopEventStream() {
+    _eventStreamSubscription?.cancel();
+  }
 
 }
