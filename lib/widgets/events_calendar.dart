@@ -167,7 +167,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                                           return RichText(
                                             text: TextSpan(
                                               text: 'Date & Time: ',
-                                              style: DefaultTextStyle.of(context).style,
+                                              style: const TextStyle(color: lightColor),
                                               children: <TextSpan>[
                                                 TextSpan(text: formattedDateNow, style: const TextStyle(fontWeight: FontWeight.bold, color: lightColor)),
                                               ],

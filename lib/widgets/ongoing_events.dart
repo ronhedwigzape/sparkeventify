@@ -28,7 +28,6 @@ class OngoingEventsState extends State<OngoingEvents> {
     // Defined update function
     void update() {
       DateTime now = DateTime.now();
-      TimeOfDay nowTime = TimeOfDay(hour: now.hour, minute: now.minute);
 
       // Clear the list of ongoing events
       ongoingEvents.clear();
@@ -40,31 +39,30 @@ class OngoingEventsState extends State<OngoingEvents> {
             event.startDate.year,
             event.startDate.month,
             event.startDate.day,
+            event.startTime.hour,
+            event.startTime.minute
           );
 
           DateTime endDate = DateTime(
             event.endDate.year,
             event.endDate.month,
             event.endDate.day,
-          );
-
-
-          TimeOfDay endTime = TimeOfDay(
-            hour: event.endTime.hour,
-            minute: event.endTime.minute,
+            event.endTime.hour,
+            event.endTime.minute
           );
 
           if ((now.isAfter(startDate) || now.isAtSameMomentAs(startDate)) && (now.isBefore(endDate) || now.isAtSameMomentAs(endDate))) {
-            if (!(now.isAtSameMomentAs(endDate) && (nowTime.hour > endTime.hour || (nowTime.hour == endTime.hour && nowTime.minute > endTime.minute)))) {
-              ongoingEvents.add(event);  // Add all ongoing events
-            }
+            ongoingEvents.add(event);  // Add all ongoing events
           }
         }
       });
     }
 
     // Call update function every minute
-    _timer = Timer.periodic(const Duration(minutes: 1), (timer) => update());
+    _timer = Timer.periodic(const Duration(minutes: 1), (timer) {
+      update();
+      setState(() {});  // Trigger a rebuild
+    });
 
     // Call update function immediately on init
     update();
