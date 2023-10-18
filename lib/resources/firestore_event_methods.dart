@@ -61,7 +61,7 @@ class FireStoreEventMethods {
       _eventsCollection.doc(eventId).set(event.toJson());
 
       await FireStoreEventMethods().updateEventStatus(
-        eventId, false, false, startDate, endDate, startTime, endTime, null);
+        eventId, false, false, startDate, endDate, startTime, endTime);
         
       response = 'Success';
     } on FirebaseException catch (err) {
@@ -167,16 +167,16 @@ class FireStoreEventMethods {
     return Event.fromSnap(doc);
   }
 
+
   Future<String> updateEventStatus(
-      String eventId,
-      bool? isCancelled,
-      bool? isMoved,
-      DateTime startDate,
-      DateTime endDate,
-      DateTime startTime,
-      DateTime endTime,
-      Event? movedEvent  // if event is moved, new event details should be provided here
-      ) async {
+    String eventId,
+    bool? isCancelled,
+    bool? isMoved,
+    DateTime startDate,
+    DateTime endDate,
+    DateTime startTime,
+    DateTime endTime,
+  ) async {
     String response = 'Some error occurred';
     DateTime currentDateTime = DateTime.now();
 
@@ -184,45 +184,41 @@ class FireStoreEventMethods {
     DateTime startDateTime = DateTime(startDate.year, startDate.month, startDate.day, startTime.hour, startTime.minute);
     DateTime endDateTime = DateTime(endDate.year, endDate.month, endDate.day, endTime.hour, endTime.minute);
 
+    // Check if isCancelled and isMoved are not null before using them
+    isCancelled = isCancelled ?? false;
+    isMoved = isMoved ?? false;
+
     try {
-      // If the event is moved, update event's details using the supplied new event details
-      if (isMoved! && movedEvent != null) {
-        await updateEvent(eventId, movedEvent);
+      if (isMoved) {
         await _eventsCollection.doc(eventId).set({
-          'status': isCancelled! ? 'Cancelled' : 'Moved',
+          'status': 'Moved',
         }, SetOptions(merge: true));
+        return 'Success';
       }
 
-      // If the current date/time is before the start date/time, then the status is "Upcoming"
       if (startDateTime.isAfter(currentDateTime)) {
         await _eventsCollection.doc(eventId).set({
-          'status': isCancelled! ? 'Cancelled' : 'Upcoming',
+          'status': isCancelled ? 'Cancelled' : 'Upcoming',
         }, SetOptions(merge: true));
-      }
-      // If the current date/time is after the end date/time, then the status is "Past"
-      else if (endDateTime.isBefore(currentDateTime)) {
+      } else if (endDateTime.isBefore(currentDateTime)) {
         await _eventsCollection.doc(eventId).set({
-          'status': isCancelled! ? 'Cancelled' : 'Past',
+          'status': isCancelled ? 'Cancelled' : 'Past',
         }, SetOptions(merge: true));
-      }
-      // If the current date/time is between the start and end datetime, then the status is "Ongoing"
-      else {
+      } else {
         await _eventsCollection.doc(eventId).set({
-          'status': isCancelled! ? 'Cancelled' : 'Ongoing',
+          'status': isCancelled ? 'Cancelled' : 'Ongoing',
         }, SetOptions(merge: true));
       }
 
-      // Set response to 'Success' if the status is updated successfully
       response = 'Success';
     } on FirebaseException catch (err) {
-      // Handle any errors that occur
       if (err.code == 'permission-denied') {
         response = 'Permission denied';
+      } else {
+        response = err.toString();
       }
-      // Handle other errors
-      response = err.toString();
     }
-    // Return the response
+
     return response;
   }
 

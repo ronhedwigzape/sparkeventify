@@ -38,6 +38,8 @@ class EditEventScreenState extends State<EditEventScreen> {
   Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
+  bool _isLoadingCancel = false;
+  bool _isLoadingMoved = false;
 
   Map<String, dynamic> selectedParticipants = {
     'program': [],
@@ -180,9 +182,25 @@ class EditEventScreenState extends State<EditEventScreen> {
   }
 
   setEventCancellation(DateTime startDate, DateTime endDate, DateTime startTime, DateTime endTime) async {
+    setState(() {
+      _isLoadingCancel = true;
+    });
     try {
-      return await FireStoreEventMethods().updateEventStatus(
-          widget.eventSnap.id, true, null, startDate, endDate, startTime, endTime, null);
+      String response = await FireStoreEventMethods()
+          .updateEventStatus(widget.eventSnap.id, true, null, startDate, endDate, startTime, endTime);
+      if (kDebugMode) {
+        print('Update Event Response Cancelled: $response');
+
+      }
+      // Check if the response is a success or a failure
+      if (response == 'Success') {
+        onPostSuccess();
+        setState(() {
+          _isLoadingCancel = false;
+        });
+      } else {
+        onPostFailure(response);
+      }
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -191,9 +209,24 @@ class EditEventScreenState extends State<EditEventScreen> {
   }
 
   setEventMoved(DateTime startDate, DateTime endDate, DateTime startTime, DateTime endTime) async {
+    setState(() {
+      _isLoadingMoved = true;
+    });
     try {
-      return await FireStoreEventMethods()
-          .updateEventStatus(widget.eventSnap.id, null, true, startDate, endDate, startTime, endTime, null);
+      String response = await FireStoreEventMethods()
+          .updateEventStatus(widget.eventSnap.id, null, true, startDate, endDate, startTime, endTime);
+      if (kDebugMode) {
+        print('Update Event Response Moved: $response');
+      }
+      // Check if the response is a success or a failure
+      if (response == 'Success') {
+        onPostSuccess();
+        setState(() {
+          _isLoadingMoved = false;
+        });
+      } else {
+        onPostFailure(response);
+      }
     } catch (e) {
       if (kDebugMode) {
         print(e);
@@ -298,7 +331,7 @@ class EditEventScreenState extends State<EditEventScreen> {
             .updateEvent(widget.eventSnap.id, event);
 
         await FireStoreEventMethods().updateEventStatus(
-            widget.eventSnap.id, false, false, startDatePart, endDatePart, startTime12, endTime12, null);
+            widget.eventSnap.id, false, false, startDatePart, endDatePart, startTime12, endTime12);
 
         if (kDebugMode) {
           print('Update Event Response: $response');
@@ -768,6 +801,10 @@ class EditEventScreenState extends State<EditEventScreen> {
                                         ),
                                       ),
                                       const SizedBox(height: 10.0),
+                                      const Text('Note: * indicates required field'),
+                                      const SizedBox(height: 5.0),
+                                      const Text('Event Status also updates when you update the event.'),
+                                      const SizedBox(height: 10.0),
                                       Center(
                                         child: InkWell(
                                           onTap: () async {
@@ -829,6 +866,166 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                         ),
                                                     ],
                                                   )),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10.0),
+                                       Center(
+                                        child: InkWell(
+                                          onTap: () async {
+                                            bool isConnected = await ConnectivityService().isConnected();
+                                            if (isConnected) {
+                                              String pickedStartDate = _startDateController.text;
+                                              String pickedEndDate = _endDateController.text;
+                                              String pickedStartTime = _startTimeController.text;
+                                              String pickedEndTime = _endTimeController.text;
+                                              // Convert picked date (yyyy-mm-dd) to DateTime
+                                              DateTime startDate = DateTime.parse(pickedStartDate);
+                                              DateTime endDate = DateTime.parse(pickedEndDate);
+                                              // Get only the date part as a DateTime object
+                                              DateTime startDatePart =
+                                                  DateTime(startDate.year, startDate.month, startDate.day);
+                                              DateTime endDatePart =
+                                                  DateTime(endDate.year, endDate.month, endDate.day);
+                                              // Parse 12-hour format time string to DateTime
+                                              DateFormat time12Format = DateFormat('h:mm a');
+                                              DateTime startTime12 = time12Format.parse(pickedStartTime);
+                                              DateTime endTime12 = time12Format.parse(pickedEndTime);
+                                              await setEventCancellation(startDatePart, endDatePart, startTime12, endTime12);
+                                            } else {
+                                              // Show a message to the user
+                                              mounted ? Navigator.of(context).pop() : '';
+                                              mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
+                                                  duration: const Duration(seconds: 5),
+                                                ),
+                                              ) : '';
+                                            }
+                                          },
+                                          child: Container(
+                                              width: double.infinity,
+                                              alignment: Alignment.center,
+                                              padding:
+                                                  const EdgeInsets.symmetric(
+                                                      vertical: 16.0),
+                                              decoration: ShapeDecoration(
+                                                shape:
+                                                    const RoundedRectangleBorder(
+                                                  borderRadius:
+                                                      BorderRadius.all(
+                                                          Radius.circular(5.0)),
+                                                ),
+                                                color: darkModeOn
+                                                    ? darkModeMaroonColor
+                                                    : lightModeMaroonColor,
+                                              ),
+                                              child: _isLoadingCancel
+                                                ? const Center(
+                                                    child:
+                                                        CircularProgressIndicator(
+                                                    valueColor:
+                                                        AlwaysStoppedAnimation<
+                                                                Color>(
+                                                            lightColor),
+                                                  ))
+                                                : Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                const Icon(
+                                                  Icons.update,
+                                                  color: lightColor,
+                                                ),
+                                                const SizedBox(width: 10.0),
+                                                Text(
+                                                    'Mark this ${widget.eventSnap.type == 'Academic' ? 'announcement' : 'event'} cancelled',
+                                                    style: const TextStyle(
+                                                      color: lightColor,
+                                                      fontWeight:
+                                                          FontWeight.bold,
+                                                    ),
+                                                  ),
+                                                ],
+                                              )),
+                                        ),
+                                      ),
+                                      const SizedBox(height: 10.0),
+                                       Center(
+                                        child: InkWell(
+                                          onTap: () async {
+                                            bool isConnected = await ConnectivityService().isConnected();
+                                            if (isConnected) {
+                                              String pickedStartDate = _startDateController.text;
+                                              String pickedEndDate = _endDateController.text;
+                                              String pickedStartTime = _startTimeController.text;
+                                              String pickedEndTime = _endTimeController.text;
+                                              // Convert picked date (yyyy-mm-dd) to DateTime
+                                              DateTime startDate = DateTime.parse(pickedStartDate);
+                                              DateTime endDate = DateTime.parse(pickedEndDate);
+                                              // Get only the date part as a DateTime object
+                                              DateTime startDatePart =
+                                                  DateTime(startDate.year, startDate.month, startDate.day);
+                                              DateTime endDatePart =
+                                                  DateTime(endDate.year, endDate.month, endDate.day);
+                                              // Parse 12-hour format time string to DateTime
+                                              DateFormat time12Format = DateFormat('h:mm a');
+                                              DateTime startTime12 = time12Format.parse(pickedStartTime);
+                                              DateTime endTime12 = time12Format.parse(pickedEndTime);
+                                              await setEventMoved(startDatePart, endDatePart, startTime12, endTime12);
+                                            } else {
+                                              // Show a message to the user
+                                              mounted ? Navigator.of(context).pop() : '';
+                                              mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                                                SnackBar(
+                                                  content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
+                                                  duration: const Duration(seconds: 5),
+                                                ),
+                                              ) : '';
+                                            }
+                                          },
+                                          child: Container(
+                                            width: double.infinity,
+                                            alignment: Alignment.center,
+                                            padding:
+                                              const EdgeInsets.symmetric(
+                                                  vertical: 16.0),
+                                            decoration: ShapeDecoration(
+                                              shape:
+                                                  const RoundedRectangleBorder(
+                                                borderRadius:
+                                                    BorderRadius.all(
+                                                        Radius.circular(5.0)),
+                                              ),
+                                              color: darkModeOn
+                                                  ? darkModeGrassColor
+                                                  : lightModeGrassColor,
+                                            ),
+                                            child: _isLoadingMoved
+                                            ? const Center(
+                                                child:
+                                                    CircularProgressIndicator(
+                                                valueColor:
+                                                    AlwaysStoppedAnimation<
+                                                            Color>(
+                                                        lightColor),
+                                              ))
+                                            : Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                              const Icon(
+                                                Icons.update,
+                                                color: lightColor,
+                                              ),
+                                              const SizedBox(width: 10.0),
+                                              Text(
+                                                  'Mark this ${widget.eventSnap.type == 'Academic' ? 'announcement' : 'event'} moved',
+                                                  style: const TextStyle(
+                                                    color: lightColor,
+                                                    fontWeight:
+                                                        FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ],
+                                            )),
                                         ),
                                       ),
                                     ],
