@@ -94,22 +94,10 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
               ),
               Text(
                 currentAppName,
-                style: TextStyle(
+                style: const TextStyle(
                   color: lightColor,
                   fontSize: 20.0,
                   fontWeight: FontWeight.bold,
-                  shadows: darkModeOn ? <Shadow>[
-                    const Shadow(
-                      offset: Offset(1.0, 1.0),
-                      blurRadius: 1.0,
-                      color: darkModePrimaryColor,
-                    ),
-                    const Shadow(
-                      offset: Offset(1.0, 1.0),
-                      blurRadius: 8.0,
-                      color: lightModeBlueColor,
-                    ),
-                  ] : null,
                 ),
               )
             ],

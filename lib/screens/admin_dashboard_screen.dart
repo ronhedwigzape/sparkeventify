@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/widgets/cspc_background.dart';
 import '../providers/darkmode_provider.dart';
 import '../widgets/events_calendar.dart';
 
@@ -38,20 +39,43 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
           builder: (BuildContext context, BoxConstraints constraints) {
             final maxWidth = min(900, constraints.maxWidth).toDouble();
             return Scaffold(
-              body: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: maxWidth),
-                  child: SingleChildScrollView( 
-                    child: Column(
-                      children: [
-                         SizedBox(
-                          height: constraints.maxHeight * 1,
-                          child: const EventsCalendar(),
-                        ),
-                      ],
+              body: Stack(
+                children: [
+                  Positioned.fill(
+                    child: CSPCBackground(height: MediaQuery.of(context).size.height),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.center,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          darkModeOn ? darkColor.withOpacity(0.0) : lightColor.withOpacity(0.0),
+                          darkModeOn ? darkColor : lightColor,
+                        ],
+                        stops: const [
+                          0.0,
+                          1.0
+                        ]
+                      ),
                     ),
                   ),
-                ),
+                  Center(
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(maxWidth: maxWidth),
+                      child: SingleChildScrollView( 
+                        child: Column(
+                          children: [
+                             SizedBox(
+                              height: constraints.maxHeight * 1,
+                              child: const EventsCalendar(),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             );
           },

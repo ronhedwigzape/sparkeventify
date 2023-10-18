@@ -11,6 +11,7 @@ import 'package:student_event_calendar/screens/edit_profile_screen.dart';
 import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/widgets/cspc_background.dart';
 import 'package:student_event_calendar/widgets/dark_mode_dialog.dart';
 import '../services/firebase_notifications.dart';
 
@@ -136,277 +137,291 @@ class _ProfileScreenState extends State<ProfileScreen> {
             builder: (BuildContext context, BoxConstraints constraints) {
             final maxWidth = min(900, constraints.maxWidth).toDouble();
             return Scaffold(
-              body: Container(
-                decoration: const BoxDecoration(
-                  image: !kIsWeb ? DecorationImage(
-                    image: AssetImage('assets/images/cspc_background.jpg'),
-                    opacity: 0.4,
-                    fit: BoxFit.cover,
-                  ) : null,
-                ),
-                child: Center(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(maxWidth: maxWidth),
-                  child: Padding(
-                    padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
-                    child: SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(fullName, style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
-                              ],
+              body: Stack(
+                children: [
+                  Positioned.fill(
+                    child: CSPCBackground(height: MediaQuery.of(context).size.height),
+                  ),
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                        colors: [
+                          darkModeOn ? darkColor.withOpacity(0.1) : lightColor.withOpacity(0.1),
+                          darkModeOn ? darkColor : lightColor,
+                        ],
+                        stops: const [
+                          0.0,
+                          1.0
+                        ]
+                      ),
+                    ),
+                  ),
+                  Center(
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: maxWidth),
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(30, 0, 30, 0),
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 20),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(fullName, style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
+                                ],
+                              ),
                             ),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                            child: Stack(
-                              alignment: AlignmentDirectional.center,
-                              children: [
-                                  // _pickedImage is null, display the profileImage
-                                  profileImage.isNotEmpty
-                                  ? CircleAvatar(
-                                      radius: 40,
-                                      backgroundImage: NetworkImage(profileImage),
-                                      backgroundColor: darkColor,
-                                    )
-                                  // else display the default profile image
-                                  : const CircleAvatar(
-                                      radius: 40,
-                                      backgroundColor: darkColor,
-                                      backgroundImage: NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
-                                  ),  
-                              ],
-                            ), 
-                          ),
-                          Container(
-                            padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                userType == 'Officer' ?
-                                Column(
-                                  children: [
-                                    Text(
-                                    '${officerPosition.toUpperCase()} - ${organization.toUpperCase()}', 
+                            Padding(
+                              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                              child: Stack(
+                                alignment: AlignmentDirectional.center,
+                                children: [
+                                    // _pickedImage is null, display the profileImage
+                                    profileImage.isNotEmpty
+                                    ? CircleAvatar(
+                                        radius: 40,
+                                        backgroundImage: NetworkImage(profileImage),
+                                        backgroundColor: darkColor,
+                                      )
+                                    // else display the default profile image
+                                    : const CircleAvatar(
+                                        radius: 40,
+                                        backgroundColor: darkColor,
+                                        backgroundImage: NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
+                                    ),  
+                                ],
+                              ), 
+                            ),
+                            Container(
+                              padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  userType == 'Officer' ?
+                                  Column(
+                                    children: [
+                                      Text(
+                                      '${officerPosition.toUpperCase()} - ${organization.toUpperCase()}', 
+                                      style: TextStyle(
+                                        fontSize: 15.0, 
+                                        fontWeight: FontWeight.bold,
+                                        color: darkModeOn ? darkModeSecondaryColor : darkColor)),
+                                      Text(
+                                      userType.toUpperCase(),
+                                      style: TextStyle(
+                                        fontSize: 12.0, 
+                                        fontWeight: FontWeight.bold,
+                                        color: darkModeOn ? darkModeTertiaryColor : darkColor)),
+                                    ],
+                                  )
+                                  : userType == 'Student' ? Text(
+                                    '${program.toUpperCase()} ${userType.toUpperCase()}',
                                     style: TextStyle(
                                       fontSize: 15.0, 
                                       fontWeight: FontWeight.bold,
-                                      color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
-                                    Text(
+                                      color: darkModeOn ? darkModeSecondaryColor : darkColor))
+                                  : userType == 'Staff' ? Text(
+                                    '${staffPosition.toUpperCase()} - ${userType.toUpperCase()}', 
+                                    style: TextStyle(
+                                      fontSize: 15.0, 
+                                      fontWeight: FontWeight.bold,
+                                      color: darkModeOn ? darkModeSecondaryColor : darkColor))
+                                  : Text(   
                                     userType.toUpperCase(),
                                     style: TextStyle(
-                                      fontSize: 12.0, 
+                                      fontSize: 15.0, 
                                       fontWeight: FontWeight.bold,
-                                      color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor)),
-                                  ],
-                                )
-                                : userType == 'Student' ? Text(
-                                  '${program.toUpperCase()} ${userType.toUpperCase()}',
-                                  style: TextStyle(
-                                    fontSize: 15.0, 
-                                    fontWeight: FontWeight.bold,
-                                    color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor))
-                                : userType == 'Staff' ? Text(
-                                  '${staffPosition.toUpperCase()} - ${userType.toUpperCase()}', 
-                                  style: TextStyle(
-                                    fontSize: 15.0, 
-                                    fontWeight: FontWeight.bold,
-                                    color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor))
-                                : Text(   
-                                  userType.toUpperCase(),
-                                  style: TextStyle(
-                                    fontSize: 15.0, 
-                                    fontWeight: FontWeight.bold,
-                                    color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                      color: darkModeOn ? darkModeSecondaryColor : darkColor)),
+                                ],
+                              ),
+                            ),
+                            kIsWeb ? const SizedBox(height: 20) : const SizedBox.shrink(),
+                            const SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: <Widget>[
+                                Flexible(
+                                  child:  Row(
+                                    children: <Widget>[
+                                      const Icon(Icons.email),
+                                      const SizedBox(width: 20),
+                                      Text(email, style: const TextStyle(fontSize: 16.0)), 
+                                    ],
+                                  ),
+                                ),
+                              ]  
+                            ),
+                            const Divider(height: 30, thickness: 2),
+                            Row(
+                              children: [
+                                const Icon(Icons.person),
+                                const SizedBox(width: 20),
+                                Text(fullName, style: const TextStyle(fontSize: 16.0)),
                               ],
                             ),
-                          ),
-                          kIsWeb ? const SizedBox(height: 20) : const SizedBox.shrink(),
-                          const SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: <Widget>[
-                              Flexible(
-                                child:  Row(
-                                  children: <Widget>[
-                                    const Icon(Icons.email),
-                                    const SizedBox(width: 20),
-                                    Text(email, style: const TextStyle(fontSize: 16.0)), 
-                                  ],
+                            const Divider(height: 30, thickness: 2),
+                            Row(
+                              children: <Widget>[
+                                const Icon(Icons.phone),
+                                const SizedBox(width: 20),
+                                Text('+$phoneNumber', style: const TextStyle(fontSize: 16.0)),
+                              ],
+                            ),
+                            currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin' ? const Divider(height: 30, thickness: 2) : const SizedBox.shrink(),
+                            currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin'
+                            ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Flexible(child:
+                                    Row(
+                                      children: [
+                                        const Icon(Icons.school),
+                                        const SizedBox(width: 20),
+                                        Flexible(child: Text('Dept: $department', style: const TextStyle(fontSize: 16.0)))
+                                      ],
+                                    )
                                 ),
-                              ),
-                            ]  
-                          ),
-                          const Divider(height: 30, thickness: 2),
-                          Row(
-                            children: [
-                              const Icon(Icons.person),
-                              const SizedBox(width: 20),
-                              Text(fullName, style: const TextStyle(fontSize: 16.0)),
-                            ],
-                          ),
-                          const Divider(height: 30, thickness: 2),
-                          Row(
-                            children: <Widget>[
-                              const Icon(Icons.phone),
-                              const SizedBox(width: 20),
-                              Text('+$phoneNumber', style: const TextStyle(fontSize: 16.0)),
-                            ],
-                          ),
-                          currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin' ? const Divider(height: 30, thickness: 2) : const SizedBox.shrink(),
-                          currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin'
-                          ? Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Flexible(child:
+                                Flexible(child:
                                   Row(
                                     children: [
                                       const Icon(Icons.school),
                                       const SizedBox(width: 20),
-                                      Flexible(child: Text('Dept: $department', style: const TextStyle(fontSize: 16.0)))
+                                      Flexible(child: Text('Program: $program', style: const TextStyle(fontSize: 16.0)))
                                     ],
                                   )
-                              ),
-                              Flexible(child:
-                                Row(
-                                  children: [
-                                    const Icon(Icons.school),
-                                    const SizedBox(width: 20),
-                                    Flexible(child: Text('Program: $program', style: const TextStyle(fontSize: 16.0)))
-                                  ],
+                                ),
+                              ],
+                            ): const SizedBox.shrink(),
+                            currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin' ? const Divider(height: 30, thickness: 2) : const SizedBox.shrink(),
+                            currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin'
+                            ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Flexible(
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.school),
+                                      const SizedBox(width: 20),
+                                      Text('Year: $year', style: const TextStyle(fontSize: 16.0)),
+                                    ],
+                                  )
+                                ),
+                                Flexible(
+                                  child: Row(
+                                    children: [
+                                      const Icon(Icons.school),
+                                      const SizedBox(width: 20), 
+                                      Text('Section: $section',
+                                      style: const TextStyle(fontSize: 16.0))
+                                    ]
+                                  )
                                 )
-                              ),
-                            ],
-                          ): const SizedBox.shrink(),
-                          currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin' ? const Divider(height: 30, thickness: 2) : const SizedBox.shrink(),
-                          currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin'
-                          ? Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Flexible(
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.school),
-                                    const SizedBox(width: 20),
-                                    Text('Year: $year', style: const TextStyle(fontSize: 16.0)),
-                                  ],
-                                )
-                              ),
-                              Flexible(
-                                child: Row(
-                                  children: [
-                                    const Icon(Icons.school),
-                                    const SizedBox(width: 20), 
-                                    Text('Section: $section',
-                                    style: const TextStyle(fontSize: 16.0))
-                                  ]
-                                )
-                              )
-                            ],
-                          ) : const SizedBox.shrink(),
-                          currentUser?.userType != 'Staff' ? const SizedBox(height: 20) : const SizedBox.shrink(),
-                          currentUser?.userType == 'Staff' ? const Divider(height: 30, thickness: 2) : const SizedBox.shrink(),
-                          currentUser?.userType == 'Staff' ? 
-                          Row(
-                            children: [
-                              const Icon(Icons.work),
-                              const SizedBox(width: 20),
-                              Text(currentUser?.profile?.staffPosition ?? 'Staff',
-                              style: const TextStyle(fontSize: 16.0)),
-                            ],
-                          ) : const SizedBox.shrink(),
-                          const SizedBox(height: 20),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              Flexible(
-                                child: SizedBox(
-                                  height: kIsWeb ? 40 : null,
-                                  child: ElevatedButton.icon(
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: darkModeOn ? lightColor : darkColor,
-                                    ),
-                                    label: Text(
-                                      darkModeOn ? 'Light Mode' : 'Dark Mode',
-                                      style: TextStyle(
-                                        color: darkModeOn ? darkColor : lightColor,
-                                        fontSize: 16.0,
+                              ],
+                            ) : const SizedBox.shrink(),
+                            currentUser?.userType != 'Staff' ? const SizedBox(height: 20) : const SizedBox.shrink(),
+                            currentUser?.userType == 'Staff' ? const Divider(height: 30, thickness: 2) : const SizedBox.shrink(),
+                            currentUser?.userType == 'Staff' ? 
+                            Row(
+                              children: [
+                                const Icon(Icons.work),
+                                const SizedBox(width: 20),
+                                Text(currentUser?.profile?.staffPosition ?? 'Staff',
+                                style: const TextStyle(fontSize: 16.0)),
+                              ],
+                            ) : const SizedBox.shrink(),
+                            const SizedBox(height: 20),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: [
+                                Flexible(
+                                  child: SizedBox(
+                                    height: kIsWeb ? 40 : null,
+                                    child: ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: darkModeOn ? lightColor : darkColor,
                                       ),
+                                      label: Text(
+                                        darkModeOn ? 'Light Mode' : 'Dark Mode',
+                                        style: TextStyle(
+                                          color: darkModeOn ? darkColor : lightColor,
+                                          fontSize: 16.0,
+                                        ),
+                                      ),
+                                      icon: Icon(darkModeOn ? Icons.light_mode : Icons.dark_mode,
+                                        color: darkModeOn ? darkColor : lightColor,),
+                                      onPressed: () {
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            return const DarkModeDialog();
+                                          }
+                                        );
+                                      },
                                     ),
-                                    icon: Icon(darkModeOn ? Icons.light_mode : Icons.dark_mode,
-                                      color: darkModeOn ? darkColor : lightColor,),
-                                    onPressed: () {
-                                      showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return const DarkModeDialog();
-                                        }
-                                      );
-                                    },
                                   ),
                                 ),
-                              ),
-                              Flexible(
-                                child: SizedBox(
-                                  height: kIsWeb ? 40 : null,
-                                  child: ElevatedButton.icon(
-                                    icon: Icon(Icons.edit, color: darkModeOn ? darkColor : lightColor,),
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: darkModeOn ? darkModeGrassColor : lightModeGrassColor,
-                                      ),
-                                    onPressed: () {
-                                      Navigator.of(context).push(MaterialPageRoute(
-                                        builder: (context) =>  EditProfileScreen(user: currentUser!)));
-                                    },
-                                    label: Text(
-                                      'Edit Profile',
-                                      style: TextStyle(
-                                        color: darkModeOn ? darkColor : lightColor,
-                                        fontSize: 16.0,
-                                      )),
-                                  ),
-                                )
-                              ),
-                            ],
-                          ),
-                          kIsWeb ? const SizedBox(height: 20) : const SizedBox.shrink(),
-                          Row(                    
-                            children: [
-                              Expanded(
-                                child: SizedBox(
-                                  height: kIsWeb ? 40 : null,
-                                  child: TextButton.icon(
-                                    onPressed: _signOut,
-                                    style: TextButton.styleFrom(
-                                      backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                                Flexible(
+                                  child: SizedBox(
+                                    height: kIsWeb ? 40 : null,
+                                    child: ElevatedButton.icon(
+                                      icon: Icon(Icons.edit, color: darkModeOn ? darkColor : lightColor,),
+                                      style: ElevatedButton.styleFrom(
+                                          backgroundColor: darkModeOn ? darkModeGrassColor : lightModeGrassColor,
+                                        ),
+                                      onPressed: () {
+                                        Navigator.of(context).push(MaterialPageRoute(
+                                          builder: (context) =>  EditProfileScreen(user: currentUser!)));
+                                      },
+                                      label: Text(
+                                        'Edit Profile',
+                                        style: TextStyle(
+                                          color: darkModeOn ? darkColor : lightColor,
+                                          fontSize: 16.0,
+                                        )),
                                     ),
-                                    icon: Icon(
-                                        Icons.logout,
-                                        color: darkModeOn ? darkColor : lightColor,
-                                    ),
-                                    label: Text(
-                                      'Sign out',
-                                      style: TextStyle(
-                                        color: darkModeOn ? darkColor : lightColor,
-                                        fontSize: 16.0,
+                                  )
+                                ),
+                              ],
+                            ),
+                            kIsWeb ? const SizedBox(height: 20) : const SizedBox.shrink(),
+                            Row(                    
+                              children: [
+                                Expanded(
+                                  child: SizedBox(
+                                    height: kIsWeb ? 40 : null,
+                                    child: TextButton.icon(
+                                      onPressed: _signOut,
+                                      style: TextButton.styleFrom(
+                                        backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
                                       ),
-                                    )
+                                      icon: Icon(
+                                          Icons.logout,
+                                          color: darkModeOn ? darkColor : lightColor,
+                                      ),
+                                      label: Text(
+                                        'Sign out',
+                                        style: TextStyle(
+                                          color: darkModeOn ? darkColor : lightColor,
+                                          fontSize: 16.0,
+                                        ),
+                                      )
+                                    ),
                                   ),
                                 ),
-                              ),
-                            ],
-                          )
-                        ],
+                              ],
+                            )
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
-                          ),
+                            ),
+                ],
               ));
          } );
         }

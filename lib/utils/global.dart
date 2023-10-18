@@ -18,6 +18,7 @@ const schoolAddress = 'Nabua, Camarines Sur';
 const schoolLogoWhite = 'assets/icon/monochrome_cspc_launcher_icon_white.png';
 const schoolLogoBlack = 'assets/icon/monochrome_cspc_launcher_icon_black.png';
 const schoolLogo = 'assets/images/cspc_logo.png';
+const schoolBackground = 'assets/images/cspc_background.png';
 const appName = 'Announce';
 
 // Global Programs and Departments

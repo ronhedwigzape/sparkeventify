@@ -12,6 +12,7 @@ import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
+import 'package:student_event_calendar/widgets/cspc_background.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
 import '../providers/darkmode_provider.dart';
 import '../utils/global.dart';
@@ -328,77 +329,161 @@ class _PostScreenState extends State<PostScreen> {
                       }
                     },
                     child: Scaffold(
-                      body: Center(
-                        child: SingleChildScrollView(
-                          child: Container(
-                            margin: EdgeInsets.symmetric(horizontal: kIsWeb ? (width > webScreenSize ? width * 0.2 : 0) : 0),
-                            child: Padding(
-                              padding: const EdgeInsets.all(kIsWeb ? 8.0 : 2),
-                              child: Card(
-                                color: darkModeOn ? darkColor : lightColor,
+                      body: Stack(
+                        children: [
+                          Positioned.fill(
+                            child: CSPCBackground(height: MediaQuery.of(context).size.height),
+                          ),
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: LinearGradient(
+                                begin: Alignment.center,
+                                end: Alignment.bottomCenter,
+                                colors: [
+                                  darkModeOn ? darkColor.withOpacity(0.0) : lightColor.withOpacity(0.0),
+                                  darkModeOn ? darkColor : lightColor,
+                                ],
+                                stops: const [
+                                  0.0,
+                                  1.0
+                                ]
+                              ),
+                            ),
+                          ),
+                          Center(
+                            child: SingleChildScrollView(
+                              child: Container(
+                                margin: EdgeInsets.symmetric(horizontal: kIsWeb ? (width > webScreenSize ? width * 0.2 : 0) : 0),
                                 child: Padding(
-                                  padding: kIsWeb ? const EdgeInsets.all(30.0) : const EdgeInsets.symmetric(horizontal: 5),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      kIsWeb ? Flexible(
-                                        child: Padding(
-                                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              Icon(
-                                                  Icons.post_add,
-                                                color: darkModeOn ? lightColor : darkColor,
-                                                size: kIsWeb ? 40 : 25,
+                                  padding: const EdgeInsets.all(kIsWeb ? 8.0 : 2),
+                                  child: Card(
+                                    color: darkModeOn ? darkColor : lightColor,
+                                    child: Padding(
+                                      padding: kIsWeb ? const EdgeInsets.all(30.0) : const EdgeInsets.symmetric(horizontal: 5),
+                                      child: Column(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          kIsWeb ? Flexible(
+                                            child: Padding(
+                                              padding: const EdgeInsets.symmetric(vertical: 16.0),
+                                              child: Row(
+                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                children: [
+                                                  Icon(
+                                                      Icons.post_add,
+                                                    color: darkModeOn ? lightColor : darkColor,
+                                                    size: kIsWeb ? 40 : 25,
+                                                  ),
+                                                  const SizedBox(width: 10),
+                                                  Text(
+                                                    'Post an Announcement',
+                                                    style: TextStyle(
+                                                      fontSize: kIsWeb ? 32.0 : 24.0,
+                                                      fontWeight: FontWeight.bold,
+                                                      color: darkModeOn ? lightColor : darkColor,
+                                                    ),
+                                                  ),
+                                                ],
                                               ),
-                                              const SizedBox(width: 10),
-                                              Text(
-                                                'Post an Announcement',
-                                                style: TextStyle(
-                                                  fontSize: kIsWeb ? 32.0 : 24.0,
-                                                  fontWeight: FontWeight.bold,
-                                                  color: darkModeOn ? lightColor : darkColor,
+                                            ),
+                                          ) : const SizedBox.shrink(),
+                                        !kIsWeb ? const SizedBox(height: 10) : const SizedBox.shrink(),
+                                         Flexible(
+                                             child: Padding(
+                                               padding: const EdgeInsets.symmetric(vertical: 8.0),
+                                               child: Text(
+                                                 'Instructions: Please fill up the required* details correctly and then post the announcement. Only one image and document can be selected. For document, only .pdf files can be uploaded. For image it can be .jpg or .png',
+                                                 style: TextStyle(
+                                                   fontSize: 15.0,
+                                                     color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor
+                                                 ),
+                                                 textAlign: TextAlign.center,
+                                               ),
+                                             ),
+                                         ),
+                                          const SizedBox(height: 10.0),
+                                          Flexible(
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Expanded(
+                                                    child: DropdownButtonFormField<String>(
+                                                      decoration: InputDecoration(
+                                                        prefixIcon: const Icon(Icons.event),
+                                                        labelText: '${kIsWeb ? 'Select announcement type' : 'Type'}*',
+                                                        border: OutlineInputBorder(
+                                                          borderSide: Divider.createBorderSide(
+                                                            context,
+                                                            color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
+                                                        ),
+                                                      ),
+                                                      value: _eventTypeController.text.isEmpty
+                                                          ? null
+                                                          : _eventTypeController.text,
+                                                      items: <String>['Academic', 'Non-academic']
+                                                          .map((String value) {
+                                                        return DropdownMenuItem<String>(
+                                                          value: value,
+                                                          child: Row(
+                                                            mainAxisSize: MainAxisSize.min,
+                                                            children: [
+                                                              Text(value),
+                                                            ],
+                                                          ),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (String? newValue) {
+                                                        setState(() {
+                                                          _eventTypeController.text = newValue!;
+                                                        });
+                                                      },
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                                    child: IconButton(
+                                                      onPressed: () => _selectImage(context),
+                                                      icon: const Icon(Icons.add_a_photo),
+                                                      tooltip: 'Add a photo',
+                                                    ),
+                                                  ),
+                                                  Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                                    child: IconButton(
+                                                      onPressed: () => _selectDocument(context),
+                                                      icon: const Icon(Icons.file_present_rounded),
+                                                      tooltip: 'Add a document',
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                          ),
+                                          const SizedBox(height: 10.0),
+                                          kIsWeb ? Flexible(
+                                            child: Row(children: [
+                                              Flexible(
+                                                child: TextFieldInput(
+                                                  textEditingController: _eventTitleController,
+                                                  labelText: 'Title*',
+                                                  textInputType: TextInputType.text,
                                                 ),
                                               ),
-                                            ],
-                                          ),
-                                        ),
-                                      ) : const SizedBox.shrink(),
-                                    !kIsWeb ? const SizedBox(height: 10) : const SizedBox.shrink(),
-                                     Flexible(
-                                         child: Padding(
-                                           padding: const EdgeInsets.symmetric(vertical: 8.0),
-                                           child: Text(
-                                             'Instructions: Please fill up the required* details correctly and then post the announcement. Only one image and document can be selected. For document, only .pdf files can be uploaded. For image it can be .jpg or .png',
-                                             style: TextStyle(
-                                               fontSize: 15.0,
-                                                 color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor
-                                             ),
-                                             textAlign: TextAlign.center,
-                                           ),
-                                         ),
-                                     ),
-                                      const SizedBox(height: 10.0),
-                                      Flexible(
-                                          child: Row(
-                                            mainAxisSize: MainAxisSize.min,
-                                            children: [
-                                              Expanded(
+                                              const SizedBox(width: 10.0),
+                                              Flexible(
                                                 child: DropdownButtonFormField<String>(
                                                   decoration: InputDecoration(
-                                                    prefixIcon: const Icon(Icons.event),
-                                                    labelText: '${kIsWeb ? 'Select announcement type' : 'Type'}*',
+                                                    prefixIcon: const Icon(Icons.location_pin),
+                                                    labelText: 'Select venue',
                                                     border: OutlineInputBorder(
                                                       borderSide: Divider.createBorderSide(
                                                         context,
                                                         color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
                                                     ),
                                                   ),
-                                                  value: _eventTypeController.text.isEmpty
+                                                  value: _eventVenueController.text.isEmpty
                                                       ? null
-                                                      : _eventTypeController.text,
-                                                  items: <String>['Academic', 'Non-academic']
+                                                      : _eventVenueController.text,
+                                                  items: <String>['Gymnasium', 'Auditorium']
                                                       .map((String value) {
                                                     return DropdownMenuItem<String>(
                                                       value: value,
@@ -412,304 +497,243 @@ class _PostScreenState extends State<PostScreen> {
                                                   }).toList(),
                                                   onChanged: (String? newValue) {
                                                     setState(() {
-                                                      _eventTypeController.text = newValue!;
+                                                      _eventVenueController.text = newValue!;
                                                     });
                                                   },
                                                 ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                                child: IconButton(
-                                                  onPressed: () => _selectImage(context),
-                                                  icon: const Icon(Icons.add_a_photo),
-                                                  tooltip: 'Add a photo',
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                                child: IconButton(
-                                                  onPressed: () => _selectDocument(context),
-                                                  icon: const Icon(Icons.file_present_rounded),
-                                                  tooltip: 'Add a document',
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                      ),
-                                      const SizedBox(height: 10.0),
-                                      kIsWeb ? Flexible(
-                                        child: Row(children: [
-                                          Flexible(
-                                            child: TextFieldInput(
-                                              textEditingController: _eventTitleController,
-                                              labelText: 'Title*',
-                                              textInputType: TextInputType.text,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10.0),
-                                          Flexible(
-                                            child: DropdownButtonFormField<String>(
-                                              decoration: InputDecoration(
-                                                prefixIcon: const Icon(Icons.location_pin),
-                                                labelText: 'Select venue',
-                                                border: OutlineInputBorder(
-                                                  borderSide: Divider.createBorderSide(
-                                                    context,
-                                                    color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
-                                                ),
-                                              ),
-                                              value: _eventVenueController.text.isEmpty
-                                                  ? null
-                                                  : _eventVenueController.text,
-                                              items: <String>['Gymnasium', 'Auditorium']
-                                                  .map((String value) {
-                                                return DropdownMenuItem<String>(
-                                                  value: value,
-                                                  child: Row(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      Text(value),
-                                                    ],
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              onChanged: (String? newValue) {
-                                                setState(() {
-                                                  _eventVenueController.text = newValue!;
-                                                });
-                                              },
-                                            ),
-                                          )
-                                        ]),
-                                      ): Flexible(
-                                        fit: FlexFit.loose,
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                          Expanded(
-                                            child: TextFieldInput(
-                                              textEditingController: _eventTitleController,
-                                              labelText: 'Title*',
-                                              textInputType: TextInputType.text,
-                                            ),
-                                          ),
-                                        ]),
-                                      ),
-                                      !kIsWeb ? const SizedBox(height: 10.0) : const SizedBox.shrink(),
-                                      !kIsWeb ? Flexible(
-                                        fit: FlexFit.loose,
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Expanded(
-                                            flex: 2,
-                                            child: DropdownButtonFormField<String>(
-                                              decoration: InputDecoration(
-                                                prefixIcon:
-                                                    const Icon(Icons.location_pin),
-                                                labelText:
-                                                    '${kIsWeb ? 'Select venue' : 'Venue'}*',
-                                                border: OutlineInputBorder(
-                                                    borderSide:
-                                                        Divider.createBorderSide(
-                                                  context,
-                                                  color: darkModeOn
-                                                      ? darkModeTertiaryColor
-                                                      : lightModeTertiaryColor,
-                                                )),
-                                              ),
-                                              value:
-                                                  _eventVenueController.text.isEmpty
-                                                      ? null
-                                                      : _eventVenueController.text,
-                                              items: <String>[
-                                                'Gymnasium',
-                                                'Auditorium'
-                                              ].map((String value) {
-                                                return DropdownMenuItem<String>(
-                                                  value: value,
-                                                  child: Row(
-                                                    mainAxisSize: MainAxisSize.min,
-                                                    children: [
-                                                      Text(value),
-                                                    ],
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              onChanged: (String? newValue) {
-                                                setState(() {
-                                                  _eventVenueController.text =
-                                                      newValue!;
-                                                });
-                                              },
-                                            ),
-                                          )],
-                                        ),
-                                      ) : const SizedBox.shrink(),
-                                      const SizedBox(height: 10.0),
-                                      Flexible(
-                                        child: TextFormField(
-                                          controller: _eventDescriptionsController,
-                                          decoration: InputDecoration(
-                                              labelText: 'Description*',
-                                              alignLabelWithHint: true,
-                                              border: outlineBorder,
-                                              focusedBorder: outlineBorder,
-                                              enabledBorder: outlineBorder,
-                                              contentPadding: const EdgeInsets.all(12),
-                                          ),
-                                          textCapitalization: TextCapitalization.sentences,
-                                          keyboardType: TextInputType.multiline,
-                                          minLines: 4,
-                                          maxLines: null,
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10.0),
-                                      Flexible(
-                                        child: Row(children: [
-                                          Flexible(
-                                            child: TextFieldInput(
-                                              startTextEditingController: _startDateController,
-                                              endTextEditingController: _endDateController,
-                                              isDateRange: true,
-                                              labelText: 'Event Date',
-                                              textInputType: TextInputType.datetime,
-                                            ),
-                                          ),
-                                        ]),
-                                      ), 
-                                      const SizedBox(height: 10.0),
-                                      Flexible(
-                                        child: Row(children: [
-                                          Flexible(
-                                            child: TextFieldInput(
-                                              startTextEditingController: _startTimeController,
-                                              endTextEditingController: _endTimeController,
-                                              isTimeRange: true,
-                                              labelText: 'Event Time',
-                                              textInputType: TextInputType.datetime,
-                                            ),
-                                          )
-                                        ]),
-                                      ),
-                                      const SizedBox(height: 10.0),
-                                      Flexible(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(20.0),
-                                          child: SingleChildScrollView(
-                                            child: Column(
+                                              )
+                                            ]),
+                                          ): Flexible(
+                                            fit: FlexFit.loose,
+                                            child: Row(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                const Flexible(
-                                                    child: Center(
-                                                        child: Padding(
-                                                          padding: EdgeInsets.all(10.0),
-                                                          child: Text(
-                                                              'Participants*',
-                                                              style: TextStyle(
-                                                                  fontSize: kIsWeb ? 28 : 24,
-                                                                  fontWeight: FontWeight.bold
-                                                              )),
-                                                        ))),
-                                                Flexible(
-                                                    child: Center(
-                                                        child: Padding(
-                                                          padding: const EdgeInsets.all(8.0),
-                                                          child: Text(
-                                                              'Check all the type of participants that will be involved.',
-                                                              style: TextStyle(
-                                                                fontSize: 15,
-                                                                color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor
-                                                              )),
-                                                        ))),
-                                                // participants (Checkbox that adds to a local array of participants)
-                                                kIsWeb ? Flexible(
-                                                  fit: FlexFit.loose,
-                                                  child: Row(
-                                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                    children: [
-                                                      Expanded(child: _buildParticipant('Program', programParticipants)),
-                                                      Expanded(child: _buildParticipant('Department', departmentParticipants)),
-                                                    ],
-                                                  ),
-                                                ) : Flexible(
-                                                  fit: FlexFit.loose,
-                                                  child: SingleChildScrollView(
-                                                    child: Column(
-                                                      mainAxisSize: MainAxisSize.min,
-                                                      children: [
-                                                        _buildParticipant('Program', programParticipants),
-                                                        _buildParticipant('Department', departmentParticipants),
-                                                      ],
-                                                    ),
-                                                  ),
+                                              Expanded(
+                                                child: TextFieldInput(
+                                                  textEditingController: _eventTitleController,
+                                                  labelText: 'Title*',
+                                                  textInputType: TextInputType.text,
                                                 ),
-                                              ],
+                                              ),
+                                            ]),
+                                          ),
+                                          !kIsWeb ? const SizedBox(height: 10.0) : const SizedBox.shrink(),
+                                          !kIsWeb ? Flexible(
+                                            fit: FlexFit.loose,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Expanded(
+                                                flex: 2,
+                                                child: DropdownButtonFormField<String>(
+                                                  decoration: InputDecoration(
+                                                    prefixIcon:
+                                                        const Icon(Icons.location_pin),
+                                                    labelText:
+                                                        '${kIsWeb ? 'Select venue' : 'Venue'}*',
+                                                    border: OutlineInputBorder(
+                                                        borderSide:
+                                                            Divider.createBorderSide(
+                                                      context,
+                                                      color: darkModeOn
+                                                          ? darkModeTertiaryColor
+                                                          : lightModeTertiaryColor,
+                                                    )),
+                                                  ),
+                                                  value:
+                                                      _eventVenueController.text.isEmpty
+                                                          ? null
+                                                          : _eventVenueController.text,
+                                                  items: <String>[
+                                                    'Gymnasium',
+                                                    'Auditorium'
+                                                  ].map((String value) {
+                                                    return DropdownMenuItem<String>(
+                                                      value: value,
+                                                      child: Row(
+                                                        mainAxisSize: MainAxisSize.min,
+                                                        children: [
+                                                          Text(value),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (String? newValue) {
+                                                    setState(() {
+                                                      _eventVenueController.text =
+                                                          newValue!;
+                                                    });
+                                                  },
+                                                ),
+                                              )],
+                                            ),
+                                          ) : const SizedBox.shrink(),
+                                          const SizedBox(height: 10.0),
+                                          Flexible(
+                                            child: TextFormField(
+                                              controller: _eventDescriptionsController,
+                                              decoration: InputDecoration(
+                                                  labelText: 'Description*',
+                                                  alignLabelWithHint: true,
+                                                  border: outlineBorder,
+                                                  focusedBorder: outlineBorder,
+                                                  enabledBorder: outlineBorder,
+                                                  contentPadding: const EdgeInsets.all(12),
+                                              ),
+                                              textCapitalization: TextCapitalization.sentences,
+                                              keyboardType: TextInputType.multiline,
+                                              minLines: 4,
+                                              maxLines: null,
                                             ),
                                           ),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10.0),
-                                      Center(
-                                        child: InkWell(
-                                          onTap: () async {
-                                            bool isConnected = await ConnectivityService().isConnected();
-                                            if (isConnected) {
-                                              await _post();
-                                            } else {
-                                              // Show a message to the user
-                                              mounted ? ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
-                                                  duration: const Duration(seconds: 5),
+                                          const SizedBox(height: 10.0),
+                                          Flexible(
+                                            child: Row(children: [
+                                              Flexible(
+                                                child: TextFieldInput(
+                                                  startTextEditingController: _startDateController,
+                                                  endTextEditingController: _endDateController,
+                                                  isDateRange: true,
+                                                  labelText: 'Event Date',
+                                                  textInputType: TextInputType.datetime,
                                                 ),
-                                              ) : '';
-                                            }
-                                          },
-                                          child: Container(
-                                            width: double.infinity,
-                                            alignment: Alignment.center,
-                                            padding: const EdgeInsets.symmetric(
-                                                vertical: 16.0),
-                                            decoration: ShapeDecoration(
-                                              shape: const RoundedRectangleBorder(
-                                                borderRadius: BorderRadius.all(
-                                                    Radius.circular(5.0)),
                                               ),
-                                              color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-                                            ),
-                                            child: _isLoading
-                                              ? const Center(
-                                                  child: CircularProgressIndicator(
-                                                  valueColor:
-                                                      AlwaysStoppedAnimation<Color>(
-                                                          lightColor),
-                                                ))
-                                              : const Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment.center,
-                                                children: [
-                                                  Icon(Icons.post_add, color: lightColor),
-                                                  SizedBox(width: 10),
-                                                  Text(
-                                                      'Create a New Announcement',
-                                                      style: TextStyle(
-                                                        color: lightColor,
-                                                        fontWeight: FontWeight.bold,
+                                            ]),
+                                          ), 
+                                          const SizedBox(height: 10.0),
+                                          Flexible(
+                                            child: Row(children: [
+                                              Flexible(
+                                                child: TextFieldInput(
+                                                  startTextEditingController: _startTimeController,
+                                                  endTextEditingController: _endTimeController,
+                                                  isTimeRange: true,
+                                                  labelText: 'Event Time',
+                                                  textInputType: TextInputType.datetime,
+                                                ),
+                                              )
+                                            ]),
+                                          ),
+                                          const SizedBox(height: 10.0),
+                                          Flexible(
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(20.0),
+                                              child: SingleChildScrollView(
+                                                child: Column(
+                                                  mainAxisSize: MainAxisSize.min,
+                                                  children: [
+                                                    const Flexible(
+                                                        child: Center(
+                                                            child: Padding(
+                                                              padding: EdgeInsets.all(10.0),
+                                                              child: Text(
+                                                                  'Participants*',
+                                                                  style: TextStyle(
+                                                                      fontSize: kIsWeb ? 28 : 24,
+                                                                      fontWeight: FontWeight.bold
+                                                                  )),
+                                                            ))),
+                                                    Flexible(
+                                                        child: Center(
+                                                            child: Padding(
+                                                              padding: const EdgeInsets.all(8.0),
+                                                              child: Text(
+                                                                  'Check all the type of participants that will be involved.',
+                                                                  style: TextStyle(
+                                                                    fontSize: 15,
+                                                                    color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor
+                                                                  )),
+                                                            ))),
+                                                    // participants (Checkbox that adds to a local array of participants)
+                                                    kIsWeb ? Flexible(
+                                                      fit: FlexFit.loose,
+                                                      child: Row(
+                                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                        children: [
+                                                          Expanded(child: _buildParticipant('Program', programParticipants)),
+                                                          Expanded(child: _buildParticipant('Department', departmentParticipants)),
+                                                        ],
+                                                      ),
+                                                    ) : Flexible(
+                                                      fit: FlexFit.loose,
+                                                      child: SingleChildScrollView(
+                                                        child: Column(
+                                                          mainAxisSize: MainAxisSize.min,
+                                                          children: [
+                                                            _buildParticipant('Program', programParticipants),
+                                                            _buildParticipant('Department', departmentParticipants),
+                                                          ],
+                                                        ),
                                                       ),
                                                     ),
-                                                ],
-                                              )),
-                                        ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          const SizedBox(height: 10.0),
+                                          Center(
+                                            child: InkWell(
+                                              onTap: () async {
+                                                bool isConnected = await ConnectivityService().isConnected();
+                                                if (isConnected) {
+                                                  await _post();
+                                                } else {
+                                                  // Show a message to the user
+                                                  mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                                                    SnackBar(
+                                                      content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
+                                                      duration: const Duration(seconds: 5),
+                                                    ),
+                                                  ) : '';
+                                                }
+                                              },
+                                              child: Container(
+                                                width: double.infinity,
+                                                alignment: Alignment.center,
+                                                padding: const EdgeInsets.symmetric(
+                                                    vertical: 16.0),
+                                                decoration: ShapeDecoration(
+                                                  shape: const RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.all(
+                                                        Radius.circular(5.0)),
+                                                  ),
+                                                  color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                                                ),
+                                                child: _isLoading
+                                                  ? const Center(
+                                                      child: CircularProgressIndicator(
+                                                      valueColor:
+                                                          AlwaysStoppedAnimation<Color>(
+                                                              lightColor),
+                                                    ))
+                                                  : const Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment.center,
+                                                    children: [
+                                                      Icon(Icons.post_add, color: lightColor),
+                                                      SizedBox(width: 10),
+                                                      Text(
+                                                          'Create a New Announcement',
+                                                          style: TextStyle(
+                                                            color: lightColor,
+                                                            fontWeight: FontWeight.bold,
+                                                          ),
+                                                        ),
+                                                    ],
+                                                  )),
+                                            ),
+                                          ),
+                                        ],
                                       ),
-                                    ],
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ),
