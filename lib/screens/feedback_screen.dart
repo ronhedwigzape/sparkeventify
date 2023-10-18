@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/resources/firestore_feedback_methods.dart';
+import 'package:student_event_calendar/screens/event_feedback_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/cspc_background.dart';
 import 'package:student_event_calendar/widgets/feedback_form.dart';
@@ -131,10 +132,10 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 3.0),
                       child: InkWell(
-                        onTap: () {
-                          // Navigator.of(context).push(MaterialPageRoute(
-                          //     builder: (context) => ));
-                        },
+                        onTap: kIsWeb ? () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => EventFeedbackScreen(eventId: event.id)));
+                        } :() {},
                         child: Card( 
                           elevation: 1,
                           shadowColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
