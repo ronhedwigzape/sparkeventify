@@ -102,6 +102,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                         List<Event> events = snapshot.data!;
                         selectedEvent = events.contains(selectedEvent) ? selectedEvent : null;
                         return Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             const Flexible(child: Text('Select an event to add feedback: ')),
                             DropdownButton<Event>(
