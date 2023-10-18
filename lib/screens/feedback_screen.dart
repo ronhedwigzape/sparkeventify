@@ -130,21 +130,42 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                     DateTime endDate = event.endDate.isAfter(now) ? now.subtract(const Duration(days: 1)) : event.endDate;
                     return Padding(
                       padding: const EdgeInsets.symmetric(vertical: 3.0),
-                      child: Card( 
-                        elevation: 1,
-                        shadowColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-                        child: Stack(
-                          alignment: Alignment.center,
-                          children: [
-                            // Parallax image with opacity
-                            Positioned.fill(
-                              child: Opacity(
-                                opacity: 0.6,
-                                child:
-                                (event.image?.isEmpty ?? true)
-                                ? CachedNetworkImage(
-                                    imageUrl:
-                                        'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
+                      child: InkWell(
+                        onTap: () {
+                          // Navigator.of(context).push(MaterialPageRoute(
+                          //     builder: (context) => ));
+                        },
+                        child: Card( 
+                          elevation: 1,
+                          shadowColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              // Parallax image with opacity
+                              Positioned.fill(
+                                child: Opacity(
+                                  opacity: 0.6,
+                                  child:
+                                  (event.image?.isEmpty ?? true)
+                                  ? CachedNetworkImage(
+                                      imageUrl:
+                                          'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
+                                      fit: BoxFit.cover,
+                                      placeholder: (context, url) => Center(
+                                        child: SizedBox(
+                                          height: kIsWeb ? 250.0 : 100,
+                                          child: Center(
+                                              child: CircularProgressIndicator(
+                                                  color: darkModeOn
+                                                      ? darkModePrimaryColor
+                                                      : lightModePrimaryColor)),
+                                        ),
+                                      ),
+                                      errorWidget: (context, url, error) =>
+                                          const Icon(Icons.error),
+                                    )
+                                  : CachedNetworkImage(
+                                    imageUrl: event.image!,
                                     fit: BoxFit.cover,
                                     placeholder: (context, url) => Center(
                                       child: SizedBox(
@@ -158,80 +179,65 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                     ),
                                     errorWidget: (context, url, error) =>
                                         const Icon(Icons.error),
-                                  )
-                                : CachedNetworkImage(
-                                  imageUrl: event.image!,
-                                  fit: BoxFit.cover,
-                                  placeholder: (context, url) => Center(
-                                    child: SizedBox(
-                                      height: kIsWeb ? 250.0 : 100,
-                                      child: Center(
-                                          child: CircularProgressIndicator(
-                                              color: darkModeOn
-                                                  ? darkModePrimaryColor
-                                                  : lightModePrimaryColor)),
+                                  ),
+                                ),
+                              ),
+                              Positioned.fill(
+                                child: DecoratedBox(
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      colors: [transparent, black.withOpacity(0.6)],
+                                      begin: Alignment.bottomCenter,
+                                      end: Alignment.bottomCenter,
                                     ),
                                   ),
-                                  errorWidget: (context, url, error) =>
-                                      const Icon(Icons.error),
                                 ),
                               ),
-                            ),
-                            Positioned.fill(
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(
-                                  gradient: LinearGradient(
-                                    colors: [transparent, black.withOpacity(0.6)],
-                                    begin: Alignment.bottomCenter,
-                                    end: Alignment.bottomCenter,
-                                  ),
-                                ),
-                              ),
-                            ),
-                            // Event details
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Flexible(
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                                      child: SizedBox(
-                                        width: 100 * 6,
-                                        child: Column(
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(event.title, style: const TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis,),
-                                            Text(
-                                                (event.startDate.day == endDate.day
-                                                  ? '${DateFormat('MMM dd, yyyy').format(event.startDate)}\n'
-                                                  : '${DateFormat('MMM dd, yyyy').format(event.startDate)} - ${DateFormat('MMM dd, yyyy').format(endDate)}\n')
-                                                  + (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
-                                                  ? DateFormat.jm().format(event.startTime)
-                                                  : '${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
-                                              style: const TextStyle(
-                                                  height: 1.5,
-                                                  color: white,
-                                                  fontSize: 10,
+                              // Event details
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  children: [
+                                    Flexible(
+                                      child: Padding(
+                                        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                                        child: SizedBox(
+                                          width: 100 * 6,
+                                          child: Column(
+                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                            children: [
+                                              Text(event.title, style: const TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis,),
+                                              Text(
+                                                  (event.startDate.day == endDate.day
+                                                    ? '${DateFormat('MMM dd, yyyy').format(event.startDate)}\n'
+                                                    : '${DateFormat('MMM dd, yyyy').format(event.startDate)} - ${DateFormat('MMM dd, yyyy').format(endDate)}\n')
+                                                    + (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
+                                                    ? DateFormat.jm().format(event.startTime)
+                                                    : '${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
+                                                style: const TextStyle(
+                                                    height: 1.5,
+                                                    color: white,
+                                                    fontSize: 10,
+                                                ),
                                               ),
-                                            ),
-                                            !kIsWeb ? FeedbackForm(eventId: event.id) : FeedbackSummaryButton(eventId: event.id)
-                                          ],                        
+                                              !kIsWeb ? FeedbackForm(eventId: event.id) : FeedbackSummaryButton(eventId: event.id)
+                                            ],                        
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                  // remove all event feedback
-                                  kIsWeb ? TextButton.icon(
-                                    onPressed: () async {
-                                      await FirestoreFeedbackMethods().removeAllEventFeedbacks(event.id);
-                                    },
-                                    icon: const Icon(Icons.delete), 
-                                    label: const Text('Remove All Feedback')) : const SizedBox.shrink(),
-                                ],
+                                    // remove all event feedback
+                                    kIsWeb ? TextButton.icon(
+                                      onPressed: () async {
+                                        await FirestoreFeedbackMethods().removeAllEventFeedbacks(event.id);
+                                      },
+                                      icon: Icon(Icons.delete_forever_rounded, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,), 
+                                      label: Text('Remove All Feedback', style: TextStyle(color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),)) : const SizedBox.shrink(),
+                                  ],
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
                       ),
                     );
