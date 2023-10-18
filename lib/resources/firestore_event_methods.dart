@@ -222,4 +222,56 @@ class FireStoreEventMethods {
     return response;
   }
 
+  Stream<String> updateEventStatusByStream(
+    String eventId,
+    bool? isCancelled,
+    bool? isMoved,
+    DateTime startDate,
+    DateTime endDate,
+    DateTime startTime,
+    DateTime endTime,
+  ) async* {
+    DateTime currentDateTime = DateTime.now();
+
+    // Combine date and time
+    DateTime startDateTime = DateTime(startDate.year, startDate.month, startDate.day, startTime.hour, startTime.minute);
+    DateTime endDateTime = DateTime(endDate.year, endDate.month, endDate.day, endTime.hour, endTime.minute);
+
+    // Check if isCancelled and isMoved are not null before using them
+    isCancelled = isCancelled ?? false;
+    isMoved = isMoved ?? false;
+
+    try {
+      if (isMoved) {
+        await _eventsCollection.doc(eventId).set({
+          'status': 'Moved',
+        }, SetOptions(merge: true));
+        yield 'Moved';
+      }
+
+      if (startDateTime.isAfter(currentDateTime)) {
+        await _eventsCollection.doc(eventId).set({
+          'status': isCancelled ? 'Cancelled' : 'Upcoming',
+        }, SetOptions(merge: true));
+        yield isCancelled ? 'Cancelled' : 'Upcoming';
+      } else if (endDateTime.isBefore(currentDateTime)) {
+        await _eventsCollection.doc(eventId).set({
+          'status': isCancelled ? 'Cancelled' : 'Past',
+        }, SetOptions(merge: true));
+        yield isCancelled ? 'Cancelled' : 'Past';
+      } else {
+        await _eventsCollection.doc(eventId).set({
+          'status': isCancelled ? 'Cancelled' : 'Ongoing',
+        }, SetOptions(merge: true));
+        yield isCancelled ? 'Cancelled' : 'Ongoing';
+      }
+    } on FirebaseException catch (err) {
+      if (err.code == 'permission-denied') {
+        yield 'Permission denied';
+      } else {
+        yield err.toString();
+      }
+    }
+  }
+
 }

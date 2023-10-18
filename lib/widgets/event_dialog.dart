@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart' as model;
+import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/services/connectivity_service.dart';
 import '../models/user.dart' as model;
 import '../providers/darkmode_provider.dart';
@@ -192,32 +193,47 @@ class EventDialogState extends State<EventDialog> {
                       const SizedBox(width: 10),
                       SizedBox(
                         height: 30,
-                        child: Chip(
-                          label: Text(
-                            event.status,
-                            style: const TextStyle(
-                                color: lightColor, fontSize: kIsWeb ? 12 : 8),
-                          ),
-                          padding: const EdgeInsets.all(2.0),
-                          backgroundColor: event.status == 'Cancelled'
-                            ? (darkModeOn
-                                ? darkModeMaroonColor
-                                : lightModeMaroonColor)
-                            : event.status == 'Upcoming'
-                            ? (darkModeOn
-                                ? darkModePrimaryColor
-                                : lightModePrimaryColor)
-                            : event.status == 'Moved'
+                        child: InkWell(
+                          onTap: kIsWeb ? () {
+                            Stream<String> stream = FireStoreEventMethods().updateEventStatusByStream(event.id, false, false, event.startDate, event.endDate, event.startTime, event.endTime);
+                            stream.listen(
+                              (status) {
+                                setState(() {
+                                  event.status = status;
+                                });
+                              },
+                              onError: (error) {
+                                print('Error: $error');
+                              },
+                            );
+                          } : () {},
+                          child: Chip(
+                            label: Text(
+                              event.status,
+                              style: const TextStyle(
+                                  color: lightColor, fontSize: kIsWeb ? 12 : 8),
+                            ),
+                            padding: const EdgeInsets.all(2.0),
+                            backgroundColor: event.status == 'Cancelled'
                               ? (darkModeOn
-                              ? darkModeSecondaryColor
-                              : lightModeSecondaryColor)
-                            : event.status == 'Past'
-                              ? black
-                            : (darkModeOn
-                              ? darkModeGrassColor
-                              : lightModeGrassColor),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.0),
+                                  ? darkModeMaroonColor
+                                  : lightModeMaroonColor)
+                              : event.status == 'Upcoming'
+                              ? (darkModeOn
+                                  ? darkModePrimaryColor
+                                  : lightModePrimaryColor)
+                              : event.status == 'Moved'
+                                ? (darkModeOn
+                                ? darkModeSecondaryColor
+                                : lightModeSecondaryColor)
+                              : event.status == 'Past'
+                                ? black
+                              : (darkModeOn
+                                ? darkModeGrassColor
+                                : lightModeGrassColor),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                            ),
                           ),
                         ),
                       ),
