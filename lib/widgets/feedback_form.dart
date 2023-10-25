@@ -1,4 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/evaluator_feedback.dart';
@@ -10,6 +11,7 @@ import 'package:student_event_calendar/resources/firestore_feedback_methods.dart
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/widgets/custom_spinner.dart';
 
 class FeedbackForm extends StatefulWidget {
   const FeedbackForm({Key? key, required this.eventId}) : super(key: key);
@@ -41,14 +43,22 @@ class _FeedbackFormState extends State<FeedbackForm> {
 
   createFeedback(context, eventName) async {
     model.User? user = await FireStoreUserMethods().getCurrentUserData();
-    print('User: $user'); 
+    if (kDebugMode) {
+      print('User: $user');
+    } 
 
     String? eventFeedbackUid = await FirestoreFeedbackMethods().getEventFeedbackUid(widget.eventId);
-    print('Event Feedback UID: $eventFeedbackUid');  // Print the event feedback UID
+    if (kDebugMode) {
+      print('Event Feedback UID: $eventFeedbackUid');
+    }  // Print the event feedback UID
 
     // Print the rating and feedback text
-    print('Rating: ${_ratingController.text}');
-    print('Feedback: ${_feedbackController.text}');
+    if (kDebugMode) {
+      print('Rating: ${_ratingController.text}');
+    }
+    if (kDebugMode) {
+      print('Feedback: ${_feedbackController.text}');
+    }
 
     // If feedback is empty
     if (eventFeedbackUid == null && user != null) {
@@ -103,7 +113,6 @@ class _FeedbackFormState extends State<FeedbackForm> {
 
   @override
   Widget build(BuildContext context) {
-    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return StreamBuilder<bool>(
     stream: FirestoreFeedbackMethods().getEventFeedbackStatusByUserId(
       widget.eventId, FirebaseAuth.instance.currentUser!.uid),
@@ -127,7 +136,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
           },
         );
       } else {
-        return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
+        return const Center(child: LinearProgressIndicator());
       }
     },
   );
@@ -143,11 +152,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
             future: event,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(
-                    child: CircularProgressIndicator(
-                        color: darkModeOn
-                            ? darkModePrimaryColor
-                            : lightModePrimaryColor));
+                return const Center(child: CustomSpinner());
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {
@@ -310,6 +315,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
                                 if (mounted) {
                                   Future<bool> Function() isConnected = ConnectivityService().isConnected;
                                   if (await isConnected()) {
+                                    // ignore: use_build_context_synchronously
                                     await createFeedback(context, snapshot.data!.title);
                                   } else {
                                     // Show a message to the user

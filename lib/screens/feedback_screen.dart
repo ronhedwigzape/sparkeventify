@@ -153,14 +153,10 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                       imageUrl:
                                           'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
                                       fit: BoxFit.cover,
-                                      placeholder: (context, url) => Center(
+                                      placeholder: (context, url) => const Center(
                                         child: SizedBox(
                                           height: kIsWeb ? 250.0 : 100,
-                                          child: Center(
-                                              child: CircularProgressIndicator(
-                                                  color: darkModeOn
-                                                      ? darkModePrimaryColor
-                                                      : lightModePrimaryColor)),
+                                          child: Center(child: LinearProgressIndicator()),
                                         ),
                                       ),
                                       errorWidget: (context, url, error) =>
@@ -169,14 +165,11 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                   : CachedNetworkImage(
                                     imageUrl: event.image!,
                                     fit: BoxFit.cover,
-                                    placeholder: (context, url) => Center(
+                                    placeholder: (context, url) => const Center(
                                       child: SizedBox(
                                         height: kIsWeb ? 250.0 : 100,
                                         child: Center(
-                                            child: CircularProgressIndicator(
-                                                color: darkModeOn
-                                                    ? darkModePrimaryColor
-                                                    : lightModePrimaryColor)),
+                                            child: LinearProgressIndicator()),
                                       ),
                                     ),
                                     errorWidget: (context, url, error) =>

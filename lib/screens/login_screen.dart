@@ -23,7 +23,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _isLoading = false;
   final _authRepository = AuthRepository();
 
   @override
@@ -34,30 +33,35 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> signIn() async {
-    if (mounted) {
-      setState(() {
-        _isLoading = true;
-      });
-    }
+    BuildContext? dialogContext;
+    showDialog(
+      context: context,
+      builder: (context) {
+        dialogContext = context;
+        return const Center(child: CircularProgressIndicator());
+      },
+    );
+
+    // Add a slight delay to ensure the dialog has displayed
+    await Future.delayed(const Duration(milliseconds: 100));
 
     String res = await _authRepository.signIn(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim());
+      email: _emailController.text.trim(),
+      password: _passwordController.text.trim(),
+    );
+
+    if (dialogContext != null) {
+      Navigator.of(dialogContext!).pop();
+    }
 
     if (res == 'Success') {
       onSignInSuccess(res);
     } else {
-      onSignInFailure(res);
+      onSignInFailure(res); 
     }
   }
 
-  void onSignInSuccess(String message) async {
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
-
+  void onSignInSuccess(String message) async { 
     if (!kIsWeb) {
       Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const ClientScreenLayout()));
@@ -68,11 +72,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void onSignInFailure(String message) {
-    if (mounted) {
-      setState(() {
-        _isLoading = false;
-      });
-    }
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
       duration: const Duration(seconds: 2),
@@ -177,18 +176,12 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         color: darkModeOn ? darkModePrimaryColor : lightModeBlueColor,
                       ),
-                      child: _isLoading
-                          ? const Center(
-                              child: CircularProgressIndicator(
-                              valueColor: AlwaysStoppedAnimation<Color>(lightColor),
-                            ))
-                          : const Text(
-                              'Log in',
-                              style: TextStyle(
-                                color: lightColor,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            )),
+                      child: const Text('Log in', 
+                        style: TextStyle(
+                            color: lightColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )),
                 ),
                 const SizedBox(height: 12.0),
                 Flexible(

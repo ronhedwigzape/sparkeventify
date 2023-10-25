@@ -30,7 +30,6 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
   late String selectedProgramAndDepartment = programsAndDepartments[0];
   late String program;
   late String department;
-  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -46,8 +45,8 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
   }
 
   Future<void> signUpAsClient() async {
-    setState(() {
-      _isLoading = true;
+    showDialog(context: context, builder: (context) {
+      return const Center(child: CircularProgressIndicator());
     });
 
     if (_firstNameController.text.trim().isEmpty ||
@@ -92,6 +91,10 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
         profile: profile,
         userType: 'Student');
 
+    if (mounted) {
+      Navigator.of(context).pop();
+    }
+
     if (res == 'Success') {
       onSignupSuccess();
     } else {
@@ -100,17 +103,11 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
   }
 
   void onSignupSuccess() {
-    setState(() {
-      _isLoading = false;
-    });
     Navigator.of(context).push(
         MaterialPageRoute(builder: (context) => const ClientScreenLayout()));
   }
 
   void onSignupFailure(String message) {
-    setState(() {
-      _isLoading = false;
-    });
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
       duration: const Duration(seconds: 2),
@@ -364,13 +361,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                             ),
                             color: darkModeOn ? darkModePrimaryColor : lightModeBlueColor,
                           ),
-                          child: _isLoading
-                              ? const Center(
-                                  child: CircularProgressIndicator(
-                                  valueColor:
-                                      AlwaysStoppedAnimation<Color>(lightColor),
-                                ))
-                              : const Text(
+                          child: const Text(
                                   'Sign up',
                                   style: TextStyle(
                                     color: lightColor,

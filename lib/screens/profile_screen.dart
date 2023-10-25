@@ -12,6 +12,7 @@ import 'package:student_event_calendar/screens/login_screen.dart';
 import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/cspc_background.dart';
+import 'package:student_event_calendar/widgets/custom_spinner.dart';
 import 'package:student_event_calendar/widgets/dark_mode_dialog.dart';
 import '../services/firebase_notifications.dart';
 
@@ -114,7 +115,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       future: currentUser,
       builder: (context, AsyncSnapshot<model.User?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
+          return const Center(child: CustomSpinner());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {

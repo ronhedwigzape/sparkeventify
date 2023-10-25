@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/widgets/cspc_logo_white.dart';
+import 'package:student_event_calendar/widgets/custom_spinner.dart';
 import '../models/user.dart' as model;
 import '../providers/darkmode_provider.dart';
 import '../resources/auth_methods.dart';
@@ -51,7 +52,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
         future: currentUser,
         builder: (context, AsyncSnapshot<model.User?> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
+            return const Center(child: CustomSpinner());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
@@ -130,7 +131,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                 future: homeScreenItems(),
                 builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
                   if (!snapshot.hasData) {
-                    return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
+                    return const Center(child: CustomSpinner());
                   }
 
                   final List<Widget> homeScreenItems = snapshot.data!;
@@ -143,7 +144,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                 },
               ),
             )
-                : Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
+                : const Center(child: CustomSpinner());
           }
         }
     );

@@ -5,6 +5,7 @@ import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/cspc_background.dart';
+import 'package:student_event_calendar/widgets/custom_spinner.dart';
 import '../providers/darkmode_provider.dart';
 import '../widgets/events_calendar.dart';
 
@@ -31,7 +32,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     future: events,
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
+        return const Center(child: CustomSpinner());
       } else if (snapshot.hasError) {
         return const Center(child: Text("Something went wrong!"));
       } else {

@@ -149,6 +149,7 @@ class _AppState extends State<App> {
             navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
             theme: theme,
+            // showPerformanceOverlay: true,
             title: 'CSPC Student Event Calendar',
             home: const AuthScreen(),
           ),

@@ -245,14 +245,10 @@ class EventDialogState extends State<EventDialog> {
                           imageUrl:
                               'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
                           width: double.infinity,
-                          placeholder: (context, url) => Center(
+                          placeholder: (context, url) => const Center(
                             child: SizedBox(
                               height: kIsWeb ? 250.0 : 100,
-                              child: Center(
-                                  child: CircularProgressIndicator(
-                                      color: darkModeOn
-                                          ? darkModePrimaryColor
-                                          : lightModePrimaryColor)),
+                              child: Center(child: CircularProgressIndicator.adaptive()),
                             ),
                           ),
                           errorWidget: (context, url, error) =>
@@ -261,14 +257,11 @@ class EventDialogState extends State<EventDialog> {
                       : CachedNetworkImage(
                           imageUrl: event.image!,
                           width: double.infinity,
-                          placeholder: (context, url) => Center(
+                          placeholder: (context, url) => const Center(
                             child: SizedBox(
                               height: kIsWeb ? 250.0 : 100,
                               child: Center(
-                                  child: CircularProgressIndicator(
-                                      color: darkModeOn
-                                          ? darkModePrimaryColor
-                                          : lightModePrimaryColor)),
+                                  child: CircularProgressIndicator.adaptive()),
                             ),
                           ),
                           errorWidget: (context, url, error) =>

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/widgets/custom_spinner.dart';
 import '../utils/global.dart';
 import '../widgets/notification_card.dart';
 import '../models/notification.dart' as model;
@@ -43,7 +44,7 @@ Future<List<model.Notification>> fetchNotifications() async {
         future: fetchNotifications(),
         builder: (BuildContext context, AsyncSnapshot<List<model.Notification>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor));
+            return const Center(child: CustomSpinner());
           }
           else if (snapshot.hasError) {
             if (kDebugMode) {

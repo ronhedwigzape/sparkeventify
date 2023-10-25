@@ -8,7 +8,7 @@ class CSPCLogo extends StatelessWidget {
   // Define the properties of the widget
   const CSPCLogo({
     super.key,
-    required this.height, // Height of the image
+    required this.height,
   });
   final double height;
 
@@ -25,7 +25,7 @@ class CSPCLogo extends StatelessWidget {
           if (snapshot.data != null) {
             // If the data is not null, return an Image widget
             return Image.memory(
-              snapshot.data as Uint8List, // Convert the data to a Uint8List
+              snapshot.data as Uint8List,
               height: height.toDouble(), // Set the height of the image
             );
           } else {

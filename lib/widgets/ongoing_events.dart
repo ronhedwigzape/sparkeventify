@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/widgets/custom_spinner.dart';
 import '../providers/darkmode_provider.dart';
 
 class OngoingEvents extends StatefulWidget {
@@ -129,14 +130,10 @@ class OngoingEventsState extends State<OngoingEvents> {
                                   imageUrl:
                                       'https://cspc.edu.ph/wp-content/uploads/2022/03/cspc-blue-2-scaled.jpg',
                                   width: 300,
-                                  placeholder: (context, url) => Center(
+                                  placeholder: (context, url) => const Center(
                                     child: SizedBox(
                                       height: kIsWeb ? 250.0 : 100,
-                                      child: Center(
-                                        child: CircularProgressIndicator(
-                                          color: darkModeOn
-                                            ? darkModePrimaryColor
-                                            : lightModePrimaryColor)),
+                                      child: Center(child: CustomSpinner()),
                                     ),
                                   ),
                                   errorWidget: (context, url, error) =>
@@ -146,14 +143,11 @@ class OngoingEventsState extends State<OngoingEvents> {
                           : CachedNetworkImage(
                             imageUrl: event.image!,
                             width: 300,
-                            placeholder: (context, url) => Center(
+                            placeholder: (context, url) => const Center(
                               child: SizedBox(
                               height: kIsWeb ? 250.0 : 100,
                               child: Center(
-                                child: CircularProgressIndicator(
-                                  color: darkModeOn
-                                  ? darkModePrimaryColor
-                                  : lightModePrimaryColor)),
+                                child: CustomSpinner()),
                               ),
                             ),
                             errorWidget: (context, url, error) =>

@@ -12,6 +12,7 @@ import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/screens/edit_event_screen.dart';
 import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/widgets/custom_spinner.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class PostCard extends StatefulWidget {
@@ -54,10 +55,10 @@ class _PostCardState extends State<PostCard> {
         future: userDetails,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return SizedBox(
+            return const SizedBox(
               height: 380.0,
               child: Center(
-                child: CircularProgressIndicator(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                child: CustomSpinner(),
               ),
             );
           } else if (snapshot.hasError) {
