@@ -8,7 +8,7 @@ import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/screens/report_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/cspc_background.dart';
-import 'package:student_event_calendar/widgets/custom_spinner.dart';
+import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 import 'package:student_event_calendar/widgets/ongoing_events.dart';
 import 'package:student_event_calendar/widgets/upcoming_events.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -88,7 +88,7 @@ class EventsCalendarState extends State<EventsCalendar> {
             future: events,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CustomSpinner());
+                return const Center(child: CSPCSpinner());
               } else if (snapshot.hasError) {
                 return const Center(child: Text("Something went wrong!"));
               } else {

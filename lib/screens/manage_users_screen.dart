@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/utils/colors.dart';
-import 'package:student_event_calendar/widgets/custom_spinner.dart';
+import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 import 'package:student_event_calendar/widgets/notification_button.dart';
 import 'package:student_event_calendar/widgets/users_card.dart';
 import 'package:student_event_calendar/utils/global.dart';
@@ -93,7 +93,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           return const Center(child: Text('Something went wrong'));
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CustomSpinner());
+          return const Center(child: CSPCSpinner());
         }
 
         allUsers = snapshot.data!.docs.map((doc) => model.User.fromSnap(doc)).toList();

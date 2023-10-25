@@ -6,7 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/utils/colors.dart';
-import 'package:student_event_calendar/widgets/custom_spinner.dart';
+import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 import '../providers/darkmode_provider.dart';
 
 class OngoingEvents extends StatefulWidget {
@@ -133,7 +133,7 @@ class OngoingEventsState extends State<OngoingEvents> {
                                   placeholder: (context, url) => const Center(
                                     child: SizedBox(
                                       height: kIsWeb ? 250.0 : 100,
-                                      child: Center(child: CustomSpinner()),
+                                      child: Center(child: CSPCSpinner()),
                                     ),
                                   ),
                                   errorWidget: (context, url, error) =>
@@ -147,7 +147,7 @@ class OngoingEventsState extends State<OngoingEvents> {
                               child: SizedBox(
                               height: kIsWeb ? 250.0 : 100,
                               child: Center(
-                                child: CustomSpinner()),
+                                child: CSPCSpinner()),
                               ),
                             ),
                             errorWidget: (context, url, error) =>

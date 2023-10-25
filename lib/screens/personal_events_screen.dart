@@ -7,7 +7,7 @@ import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/firestore_personal_event_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/add_personal_event.dart';
-import 'package:student_event_calendar/widgets/custom_spinner.dart';
+import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 import 'package:student_event_calendar/widgets/personal_event_note.dart';
 
 class PersonalEventsScreen extends StatefulWidget {
@@ -29,7 +29,7 @@ class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
         builder: (context, snapshot) {
           
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CustomSpinner());
+            return const Center(child: CSPCSpinner());
           }
           else if (snapshot.hasError) {
             if (kDebugMode) {

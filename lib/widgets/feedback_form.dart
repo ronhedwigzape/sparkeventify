@@ -11,7 +11,7 @@ import 'package:student_event_calendar/resources/firestore_feedback_methods.dart
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/utils/colors.dart';
-import 'package:student_event_calendar/widgets/custom_spinner.dart';
+import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 
 class FeedbackForm extends StatefulWidget {
   const FeedbackForm({Key? key, required this.eventId}) : super(key: key);
@@ -152,7 +152,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
             future: event,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CustomSpinner());
+                return const Center(child: CSPCSpinner());
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {

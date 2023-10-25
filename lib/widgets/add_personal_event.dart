@@ -9,7 +9,7 @@ import 'package:student_event_calendar/resources/firestore_personal_event_method
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
-import 'package:student_event_calendar/widgets/custom_spinner.dart';
+import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
 import '../providers/darkmode_provider.dart';
 import '../utils/global.dart';
@@ -302,7 +302,7 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
       future: currentUser,
       builder: (context, AsyncSnapshot<model.User?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CustomSpinner());
+          return const Center(child: CSPCSpinner());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {

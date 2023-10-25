@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart';
-import 'package:student_event_calendar/widgets/custom_spinner.dart';
+import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 import '../providers/darkmode_provider.dart';
 import '../utils/colors.dart';
 
@@ -109,7 +109,7 @@ class UpcomingEventsState extends State<UpcomingEvents> {
                                     child: SizedBox(
                                       height: kIsWeb ? 250.0 : 100,
                                       child: Center(
-                                        child: CustomSpinner()),
+                                        child: CSPCSpinner()),
                                     ),
                                   ),
                                   errorWidget: (context, url, error) =>
@@ -123,7 +123,7 @@ class UpcomingEventsState extends State<UpcomingEvents> {
                                   child: SizedBox(
                                     height: kIsWeb ? 250.0 : 100,
                                     child: Center(
-                                      child: CustomSpinner()),
+                                      child: CSPCSpinner()),
                                   ),
                                 ),
                                 errorWidget: (context, url, error) =>

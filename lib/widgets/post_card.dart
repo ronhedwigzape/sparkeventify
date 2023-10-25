@@ -12,7 +12,7 @@ import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/screens/edit_event_screen.dart';
 import 'package:student_event_calendar/services/connectivity_service.dart';
 import 'package:student_event_calendar/utils/colors.dart';
-import 'package:student_event_calendar/widgets/custom_spinner.dart';
+import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class PostCard extends StatefulWidget {
@@ -58,7 +58,7 @@ class _PostCardState extends State<PostCard> {
             return const SizedBox(
               height: 380.0,
               child: Center(
-                child: CustomSpinner(),
+                child: CSPCSpinner(),
               ),
             );
           } else if (snapshot.hasError) {

@@ -8,7 +8,7 @@ import 'package:student_event_calendar/services/firebase_notifications.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo_white.dart';
-import 'package:student_event_calendar/widgets/custom_spinner.dart';
+import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 
 class ClientScreenLayout extends StatefulWidget {
   const ClientScreenLayout({Key? key}) : super(key: key);
@@ -160,7 +160,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
             future: homeScreenItems(),
             builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
               if (!snapshot.hasData) {
-                return const Center(child: CustomSpinner());
+                return const Center(child: CSPCSpinner());
               }
     
               final List<Widget> homeScreenItems = snapshot.data!;

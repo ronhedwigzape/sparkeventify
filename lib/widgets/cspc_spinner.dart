@@ -5,14 +5,14 @@ import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo_spinner.dart';
 import 'package:flutter/services.dart';
 
-class CustomSpinner extends StatefulWidget {
-  const CustomSpinner({Key? key}) : super(key: key);
+class CSPCSpinner extends StatefulWidget {
+  const CSPCSpinner({Key? key}) : super(key: key);
 
   @override
-  State<CustomSpinner> createState() => _CustomSpinnerState();
+  State<CSPCSpinner> createState() => _CSPCSpinnerState();
 }
 
-class _CustomSpinnerState extends State<CustomSpinner> with SingleTickerProviderStateMixin {
+class _CSPCSpinnerState extends State<CSPCSpinner> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
   @override
