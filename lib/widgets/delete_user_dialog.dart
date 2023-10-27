@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student_event_calendar/auth/login_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
-
 import '../providers/darkmode_provider.dart';
 import '../resources/firestore_user_methods.dart';
-import '../screens/login_screen.dart';
 import '../services/connectivity_service.dart';
 
 class DeleteUserDialog extends StatefulWidget {
