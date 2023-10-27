@@ -8,6 +8,7 @@ import 'package:student_event_calendar/resources/firestore_feedback_methods.dart
 import 'package:student_event_calendar/screens/event_feedback_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/cspc_background.dart';
+import 'package:student_event_calendar/widgets/cspc_spinkit_fading_circle.dart';
 import 'package:student_event_calendar/widgets/feedback_form.dart';
 import 'package:student_event_calendar/widgets/feedback_summary_button.dart';
 import '../providers/darkmode_provider.dart';
@@ -156,7 +157,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                       placeholder: (context, url) => const Center(
                                         child: SizedBox(
                                           height: kIsWeb ? 250.0 : 100,
-                                          child: Center(child: LinearProgressIndicator()),
+                                          child: Center(child: CSPCSpinKitFadingCircle()),
                                         ),
                                       ),
                                       errorWidget: (context, url, error) =>
@@ -169,7 +170,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                       child: SizedBox(
                                         height: kIsWeb ? 250.0 : 100,
                                         child: Center(
-                                            child: LinearProgressIndicator()),
+                                            child: CSPCSpinKitFadingCircle()),
                                       ),
                                     ),
                                     errorWidget: (context, url, error) =>
