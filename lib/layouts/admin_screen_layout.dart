@@ -19,6 +19,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
   Future<model.User?> currentUser = AuthMethods().getCurrentUserDetails();
   int _page = 0;
   PageController pageController = PageController();
+  late var _refreshKey = UniqueKey();
 
   @override
   void initState() {
@@ -87,6 +88,14 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                 elevation: 0.0,
                 backgroundColor: darkModeOn ? darkColor : lightColor,
                 actions: [
+                  IconButton(
+                    onPressed: () => setState(() {
+                    _refreshKey = UniqueKey();
+                    navigationTapped(0);
+                  }),
+                  tooltip: 'Refresh', 
+                  icon: Icon(Icons.refresh, color: darkModeOn ? lightColor : darkColor),),
+                  const SizedBox(width: 10.0),
                   buildAppBarButton(icon: Icons.dashboard, label: "Dashboard", pageIndex: 0, onTap: () => navigationTapped(0)),
                   const SizedBox(width: 10.0),
                   buildAppBarButton(icon: Icons.add_circle, label: "Post", pageIndex: 1, onTap: () => navigationTapped(1)),
@@ -128,6 +137,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                 ],
               ),
               body: FutureBuilder<List<Widget>>(
+                key: _refreshKey,
                 future: homeScreenItems(),
                 builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
                   if (!snapshot.hasData) {
