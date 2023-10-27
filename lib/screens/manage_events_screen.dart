@@ -90,7 +90,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
               builder: (BuildContext context,
                   AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CSPCSpinner());
+                  return const Center(child: CSPCFadeLoader());
                 }
                 if (snapshot.hasError) {
                   return const Center(child: Text('Something went wrong'));
@@ -104,7 +104,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                     builder: (BuildContext context,
                         AsyncSnapshot<List<Event>> snapshot) {
                       if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CSPCSpinner());
+                        return const Center(child: CSPCFadeLoader());
                       }
                       else if (snapshot.hasError) {
                         return const Center(child: Text('Something went wrong'));

@@ -44,7 +44,7 @@ Future<List<model.Notification>> fetchNotifications() async {
         future: fetchNotifications(),
         builder: (BuildContext context, AsyncSnapshot<List<model.Notification>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CSPCSpinner());
+            return const Center(child: CSPCFadeLoader());
           }
           else if (snapshot.hasError) {
             if (kDebugMode) {

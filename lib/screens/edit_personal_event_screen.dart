@@ -363,7 +363,7 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
       future: currentUser,
       builder: (context, AsyncSnapshot<model.User?> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CSPCSpinner());
+          return const Center(child: CSPCFadeLoader());
         } else if (snapshot.hasError) {
           return Center(child: Text('Error: ${snapshot.error}'));
         } else {

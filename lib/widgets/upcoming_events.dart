@@ -109,7 +109,7 @@ class UpcomingEventsState extends State<UpcomingEvents> {
                                     child: SizedBox(
                                       height: kIsWeb ? 250.0 : 100,
                                       child: Center(
-                                        child: CSPCSpinner()),
+                                        child: CSPCFadeLoader()),
                                     ),
                                   ),
                                   errorWidget: (context, url, error) =>
@@ -123,7 +123,7 @@ class UpcomingEventsState extends State<UpcomingEvents> {
                                   child: SizedBox(
                                     height: kIsWeb ? 250.0 : 100,
                                     child: Center(
-                                      child: CSPCSpinner()),
+                                      child: CSPCFadeLoader()),
                                   ),
                                 ),
                                 errorWidget: (context, url, error) =>

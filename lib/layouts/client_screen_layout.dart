@@ -160,7 +160,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
             future: homeScreenItems(),
             builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
               if (!snapshot.hasData) {
-                return const Center(child: CSPCSpinner());
+                return const Center(child: CSPCFadeLoader());
               }
     
               final List<Widget> homeScreenItems = snapshot.data!;

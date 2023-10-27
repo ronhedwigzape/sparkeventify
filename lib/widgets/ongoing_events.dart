@@ -133,7 +133,7 @@ class OngoingEventsState extends State<OngoingEvents> {
                                   placeholder: (context, url) => const Center(
                                     child: SizedBox(
                                       height: kIsWeb ? 250.0 : 100,
-                                      child: Center(child: CSPCSpinner()),
+                                      child: Center(child: CSPCFadeLoader()),
                                     ),
                                   ),
                                   errorWidget: (context, url, error) =>
@@ -147,7 +147,7 @@ class OngoingEventsState extends State<OngoingEvents> {
                               child: SizedBox(
                               height: kIsWeb ? 250.0 : 100,
                               child: Center(
-                                child: CSPCSpinner()),
+                                child: CSPCFadeLoader()),
                               ),
                             ),
                             errorWidget: (context, url, error) =>

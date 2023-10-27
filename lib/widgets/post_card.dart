@@ -58,7 +58,7 @@ class _PostCardState extends State<PostCard> {
             return const SizedBox(
               height: 380.0,
               child: Center(
-                child: CSPCSpinner(),
+                child: CSPCFadeLoader(),
               ),
             );
           } else if (snapshot.hasError) {

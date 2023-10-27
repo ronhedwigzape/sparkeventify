@@ -29,7 +29,7 @@ class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
         builder: (context, snapshot) {
           
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CSPCSpinner());
+            return const Center(child: CSPCFadeLoader());
           }
           else if (snapshot.hasError) {
             if (kDebugMode) {

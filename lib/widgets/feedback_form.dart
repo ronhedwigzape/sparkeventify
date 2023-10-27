@@ -152,7 +152,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
             future: event,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CSPCSpinner());
+                return const Center(child: CSPCFadeLoader());
               } else if (snapshot.hasError) {
                 return Text('Error: ${snapshot.error}');
               } else {

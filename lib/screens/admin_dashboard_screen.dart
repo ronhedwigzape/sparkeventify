@@ -32,7 +32,7 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
     future: events,
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
-        return const Center(child: CSPCSpinner());
+        return const Center(child: CSPCFadeLoader());
       } else if (snapshot.hasError) {
         return const Center(child: Text("Something went wrong!"));
       } else {

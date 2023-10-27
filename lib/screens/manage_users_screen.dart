@@ -93,7 +93,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           return const Center(child: Text('Something went wrong'));
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CSPCSpinner());
+          return const Center(child: CSPCFadeLoader());
         }
 
         allUsers = snapshot.data!.docs.map((doc) => model.User.fromSnap(doc)).toList();
