@@ -157,7 +157,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                       placeholder: (context, url) => const Center(
                                         child: SizedBox(
                                           height: kIsWeb ? 250.0 : 100,
-                                          child: Center(child: CSPCSpinKitFadingCircle()),
+                                          child: Center(child: CSPCSpinKitFadingCircle(isLogoVisible: false,)),
                                         ),
                                       ),
                                       errorWidget: (context, url, error) =>
@@ -170,7 +170,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                       child: SizedBox(
                                         height: kIsWeb ? 250.0 : 100,
                                         child: Center(
-                                            child: CSPCSpinKitFadingCircle()),
+                                            child: CSPCSpinKitFadingCircle(isLogoVisible: false)),
                                       ),
                                     ),
                                     errorWidget: (context, url, error) =>

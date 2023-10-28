@@ -8,12 +8,14 @@ class CSPCSpinKitFadingCircle extends StatefulWidget {
     Key? key,
     this.color,
     this.size = 50.0,
-    this.duration = const Duration(milliseconds: 1000),
+    this.duration = const Duration(milliseconds: 1000), 
+    this.isLogoVisible = true,
   }) : super(key: key);
 
   final Color? color;
   final double? size;
   final Duration? duration;
+  final bool? isLogoVisible;
 
   @override
   State<CSPCSpinKitFadingCircle> createState() => _CSPCSpinKitFadingCircleState();
@@ -40,11 +42,14 @@ class _CSPCSpinKitFadingCircleState extends State<CSPCSpinKitFadingCircle> with 
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center, 
         children: [
-          !kIsWeb ? Image.asset(
+          Visibility(
+            visible: widget.isLogoVisible!,
+            child: !kIsWeb ? Image.asset(
             'assets/images/cspc_logo.png',
             width: 80,
             height: 80,
-          ) : const SizedBox.shrink(),
+          ) : const SizedBox.shrink(), 
+          ),
           const SizedBox(height: 10),
           SpinKitFadingCircle(
             color: widget.color ?? lightModePrimaryColor,
