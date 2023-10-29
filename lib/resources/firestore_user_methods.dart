@@ -301,5 +301,74 @@ class FireStoreUserMethods {
     return res;
   }
 
+  // Stream function to get all users
+  Stream<List<model.User>> getAllUsers() {
+    return _usersCollection.snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => model.User.fromSnap(doc)).toList();
+    });
+  }
+
+  // Stream function to get all user's userType
+  Stream<List<String>> getUniqueUserTypes() {
+    return getAllUsers().map((users) {
+      Set<String> userTypes = <String>{};
+      for (var user in users) {
+        userTypes.add(user.userType);
+      }
+      return userTypes.toList();
+    });
+  }
+
+  // Stream function to get all user's year
+  Stream<List<String>> getUniqueYears() {
+    return getAllUsers().map((users) {
+      Set<String> years = <String>{};
+      for (var user in users) {
+        if (user.profile?.year != null) {
+          years.add(user.profile!.year!);
+        }
+      }
+      return years.toList();
+    });
+  }
+
+  // Stream function to get all user's departments
+  Stream<List<String>> getUniqueDepartments() {
+    return getAllUsers().map((users) {
+      Set<String> departments = <String>{};
+      for (var user in users) {
+        if (user.profile?.department != null) {
+          departments.add(user.profile!.department!);
+        }
+      }
+      return departments.toList();
+    });
+  }
+
+  // Stream function to get all user's programs
+  Stream<List<String>> getUniquePrograms() {
+    return getAllUsers().map((users) {
+      Set<String> programs = <String>{};
+      for (var user in users) {
+        if (user.profile?.program != null) {
+          programs.add(user.profile!.program!);
+        }
+      }
+      return programs.toList();
+    });
+  }
+
+  // Stream function to get all user's sections
+  Stream<List<String>> getUniqueSections() {
+    return getAllUsers().map((users) {
+      Set<String> sections = <String>{};
+      for (var user in users) {
+        if (user.profile?.section != null) {
+          sections.add(user.profile!.section!);
+        }
+      }
+      return sections.toList();
+    });
+  }
 
 }
