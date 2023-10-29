@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
+import 'package:student_event_calendar/widgets/cspc_spinkit_fading_circle.dart';
 import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 import 'package:student_event_calendar/widgets/notification_button.dart';
 import 'package:student_event_calendar/widgets/users_card.dart';
@@ -150,80 +152,111 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                             ),
                           ],
                         ),
-                        DropdownButton<String>(
-                          value: dropdownUserType,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              dropdownUserType = newValue!;
-                            });
-                          },
-                          items: <String>['All', 'Student', 'Officer', 'Staff']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
+                        StreamBuilder<List<String>>(
+                          stream: FireStoreUserMethods().getUniqueUserTypes(),  // Stream function
+                          builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) return const CSPCSpinKitFadingCircle(isLogoVisible: false); // Show loading spinner if no data
+
+                            // Initialize dropdownUserType with the first item from snapshot.data, if it's not already set
+                            if (dropdownUserType == 'All' && snapshot.data!.isNotEmpty) {
+                              dropdownUserType = snapshot.data![0];
+                            }
+
+                            return DropdownButton<String>(
+                              value: dropdownUserType,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  dropdownUserType = newValue!;
+                                });
+                              },
+                              items: snapshot.data!.map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
                             );
-                          }).toList(),
-                        ), 
-                        DropdownButton<String>(
-                          value: dropdownYear,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              dropdownYear = newValue!;
-                            });
                           },
-                          items: <String>['All', '1', '2', '3', '4']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),   
-                        DropdownButton<String>(
-                          value: dropdownDepartment,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              dropdownDepartment = newValue!;
-                            });
-                          },
-                          items: <String>['All', 'CCS', 'CHS']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
-                            );
-                          }).toList(),
                         ),
-                        DropdownButton<String>(
-                          value: dropdownProgram,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              dropdownProgram = newValue!;
-                            });
-                          },
-                          items: <String>['All', 'BSIT', 'BSN', 'BSCS']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
+                        StreamBuilder<List<String>>(
+                          stream: FireStoreUserMethods().getUniqueYears(),  // Stream function
+                          builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) return const CSPCSpinKitFadingCircle(isLogoVisible: false);  // Show loading spinner if no data
+                            return DropdownButton<String>(
+                              value: dropdownYear,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  dropdownYear = newValue!;
+                                });
+                              },
+                              items: snapshot.data!.map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
                             );
-                          }).toList(),
+                          },
                         ),
-                        DropdownButton<String>(
-                          value: dropdownSection,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              dropdownSection = newValue!;
-                            });
-                          },
-                          items: <String>['All', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']
-                              .map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value),
+                        StreamBuilder<List<String>>(
+                          stream: FireStoreUserMethods().getUniqueDepartments(),  // Stream function
+                          builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) return const CSPCSpinKitFadingCircle(isLogoVisible: false);  // Show loading spinner if no data
+                            return DropdownButton<String>(
+                              value: dropdownDepartment,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  dropdownDepartment = newValue!;
+                                });
+                              },
+                              items: snapshot.data!.map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
                             );
-                          }).toList(),
+                          },
+                        ),
+                        StreamBuilder<List<String>>(
+                          stream: FireStoreUserMethods().getUniquePrograms(),  // Stream function
+                          builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) return const CSPCSpinKitFadingCircle(isLogoVisible: false);  // Show loading spinner if no data
+                            return DropdownButton<String>(
+                              value: dropdownProgram,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  dropdownProgram = newValue!;
+                                });
+                              },
+                              items: snapshot.data!.map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            );
+                          },
+                        ),
+                        StreamBuilder<List<String>>(
+                          stream: FireStoreUserMethods().getUniqueSections(),  // Stream function
+                          builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) return const CSPCSpinKitFadingCircle(isLogoVisible: false);  // Show loading spinner if no data
+                            return DropdownButton<String>(
+                              value: dropdownSection,
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  dropdownSection = newValue!;
+                                });
+                              },
+                              items: snapshot.data!.map<DropdownMenuItem<String>>((String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            );
+                          },
                         ),
                         NotificationButton(selectedUsers: selectedUsers, clearSelectedUsers: clearSelectedUsers),
                         Checkbox(
