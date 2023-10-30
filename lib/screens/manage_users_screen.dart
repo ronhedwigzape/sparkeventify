@@ -155,24 +155,20 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         StreamBuilder<List<String>>(
                           stream: FireStoreUserMethods().getUniqueUserTypes(),  // Stream function
                           builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-                            if (!snapshot.hasData || snapshot.data!.isEmpty) return const CSPCSpinKitFadingCircle(isLogoVisible: false); // Show loading spinner if no data
-
-                            // Initialize dropdownUserType with the first item from snapshot.data, if it's not already set
-                            if (dropdownUserType == 'All' && snapshot.data!.isNotEmpty) {
-                              dropdownUserType = snapshot.data![0];
-                            }
-
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) return const CSPCSpinKitFadingCircle(isLogoVisible: false); 
                             return DropdownButton<String>(
                               value: dropdownUserType,
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  dropdownUserType = newValue!;
+                                  dropdownUserType = newValue!.trim();
                                 });
                               },
-                              items: snapshot.data!.map<DropdownMenuItem<String>>((String value) {
+                              items: <String>['All', ...?snapshot.data]
+                                  .where((String value) => value.trim().isNotEmpty)  // Filter out blank or empty strings
+                                  .map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
+                                  value: value.trim(),  // Remove whitespaces
+                                  child: Text(value.trim()),  // Remove whitespaces
                                 );
                               }).toList(),
                             );
@@ -181,18 +177,20 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         StreamBuilder<List<String>>(
                           stream: FireStoreUserMethods().getUniqueYears(),  // Stream function
                           builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-                            if (!snapshot.hasData || snapshot.data!.isEmpty) return const CSPCSpinKitFadingCircle(isLogoVisible: false);  // Show loading spinner if no data
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) return const CSPCSpinKitFadingCircle(isLogoVisible: false); 
                             return DropdownButton<String>(
                               value: dropdownYear,
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  dropdownYear = newValue!;
+                                  dropdownYear = newValue!.trim();
                                 });
                               },
-                              items: snapshot.data!.map<DropdownMenuItem<String>>((String value) {
+                              items: <String>['All', ...?snapshot.data]
+                                  .where((String value) => value.trim().isNotEmpty)  // Filter out blank or empty strings
+                                  .map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
+                                  value: value.trim(),  // Remove whitespaces
+                                  child: Text(value.trim()),  // Remove whitespaces
                                 );
                               }).toList(),
                             );
@@ -201,18 +199,20 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         StreamBuilder<List<String>>(
                           stream: FireStoreUserMethods().getUniqueDepartments(),  // Stream function
                           builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-                            if (!snapshot.hasData || snapshot.data!.isEmpty) return const CSPCSpinKitFadingCircle(isLogoVisible: false);  // Show loading spinner if no data
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) return const CSPCSpinKitFadingCircle(isLogoVisible: false); 
                             return DropdownButton<String>(
                               value: dropdownDepartment,
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  dropdownDepartment = newValue!;
+                                  dropdownDepartment = newValue!.trim();
                                 });
                               },
-                              items: snapshot.data!.map<DropdownMenuItem<String>>((String value) {
+                              items: <String>['All', ...?snapshot.data]
+                                  .where((String value) => value.trim().isNotEmpty)  // Filter out blank or empty strings
+                                  .map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
+                                  value: value.trim(),  // Remove whitespaces
+                                  child: Text(value.trim()),  // Remove whitespaces
                                 );
                               }).toList(),
                             );
@@ -221,18 +221,20 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         StreamBuilder<List<String>>(
                           stream: FireStoreUserMethods().getUniquePrograms(),  // Stream function
                           builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-                            if (!snapshot.hasData || snapshot.data!.isEmpty) return const CSPCSpinKitFadingCircle(isLogoVisible: false);  // Show loading spinner if no data
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) return const CSPCSpinKitFadingCircle(isLogoVisible: false);
                             return DropdownButton<String>(
                               value: dropdownProgram,
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  dropdownProgram = newValue!;
+                                  dropdownProgram = newValue!.trim();
                                 });
                               },
-                              items: snapshot.data!.map<DropdownMenuItem<String>>((String value) {
+                              items: <String>['All', ...?snapshot.data]
+                                  .where((String value) => value.trim().isNotEmpty)  // Filter out blank or empty strings
+                                  .map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
+                                  value: value.trim(),  // Remove whitespaces
+                                  child: Text(value.trim()),  // Remove whitespaces
                                 );
                               }).toList(),
                             );
@@ -241,18 +243,20 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         StreamBuilder<List<String>>(
                           stream: FireStoreUserMethods().getUniqueSections(),  // Stream function
                           builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-                            if (!snapshot.hasData || snapshot.data!.isEmpty) return const CSPCSpinKitFadingCircle(isLogoVisible: false);  // Show loading spinner if no data
+                            if (!snapshot.hasData || snapshot.data!.isEmpty) return const CSPCSpinKitFadingCircle(isLogoVisible: false);
                             return DropdownButton<String>(
                               value: dropdownSection,
                               onChanged: (String? newValue) {
                                 setState(() {
-                                  dropdownSection = newValue!;
+                                  dropdownSection = newValue!.trim();
                                 });
                               },
-                              items: snapshot.data!.map<DropdownMenuItem<String>>((String value) {
+                              items: <String>['All', ...?snapshot.data]
+                                  .where((String value) => value.trim().isNotEmpty)  // Filter out blank or empty strings
+                                  .map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
-                                  value: value,
-                                  child: Text(value),
+                                  value: value.trim(),  // Remove whitespaces
+                                  child: Text(value.trim()),  // Remove whitespaces
                                 );
                               }).toList(),
                             );
