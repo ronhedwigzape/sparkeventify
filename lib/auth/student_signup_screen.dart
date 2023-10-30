@@ -61,7 +61,14 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
         department.isEmpty
     ) return onSignupFailure('Please complete all required fields.');
 
-      // Validate the phone number
+    // Validate the section
+    String section = _sectionController.text.trim();
+    if (section.length != 1 || !RegExp(r'^[A-Za-z]$').hasMatch(section)) {
+      onSignupFailure('Section should be one letter only.');
+      return;
+    }
+
+    // Validate the phone number
     String phoneNumber = _phoneNumberController.text.trim();
     if (!RegExp(r'^9[0-9]{9}$').hasMatch(phoneNumber)) {
       onSignupFailure('Please enter your last 10 digits of the phone number.');
@@ -82,7 +89,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
       department: department,
       program: program,
       year: _yearController.text.trim(),
-      section: _sectionController.text.trim().toUpperCase(),
+      section: section.toUpperCase(),
     );
 
     String res = await AuthMethods().signUp(
