@@ -23,6 +23,7 @@ const appName = 'Announce';
 
 // Global Programs and Departments
 final List<String> programsAndDepartments = [
+  'Select your program and department',
   'BSCS - CCS - Computer Science',
   'BSIT - CCS - Information Technology',
   'BSIS - CCS - Information Systems',
@@ -134,6 +135,7 @@ Map<String, String> programDepartmentMap = {
 };
 
 final List<String> staffPositions = [
+  'Select your position',
   'Director - Student Affairs and Services - SASO',
   'Administrative Aide VI - Head of Staff - SASO',
   'Administrative Aide III - Support Staff - Student Development',

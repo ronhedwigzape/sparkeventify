@@ -29,15 +29,10 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
   final TextEditingController _organizationController = TextEditingController();
   final TextEditingController _positionController = TextEditingController();
   late String selectedProgramAndDepartment = programsAndDepartments[0];
-  late String program;
-  late String department;
+  late String program = '';
+  late String department = '';
 
   Future<void> signUpAsClient() async {
-    BuildContext? dialogContext;
-    showDialog(context: context, builder: (context) {
-      return const Center(child: CircularProgressIndicator());
-    });
-
     if (_firstNameController.text.trim().isEmpty ||
         _middleInitialController.text.trim().isEmpty ||
         _lastNameController.text.trim().isEmpty ||
@@ -48,9 +43,22 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
         _passwordController.text.trim().isEmpty ||
         _organizationController.text.trim().isEmpty ||
         _positionController.text.trim().isEmpty ||
-        program.isEmpty ||
-        department.isEmpty
+        program.trim().isEmpty ||
+        department.trim().isEmpty
     ) return onSignupFailure('Please complete all required fields.');
+
+    // Validate the section
+    String section = _sectionController.text.trim();
+    if (section.length != 1 || !RegExp(r'^[A-Za-z]$').hasMatch(section)) {
+      onSignupFailure('Section should be one letter only.');
+      return;
+    }
+
+    // Validate the program and department
+    if (selectedProgramAndDepartment == 'Select your program and department' || department.isEmpty || program.isEmpty) {
+      onSignupFailure('Please select your program and department.');
+      return;
+    }
 
     // Validate the phone number
     String phoneNumber = _phoneNumberController.text.trim();
@@ -77,6 +85,11 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
       organization: _organizationController.text.trim(),
       officerPosition: _positionController.text.trim(),
     );
+
+    BuildContext? dialogContext;
+    showDialog(context: context, builder: (context) {
+      return const Center(child: CircularProgressIndicator());
+    });
 
     // Add a slight delay to ensure the dialog has displayed
     await Future.delayed(const Duration(milliseconds: 100));

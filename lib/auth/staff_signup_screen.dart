@@ -26,9 +26,9 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   late String selectedStaffPositions = staffPositions[0];
-  late String position;
-  late String staffType;
-  late String staffDescription;
+  late String position = '';
+  late String staffType = '';
+  late String staffDescription = '';
 
   @override
   void dispose() {
@@ -42,26 +42,26 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
   }
 
   Future<void> signUpAsClient() async {
-    BuildContext? dialogContext;
-    showDialog(context: context, builder: (context) {
-      return const Center(child: CircularProgressIndicator());
-    });
-
     if (_firstNameController.text.trim().isEmpty ||
         _middleInitialController.text.trim().isEmpty ||
         _lastNameController.text.trim().isEmpty ||
         _emailController.text.trim().isEmpty ||
         _phoneNumberController.text.trim().isEmpty ||
         _passwordController.text.trim().isEmpty ||
-        position.isEmpty ||
-        staffType.isEmpty ||
-        staffDescription.isEmpty
+        position.trim().isEmpty ||
+        staffType.trim().isEmpty ||
+        staffDescription.trim().isEmpty
     ) return onSignupFailure('Please complete all required fields.');
 
     // Validate the phone number
     String phoneNumber = _phoneNumberController.text.trim();
     if (!RegExp(r'^9[0-9]{9}$').hasMatch(phoneNumber)) {
       onSignupFailure('Please enter your last 10 digits of the phone number.');
+      return;
+    }
+
+    if (selectedStaffPositions == staffPositions[0] || staffType.isEmpty || staffDescription.isEmpty || position.isEmpty) {
+      onSignupFailure('Please select your position.');
       return;
     }
 
@@ -80,6 +80,11 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
       staffType: staffType,
       staffDescription: staffDescription,
     );
+    
+    BuildContext? dialogContext;
+    showDialog(context: context, builder: (context) {
+      return const Center(child: CircularProgressIndicator());
+    });
 
     // Add a slight delay to ensure the dialog has displayed
     await Future.delayed(const Duration(milliseconds: 100));
