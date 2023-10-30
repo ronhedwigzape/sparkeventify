@@ -32,22 +32,8 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
   late String program;
   late String department;
 
-  @override
-  void dispose() {
-    super.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _firstNameController.dispose();
-    _middleInitialController.dispose();
-    _lastNameController.dispose();
-    _phoneNumberController.dispose();
-    _yearController.dispose();
-    _sectionController.dispose();
-    _organizationController.dispose();
-    _positionController.dispose();
-  }
-
   Future<void> signUpAsClient() async {
+    BuildContext? dialogContext;
     showDialog(context: context, builder: (context) {
       return const Center(child: CircularProgressIndicator());
     });
@@ -92,14 +78,18 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
       officerPosition: _positionController.text.trim(),
     );
 
+    // Add a slight delay to ensure the dialog has displayed
+    await Future.delayed(const Duration(milliseconds: 100));
+
     String res = await AuthMethods().signUp(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
         profile: profile,
         userType: 'Officer');
 
-    if (mounted) {
-      Navigator.of(context).pop();
+    // ignore: unnecessary_null_comparison
+    if (dialogContext != null) {
+      mounted ? Navigator.of(dialogContext).pop() : '';
     }
 
     if (res == 'Success') {
@@ -124,6 +114,21 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
   void navigateToLogin() {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => const LoginScreen()));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _firstNameController.dispose();
+    _middleInitialController.dispose();
+    _lastNameController.dispose();
+    _phoneNumberController.dispose();
+    _yearController.dispose();
+    _sectionController.dispose();
+    _organizationController.dispose();
+    _positionController.dispose();
   }
 
   @override
