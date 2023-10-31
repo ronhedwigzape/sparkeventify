@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:student_event_calendar/models/personal_event.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/firestore_personal_event_methods.dart';
@@ -19,6 +20,15 @@ class PersonalEventsScreen extends StatefulWidget {
 
 class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
   final _fireStorePersonalEventMethods = FireStorePersonalEventMethods();
+
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    // monitor network fetch
+    await Future.delayed(const Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -131,14 +141,24 @@ class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
           // Sort the personalEvents list in descending order of dateUpdated
           personalEvents.sort((a, b) => b.dateUpdated!.compareTo(a.dateUpdated!));
 
-          return ListView.builder(
-            itemCount: personalEvents.length,
-            padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
-            itemBuilder: (context, index) {
-              return PersonalEventNote(
-                personalEvent: personalEvents?[index],
-              );
-            },
+          return Stack(
+            children: [
+              SmartRefresher(
+                enablePullDown: true,
+                header: const WaterDropHeader(),
+                controller: _refreshController,
+                onRefresh: _onRefresh,
+                child: ListView.builder(
+                  itemCount: personalEvents.length,
+                  padding: const EdgeInsets.fromLTRB(0, 5, 0, 0),
+                  itemBuilder: (context, index) {
+                    return PersonalEventNote(
+                      personalEvent: personalEvents?[index],
+                    );
+                  },
+                ),
+              ),
+            ],
           );
         },
       ),

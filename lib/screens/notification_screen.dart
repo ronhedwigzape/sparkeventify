@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/cspc_spinner.dart';
@@ -11,9 +12,14 @@ import '../widgets/notification_card.dart';
 import '../models/notification.dart' as model;
 import '../models/user.dart' as model;
 
-class NotificationScreen extends StatelessWidget {
+class NotificationScreen extends StatefulWidget {
   const NotificationScreen({super.key});
 
+  @override
+  State<NotificationScreen> createState() => _NotificationScreenState();
+}
+
+class _NotificationScreenState extends State<NotificationScreen> {
 Future<List<model.Notification>> fetchNotifications() async {
   final currentUserID = FirebaseAuth.instance.currentUser!.uid;
 
@@ -33,6 +39,17 @@ Future<List<model.Notification>> fetchNotifications() async {
   return notifications;
 }
 
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+
+  void _onRefresh() async {
+    // monitor network fetch
+    await Future.delayed(const Duration(milliseconds: 1000));
+    // if failed,use refreshFailed()
+    _refreshController.refreshCompleted();
+    setState(() {
+      fetchNotifications();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,15 +93,25 @@ Future<List<model.Notification>> fetchNotifications() async {
             ); 
           }
           
-          return ListView.builder(
-            itemCount: snapshot.data!.length,
-            itemBuilder: (context, index) => Container(
-              margin: EdgeInsets.symmetric(
-                horizontal: width > webScreenSize ? width * 0.2 : 0,
-                vertical: width > webScreenSize ? 15 : 0),
-              child: NotificationCard(snap: snapshot.data![index],
-              )
-            )
+          return Stack(
+            children: [
+              SmartRefresher(
+                enablePullDown: true,
+                header: WaterDropHeader(),
+                controller: _refreshController,
+                onRefresh: _onRefresh,
+                child: ListView.builder(
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) => Container(
+                    margin: EdgeInsets.symmetric(
+                      horizontal: width > webScreenSize ? width * 0.2 : 0,
+                      vertical: width > webScreenSize ? 15 : 0),
+                    child: NotificationCard(snap: snapshot.data![index],
+                    )
+                  )
+                ),
+              ),
+            ],
           );
         },
       ),
