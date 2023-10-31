@@ -17,7 +17,7 @@ class AdminDashboardScreen extends StatefulWidget {
 }
 
 class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
-  late Future<Map<DateTime, List<Event>>> events;
+  late Stream<Map<DateTime, List<Event>>> events;
 
   @override
   void initState() {
@@ -28,8 +28,8 @@ class _AdminDashboardScreenState extends State<AdminDashboardScreen> {
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-   return FutureBuilder<Map<DateTime, List<Event>>>(
-    future: events,
+   return StreamBuilder<Map<DateTime, List<Event>>>(
+    stream: events,
     builder: (context, snapshot) {
       if (snapshot.connectionState == ConnectionState.waiting) {
         return const Center(child: CSPCFadeLoader());

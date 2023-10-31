@@ -28,7 +28,7 @@ class EventsCalendarState extends State<EventsCalendar> {
   DateTime? _selectedDay;
   Map<DateTime, List<Event>> _events = {};
   final fireStoreEventMethods = FireStoreEventMethods();
-  late Future<Map<DateTime, List<Event>>> events;
+  late Stream<Map<DateTime, List<Event>>> events;
   String currentMonth = DateFormat('MMMM yyyy').format(DateTime.now());
 
   @override
@@ -84,8 +84,8 @@ class EventsCalendarState extends State<EventsCalendar> {
               currentFocus.unfocus();
             }
           },
-          child: FutureBuilder<Map<DateTime, List<Event>>>(
-            future: events,
+          child: StreamBuilder<Map<DateTime, List<Event>>>(
+            stream: events,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CSPCFadeLoader());
