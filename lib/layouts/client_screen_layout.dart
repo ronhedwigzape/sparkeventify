@@ -22,7 +22,6 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
   PageController pageController = PageController();
   final firestoreNotification = FirebaseNotificationService();
   late Stream<int> notificationCount;
-  late var _refreshKey = UniqueKey();
 
   // Define app names for each user type
   final List<String> appNamesForStaff = ['Calendar of Events', 'Post Announcement', 'Manage Events', 'Profile', '', 'Notifications'];
@@ -105,11 +104,6 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
             ],
           ),
           actions: [
-            IconButton(onPressed: () => setState(() {
-              _refreshKey = UniqueKey();
-              navigationTapped(0);
-            }), 
-            icon: const Icon(Icons.refresh, color: lightColor),),
             IconButton(
               onPressed: () => navigationTapped(5),
               icon: Stack(
@@ -156,7 +150,6 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
           ],
         ),
           body: FutureBuilder<List<Widget>>(
-            key: _refreshKey,
             future: homeScreenItems(),
             builder: (BuildContext context, AsyncSnapshot<List<Widget>> snapshot) {
               if (!snapshot.hasData) {
