@@ -260,6 +260,51 @@ class FirestoreFeedbackMethods {
     });
   }
 
+    Stream<Map<DateTime, List<model.Event>>> getEventsWithFeedbackByDateByDepartment(String department) {
+    // Get all documents from the events collection where 'hasFeedback' is true.
+    return _eventRef.where('hasFeedback', isEqualTo: true).snapshots().asyncMap((snapshot) async {
+      // Initialize an empty map to store the events.
+      Map<DateTime, List<model.Event>> events = {};
+
+      // Check if the snapshot contains any documents.
+      if (snapshot.docs.isNotEmpty) {
+        // Loop through each document in the snapshot.
+        for (var doc in snapshot.docs) {
+          // Convert the document snapshot to an Event object.
+          model.Event event = await model.Event.fromSnap(doc);
+
+          // Check if the event's department matches the provided department.
+          if (event.participants != null && event.participants!['department'].contains(department)) {
+            // Get the start and end dates of the event and adjust the time to the start and end of the day respectively.
+            DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+                .toLocal();
+            DateTime endDate = DateTime(event.endDate.year, event.endDate.month, event.endDate.day, 23, 59, 59)
+                .toLocal();
+
+            // Loop through each day between the start and end dates.
+            for (var day = startDate; day.isBefore(endDate) || day.isAtSameMomentAs(endDate);
+            day = day.add(const Duration(days: 1))) {
+              // Adjust the time of the day to the start of the day.
+              DateTime adjustedDay = DateTime(day.year, day.month, day.day, 0, 0, 0)
+                  .toLocal();
+
+              // Check if the events map already contains the adjusted day as a key.
+              if (events.containsKey(adjustedDay)) {
+                // If the key exists, add the event to the list of events for that day.
+                events[adjustedDay]!.add(event);
+              } else {
+                // If the key does not exist, create a new list with the event and add it to the map.
+                events[adjustedDay] = [event];
+              }
+            }
+          }
+        }
+      }
+
+      // Return the map of events.
+      return events;
+    });
+  }
 
   Future<Map<String, dynamic>> getEventFeedbackSummary(String eventId) async {
     List<EventFeedbacks> allFeedbacks = await getAllFeedbacks(eventId);

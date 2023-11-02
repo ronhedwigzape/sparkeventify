@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/resources/firestore_feedback_methods.dart';
+import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/screens/event_feedback_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/cspc_background.dart';
@@ -22,28 +23,35 @@ class FeedbackScreen extends StatefulWidget {
 }
 
 class FeedbackScreenState extends State<FeedbackScreen> {
- final Stream<Map<DateTime, List<Event>>> _events = FirestoreFeedbackMethods().getEventsWithFeedbackByDate();
   List<Event> pastEvents = [];
   Event? selectedEvent;
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  final FireStoreUserMethods _userMethods = FireStoreUserMethods();
 
   @override
   void initState() {
     super.initState();
-    _updatePastEvents();
+    _userMethods.getCurrentUserDataStream().listen((user) {
+      String? department = user?.profile?.department;
+      final Stream<Map<DateTime, List<Event>>> events = kIsWeb ? FirestoreFeedbackMethods().getEventsWithFeedbackByDate() : FirestoreFeedbackMethods().getEventsWithFeedbackByDateByDepartment(department!);
+      _updatePastEvents(events);
+    });
   }
-
-  final RefreshController _refreshController = RefreshController(initialRefresh: false);
 
   void _onRefresh() async {
     // monitor network fetch
     await Future.delayed(const Duration(milliseconds: 1000));
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
-    _updatePastEvents();
+    _userMethods.getCurrentUserDataStream().listen((user) {
+      String? department = user?.profile?.department;
+      final Stream<Map<DateTime, List<Event>>> events = kIsWeb ? FirestoreFeedbackMethods().getEventsWithFeedbackByDate() : FirestoreFeedbackMethods().getEventsWithFeedbackByDateByDepartment(department!);
+      _updatePastEvents(events);
+    });
   }
 
-  void _updatePastEvents() {
-    _events.listen((events) {
+  void _updatePastEvents(Stream<Map<DateTime, List<Event>>> eventsStream) {
+    eventsStream.listen((events) {
       // Clear previous state
       pastEvents.clear();
 

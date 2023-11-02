@@ -22,6 +22,17 @@ class FireStoreUserMethods {
     return user;
   }
 
+  Stream<model.User?> getCurrentUserDataStream() async* {
+    final currentUser = _auth.currentUser;
+    if (currentUser == null) yield null;
+    final documentSnapshot = await _usersCollection.doc(currentUser!.uid).get();
+    if (documentSnapshot.exists) {
+      // Convert DocumentSnapshot to User
+      final user = model.User.fromSnap(documentSnapshot);
+      yield user;
+    }
+}
+
   Future<void> updateCurrentUserData(model.User user) async {
     await _usersCollection
         .doc(user.uid)

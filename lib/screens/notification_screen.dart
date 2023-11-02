@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/utils/colors.dart';
-import 'package:student_event_calendar/widgets/cspc_spinner.dart';
+import 'package:student_event_calendar/widgets/cspc_spinkit_fading_circle.dart';
 import '../utils/global.dart';
 import '../widgets/notification_card.dart';
 import '../models/notification.dart' as model;
@@ -61,7 +61,7 @@ Future<List<model.Notification>> fetchNotifications() async {
         future: fetchNotifications(),
         builder: (BuildContext context, AsyncSnapshot<List<model.Notification>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CSPCFadeLoader());
+            return const Center(child: CSPCSpinKitFadingCircle());
           }
           else if (snapshot.hasError) {
             if (kDebugMode) {
@@ -97,7 +97,7 @@ Future<List<model.Notification>> fetchNotifications() async {
             children: [
               SmartRefresher(
                 enablePullDown: true,
-                header: WaterDropHeader(),
+                header: const WaterDropHeader(),
                 controller: _refreshController,
                 onRefresh: _onRefresh,
                 child: ListView.builder(
