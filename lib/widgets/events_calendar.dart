@@ -6,9 +6,11 @@ import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
+import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/screens/report_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/cspc_background.dart';
+import 'package:student_event_calendar/widgets/cspc_spinkit_fading_circle.dart';
 import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 import 'package:student_event_calendar/widgets/ongoing_events.dart';
 import 'package:student_event_calendar/widgets/upcoming_events.dart';
@@ -29,13 +31,20 @@ class EventsCalendarState extends State<EventsCalendar> {
   DateTime? _selectedDay;
   Map<DateTime, List<Event>> _events = {};
   final fireStoreEventMethods = FireStoreEventMethods();
-  late Stream<Map<DateTime, List<Event>>> events;
+  Stream<Map<DateTime, List<Event>>>? events; 
   String currentMonth = DateFormat('MMMM yyyy').format(DateTime.now());
+  String? department;
 
   @override
   void initState() {
     super.initState();
-    events = fireStoreEventMethods.getEventsByDate();
+    final fireStoreUserMethods = FireStoreUserMethods();
+    fireStoreUserMethods.getCurrentUserDataStream().listen((user) {
+      setState(() {
+        department = user?.profile!.department;
+      });
+      events = kIsWeb ? fireStoreEventMethods.getEventsByDate() : fireStoreEventMethods.getEventsByDateByDepartment(department!);
+    });
   }
 
   List<Event> _getEventsForDay(DateTime day) {
@@ -58,7 +67,7 @@ class EventsCalendarState extends State<EventsCalendar> {
     // if failed,use refreshFailed()
     _refreshController.refreshCompleted();
     setState(() {
-      events = fireStoreEventMethods.getEventsByDate();
+      events = kIsWeb ? fireStoreEventMethods.getEventsByDate() : fireStoreEventMethods.getEventsByDateByDepartment(department!);
     });
   }
 
@@ -98,7 +107,7 @@ class EventsCalendarState extends State<EventsCalendar> {
               currentFocus.unfocus();
             }
           },
-          child: StreamBuilder<Map<DateTime, List<Event>>>(
+          child: events != null ? StreamBuilder<Map<DateTime, List<Event>>>(
             stream: events,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -343,7 +352,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                 );
               }
             },
-          ),
+          ) : const CSPCSpinKitFadingCircle(),
         ),
       ],
     );

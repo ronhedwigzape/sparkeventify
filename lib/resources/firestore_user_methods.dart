@@ -31,7 +31,7 @@ class FireStoreUserMethods {
       final user = model.User.fromSnap(documentSnapshot);
       yield user;
     }
-}
+  }
 
   Future<void> updateCurrentUserData(model.User user) async {
     await _usersCollection
