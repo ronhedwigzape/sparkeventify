@@ -28,7 +28,7 @@ void main() async {
   await dotenv.load();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   runApp(const App());
-  FirebaseNotificationService().manageTokenRegistrations();
+  // FirebaseNotificationService().manageTokenRegistrations();
   final prefs = await SharedPreferences.getInstance();
   prefs.setBool('dialogShown', false);
 }
