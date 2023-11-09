@@ -135,7 +135,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         password: _passwordController.text.trim(),
         profile: profile,
         userType: widget.user.userType, 
-        uid: widget.user.uid);
+        uid: widget.user.uid,
+        currentPassword: widget.user.password!);
 
     if (res == 'Success') {
       onUpdateSuccess();

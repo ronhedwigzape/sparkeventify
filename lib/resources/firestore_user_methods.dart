@@ -169,59 +169,108 @@ class FireStoreUserMethods {
     return res;
   }
 
-  /* Update current user account details */
+
+  // Method to reauthenticate user
+  Future<bool> reauthenticateUser(String email, String currentPassword) async {
+    try {
+      // Obtain the user's current authentication credentials
+      User? user = _auth.currentUser;
+      AuthCredential credential = EmailAuthProvider.credential(email: email, password: currentPassword);
+
+      // Reauthenticate
+      await user?.reauthenticateWithCredential(credential);
+      return true;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error in reauthentication: $e');
+      }
+      return false;
+    }
+  }
+
+  // Updated updateUser function
   Future<String> updateUser({
     required String uid,
     required String email,
     required String password,
     String? username,
     required String userType,
-    model.Profile? profile
+    model.Profile? profile,
+    required String currentPassword // Add current password parameter
   }) async {
     String res = "Enter valid credentials";
     Map<String, String>? deviceTokens = {};
+    print('UpdateUser Function Called');
+    print('Email: $email');
+    print('Password: $password');
+    print('UserType: $userType');
+    print('Initial Response: $res');
+
     try {
-      if (email.isNotEmpty && password.isNotEmpty && userType.isNotEmpty) {
-
-        // Check cspc email format based on userType
-        if ((userType == 'Admin' || userType == 'Staff') && !email.endsWith('@cspc.edu.ph')) {
-          return 'Invalid email format. Please use an email ending with @cspc.edu.ph';
-        } else if ((userType == 'Student' || userType == 'Officer') && !email.endsWith('@my.cspc.edu.ph')) {
-          return 'Invalid email format. Please use an email ending with @my.cspc.edu.ph';
+      // Reauthenticate before performing sensitive operations
+      bool reauthResult = await reauthenticateUser(email, currentPassword);
+      if (!reauthResult) {
+        if (kDebugMode) {
+          print('Reauthentication failed');
         }
-         // Check if phone number starts with 639 and has length of 12 digits
-        if (!RegExp(r"^639\d{9}$").hasMatch(profile?.phoneNumber ?? '')) {
-          return 'Please enter a valid phone number. (e.g. 639123456789)';
+        return 'Reauthentication required';
+      }
+      // Validate if all required fields are provided
+      if (email.isEmpty || password.isEmpty || userType.isEmpty) {
+        print('Error: Email, Password, or UserType is empty');
+        return res;
+      }
+
+      // Email format validation
+      if ((userType == 'Admin' || userType == 'Staff') && !email.endsWith('@cspc.edu.ph')) {
+        print('Error: Invalid email format for Admin/Staff');
+        return 'Invalid email format. Please use an email ending with @cspc.edu.ph';
+      } else if ((userType == 'Student' || userType == 'Officer') && !email.endsWith('@my.cspc.edu.ph')) {
+        print('Error: Invalid email format for Student/Officer');
+        return 'Invalid email format. Please use an email ending with @my.cspc.edu.ph';
+      }
+
+      // Phone number validation
+      if (!RegExp(r"^639\d{9}$").hasMatch(profile?.phoneNumber ?? '')) {
+        print('Error: Invalid phone number format');
+        return 'Please enter a valid phone number. (e.g. 639123456789)';
+      }
+
+      // Section and Year validation for non-Staff and non-Admin
+      if (userType != "Staff" && userType != "Admin") {
+        if (!RegExp(r"^[A-Z]$").hasMatch(profile?.section ?? '')) {
+          print('Error: Invalid section format');
+          return 'Section should be a single letter A-Z';
         }
-
-        if (userType != "Staff" && userType != "Admin") {
-          // Check if section is a single letter A-Z
-          if (!RegExp(r"^[A-Z]$").hasMatch(profile?.section ?? '')) {
-            return 'Section should be a single letter A-Z';
-          }
-          // Check if year is 1-4
-          if (!RegExp(r"^[1-4]$").hasMatch(profile?.year ?? '')) {
-            return 'Year should be 1-4';
-          }
+        if (!RegExp(r"^[1-4]$").hasMatch(profile?.year ?? '')) {
+          print('Error: Invalid year format');
+          return 'Year should be 1-4';
         }
+      }
 
-        model.User user = model.User(
-          uid: uid,
-          email: email,
-          username: username,
-          userType: userType,
-          profile: profile,
-          password: password,
-          deviceTokens: deviceTokens,
-        );
+      // If all validations pass
+      model.User user = model.User(
+        uid: uid,
+        email: email,
+        username: username,
+        userType: userType,
+        profile: profile,
+        password: password,
+        deviceTokens: deviceTokens,
+      );
 
-        await _auth.currentUser!.updateEmail(email);
-        await _auth.currentUser!.updatePassword(password);
-        await _usersCollection.doc(uid).update(user.toJson());
-        
-        res = "Success";
-      } 
+      // Updating Firebase user
+      await _auth.currentUser!.updateEmail(email);
+      await _auth.currentUser!.updatePassword(password);
+      await _usersCollection.doc(uid).update(user.toJson());
+      res = "Success";
+      if (kDebugMode) {
+        print('User updated successfully: $res');
+      }
     } catch (err) {
+      if (kDebugMode) {
+        print('Error in try-catch block: $err');
+      }
       if (err is FirebaseAuthException) {  
         if (err.code == 'invalid-email') {
           res = 'The email is badly formatted.';
