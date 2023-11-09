@@ -500,46 +500,11 @@ class _PostScreenState extends State<PostScreen> {
                                               children: [
                                                 Expanded(
                                                 flex: 2,
-                                                child: DropdownButtonFormField<String>(
-                                                  decoration: InputDecoration(
-                                                    prefixIcon:
-                                                        const Icon(Icons.location_pin),
-                                                    labelText:
-                                                        '${kIsWeb ? 'Select venue' : 'Venue'}*',
-                                                    border: OutlineInputBorder(
-                                                        borderSide:
-                                                            Divider.createBorderSide(
-                                                      context,
-                                                      color: darkModeOn
-                                                          ? darkModeTertiaryColor
-                                                          : lightModeTertiaryColor,
-                                                    )),
-                                                  ),
-                                                  value:
-                                                      _eventVenueController.text.isEmpty
-                                                          ? null
-                                                          : _eventVenueController.text,
-                                                  items: <String>[
-                                                    'Gymnasium',
-                                                    'Auditorium'
-                                                  ].map((String value) {
-                                                    return DropdownMenuItem<String>(
-                                                      value: value,
-                                                      child: Row(
-                                                        mainAxisSize: MainAxisSize.min,
-                                                        children: [
-                                                          Text(value),
-                                                        ],
-                                                      ),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (String? newValue) {
-                                                    setState(() {
-                                                      _eventVenueController.text =
-                                                          newValue!;
-                                                    });
-                                                  },
-                                                ),
+                                                child: TextFieldInput(
+                                                  textEditingController: _eventVenueController,
+                                                  labelText: 'Venue*',
+                                                  textInputType: TextInputType.text,
+                                                )
                                               )],
                                             ),
                                           ) : const SizedBox.shrink(),
