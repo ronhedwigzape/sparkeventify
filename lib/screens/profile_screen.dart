@@ -357,7 +357,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                 children: [
-                                  Flexible(
+                                  Expanded(
                                     child: SizedBox(
                                       height: kIsWeb ? 40 : null,
                                       child: ElevatedButton.icon(
@@ -384,7 +384,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       ),
                                     ),
                                   ),
-                                  Flexible(
+                                  const SizedBox(width: 10),
+                                  Expanded(
                                     child: SizedBox(
                                       height: kIsWeb ? 40 : null,
                                       child: ElevatedButton.icon(
