@@ -186,7 +186,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                                 'Event Type',
                                 style: TextStyle(
                                   fontWeight: FontWeight.bold,
-                                  fontSize: 18.0,
+                                  fontSize: 21.0,
                                   color: darkModeOn ? lightColor : darkColor,
                                 ),
                               )) : const SizedBox.shrink(),

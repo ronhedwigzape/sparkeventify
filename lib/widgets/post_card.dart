@@ -237,6 +237,7 @@ class _PostCardState extends State<PostCard> {
                   ],
                 ),
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Flexible(
                       child: Padding(
