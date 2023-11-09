@@ -95,7 +95,14 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           return const Center(child: Text('Something went wrong'));
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CSPCFadeLoader());
+          return const Center(child: 
+          Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CSPCFadeLoader(),
+              Text('Loading users...')
+            ],
+          ));
         }
 
         allUsers = snapshot.data!.docs.map((doc) => model.User.fromSnap(doc)).toList();
@@ -292,8 +299,13 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   height: MediaQuery.of(context).size.height > webScreenSize ? width * 0.33 : 0,
                   child: SingleChildScrollView(
                     child: Column(
-                    children: filteredUsers.isEmpty
-                    ? <Widget>[const Text('No user matches your search.')]  // If filteredUsers is empty, display a text message
+                    children: filteredUsers.isEmpty && snapshot.connectionState == ConnectionState.waiting
+                    ? <Widget>[
+                        const CSPCSpinKitFadingCircle(isLogoVisible: true),
+                        const Text('Loading users...')
+                    ] : filteredUsers.isEmpty ? <Widget>[
+                        const Center(child: Text('No user matches your search.')),
+                    ]
                     : filteredUsers.map((user) => Container(  // Otherwise, display the list of users
                       margin: EdgeInsets.symmetric(
                       horizontal: width > webScreenSize ? width * 0.08 : 0,
