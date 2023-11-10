@@ -66,7 +66,7 @@ class _PostCardState extends State<PostCard> {
           } else {
             final author = snapshot.data?.profile?.fullName;
             final authorType = snapshot.data?.userType;
-            final authorImage = snapshot.data?.profile?.profileImage;
+            final authorImage = snapshot.data?.profile?.profileImage != null ? snapshot.data?.profile?.profileImage!.trim() : '';
             final datePublished = widget.snap.datePublished ?? DateTime.now().toUtc();
             final manila = tz.getLocation('Asia/Manila');
             final localTime = tz.TZDateTime.from(datePublished, manila);
@@ -85,8 +85,9 @@ class _PostCardState extends State<PostCard> {
                       children: <Widget>[
                       CircleAvatar(
                         radius: 16,
-                        backgroundImage: NetworkImage(authorImage ??
-                            'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
+                        backgroundImage: authorImage != null && authorImage.isNotEmpty 
+                          ? NetworkImage(authorImage)
+                          : const NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
                         backgroundColor: transparent,
                       ),
                       Expanded(
@@ -172,6 +173,7 @@ class _PostCardState extends State<PostCard> {
                                     bool isConnected = await ConnectivityService().isConnected();
                                     if (isConnected) {
                                       await FireStoreEventMethods().removeEvent(widget.snap.id);
+                                      mounted ? Navigator.of(context).pop() : '';
                                     } else {
                                       // Show a message to the user
                                       mounted ? Navigator.of(context).pop() : '';
@@ -350,8 +352,9 @@ class _PostCardState extends State<PostCard> {
                       children: <Widget>[
                       CircleAvatar(
                         radius: 16,
-                        backgroundImage: NetworkImage(authorImage ??
-                            'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
+                        backgroundImage: authorImage != null && authorImage.isNotEmpty 
+                          ? NetworkImage(authorImage)
+                          : const NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
                         backgroundColor: transparent,
                       ),
                       Expanded(
@@ -504,26 +507,28 @@ class _PostCardState extends State<PostCard> {
              
                  Row(
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextButton.icon(
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (context) => EditEventScreen(
-                                eventSnap: widget.snap,
+                    Flexible(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: TextButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => EditEventScreen(
+                                  eventSnap: widget.snap,
+                                ),
                               ),
+                            );
+                          },
+                          icon: Icon(Icons.edit_calendar, size: 24, color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,),
+                          label: Text('Edit ${widget.snap.title}', 
+                            style: TextStyle(
+                              fontWeight: FontWeight.w700,
+                              fontSize: 16,
+                              color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                              overflow: TextOverflow.ellipsis,  
                             ),
-                          );
-                        },
-                        icon: Icon(Icons.edit_calendar, size: 24, color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,),
-                        label: Text('Edit ${widget.snap.title}', 
-                          style: TextStyle(
-                            fontWeight: FontWeight.w700,
-                            fontSize: 16,
-                            color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
-                            overflow: TextOverflow.ellipsis,  
-                          ),
+                        ),
                       ),
                     ),
                   ],
