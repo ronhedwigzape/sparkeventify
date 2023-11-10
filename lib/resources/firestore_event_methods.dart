@@ -98,6 +98,8 @@ class FireStoreEventMethods {
     try {
       // Remove the event from the 'events' collection in Firestore
       await _eventsCollection.doc(eventId).delete();
+      await StorageMethods().deleteImageFromStorage('images/$eventId');
+      await StorageMethods().deleteFileFromStorage('documents/$eventId');
 
       response = 'Success';
     } on FirebaseException catch (err) {

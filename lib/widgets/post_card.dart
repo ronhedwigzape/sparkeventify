@@ -440,6 +440,7 @@ class _PostCardState extends State<PostCard> {
                                     bool isConnected = await ConnectivityService().isConnected();
                                     if (isConnected) {
                                       await FireStoreEventMethods().removeEvent(widget.snap.id);
+                                      mounted ? Navigator.of(context).pop() : '';
                                     } else {
                                       // Show a message to the user
                                       mounted ? Navigator.of(context).pop() : '';

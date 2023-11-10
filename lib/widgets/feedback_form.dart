@@ -245,7 +245,6 @@ class _FeedbackFormState extends State<FeedbackForm> {
                                       context,
                                       color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
                                   ),
-                                  prefixIcon: const Icon(Icons.thumb_up_alt),
                                   labelText: 'Rating*',
                                 ),
                                 value: _ratingController.text.isEmpty

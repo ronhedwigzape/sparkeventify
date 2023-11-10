@@ -297,6 +297,7 @@ class FireStoreUserMethods {
       if (email.isNotEmpty && password.isNotEmpty) {
         await _usersCollection.doc(uid).delete();
         await _auth.currentUser!.delete();
+        await StorageMethods().deleteImageFromStorage('profileImages/$uid');
         res = "Success";
       } 
     } catch (err) {

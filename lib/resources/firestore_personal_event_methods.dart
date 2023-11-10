@@ -99,6 +99,8 @@ class FireStorePersonalEventMethods {
     try {
       // Remove the event from the 'personal_events' collection in Firestore
       await _personalEventsCollection.doc(eventId).delete();
+      await StorageMethods().deleteImageFromStorage('images/$eventId');
+      await StorageMethods().deleteFileFromStorage('documents/$eventId');
 
       response = 'Success';
     } on FirebaseException catch (err) {

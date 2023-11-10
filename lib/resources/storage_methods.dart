@@ -40,4 +40,17 @@ class StorageMethods {
 
     return downloadUrl;
   }
+
+  // Method to delete a file from storage
+  Future<void> deleteFileFromStorage(String filePath) async {
+    Reference ref = _storage.ref(filePath);
+    await ref.delete();
+  }
+
+  // Method to delete an image from storage
+  Future<void> deleteImageFromStorage(String filePath) async {
+    Reference ref = _storage.ref(filePath);
+    await ref.delete();
+  }
+  
 }
