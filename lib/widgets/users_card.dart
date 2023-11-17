@@ -226,7 +226,7 @@ class _UsersCardState extends State<UsersCard> {
                        ),
                        Flexible(
                         fit: FlexFit.loose,
-                        child: EditUserDialog(user: widget.user)
+                        child: EditUserDialog(key: ValueKey(widget.user.uid), user: widget.user)
                        ),
                        Flexible(
                          child: Tooltip(
