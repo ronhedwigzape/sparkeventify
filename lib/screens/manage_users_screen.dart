@@ -162,7 +162,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         StreamBuilder<List<String>>(
                           stream: FireStoreUserMethods().getUniqueUserTypes(),  // Stream function
                           builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-                            if (!snapshot.hasData || snapshot.data!.isEmpty || snapshot.hasError) return const CSPCSpinKitFadingCircle(isLogoVisible: false); 
+                            if (snapshot.connectionState == ConnectionState.waiting) return const CSPCSpinKitFadingCircle(isLogoVisible: false,);
+                            if (!snapshot.hasData || snapshot.hasError) return const CSPCSpinKitFadingCircle(isLogoVisible: false); 
                             return DropdownButton<String>(
                               value: dropdownUserType,
                               onChanged: (String? newValue) {
@@ -184,7 +185,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         StreamBuilder<List<String>>(
                           stream: FireStoreUserMethods().getUniqueYears(),  // Stream function
                           builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-                            if (!snapshot.hasData || snapshot.data!.isEmpty || snapshot.hasError) return const CSPCSpinKitFadingCircle(isLogoVisible: false); 
+                            if (snapshot.connectionState == ConnectionState.waiting) return const CSPCSpinKitFadingCircle(isLogoVisible: false,);
+                            if (!snapshot.hasData || snapshot.hasError) return const CSPCSpinKitFadingCircle(isLogoVisible: false); 
                             return DropdownButton<String>(
                               value: dropdownYear,
                               onChanged: (String? newValue) {
@@ -206,7 +208,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         StreamBuilder<List<String>>(
                           stream: FireStoreUserMethods().getUniqueDepartments(),  // Stream function
                           builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-                            if (!snapshot.hasData || snapshot.data!.isEmpty || snapshot.hasError) return const CSPCSpinKitFadingCircle(isLogoVisible: false); 
+                            if (snapshot.connectionState == ConnectionState.waiting) return const CSPCSpinKitFadingCircle(isLogoVisible: false,);
+                            if (!snapshot.hasData || snapshot.hasError) return const CSPCSpinKitFadingCircle(isLogoVisible: false); 
                             return DropdownButton<String>(
                               value: dropdownDepartment,
                               onChanged: (String? newValue) {
@@ -228,7 +231,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         StreamBuilder<List<String>>(
                           stream: FireStoreUserMethods().getUniquePrograms(),  // Stream function
                           builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-                            if (!snapshot.hasData || snapshot.data!.isEmpty || snapshot.hasError) return const CSPCSpinKitFadingCircle(isLogoVisible: false);
+                            if (snapshot.connectionState == ConnectionState.waiting) return const CSPCSpinKitFadingCircle(isLogoVisible: false,);
+                            if (!snapshot.hasData || snapshot.hasError) return const CSPCSpinKitFadingCircle(isLogoVisible: false);
                             return DropdownButton<String>(
                               value: dropdownProgram,
                               onChanged: (String? newValue) {
@@ -250,7 +254,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                         StreamBuilder<List<String>>(
                           stream: FireStoreUserMethods().getUniqueSections(),  // Stream function
                           builder: (BuildContext context, AsyncSnapshot<List<String>> snapshot) {
-                            if (!snapshot.hasData || snapshot.data!.isEmpty || snapshot.hasError) return const CSPCSpinKitFadingCircle(isLogoVisible: false);
+                            if (snapshot.connectionState == ConnectionState.waiting) return const CSPCSpinKitFadingCircle(isLogoVisible: false,);
+                            if (!snapshot.hasData || snapshot.hasError) return const CSPCSpinKitFadingCircle(isLogoVisible: false);
                             return DropdownButton<String>(
                               value: dropdownSection,
                               onChanged: (String? newValue) {
@@ -299,7 +304,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   height: MediaQuery.of(context).size.height > webScreenSize ? width * 0.33 : 0,
                   child: SingleChildScrollView(
                     child: Column(
-                    children: filteredUsers.isEmpty && snapshot.connectionState == ConnectionState.waiting
+                    children: snapshot.connectionState == ConnectionState.waiting
                     ? <Widget>[
                         const CSPCSpinKitFadingCircle(isLogoVisible: true),
                         const Text('Loading users...')

@@ -241,7 +241,7 @@ class _PostCardState extends State<PostCard> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Flexible(
+                    Expanded(
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: ElevatedButton.icon(
