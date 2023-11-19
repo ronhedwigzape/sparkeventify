@@ -19,6 +19,7 @@ class TextFieldInput extends StatefulWidget {
   final double width;
   final Widget? prefixIcon;
   final FormFieldValidator<String>? validator;
+  final bool isRegistration;
 
   const TextFieldInput({
     Key? key,
@@ -35,6 +36,7 @@ class TextFieldInput extends StatefulWidget {
     this.enabled = true,
     this.prefixIcon,
     this.validator,
+    this.isRegistration = true,
   }) : super(key: key);
 
   @override
@@ -43,6 +45,8 @@ class TextFieldInput extends StatefulWidget {
 
 class _TextFieldInputState extends State<TextFieldInput> {
   bool _isPasswordVisible = false;
+  bool _showPhoneNumberWarning = false;
+  bool _showPasswordWarning = false;
 
   @override
   Widget build(BuildContext context) {
@@ -63,59 +67,13 @@ class _TextFieldInputState extends State<TextFieldInput> {
               _buildTextField(
                 controller: widget.startTextEditingController!,
                 labelText: 'Start ${widget.isDateRange ? 'Date*' : 'Time*'}',
-                onTap: () async {
-                  if (widget.isDateRange) {
-                    DateTime? date = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                    );
-                    if (date != null) {
-                      widget.startTextEditingController!.text =
-                          DateFormat('yyyy-MM-dd').format(date);
-                    }
-                  } else if (widget.isTimeRange) {
-                    TimeOfDay? time = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
-                    if (time != null) {
-                      widget.startTextEditingController!.text =
-                          time.format(context);
-                    }
-                  }
-                },
+                onTap: () => _handleDateTimeInput(context, widget.startTextEditingController!, widget.isDateRange),
               ),
-              const SizedBox(
-                width: 10,
-              ),
+              const SizedBox(width: 10),
               _buildTextField(
                 controller: widget.endTextEditingController!,
                 labelText: 'End ${widget.isDateRange ? 'Date*' : 'Time*'}',
-                onTap: () async {
-                  if (widget.isDateRange) {
-                    DateTime? date = await showDatePicker(
-                      context: context,
-                      initialDate: DateTime.now(),
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                    );
-                    if (date != null) {
-                      widget.endTextEditingController!.text =
-                          DateFormat('yyyy-MM-dd').format(date);
-                    }
-                  } else if (widget.isTimeRange) {
-                    TimeOfDay? time = await showTimePicker(
-                      context: context,
-                      initialTime: TimeOfDay.now(),
-                    );
-                    if (time != null) {
-                      widget.endTextEditingController!.text =
-                          time.format(context);
-                    }
-                  }
-                },
+                onTap: () => _handleDateTimeInput(context, widget.endTextEditingController!, widget.isDateRange),
               ),
             ],
           ),
@@ -126,6 +84,23 @@ class _TextFieldInputState extends State<TextFieldInput> {
             child: TextFormField(
               style: TextStyle(color: darkModeOn ? lightColor : darkColor),
               controller: widget.textEditingController,
+              onChanged: (value) {
+                if (widget.labelText.contains('Phone')) {
+                  bool isValidPhoneNumber = value.startsWith('639') && value.length == 10;
+                  setState(() {
+                    _showPhoneNumberWarning = !isValidPhoneNumber;
+                  });
+                } else {
+                  setState(() {
+                    _showPhoneNumberWarning = false;
+                  });
+                }
+                if (widget.isPass && widget.isRegistration) {
+                  setState(() {
+                    _showPasswordWarning = !_isStrongPassword(value);
+                  });
+                }
+              },
               decoration: InputDecoration(
                 labelText: widget.labelText,
                 border: inputBorder,
@@ -154,8 +129,54 @@ class _TextFieldInputState extends State<TextFieldInput> {
               enabled: widget.enabled,
             ),
           ),
+        if (_showPhoneNumberWarning && widget.labelText.contains('Phone'))
+        const Padding(
+          padding: EdgeInsets.only(top: 8.0),
+          child: Text(
+            'Please enter a 10-digit phone number starting with 639.',
+            style: TextStyle(color: Colors.red),
+          ),
+        ),
+        if (_showPasswordWarning && widget.isRegistration && widget.isPass)
+        const Padding(
+          padding: EdgeInsets.only(top: 8.0),
+          child: Text(
+            'The password must be at least 6 characters long and include uppercase, lowercase letters, numbers, and symbols.',
+            style: TextStyle(color: Colors.red),
+          ),
+        ),
       ],
     );
+  }
+
+  bool _isStrongPassword(String password) {
+    bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
+    bool hasLowercase = password.contains(RegExp(r'[a-z]'));
+    bool hasDigits = password.contains(RegExp(r'\d'));
+    bool hasSpecialCharacters = password.contains(RegExp(r'[\W_]'));
+    return password.length >= 6 && hasUppercase && hasLowercase && hasDigits && hasSpecialCharacters;
+  }
+
+  Future<void> _handleDateTimeInput(BuildContext context, TextEditingController controller, bool isDate) async {
+    if (isDate) {
+      DateTime? date = await showDatePicker(
+        context: context,
+        initialDate: DateTime.now(),
+        firstDate: DateTime(2000),
+        lastDate: DateTime(2100),
+      );
+      if (date != null) {
+        controller.text = DateFormat('yyyy-MM-dd').format(date);
+      }
+    } else {
+      TimeOfDay? time = await showTimePicker(
+        context: context,
+        initialTime: TimeOfDay.now(),
+      );
+      if (time != null) {
+        controller.text = time.format(context);
+      }
+    }
   }
 
   Widget _buildTextField({

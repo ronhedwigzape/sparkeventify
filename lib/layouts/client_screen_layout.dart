@@ -9,7 +9,6 @@ import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo_white.dart';
 import 'package:student_event_calendar/widgets/cspc_spinkit_fading_circle.dart';
-import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 
 class ClientScreenLayout extends StatefulWidget {
   const ClientScreenLayout({Key? key}) : super(key: key);

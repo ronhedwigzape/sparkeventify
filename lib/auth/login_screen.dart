@@ -161,6 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   textEditingController: _passwordController,
                   labelText: 'Password',
                   textInputType: TextInputType.visiblePassword,
+                  isRegistration: false,
                   isPass: true,
                 ),
                 const SizedBox(height: 16.0),

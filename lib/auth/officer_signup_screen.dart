@@ -262,7 +262,7 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
                                   child: TextFieldInput(
                                       prefixIcon: const Icon(Icons.phone),
                                       textEditingController: _phoneNumberController,
-                                      labelText: '9123456789*',
+                                      labelText: 'Phone: 9123456789*',
                                       textInputType: TextInputType.phone
                                   ),
                                 ),

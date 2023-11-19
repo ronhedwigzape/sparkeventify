@@ -255,7 +255,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                               child: TextFieldInput(
                                 prefixIcon: const Icon(Icons.phone),
                                 textEditingController: _phoneNumberController,
-                                labelText: '9123456789*',
+                                labelText: 'Phone: 9123456789*',
                                 textInputType: TextInputType.phone
                               ),
                             ),

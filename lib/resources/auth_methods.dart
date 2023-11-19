@@ -37,6 +37,14 @@ class AuthMethods {
     return snapshot.docs.isNotEmpty;
   }
 
+  bool _isStrongPassword(String password) {
+    bool hasUppercase = password.contains(RegExp(r'[A-Z]'));
+    bool hasLowercase = password.contains(RegExp(r'[a-z]'));
+    bool hasDigits = password.contains(RegExp(r'\d'));
+    bool hasSpecialCharacters = password.contains(RegExp(r'[\W_]'));
+    return password.length >= 6 && hasUppercase && hasLowercase && hasDigits && hasSpecialCharacters;
+  }
+
   // Sign up user (Admin, Student, SASO Staff, Organization Officer)
   Future<String> signUp({
     required String email,
@@ -63,6 +71,11 @@ class AuthMethods {
           if (positionTaken) {
             return 'The officer position "${profile.officerPosition}" is already taken in "${profile.organization}".';
           }
+        }
+
+        // Password strength validation
+        if (!_isStrongPassword(password)) {
+          return 'Password must be at least 6 characters long and include uppercase, lowercase letters, numbers, and symbols.';
         }
 
         // Create user in Firebase Auth
