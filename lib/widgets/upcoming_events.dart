@@ -60,7 +60,7 @@ class UpcomingEventsState extends State<UpcomingEvents> {
             '${key[0].toUpperCase()}${key.substring(1)}: ${(value as List).join(', ')}';
         formattedList.add(formattedString);
       });
-      return formattedList.join('\n');
+      return formattedList.join('\n\n');
     }
 
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
@@ -77,9 +77,10 @@ class UpcomingEventsState extends State<UpcomingEvents> {
               child: ListView(
                 shrinkWrap: true,
                 children: [
-                  const Text(
+                  Text(
                     'Upcoming Events!',
                     style: TextStyle(
+                        color: darkModeOn ? lightColor : darkColor,
                         fontSize: 28,
                         fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
@@ -95,8 +96,9 @@ class UpcomingEventsState extends State<UpcomingEvents> {
                       elevation: 0,
                       color: darkModeOn ? darkColor : lightColor,
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                        padding: const EdgeInsets.fromLTRB(140, 10, 80, 10),
                         child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             (event.image?.isEmpty ?? true)
                             ? Container(
@@ -129,21 +131,39 @@ class UpcomingEventsState extends State<UpcomingEvents> {
                                 errorWidget: (context, url, error) =>
                                     const Icon(Icons.error),
                               ),
-                            ListTile(
-                              title: Center(child: Text(event.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),)),
-                              subtitle: Text(
-                                (startDate.day == event.endDate.day
-                                    ? 'Date: ${DateFormat('MMM dd, yyyy').format(startDate)}\n'
-                                    : 'Date: ${DateFormat('MMM dd, yyyy').format(startDate)} - ${DateFormat('MMM dd, yyyy').format(event.endDate)}\n')
-                                    + (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
-                                    ? 'Time: ${DateFormat.jm().format(event.startTime)}'
-                                    : 'Time: ${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(height: 2, fontSize: 15),
+                            const SizedBox(height: 10),
+
+                            // Event Title
+                            Text(
+                              event.title,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: darkModeOn ? lightColor : darkColor,
+                                height: 2
                               ),
-                              isThreeLine: true,
                             ),
-                            Text('Venue: ${event.venue}', style: TextStyle(fontSize: 14, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor ),), 
+
+                            // Date and Time
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Flexible(
+                                child: Text(
+                                  (startDate.day == event.endDate.day
+                                      ? 'Remaining Date: ${DateFormat('MMM dd, yyyy').format(startDate)}'
+                                      : 'Remaining Dates: ${DateFormat('MMM dd, yyyy').format(startDate)} - ${DateFormat('MMM dd, yyyy').format(event.endDate)}') +
+                                      (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
+                                          ? '\nTime: ${DateFormat.jm().format(event.startTime)}'
+                                          : '\nTime: ${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
+                                  style: TextStyle(
+                                    color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,
+                                    fontSize: 15,
+                                    height: 2
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Text('Venue: ${event.venue}', style: TextStyle(fontSize: 15, height: 2, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor ),), 
                             Column(
                               children: [
                                 Text(

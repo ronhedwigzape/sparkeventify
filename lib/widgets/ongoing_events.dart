@@ -99,31 +99,34 @@ class OngoingEventsState extends State<OngoingEvents> {
             elevation: 2,
             color: darkModeOn ? darkColor : lightColor,
             child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(vertical: 20),
               child: ListView(
                 shrinkWrap: true,
                 children: [
-                  const Text(
+                  Text(
                     'Ongoing Events!',
                     style: TextStyle(
+                        color: darkModeOn ? lightColor : darkColor,
                         fontSize: 28,
                         fontWeight: FontWeight.bold),
                     textAlign: TextAlign.center,
                   ),
                   ...(ongoingEvents.isEmpty) ? [
                     const Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Text('No ongoing events for now..', textAlign: TextAlign.center,),
-                  )]
+                      padding: EdgeInsets.all(8.0),
+                      child: Text('No upcoming events for now..', textAlign: TextAlign.center,),
+                    )]
                   : ongoingEvents.map((event) {
-                  return Card(
-                    elevation: 0,
-                    color: darkModeOn ? darkColor : lightColor,
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Column(
-                        children: [
-                          (event.image?.isEmpty ?? true)
+                    DateTime startDate = event.startDate.isBefore(now) ? now.add(const Duration(days: 1)) : event.startDate;
+                    return Card(
+                      elevation: 0,
+                      color: darkModeOn ? darkColor : lightColor,
+                      child: Padding(
+                        padding: const EdgeInsets.fromLTRB(140, 10, 80, 10),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            (event.image?.isEmpty ?? true)
                             ? Container(
                               decoration: BoxDecoration(border: Border.all(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor)),
                               child: CachedNetworkImage(
@@ -133,55 +136,74 @@ class OngoingEventsState extends State<OngoingEvents> {
                                   placeholder: (context, url) => const Center(
                                     child: SizedBox(
                                       height: kIsWeb ? 250.0 : 100,
-                                      child: Center(child: CSPCFadeLoader()),
+                                      child: Center(
+                                        child: CSPCFadeLoader()),
                                     ),
                                   ),
                                   errorWidget: (context, url, error) =>
                                       const Icon(Icons.error),
                                 ),
                             )
-                          : CachedNetworkImage(
-                            imageUrl: event.image!,
-                            width: 300,
-                            placeholder: (context, url) => const Center(
-                              child: SizedBox(
-                              height: kIsWeb ? 250.0 : 100,
-                              child: Center(
-                                child: CSPCFadeLoader()),
+                            : CachedNetworkImage(
+                                imageUrl: event.image!,
+                                width: 300,
+                                placeholder: (context, url) => const Center(
+                                  child: SizedBox(
+                                    height: kIsWeb ? 250.0 : 100,
+                                    child: Center(
+                                      child: CSPCFadeLoader()),
+                                  ),
+                                ),
+                                errorWidget: (context, url, error) =>
+                                    const Icon(Icons.error),
                               ),
-                            ),
-                            errorWidget: (context, url, error) =>
-                                const Icon(Icons.error),
-                            ),
-                            ListTile(
-                              title: Center(child: Text(event.title, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold))),
-                              subtitle: Text(
-                              'Date: ${DateFormat('MMM dd, yyyy').format(now)}\n'
-                              '${event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
-                                  ? 'Time: ${DateFormat.jm().format(event.startTime)}'
-                                  : 'Time: ${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'}',
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                  height: 2,
-                                  fontSize: 15
-                              ),
-                              ),
-                            ),
-                            Text('Venue: ${event.venue}', style: TextStyle(fontSize: 14, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor ),),
-                            Column(
-                            children: [
+                            const SizedBox(height: 10),
+                            
+                            // Event Title
                             Text(
-                              formatParticipants(event.participants),
-                              style: TextStyle(fontSize: 14, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor ),
+                              event.title,
+                              style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: darkModeOn ? lightColor : darkColor,
+                                height: 2
+                              ),
+                            ),
+
+                            // Date and Time
+                            Padding(
+                              padding: const EdgeInsets.only(top: 8.0),
+                              child: Flexible(
+                                child: Text(
+                                  (startDate.day == event.endDate.day
+                                      ? 'Remaining Date: ${DateFormat('MMM dd, yyyy').format(startDate)}'
+                                      : 'Remaining Dates: ${DateFormat('MMM dd, yyyy').format(startDate)} - ${DateFormat('MMM dd, yyyy').format(event.endDate)}') +
+                                      (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
+                                          ? '\nTime: ${DateFormat.jm().format(event.startTime)}'
+                                          : '\nTime: ${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
+                                  style: TextStyle(
+                                    color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,
+                                    fontSize: 15,
+                                    height: 2
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Text('Venue: ${event.venue}', style: TextStyle(fontSize: 15, height: 2, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor ),), 
+                            Column(
+                              children: [
+                                Text(
+                                  formatParticipants(event.participants),
+                                  style: TextStyle(fontSize: 14, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
-                      ],
-                    ),
-                  ),
-                );
-              }).toList(),
-              ],
+                      ),
+                    );
+                  }).toList(),
+                ],
               ),
             ),
           ),
