@@ -6,6 +6,7 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -148,7 +149,11 @@ class _AppState extends State<App> {
           child: MaterialApp(
             navigatorKey: navigatorKey,
             debugShowCheckedModeBanner: false,
-            theme: theme,
+            theme: theme.copyWith(
+              textTheme: GoogleFonts.nunitoTextTheme(
+                Theme.of(context).textTheme,
+              ),
+            ),
             // showPerformanceOverlay: true,
             title: 'CSPC Student Event Calendar',
             home: const AuthScreen(),
