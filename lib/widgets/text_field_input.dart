@@ -86,7 +86,7 @@ class _TextFieldInputState extends State<TextFieldInput> {
               controller: widget.textEditingController,
               onChanged: (value) {
                 if (widget.labelText.contains('Phone')) {
-                  bool isValidPhoneNumber = value.startsWith('639') && value.length == 10;
+                  bool isValidPhoneNumber = value.startsWith('9') && value.length == 10;
                   setState(() {
                     _showPhoneNumberWarning = !isValidPhoneNumber;
                   });
@@ -133,7 +133,7 @@ class _TextFieldInputState extends State<TextFieldInput> {
         const Padding(
           padding: EdgeInsets.only(top: 8.0),
           child: Text(
-            'Please enter a 10-digit phone number starting with 639.',
+            'Please enter a 10-digit phone number starting with 9.',
             style: TextStyle(color: Colors.red),
           ),
         ),
