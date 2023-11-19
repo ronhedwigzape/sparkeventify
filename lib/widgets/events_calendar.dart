@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:pull_to_refresh/pull_to_refresh.dart';
 import 'package:student_event_calendar/models/event.dart';
+import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
@@ -11,7 +12,6 @@ import 'package:student_event_calendar/screens/report_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/cspc_background.dart';
 import 'package:student_event_calendar/widgets/cspc_spinkit_fading_circle.dart';
-import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 import 'package:student_event_calendar/widgets/ongoing_events.dart';
 import 'package:student_event_calendar/widgets/upcoming_events.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -111,7 +111,7 @@ class EventsCalendarState extends State<EventsCalendar> {
             stream: events,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CSPCFadeLoader());
+                return const Center(child: CSPCSpinKitFadingCircle(isLogoVisible: false,));
               } else if (snapshot.hasError) {
                 return const Center(child: Text("Something went wrong!"));
               } else {
@@ -161,7 +161,42 @@ class EventsCalendarState extends State<EventsCalendar> {
                                       ),
                                     ],
                                   ),
-                                ) : const SizedBox.shrink(),
+                                ) : StreamBuilder<model.User?>(
+                                  stream: FireStoreUserMethods().getCurrentUserDataStream(),
+                                  builder: (context, snapshot) {
+                                    // Check for connection state and errors first
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return const SizedBox.shrink();  
+                                    }
+                                    if (!snapshot.hasData || snapshot.hasError) {
+                                      return const Text('Hi! User!');  // Error or no data handling
+                                    }
+
+                                    final model.User user = snapshot.data!;
+                                    final firstName = user.profile?.firstName ?? 'User';  // Fallback to 'User' if null
+
+                                    // Determine if it's morning or afternoon
+                                    final hour = DateTime.now().hour;
+                                    final greeting = hour < 12 ? 'Good Morning' : 'Good Afternoon';
+
+                                    return Padding(
+                                      padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            '$greeting, $firstName!', 
+                                            style: const TextStyle(
+                                              color: lightColor,
+                                              fontSize: 25.0,
+                                              fontWeight: FontWeight.w900
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    );
+                                  }
+                                ),
                                 Padding(
                                   padding: const EdgeInsets.symmetric(vertical: 10.0),
                                   child: Center(
@@ -224,8 +259,17 @@ class EventsCalendarState extends State<EventsCalendar> {
                                     decoration: BoxDecoration(
                                         color: darkModeOn ? darkColor : lightColor,
                                         border: Border.all(
-                                            color: darkModeOn ? lightColor : darkColor)),
+                                          color: darkModeOn ? lightColor : darkColor),
+                                          borderRadius: BorderRadius.circular(10.0), ),
                                     child: TableCalendar(
+                                      headerStyle: HeaderStyle(
+                                        titleTextStyle: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                                        formatButtonTextStyle: TextStyle(color: darkModeOn ? lightColor : darkColor), 
+                                        formatButtonDecoration: BoxDecoration(
+                                          border: Border.all(color: darkModeOn ? lightColor : darkColor), 
+                                          borderRadius: BorderRadius.circular(5.0), 
+                                        ),
+                                      ),
                                       eventLoader: (day) {
                                         // Use `eventLoader` to return a list of events for the given day.
                                         DateTime adjustedDay =
@@ -312,6 +356,9 @@ class EventsCalendarState extends State<EventsCalendar> {
                                           DateTime adjustedDay = DateTime(dateTime.year,
                                                   dateTime.month, dateTime.day, 0, 0, 0)
                                               .toLocal();
+
+                                          bool hasEvents = _events.containsKey(adjustedDay);
+
                                           if (_events.containsKey(adjustedDay)) {
                                             return Container(
                                               decoration: const BoxDecoration(
@@ -322,7 +369,9 @@ class EventsCalendarState extends State<EventsCalendar> {
                                               alignment: Alignment.center,
                                               child: Text(
                                                 dateTime.day.toString(),
-                                                style: TextStyle(color: darkModeOn ? darkColor : lightColor, fontWeight: FontWeight.bold),
+                                                style: TextStyle(
+                                                  color: darkModeOn ? (hasEvents ? darkColor : lightColor) : (hasEvents ? lightColor : darkColor), 
+                                                  fontWeight: FontWeight.bold),
                                               ),
                                             );
                                           }
@@ -331,7 +380,9 @@ class EventsCalendarState extends State<EventsCalendar> {
                                             alignment: Alignment.center,
                                             child: Text(
                                               dateTime.day.toString(),
-                                              style: const TextStyle(fontWeight: FontWeight.bold),
+                                              style: TextStyle(
+                                                color: darkModeOn ? (hasEvents ? darkColor : lightColor) : (hasEvents ? lightColor : darkColor),
+                                                fontWeight: FontWeight.bold),
                                             ),
                                           );
                                         },
