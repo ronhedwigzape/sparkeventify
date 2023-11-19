@@ -127,24 +127,33 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                           return Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Flexible(child: Text('Select an event to add feedback: ')),
-                              DropdownButton<Event>(
-                                value: selectedEvent,
-                                onChanged: (Event? newValue) {
-                                  setState(() {
-                                    selectedEvent = newValue;
-                                  });
-                                                  
-                                  if (selectedEvent != null) {
-                                    FirestoreFeedbackMethods().addEmptyFeedback(selectedEvent!.id);
-                                  }
-                                },
-                                items: events.map<DropdownMenuItem<Event>>((Event event) {
-                                  return DropdownMenuItem<Event>(
-                                    value: event,
-                                    child: Text(event.title),
-                                  );
-                                }).toList(),
+                              Flexible(
+                                child: Text(
+                                  'Select an event to add feedback: '.toUpperCase(), 
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    color: darkModeOn ? lightColor : darkColor
+                                    ),)),
+                              Expanded(
+                                child: DropdownButton<Event>(
+                                  isExpanded: true,
+                                  value: selectedEvent,
+                                  onChanged: (Event? newValue) {
+                                    setState(() {
+                                      selectedEvent = newValue;
+                                    });
+                                                    
+                                    if (selectedEvent != null) {
+                                      FirestoreFeedbackMethods().addEmptyFeedback(selectedEvent!.id);
+                                    }
+                                  },
+                                  items: events.map<DropdownMenuItem<Event>>((Event event) {
+                                    return DropdownMenuItem<Event>(
+                                      value: event,
+                                      child: Text(event.title, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
+                                    );
+                                  }).toList(),
+                                ),
                               ),
                             ],
                           );
