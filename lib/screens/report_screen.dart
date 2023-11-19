@@ -43,31 +43,31 @@ class ReportScreen extends StatelessWidget {
     const cellPadding = pw.EdgeInsets.all(4.0);  // Adjust this value as needed for padding
 
     // Define the width for each column
-    const double columnWidth = 0.125; // This represents a fraction of the total table width
-    final columnWidths = <int, pw.TableColumnWidth>{
-      0: pw.FlexColumnWidth(columnWidth),
-      1: pw.FlexColumnWidth(columnWidth),
-      2: pw.FlexColumnWidth(columnWidth),
-      3: pw.FlexColumnWidth(columnWidth),
-      4: pw.FlexColumnWidth(columnWidth),
-      5: pw.FlexColumnWidth(columnWidth),
-      6: pw.FlexColumnWidth(columnWidth),
-      7: pw.FlexColumnWidth(columnWidth),
-      // Add or remove columns based on your table
-    };
+    // const double columnWidth = 0.125; // This represents a fraction of the total table width
+    // final columnWidths = <int, pw.TableColumnWidth>{
+    //   0: pw.FlexColumnWidth(columnWidth),
+    //   1: pw.FlexColumnWidth(columnWidth),
+    //   2: pw.FlexColumnWidth(columnWidth),
+    //   3: pw.FlexColumnWidth(columnWidth),
+    //   4: pw.FlexColumnWidth(columnWidth),
+    //   5: pw.FlexColumnWidth(columnWidth),
+    //   6: pw.FlexColumnWidth(columnWidth),
+    //   7: pw.FlexColumnWidth(columnWidth),
+    //   // Add or remove columns based on your table
+    // };
     
     // Predefined A4 size - most common for documents
     var myPageFormat = PdfPageFormat.a4;
 
     // Custom shorter page format - for example, A5 size
-    var myShortPageFormat = PdfPageFormat.a5;
+    // var myShortPageFormat = PdfPageFormat.a5;
 
     // Custom longer page format - you can specify the size you need
-    var myLongPageFormat = const PdfPageFormat(
-      21.0 * PdfPageFormat.cm,
-      29.7 * PdfPageFormat.cm,
-      marginAll: 2.0 * PdfPageFormat.cm,
-    );
+    // var myLongPageFormat = const PdfPageFormat(
+    //   21.0 * PdfPageFormat.cm,
+    //   29.7 * PdfPageFormat.cm,
+    //   marginAll: 2.0 * PdfPageFormat.cm,
+    // );
 
     // Decide which format to use
     // myPageFormat = myShortPageFormat; // Uncomment to use short format
