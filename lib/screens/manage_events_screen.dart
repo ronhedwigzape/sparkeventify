@@ -24,6 +24,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
   String dropdownEventType = 'All';
   late TextEditingController _searchController;
   final _searchSubject = BehaviorSubject<String>();
+  ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
@@ -37,6 +38,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
     _searchSubject.close();
+    _scrollController.dispose();
     super.dispose();
   }
 
@@ -57,12 +59,24 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     final width = MediaQuery.of(context).size.width;
+
+    Stream<List<Event>> getEventsStream() {
+      return FirebaseFirestore.instance
+          .collection('events')
+          .orderBy('datePublished', descending: true)
+          .snapshots()
+          .map((QuerySnapshot query) {
+            return query.docs.map((doc) => Event.fromSnapStream(doc)).toList();
+          });
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 8),
       child: Scaffold(
         appBar: AppBar(
           automaticallyImplyLeading: false,
           title: TextField(
+            style: TextStyle(color: darkModeOn ? lightColor : darkColor),
             controller: _searchController,
             decoration: InputDecoration(
                 border: const OutlineInputBorder(),
@@ -82,164 +96,141 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
           builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
             String searchTerm = snapshot.data ?? '';
 
-            return StreamBuilder(
-              stream: FirebaseFirestore.instance
-                  .collection('events')
-                  .orderBy('datePublished', descending: true)
-                  .snapshots(),
-              builder: (BuildContext context,
-                  AsyncSnapshot<QuerySnapshot<Map<String, dynamic>>> snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CSPCFadeLoader());
-                }
-                if (snapshot.hasError) {
-                  return const Center(child: Text('Something went wrong'));
-                }
+            return StreamBuilder<List<Event>>(
+              stream: getEventsStream(),
+              builder: (BuildContext context, AsyncSnapshot<List<Event>> eventSnapshot) {
+              if (eventSnapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CSPCFadeLoader());
+              } else if (eventSnapshot.hasError) {
+                return const Center(child: Text('Something went wrong'));
+              } else if (!eventSnapshot.hasData || eventSnapshot.data!.isEmpty) {
+                return const Center(child: Text('No events found.'));
+              }
 
-                Future<List<Event>> allEventsFutures = Future.wait(
-                    snapshot.data!.docs.map((doc) => Event.fromSnap(doc)));
+              List<Event> allEvents = eventSnapshot.data!;
+              List<Event> filteredEvents = allEvents.where((event) {
+                return (dropdownEventType == 'All' || event.type == dropdownEventType);
+              }).toList();
 
-                return FutureBuilder(
-                    future: allEventsFutures,
-                    builder: (BuildContext context,
-                        AsyncSnapshot<List<Event>> snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: CSPCFadeLoader());
-                      }
-                      else if (snapshot.hasError) {
-                        return const Center(child: Text('Something went wrong'));
-                      }
-                      if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                        return const Center(child: Text('No events found.'));
-                      }
+              List<Event> searchTermFilteredEvents = filterEvents(filteredEvents, searchTerm);
+              List<Event> eventsUserType = allEvents.where((event) => event.createdBy == 
+              FirebaseAuth.instance.currentUser!.uid).toList();
 
-                      List<Event> allEvents = snapshot.data!;
-                      List<Event> filteredEvents = allEvents.where((event) {
-                        return (dropdownEventType == 'All' ||
-                            event.type == dropdownEventType);
-                      }).toList();
+              if (searchTermFilteredEvents.isEmpty) {
+                return const Text('No events match your search.');
+              }
 
-                      List<Event> searchTermFilteredEvents =
-                          filterEvents(filteredEvents, searchTerm);
-
-                      List<Event> eventsUserType = allEvents.where((event) => event.createdBy == 
-                      FirebaseAuth.instance.currentUser!.uid).toList();
-
-                      if (searchTermFilteredEvents.isEmpty) {
-                        return const Text('No events match your search.');
-                      }
-
-                      if (eventsUserType.isEmpty) {
-                       return Center(
-                        child: Padding(
-                          padding: const EdgeInsets.all(50.0),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(Icons.event_busy, size: 25.0, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
-                                  const SizedBox(width: 10),
-                                  const Flexible(
-                                    child: Text(
-                                    'You haven\'t made any events yet.',
-                                    textAlign: TextAlign.center,
-                                  )),
-                                ],
-                              ),
-                            ],
-                          ),
-                        ),
-                      ); 
-                      }
-
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
+              if (eventsUserType.isEmpty) {
+                return Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(50.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              kIsWeb ? Flexible(
-                                child: Row(
-                                  children: [
-                                    Icon(
-                                      Icons.edit,
-                                      color: darkModeOn ? lightColor : darkColor,
-                                      size: 40,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                  'Manage Events',
-                                  style: TextStyle(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 32.0,
-                                      color: darkModeOn ? lightColor : darkColor,
-                                      ),
-                                    ),
-                                  ],
-                                )) : const SizedBox.shrink(),
-                              !kIsWeb ? Expanded(
-                                child: Text(
-                                'Event Type',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.bold,
-                                  fontSize: 21.0,
-                                  color: darkModeOn ? lightColor : darkColor,
-                                ),
-                              )) : const SizedBox.shrink(),
-                              Flexible(
-                                child: DropdownButton<String>(
-                                  value: dropdownEventType,
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      dropdownEventType = newValue!;
-                                    });
-                                  },
-                                  items: <String>[
-                                    'All',
-                                    'Non-academic',
-                                    'Academic'
-                                  ].map<DropdownMenuItem<String>>((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value,
-                                      child: Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
-                                    );
-                                  }).toList(),
-                                ),
-                              )
-                            ],
-                          )
-                        ),
-                        Container(
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                          child: Text(
-                            'Instructions: In this section, all events can be viewed. You can update and delete the created events here.',
-                            style: TextStyle(
-                            fontSize: 15.0,
-                            color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor
+                          Icon(Icons.event_busy, size: 25.0, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
+                          const SizedBox(width: 10),
+                          const Flexible(
+                            child: Text(
+                            'You haven\'t made any events yet.',
+                            textAlign: TextAlign.center,
+                          )),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ); 
+              }
+
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      kIsWeb ? Flexible(
+                        child: Row(
+                          children: [
+                            Icon(
+                              Icons.edit,
+                              color: darkModeOn ? lightColor : darkColor,
+                              size: 40,
                             ),
-                          ),
+                            const SizedBox(width: 10),
+                            Text(
+                          'Manage Events',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 32.0,
+                              color: darkModeOn ? lightColor : darkColor,
+                              ),
+                            ),
+                          ],
+                        )) : const SizedBox.shrink(),
+                      !kIsWeb ? Expanded(
+                        child: Text(
+                        'Event Type',
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 21.0,
+                          color: darkModeOn ? lightColor : darkColor,
                         ),
-                        Expanded(
-                          child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount: searchTermFilteredEvents.length,
-                              itemBuilder: (context, index) => Container(
-                                  key: ValueKey(searchTermFilteredEvents[index].id),
-                                  margin: EdgeInsets.symmetric(
-                                      horizontal:
-                                          width > webScreenSize ? width * 0.2 : 0,
-                                      vertical: width > webScreenSize ? 10 : 0),
-                                  child: PostCard(
-                                      snap: searchTermFilteredEvents[index]))),
-                        )
-                      ]);
-                    });
-              },
-            );
+                      )) : const SizedBox.shrink(),
+                      Flexible(
+                        child: DropdownButton<String>(
+                          value: dropdownEventType,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              dropdownEventType = newValue!;
+                            });
+                          },
+                          items: <String>[
+                            'All',
+                            'Non-academic',
+                            'Academic'
+                          ].map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
+                            );
+                          }).toList(),
+                        ),
+                      )
+                    ],
+                  )
+                ),
+                Container(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Text(
+                    'Instructions: In this section, all events can be viewed. You can update and delete the created events here.',
+                    style: TextStyle(
+                    fontSize: 15.0,
+                    color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                      controller: _scrollController,
+                      shrinkWrap: true,
+                      itemCount: searchTermFilteredEvents.length,
+                      itemBuilder: (context, index) => Container(
+                          key: ValueKey(searchTermFilteredEvents[index].id),
+                          margin: EdgeInsets.symmetric(
+                              horizontal:
+                                  width > webScreenSize ? width * 0.2 : 0,
+                              vertical: width > webScreenSize ? 10 : 0),
+                          child: PostCard(
+                              key: ValueKey(searchTermFilteredEvents[index].id),
+                              snap: searchTermFilteredEvents[index]))),
+                )
+              ]);
+            });
           },
         ),
       ),

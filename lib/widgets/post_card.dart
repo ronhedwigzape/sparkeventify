@@ -24,12 +24,12 @@ class PostCard extends StatefulWidget {
 }
 
 class _PostCardState extends State<PostCard> {
-  late Future<model.User> userDetails;
+  late Stream<model.User> userDetails;
 
   @override
   void initState() {
     super.initState();
-    userDetails = FireStoreUserMethods().getUserByEventsCreatedBy(widget.snap.createdBy);
+    userDetails = FireStoreUserMethods().getUserByEventsCreatedByStream(widget.snap.createdBy);
   }
 
   String formatParticipants(Map<String, dynamic>? participants) {
@@ -51,8 +51,8 @@ class _PostCardState extends State<PostCard> {
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-    return FutureBuilder<model.User>(
-        future: userDetails,
+    return StreamBuilder<model.User>(
+        stream: userDetails,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const SizedBox(

@@ -64,29 +64,46 @@ class Event {
   static Future<Event> fromSnap(DocumentSnapshot snap) async {
     var snapshot = snap.data() as Map<String, dynamic>;
     return Event(
-        id: snapshot['id'],
-        title: snapshot['title'],
-        startDate: (snapshot['startDate'] as Timestamp).toDate().toLocal(),
-        endDate: (snapshot['endDate'] as Timestamp).toDate().toLocal(),
-        startTime: (snapshot['startTime'] as Timestamp).toDate().toLocal(),
-        endTime: (snapshot['endTime'] as Timestamp).toDate().toLocal(),
-        description: snapshot['description'],
-        createdBy: snapshot['createdBy'],
-        image: snapshot['image'],
-        document: snapshot['document'],
-        participants: Map<String, List<dynamic>>.from(snapshot['participants']),
-        venue: snapshot['venue'],
-        type: snapshot['type'],
-        status: snapshot['status'],
-        hasFeedback: snapshot['hasFeedback'],
-        dateUpdated:
-            (snapshot['dateUpdated'] as Timestamp).toDate().toUtc(),
-        datePublished:
-            (snapshot['datePublished'] as Timestamp).toDate().toUtc());
+      id: snapshot['id'],
+      title: snapshot['title'],
+      startDate: (snapshot['startDate'] as Timestamp).toDate().toLocal(),
+      endDate: (snapshot['endDate'] as Timestamp).toDate().toLocal(),
+      startTime: (snapshot['startTime'] as Timestamp).toDate().toLocal(),
+      endTime: (snapshot['endTime'] as Timestamp).toDate().toLocal(),
+      description: snapshot['description'],
+      createdBy: snapshot['createdBy'],
+      image: snapshot['image'],
+      document: snapshot['document'],
+      participants: Map<String, List<dynamic>>.from(snapshot['participants']),
+      venue: snapshot['venue'],
+      type: snapshot['type'],
+      status: snapshot['status'],
+      hasFeedback: snapshot['hasFeedback'],
+      dateUpdated: (snapshot['dateUpdated'] as Timestamp).toDate().toUtc(),
+      datePublished: (snapshot['datePublished'] as Timestamp).toDate().toUtc());
   }
 
-  // @override
-  // String toString() {
-  //   return 'Event{id: $id, title: $title, date: $date, time: $time, description: $description, createdBy: $createdBy, image: $image, document: $document, participants: $participants, venue: $venue, type: $type, status: $status, updatedAt: $updatedAt}';
-  // }
+  static Event fromSnapStream(DocumentSnapshot snap) {
+    var snapshot = snap.data() as Map<String, dynamic>;
+    return Event(
+      id: snapshot['id'],
+      title: snapshot['title'],
+      startDate: (snapshot['startDate'] as Timestamp).toDate().toLocal(),
+      endDate: (snapshot['endDate'] as Timestamp).toDate().toLocal(),
+      startTime: (snapshot['startTime'] as Timestamp).toDate().toLocal(),
+      endTime: (snapshot['endTime'] as Timestamp).toDate().toLocal(),
+      description: snapshot['description'],
+      createdBy: snapshot['createdBy'],
+      image: snapshot['image'],
+      document: snapshot['document'],
+      participants: Map<String, List<dynamic>>.from(snapshot['participants']),
+      venue: snapshot['venue'],
+      type: snapshot['type'],
+      status: snapshot['status'],
+      hasFeedback: snapshot['hasFeedback'],
+      dateUpdated: (snapshot['dateUpdated'] as Timestamp).toDate().toUtc(),
+      datePublished: (snapshot['datePublished'] as Timestamp).toDate().toUtc(),
+    );
+  }
+
 }

@@ -125,6 +125,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 14),
                   child: TextField(
+                    style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                     controller: searchController,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),

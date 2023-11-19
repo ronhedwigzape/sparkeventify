@@ -70,6 +70,34 @@ class FireStoreUserMethods {
     return user;
   }
 
+  Stream<model.User> getUserByEventsCreatedByStream(String createdBy) {
+  // Create a stream of event query snapshots
+  return FirebaseFirestore.instance
+    .collection('events')
+    .where('createdBy', isEqualTo: createdBy)
+    .snapshots()
+    .asyncMap((QuerySnapshot eventQuerySnapshot) async {
+      // If no events were found, throw an exception
+      if (eventQuerySnapshot.docs.isEmpty) {
+        throw Exception('No events found created by user $createdBy');
+      }
+      // Get the first event document
+      DocumentSnapshot eventDocument = eventQuerySnapshot.docs.first;
+      // Get the 'createdBy' field from the event document
+      String userId = eventDocument['createdBy'];
+      // Query the users collection for the user with the obtained 'createdBy' (userId)
+      DocumentSnapshot userSnapshot =
+          await FirebaseFirestore.instance.collection('users').doc(userId).get();
+      // If no user was found, throw an exception
+      if (!userSnapshot.exists) {
+        throw Exception('No user found with id $userId');
+      }
+      // Create a User object from the document snapshot
+      return model.User.fromSnap(userSnapshot);
+    });
+  }
+
+
   Future<Map<String, String>?> getUserDeviceTokens(String uid) async {
     try {
       DocumentSnapshot docSnapshot = await _usersCollection.doc(uid).get();

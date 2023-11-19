@@ -48,12 +48,12 @@ class _EventFeedbackScreenState extends State<EventFeedbackScreen> {
                         subtitle: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text('Program: ${feedback.userProgram}'),
-                            Text('Department: ${feedback.userDepartment}'),
-                            Text('Satisfaction: ${feedback.satisfactionStatus ? 'Satisfied' : 'Not satisfied'}'),
-                            Text('Evaluation: ${feedback.studentEvaluation}'),
-                            Text('Attendance: ${feedback.attendanceStatus ? 'Attended' : 'Did not attend'}'),
-                            Text('Feedback done: ${feedback.isFeedbackDone ? 'Yes' : 'No'}'),
+                            Text('Program: ${feedback.userProgram}',style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
+                            Text('Department: ${feedback.userDepartment}',style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
+                            Text('Satisfaction: ${feedback.satisfactionStatus ? 'Satisfied' : 'Not satisfied'}',style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
+                            Text('Evaluation: ${feedback.studentEvaluation}',style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
+                            Text('Attendance: ${feedback.attendanceStatus ? 'Attended' : 'Did not attend'}',style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
+                            Text('Feedback done: ${feedback.isFeedbackDone ? 'Yes' : 'No'}',style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                           ],
                         ),
                       ),
