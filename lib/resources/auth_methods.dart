@@ -27,6 +27,16 @@ class AuthMethods {
     return (snap.data() as Map<String, dynamic>)['userType'];
   }
 
+  Future<bool> isOfficerPositionTaken(String officerPosition, String organization) async {
+    final QuerySnapshot snapshot = await _firestore.collection('users')
+      .where('profile.officerPosition', isEqualTo: officerPosition)
+      .where('profile.organization', isEqualTo: organization)
+      .get();
+
+    // If there are documents, the position is taken
+    return snapshot.docs.isNotEmpty;
+  }
+
   // Sign up user (Admin, Student, SASO Staff, Organization Officer)
   Future<String> signUp({
     required String email,
@@ -46,6 +56,15 @@ class AuthMethods {
         } else if ((userType == 'Student' || userType == 'Officer') && !email.endsWith('@my.cspc.edu.ph')) {
           return 'Invalid email format. Please use an email ending with @my.cspc.edu.ph';
         }
+
+        // Additional condition to check for unique officer position in an organization
+        if (userType == 'Officer' && profile.officerPosition != null && profile.organization != null) {
+          bool positionTaken = await isOfficerPositionTaken(profile.officerPosition!, profile.organization!);
+          if (positionTaken) {
+            return 'The officer position "${profile.officerPosition}" is already taken in "${profile.organization}".';
+          }
+        }
+
         // Create user in Firebase Auth
         UserCredential credential = await _auth.createUserWithEmailAndPassword(email: email, password: password);
         // Create user object for storing credentials in Firebase Firestore
