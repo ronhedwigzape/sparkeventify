@@ -34,12 +34,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
     event = FireStoreEventMethods().getEventById(widget.eventId);
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    _feedbackController.dispose();
-    _ratingController.dispose();
-  }
+
 
   createFeedback(context, eventName) async {
     model.User? user = await FireStoreUserMethods().getCurrentUserData();
@@ -109,6 +104,14 @@ class _FeedbackFormState extends State<FeedbackForm> {
         );
       }
     }
+  }
+
+  
+  @override
+  void dispose() {
+    _feedbackController.dispose();
+    _ratingController.dispose();
+    super.dispose();
   }
 
   @override
@@ -183,7 +186,8 @@ class _FeedbackFormState extends State<FeedbackForm> {
                             ),
                             Text(
                               snapshot.data!.title,
-                              style: const TextStyle(
+                              style: TextStyle(
+                                color: darkModeOn ? lightColor : darkColor,
                                 fontWeight: FontWeight.w800,
                               ),
                             ),
@@ -201,8 +205,8 @@ class _FeedbackFormState extends State<FeedbackForm> {
                             const SizedBox(
                               height: 10,
                             ),
-                            const Text('Instructions:',
-                                style: TextStyle(fontSize: 13)),
+                            Text('Instructions:',
+                                style: TextStyle(fontSize: 13, color: darkModeOn ? lightColor : darkColor)),
                             const SizedBox(
                               height: 5,
                             ),
