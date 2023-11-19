@@ -175,9 +175,18 @@ class EventsCalendarState extends State<EventsCalendar> {
                                     final model.User user = snapshot.data!;
                                     final firstName = user.profile?.firstName ?? 'User';  // Fallback to 'User' if null
 
-                                    // Determine if it's morning or afternoon
+                                    // Determine the appropriate greeting based on the hour of the day
                                     final hour = DateTime.now().hour;
-                                    final greeting = hour < 12 ? 'Good Morning' : 'Good Afternoon';
+                                    String greeting;
+                                    if (hour >= 0 && hour < 12) { // 12 AM to 11:59 AM
+                                      greeting = 'Good Morning 🌄';
+                                    } else if (hour >= 12 && hour < 18) { // 12 PM to 5:59 PM
+                                      greeting = 'Good Afternoon 🕛';
+                                    } else if (hour >= 18 && hour < 22) { // 6 PM to 9:59 PM
+                                      greeting = 'Good Evening 🌆';
+                                    } else { // 10 PM to 11:59 PM
+                                      greeting = 'Good Night 🌃';
+                                    }
 
                                     return Padding(
                                       padding: const EdgeInsets.fromLTRB(15, 0, 0, 0),
