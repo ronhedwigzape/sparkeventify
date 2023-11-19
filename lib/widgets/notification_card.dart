@@ -50,16 +50,17 @@ class _NotificationCardState extends State<NotificationCard> {
     showDialog(
         context: context,
         builder: (context) {
+          final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
           return SimpleDialog(
-            title: const Text('Manage Notification'),
+            title: Text('Manage Notification', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
             children: [
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.mark_as_unread),
-                    SizedBox(width: 10),
-                    Text('Mark as unread'),
+                    const Icon(Icons.mark_as_unread),
+                    const SizedBox(width: 10),
+                    Text('Mark as unread', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () async {
@@ -72,11 +73,11 @@ class _NotificationCardState extends State<NotificationCard> {
               ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.cancel),
-                    SizedBox(width: 10),
-                    Text('Cancel'),
+                    const Icon(Icons.cancel),
+                    const SizedBox(width: 10),
+                    Text('Cancel', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                   ],
                 ),
                 onPressed: () {
@@ -92,6 +93,7 @@ class _NotificationCardState extends State<NotificationCard> {
     final manila = tz.getLocation('Asia/Manila');
     final localTime =
         tz.TZDateTime.from(widget.snap.timestamp!.toDate().toUtc(), manila);
+    final darkModeOn = Provider.of<DarkModeProvider>(context, listen: false).darkMode;
     showDialog(
         context: context,
         builder: (BuildContext context) => Padding(
@@ -109,7 +111,7 @@ class _NotificationCardState extends State<NotificationCard> {
                   const SizedBox(width: 10),
                   Flexible(
                       child: Text(
-                          'Notification from ${senderData?.profile?.fullName}'))
+                          'Notification from ${senderData?.profile?.fullName}', style: TextStyle(color: darkModeOn ? lightColor : darkColor)))
                 ]),
                 content: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -121,14 +123,14 @@ class _NotificationCardState extends State<NotificationCard> {
                         style: TextStyle(color: darkModeSecondaryColor),
                       ),
                       const SizedBox(height: 5),
-                      Flexible(child: Text('${widget.snap.title}')),
+                      Flexible(child: Text('${widget.snap.title}', style: TextStyle(color: darkModeOn ? lightColor : darkColor))),
                       const SizedBox(height: 15),
                       const Text(
                         'Message',
                         style: TextStyle(color: darkModeSecondaryColor),
                       ),
                       const SizedBox(height: 5),
-                      Flexible(child: Text('${widget.snap.message}')),
+                      Flexible(child: Text('${widget.snap.message}', style: TextStyle(color: darkModeOn ? lightColor : darkColor))),
                       const SizedBox(height: 20),
                       Text(
                         'Received: ${DateFormat.yMMMd().format(localTime)} ${DateFormat.jm().format(localTime)}',
@@ -210,7 +212,8 @@ class _NotificationCardState extends State<NotificationCard> {
                             Text(
                               '${widget.snap.title}',
                               overflow: TextOverflow.ellipsis,
-                              style: const TextStyle(
+                              style: TextStyle(
+                                color: darkModeOn ? lightColor : darkColor,
                                 fontWeight: FontWeight.bold,
                                 fontSize: 15.0,
                               ),

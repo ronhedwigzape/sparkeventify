@@ -51,9 +51,9 @@ class _PersonalEventDialogState extends State<PersonalEventDialog> {
             RichText(
               text: TextSpan(
                 text: 'Start Date: ',
-                style: DefaultTextStyle.of(context).style,
+                style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                 children: <TextSpan>[
-                  TextSpan(text: DateFormat.yMMMd().format(startDate), style: const TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: DateFormat.yMMMd().format(startDate), style: TextStyle(fontWeight: FontWeight.bold,color: darkModeOn ? lightColor : darkColor)),
                 ],
               ),
             ),
@@ -61,9 +61,9 @@ class _PersonalEventDialogState extends State<PersonalEventDialog> {
             RichText(
               text: TextSpan(
                 text: 'End Date: ',
-                style: DefaultTextStyle.of(context).style,
+                style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                 children: <TextSpan>[
-                  TextSpan(text: DateFormat.yMMMd().format(endDate), style: const TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: DateFormat.yMMMd().format(endDate), style: TextStyle(fontWeight: FontWeight.bold,color: darkModeOn ? lightColor : darkColor)),
                 ],
               ),
             ),
@@ -71,9 +71,9 @@ class _PersonalEventDialogState extends State<PersonalEventDialog> {
             RichText(
               text: TextSpan(
                 text: 'Start Time: ',
-                style: DefaultTextStyle.of(context).style,
+                style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                 children: <TextSpan>[
-                  TextSpan(text: DateFormat.jm().format(startTime), style: const TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: DateFormat.jm().format(startTime), style: TextStyle(fontWeight: FontWeight.bold,color: darkModeOn ? lightColor : darkColor)),
                 ],
               ),
             ),
@@ -81,9 +81,9 @@ class _PersonalEventDialogState extends State<PersonalEventDialog> {
             RichText(
               text: TextSpan(
                 text: 'End Time: ',
-                style: DefaultTextStyle.of(context).style,
+                style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                 children: <TextSpan>[
-                  TextSpan(text: DateFormat.jm().format(endTime), style: const TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: DateFormat.jm().format(endTime), style: TextStyle(fontWeight: FontWeight.bold,color: darkModeOn ? lightColor : darkColor)),
                 ],
               ),
             ),
@@ -91,9 +91,9 @@ class _PersonalEventDialogState extends State<PersonalEventDialog> {
             RichText(
               text: TextSpan(
                 text: 'Description: ',
-                style: DefaultTextStyle.of(context).style,
+                style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                 children: <TextSpan>[
-                  TextSpan(text: widget.personalEvent!.description, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: widget.personalEvent!.description, style: TextStyle(fontWeight: FontWeight.bold,color: darkModeOn ? lightColor : darkColor)),
                 ],
               )
             ),
@@ -101,9 +101,9 @@ class _PersonalEventDialogState extends State<PersonalEventDialog> {
             RichText(
               text: TextSpan(
                 text: 'Location: ',
-                style: DefaultTextStyle.of(context).style,
+                style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                 children: <TextSpan>[
-                  TextSpan(text: widget.personalEvent!.venue, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: widget.personalEvent!.venue, style: TextStyle(fontWeight: FontWeight.bold,color: darkModeOn ? lightColor : darkColor)),
                 ],
               )
             ),
@@ -111,9 +111,9 @@ class _PersonalEventDialogState extends State<PersonalEventDialog> {
             RichText(
               text: TextSpan(
                 text: 'Type: ',
-                style: DefaultTextStyle.of(context).style,
+                style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                 children: <TextSpan>[
-                  TextSpan(text: widget.personalEvent!.type, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  TextSpan(text: widget.personalEvent!.type, style: TextStyle(fontWeight: FontWeight.bold,color: darkModeOn ? lightColor : darkColor)),
                 ],
               )
             ),
