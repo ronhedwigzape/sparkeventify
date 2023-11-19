@@ -61,17 +61,18 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
     return showDialog(
         context: context,
         builder: (context) {
+        final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
           return SimpleDialog(
-            title: const Text('Upload an Image'),
+            title: Text('Upload an Image', style: TextStyle(color: darkModeOn ? lightColor : darkColor,),),
             children: [
               !kIsWeb
                   ? SimpleDialogOption(
                       padding: const EdgeInsets.all(20),
-                      child: const Row(
+                      child: Row(
                         children: <Widget>[
-                          Icon(Icons.camera),
-                          SizedBox(width: 10),
-                          Text('Take a photo'),
+                          const Icon(Icons.camera),
+                          const SizedBox(width: 10),
+                          Text('Take a photo', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                         ],
                       ),
                       onPressed: () async {
@@ -90,11 +91,11 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
                   : const SizedBox.shrink(),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.image_rounded),
-                    SizedBox(width: 10),
-                    Text('Choose from ${kIsWeb ? 'files' : 'gallery'}'),
+                    const Icon(Icons.image_rounded),
+                    const SizedBox(width: 10),
+                    Text('Choose from ${kIsWeb ? 'files' : 'gallery'}', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () async {
@@ -111,11 +112,11 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
               ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.cancel),
-                    SizedBox(width: 10),
-                    Text('Cancel'),
+                    const Icon(Icons.cancel),
+                    const SizedBox(width: 10),
+                    Text('Cancel', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () {
@@ -131,16 +132,17 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
     showDialog(
         context: context,
         builder: (context) {
+          final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
           return SimpleDialog(
-            title: const Text('Upload a Document'),
+            title: Text('Upload a Document', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
             children: [
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.file_present_rounded),
-                    SizedBox(width: 10),
-                    Text('Choose from files'),
+                    const Icon(Icons.file_present_rounded),
+                    const SizedBox(width: 10),
+                    Text('Choose from files', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () async {
@@ -157,11 +159,11 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
               ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.cancel),
-                    SizedBox(width: 10),
-                    Text('Cancel'),
+                    const Icon(Icons.cancel),
+                    const SizedBox(width: 10),
+                    Text('Cancel', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () {
@@ -499,7 +501,7 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
                                                       mainAxisSize:
                                                           MainAxisSize.min,
                                                       children: [
-                                                        Text(value),
+                                                        Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
                                                       ],
                                                     ),
                                                   );
@@ -566,39 +568,10 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
                                           ),
                                           const SizedBox(width: 10.0),
                                           Flexible(
-                                            child:
-                                                DropdownButtonFormField<String>(
-                                              decoration: const InputDecoration(
-                                                prefixIcon:
-                                                    Icon(Icons.location_pin),
-                                                labelText:
-                                                    '${kIsWeb ? 'Select venue' : 'Venue'}*',
-                                              ),
-                                              value: _personalEventVenueController
-                                                      .text.isEmpty
-                                                  ? widget.eventSnap.venue
-                                                  : _personalEventVenueController.text,
-                                              items: <String>[
-                                                'Gymnasium',
-                                                'Auditorium'
-                                              ].map((String value) {
-                                                return DropdownMenuItem<String>(
-                                                  value: value,
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Text(value),
-                                                    ],
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              onChanged: (String? newValue) {
-                                                setState(() {
-                                                  _personalEventVenueController.text =
-                                                      newValue!;
-                                                });
-                                              },
+                                            child: TextFieldInput(
+                                              textEditingController: _personalEventVenueController,
+                                              labelText: 'Venue*',
+                                              textInputType: TextInputType.text,
                                             ),
                                           )
                                         ]),
@@ -606,6 +579,7 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
                                       const SizedBox(height: 10.0),
                                       Flexible(
                                         child: TextFormField(
+                                          style: TextStyle(color: darkModeOn ? lightColor : darkColor,),
                                           controller:
                                               _personalEventDescriptionsController,
                                           decoration: InputDecoration(

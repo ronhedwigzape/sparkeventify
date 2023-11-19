@@ -80,10 +80,11 @@ Future<List<model.Notification>> fetchNotifications() async {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Icon(Icons.notification_important_rounded, size: 25.0, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
-                        const Flexible(
+                        Flexible(
                           child: Text(
                             'You don’t have any notifications. Check back later.',
                             textAlign: TextAlign.center,
+                            style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                             )),
                       ],
                     ),

@@ -61,9 +61,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
             ],
           ),
           children: [
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
-              child: Text('Are you sure you want to sign out?'),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
+              child: Text('Are you sure you want to sign out?', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
             ),
             SimpleDialogOption(
               padding: const EdgeInsets.all(20),
@@ -98,7 +98,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Icon(Icons.check_circle, 
                   color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
                   const SizedBox(width: 10),
-                  const Text('Yes'),
+                  Text('Yes', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                 ],
               ),
             ),
@@ -108,7 +108,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 children: <Widget>[
                   Icon(Icons.cancel, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
                   const SizedBox(width: 10),
-                  const Text('Go Back'),
+                  Text('Go Back', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                 ],
               ),
               onPressed: () {
@@ -191,7 +191,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 child: Row(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    Text(fullName, style: const TextStyle(fontSize: 24.0, fontWeight: FontWeight.bold)),
+                                    Text(
+                                      fullName, 
+                                      style: TextStyle(
+                                        color: darkModeOn ? lightColor : darkColor,
+                                        fontSize: 24.0, 
+                                        fontWeight: FontWeight.bold)),
                                   ],
                                 ),
                               ),
@@ -269,7 +274,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       children: <Widget>[
                                         const Icon(Icons.email),
                                         const SizedBox(width: 20),
-                                        Text(email, style: const TextStyle(fontSize: 16.0)), 
+                                        Text(email, style: TextStyle(fontSize: 16.0, color: darkModeOn ? lightColor : darkColor,)), 
                                       ],
                                     ),
                                   ),
@@ -280,7 +285,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 children: [
                                   const Icon(Icons.person),
                                   const SizedBox(width: 20),
-                                  Text(fullName, style: const TextStyle(fontSize: 16.0)),
+                                  Text(fullName, style: TextStyle(fontSize: 16.0, color: darkModeOn ? lightColor : darkColor,)),
                                 ],
                               ),
                               const Divider(height: 30, thickness: 2),
@@ -288,7 +293,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 children: <Widget>[
                                   const Icon(Icons.phone),
                                   const SizedBox(width: 20),
-                                  Text('+$phoneNumber', style: const TextStyle(fontSize: 16.0)),
+                                  Text('+$phoneNumber', style: TextStyle(fontSize: 16.0, color: darkModeOn ? lightColor : darkColor,)),
                                 ],
                               ),
                               currentUser?.userType != 'Staff' && currentUser?.userType != 'Admin' ? const Divider(height: 30, thickness: 2) : const SizedBox.shrink(),
@@ -301,7 +306,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         children: [
                                           const Icon(Icons.school),
                                           const SizedBox(width: 20),
-                                          Flexible(child: Text('Dept: $department', style: const TextStyle(fontSize: 16.0)))
+                                          Flexible(child: Text('Dept: $department', style: TextStyle(fontSize: 16.0, color: darkModeOn ? lightColor : darkColor,)))
                                         ],
                                       )
                                   ),
@@ -310,7 +315,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       children: [
                                         const Icon(Icons.school),
                                         const SizedBox(width: 20),
-                                        Flexible(child: Text('Program: $program', style: const TextStyle(fontSize: 16.0)))
+                                        Flexible(child: Text('Program: $program', style: TextStyle(fontSize: 16.0, color: darkModeOn ? lightColor : darkColor,)))
                                       ],
                                     )
                                   ),
@@ -326,7 +331,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       children: [
                                         const Icon(Icons.school),
                                         const SizedBox(width: 20),
-                                        Text('Year: $year', style: const TextStyle(fontSize: 16.0)),
+                                        Text('Year: $year', style: TextStyle(fontSize: 16.0, color: darkModeOn ? lightColor : darkColor,)),
                                       ],
                                     )
                                   ),
@@ -336,7 +341,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                         const Icon(Icons.school),
                                         const SizedBox(width: 20), 
                                         Text('Section: $section',
-                                        style: const TextStyle(fontSize: 16.0))
+                                        style: TextStyle(fontSize: 16.0, color: darkModeOn ? lightColor : darkColor,))
                                       ]
                                     )
                                   )
@@ -350,7 +355,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                   const Icon(Icons.work),
                                   const SizedBox(width: 20),
                                   Text(currentUser?.profile?.staffPosition ?? 'Staff',
-                                  style: const TextStyle(fontSize: 16.0)),
+                                  style: TextStyle(fontSize: 16.0, color: darkModeOn ? lightColor : darkColor,)),
                                 ],
                               ) : const SizedBox.shrink(),
                               const SizedBox(height: 20),

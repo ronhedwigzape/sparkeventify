@@ -45,37 +45,41 @@ class _PostScreenState extends State<PostScreen> {
     return showDialog(
         context: context,
         builder: (context) {
+        final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
           return SimpleDialog(
-            title: const Text('Upload an Image'),
+            title: Text('Upload an Image', style: TextStyle(color: darkModeOn ? lightColor : darkColor,),),
             children: [
-              !kIsWeb ? SimpleDialogOption(
-                padding: const EdgeInsets.all(20),
-                child: const Row(
-                  children: <Widget>[
-                    Icon(Icons.camera),
-                    SizedBox(width: 10),
-                    Text('Take a photo'),
-                  ],
-                ),
-                onPressed: () async {
-                  Navigator.of(context).pop();
-                  Uint8List? file = await pickImage(ImageSource.camera);
-                  if (file != null) {
-                    _imageFile = file;
-                    const SnackBar snackBar =
-                        SnackBar(content: Text('Image is uploaded!'));
-                    ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!)
-                        .showSnackBar(snackBar);
-                  }
-                },
-              ) : const SizedBox.shrink() ,
+              !kIsWeb
+                  ? SimpleDialogOption(
+                      padding: const EdgeInsets.all(20),
+                      child: Row(
+                        children: <Widget>[
+                          const Icon(Icons.camera),
+                          const SizedBox(width: 10),
+                          Text('Take a photo', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
+                        ],
+                      ),
+                      onPressed: () async {
+                        Navigator.of(context).pop();
+                        Uint8List? file = await pickImage(ImageSource.camera);
+                        if (file != null) {
+                          _imageFile = file;
+                          const SnackBar snackBar =
+                              SnackBar(content: Text('Image is uploaded!'));
+                          ScaffoldMessenger.of(
+                                  _scaffoldMessengerKey.currentContext!)
+                              .showSnackBar(snackBar);
+                        }
+                      },
+                    )
+                  : const SizedBox.shrink(),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.image_rounded),
-                    SizedBox(width: 10),
-                    Text('Choose from ${kIsWeb ? 'files' : 'gallery'}'),
+                    const Icon(Icons.image_rounded),
+                    const SizedBox(width: 10),
+                    Text('Choose from ${kIsWeb ? 'files' : 'gallery'}', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () async {
@@ -92,11 +96,11 @@ class _PostScreenState extends State<PostScreen> {
               ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.cancel),
-                    SizedBox(width: 10),
-                    Text('Cancel'),
+                    const Icon(Icons.cancel),
+                    const SizedBox(width: 10),
+                    Text('Cancel', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () {
@@ -112,16 +116,17 @@ class _PostScreenState extends State<PostScreen> {
     showDialog(
         context: context,
         builder: (context) {
+          final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
           return SimpleDialog(
-            title: const Text('Upload a Document'),
+            title: Text('Upload a Document', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
             children: [
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.file_present_rounded),
-                    SizedBox(width: 10),
-                    Text('Choose from files'),
+                    const Icon(Icons.file_present_rounded),
+                    const SizedBox(width: 10),
+                    Text('Choose from files', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () async {
@@ -138,11 +143,11 @@ class _PostScreenState extends State<PostScreen> {
               ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.cancel),
-                    SizedBox(width: 10),
-                    Text('Cancel'),
+                    const Icon(Icons.cancel),
+                    const SizedBox(width: 10),
+                    Text('Cancel', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () {
@@ -428,7 +433,7 @@ class _PostScreenState extends State<PostScreen> {
                                                           child: Row(
                                                             mainAxisSize: MainAxisSize.min,
                                                             children: [
-                                                              Text(value),
+                                                              Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                                                             ],
                                                           ),
                                                         );
@@ -511,6 +516,7 @@ class _PostScreenState extends State<PostScreen> {
                                           const SizedBox(height: 10.0),
                                           Flexible(
                                             child: TextFormField(
+                                              style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                                               controller: _eventDescriptionsController,
                                               decoration: InputDecoration(
                                                   labelText: 'Description*',
@@ -562,13 +568,14 @@ class _PostScreenState extends State<PostScreen> {
                                                 child: Column(
                                                   mainAxisSize: MainAxisSize.min,
                                                   children: [
-                                                    const Flexible(
+                                                    Flexible(
                                                         child: Center(
                                                             child: Padding(
-                                                              padding: EdgeInsets.all(10.0),
+                                                              padding: const EdgeInsets.all(10.0),
                                                               child: Text(
                                                                   'Participants*',
                                                                   style: TextStyle(
+                                                                      color: darkModeOn ? lightColor : darkColor,
                                                                       fontSize: kIsWeb ? 28 : 24,
                                                                       fontWeight: FontWeight.bold
                                                                   )),
@@ -692,13 +699,13 @@ class _PostScreenState extends State<PostScreen> {
           padding: const EdgeInsets.all(8.0),
           child: Text(
             type,
-            style: const TextStyle(fontSize: kIsWeb ? 20 : 12, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: kIsWeb ? 20 : 12, fontWeight: FontWeight.bold, color: darkModeOn ? lightColor : darkColor,),
           ),
         ), ...participants.map(
               (participant) => CheckboxListTile(
             activeColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
             checkColor: darkModeOn ? darkColor : lightColor,
-            title: Text(participant),
+            title: Text(participant, style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
             value: selectedParticipants[type.toLowerCase()]?.contains(participant),
             onChanged: (bool? value) {
               setState(() {
@@ -748,7 +755,7 @@ class _PostScreenState extends State<PostScreen> {
           padding: const EdgeInsets.all(8.0),
           child: Text(
             type,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: darkModeOn ? lightColor : darkColor,),
           ),
         ),
         ListView(
@@ -758,7 +765,7 @@ class _PostScreenState extends State<PostScreen> {
                 (participant) => CheckboxListTile(
               activeColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
               checkColor: darkModeOn ? darkColor : lightColor,
-              title: Text(participant),
+              title: Text(participant, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
               value: selectedParticipants[type.toLowerCase()]?.contains(participant),
               onChanged: (bool? value) {
                 setState(() {

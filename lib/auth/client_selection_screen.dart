@@ -52,17 +52,17 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                   padding: const EdgeInsets.symmetric(
                     vertical: 8,
                   ),
-                  child: const Text(
+                  child: Text(
                     schoolName,
                     style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0, color: darkModeOn ? lightColor : darkColor),
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     vertical: 8,
                   ),
-                  child: const Text(schoolAddress),
+                  child: Text(schoolAddress, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                 ),
               ],
             ),
@@ -78,10 +78,10 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                       horizontal: 50.0, vertical: 10.0),
                   decoration: BoxDecoration(
                     color: darkModeOn ? darkColor : lightColor,
-                    border: Border.all(color: secondaryDarkColor),
+                    border: Border.all(color: darkModeOn ? darkModeSecondaryColor : secondaryDarkColor),
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  child: Text('Student'.toUpperCase())),
+                  child: Text('Student'.toUpperCase(), style: TextStyle(color: darkModeOn ? lightColor : darkColor),)),
             ),
             InkWell(
               onTap: onOfficerTap,
@@ -93,10 +93,10 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                       horizontal: 50.0, vertical: 10.0),
                   decoration: BoxDecoration(
                     color: darkModeOn ? darkColor : lightColor,
-                    border: Border.all(color: secondaryDarkColor),
+                    border: Border.all(color: darkModeOn ? darkModeSecondaryColor : secondaryDarkColor),
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  child: Text('Organization Officer'.toUpperCase())),
+                  child: Text('Organization Officer'.toUpperCase(), style: TextStyle(color: darkModeOn ? lightColor : darkColor))),
             ),
             InkWell(
               onTap: onStaffTap,
@@ -108,10 +108,10 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                       horizontal: 50.0, vertical: 10.0),
                   decoration: BoxDecoration(
                     color: darkModeOn ? darkColor : lightColor,
-                    border: Border.all(color: secondaryDarkColor),
+                    border: Border.all(color: darkModeOn ? darkModeSecondaryColor : secondaryDarkColor),
                     borderRadius: BorderRadius.circular(5),
                   ),
-                  child: Text('SASO Staff'.toUpperCase())),
+                  child: Text('SASO Staff'.toUpperCase(), style: TextStyle(color: darkModeOn ? lightColor : darkColor))),
             ),
           ],
         ),

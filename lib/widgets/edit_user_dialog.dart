@@ -158,7 +158,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                 children: [
                   const Icon(Icons.person),
                   const SizedBox(width: 10),
-                  Text('Edit ${widget.user.profile!.firstName}\'s profile'),
+                  Text('Edit ${widget.user.profile!.firstName}\'s profile', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
                 ],
               ),
               insetPadding: const EdgeInsets.symmetric(vertical: 80),
@@ -182,7 +182,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                                   children: [
                                   const Icon(Icons.email),
                                   const SizedBox(width: 10),
-                                  Text(widget.user.email ?? 'No email found')
+                                  Text(widget.user.email ?? 'No email found', style: TextStyle(color: darkModeOn ? lightColor : darkColor,))
                                 ]),
                               ),
                               PasswordWidget(password: widget.user.password ?? 'No password found')
@@ -255,7 +255,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                           value: selectedProgramAndDepartment,
                           style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
                           decoration: InputDecoration(
-                            focusColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                            focusColor: darkModeOn ? lightColor : darkColor,
                             prefixIcon: const Icon(Icons.school),
                             labelText: 'Program and Department*',
                             border: OutlineInputBorder(
@@ -277,7 +277,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                           items: programsAndDepartments.map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value.isEmpty ? null : value,
-                              child: Text(value),
+                              child: Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
                             );
                           }).toList(),
                         ) : const SizedBox.shrink(),
@@ -307,7 +307,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                             value: selectedStaffPosition,
                             style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
                             decoration: InputDecoration(
-                              focusColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                              focusColor: darkModeOn ? lightColor : darkColor,
                               prefixIcon: const Icon(Icons.school),
                               labelText: 'Staff Positions*',
                               border: OutlineInputBorder(
@@ -330,7 +330,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                             items: staffPositions.map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value.isEmpty ? null : value,
-                                child: Text(value),
+                                child: Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
                               );
                             }).toList(),
                           ) : const SizedBox.shrink(),

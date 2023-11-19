@@ -126,23 +126,24 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.symmetric(
                         vertical: 8,
                       ),
-                      child: const Text(
+                      child: Text(
                         schoolName,
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0, color: darkModeOn ? lightColor : darkColor),
                       ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         vertical: 8,
                       ),
-                      child: const Text(schoolAddress),
+                      child: Text(schoolAddress, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                     ),
                   ],
                 ),
                 const SizedBox(height: 20.0),
                 // text field input for email
-                const Text('Log in',
+                Text('Log in',
                     style: TextStyle(
+                      color: darkModeOn ? lightColor : darkColor,
                       fontSize: 24.0,
                       fontWeight: FontWeight.bold,
                     )),
@@ -195,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       padding: const EdgeInsets.symmetric(
                         vertical: 15,
                       ),
-                      child: const Text('Don\'t have an account?'),
+                      child: Text('Don\'t have an account?', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                     ),
                     GestureDetector(
                       onTap: navigateToSignup,
@@ -203,9 +204,10 @@ class _LoginScreenState extends State<LoginScreen> {
                         padding: const EdgeInsets.symmetric(
                           vertical: 8,
                         ),
-                        child: const Text(
+                        child: Text(
                           ' Sign up.',
                           style: TextStyle(
+                            color: darkModeOn ? lightColor : darkColor,
                             fontWeight: FontWeight.bold,
                           ),
                         ),

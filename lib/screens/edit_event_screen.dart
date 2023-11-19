@@ -70,17 +70,18 @@ class EditEventScreenState extends State<EditEventScreen> {
     return showDialog(
         context: context,
         builder: (context) {
+          final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
           return SimpleDialog(
-            title: const Text('Upload an Image'),
+            title: Text('Upload an Image', style: TextStyle( color: darkModeOn ? lightColor : darkColor)),
             children: [
               !kIsWeb
                   ? SimpleDialogOption(
                       padding: const EdgeInsets.all(20),
-                      child: const Row(
+                      child: Row(
                         children: <Widget>[
-                          Icon(Icons.camera),
-                          SizedBox(width: 10),
-                          Text('Take a photo'),
+                          const Icon(Icons.camera),
+                          const SizedBox(width: 10),
+                          Text('Take a photo', style: TextStyle( color: darkModeOn ? lightColor : darkColor)),
                         ],
                       ),
                       onPressed: () async {
@@ -99,11 +100,11 @@ class EditEventScreenState extends State<EditEventScreen> {
                   : const SizedBox.shrink(),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.image_rounded),
-                    SizedBox(width: 10),
-                    Text('Choose from ${kIsWeb ? 'files' : 'gallery'}'),
+                    const Icon(Icons.image_rounded),
+                    const SizedBox(width: 10),
+                    Text('Choose from ${kIsWeb ? 'files' : 'gallery'}', style: TextStyle( color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () async {
@@ -120,11 +121,11 @@ class EditEventScreenState extends State<EditEventScreen> {
               ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child:  Row(
                   children: <Widget>[
-                    Icon(Icons.cancel),
-                    SizedBox(width: 10),
-                    Text('Cancel'),
+                    const Icon(Icons.cancel),
+                    const SizedBox(width: 10),
+                    Text('Cancel', style: TextStyle( color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () {
@@ -140,16 +141,17 @@ class EditEventScreenState extends State<EditEventScreen> {
     showDialog(
         context: context,
         builder: (context) {
+          final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
           return SimpleDialog(
-            title: const Text('Upload a Document'),
+            title: Text('Upload a Document', style: TextStyle( color: darkModeOn ? lightColor : darkColor)),
             children: [
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.file_present_rounded),
-                    SizedBox(width: 10),
-                    Text('Choose from files'),
+                    const Icon(Icons.file_present_rounded),
+                    const SizedBox(width: 10),
+                    Text('Choose from files', style: TextStyle( color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () async {
@@ -166,11 +168,11 @@ class EditEventScreenState extends State<EditEventScreen> {
               ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.cancel),
-                    SizedBox(width: 10),
-                    Text('Cancel'),
+                    const Icon(Icons.cancel),
+                    const SizedBox(width: 10),
+                    Text('Cancel', style: TextStyle( color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () {
@@ -563,7 +565,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                       mainAxisSize:
                                                           MainAxisSize.min,
                                                       children: [
-                                                        Text(value),
+                                                        Text(value, style: TextStyle( color: darkModeOn ? lightColor : darkColor)),
                                                       ],
                                                     ),
                                                   );
@@ -630,46 +632,18 @@ class EditEventScreenState extends State<EditEventScreen> {
                                           ),
                                           const SizedBox(width: 10.0),
                                           Flexible(
-                                            child:
-                                                DropdownButtonFormField<String>(
-                                              decoration: const InputDecoration(
-                                                prefixIcon:
-                                                    Icon(Icons.location_pin),
-                                                labelText:
-                                                    '${kIsWeb ? 'Select venue' : 'Venue'}*',
-                                              ),
-                                              value: _eventVenueController
-                                                      .text.isEmpty
-                                                  ? widget.eventSnap.venue
-                                                  : _eventVenueController.text,
-                                              items: <String>[
-                                                'Gymnasium',
-                                                'Auditorium'
-                                              ].map((String value) {
-                                                return DropdownMenuItem<String>(
-                                                  value: value,
-                                                  child: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      Text(value),
-                                                    ],
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              onChanged: (String? newValue) {
-                                                setState(() {
-                                                  _eventVenueController.text =
-                                                      newValue!;
-                                                });
-                                              },
-                                            ),
+                                            child: TextFieldInput(
+                                              labelText: 'Venue*',
+                                              textEditingController: _eventVenueController,
+                                              textInputType: TextInputType.text,
+                                            )
                                           )
                                         ]),
                                       ),
                                       const SizedBox(height: 10.0),
                                       Flexible(
                                         child: TextFormField(
+                                          style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                                           controller:
                                               _eventDescriptionsController,
                                           decoration: InputDecoration(
@@ -726,12 +700,13 @@ class EditEventScreenState extends State<EditEventScreen> {
                                             child: Column(
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
-                                                const Flexible(
+                                                Flexible(
                                                     child: Center(
                                                         child: Padding(
-                                                  padding: EdgeInsets.all(10.0),
+                                                  padding: const EdgeInsets.all(10.0),
                                                   child: Text('Participants*',
                                                       style: TextStyle(
+                                                          color: darkModeOn ? lightColor : darkColor,
                                                           fontSize:
                                                               kIsWeb ? 28 : 24,
                                                           fontWeight:
@@ -798,9 +773,9 @@ class EditEventScreenState extends State<EditEventScreen> {
                                         ),
                                       ),
                                       const SizedBox(height: 10.0),
-                                      const Text('Note: * indicates required field'),
+                                      Text('Note: * indicates required field', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                                       const SizedBox(height: 5.0),
-                                      const Text('Event Status also updates when you update the event.'),
+                                      Text('Event Status also updates when you update the event.', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                                       const SizedBox(height: 10.0),
                                       Center(
                                         child: InkWell(
@@ -837,26 +812,26 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                     : lightModePrimaryColor,
                                               ),
                                               child: _isLoading
-                                                  ? const Center(
+                                                  ? Center(
                                                       child:
                                                           CircularProgressIndicator(
                                                       valueColor:
                                                           AlwaysStoppedAnimation<
                                                                   Color>(
-                                                              lightColor),
+                                                              darkModeOn ? darkColor : lightColor),
                                                     ))
                                                   : Row(
                                                     mainAxisAlignment: MainAxisAlignment.center,
                                                     children: [
-                                                      const Icon(
+                                                      Icon(
                                                         Icons.update,
-                                                        color: lightColor,
+                                                        color: darkModeOn ? darkColor : lightColor,
                                                       ),
                                                       const SizedBox(width: 10.0),
                                                       Text(
                                                           'Update ${widget.eventSnap.type == 'Academic' ? 'announcement' : 'event'}',
-                                                          style: const TextStyle(
-                                                            color: lightColor,
+                                                          style: TextStyle(
+                                                            color: darkModeOn ? darkColor : lightColor,
                                                             fontWeight:
                                                                 FontWeight.bold,
                                                           ),
@@ -917,26 +892,26 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                     : lightModeMaroonColor,
                                               ),
                                               child: _isLoadingCancel
-                                                ? const Center(
+                                                ? Center(
                                                     child:
                                                         CircularProgressIndicator(
                                                     valueColor:
                                                         AlwaysStoppedAnimation<
                                                                 Color>(
-                                                            lightColor),
+                                                            darkModeOn ? darkColor : lightColor),
                                                   ))
                                                 : Row(
                                                 mainAxisAlignment: MainAxisAlignment.center,
                                                 children: [
-                                                const Icon(
+                                                Icon(
                                                   Icons.update,
-                                                  color: lightColor,
+                                                  color: darkModeOn ? darkColor : lightColor,
                                                 ),
                                                 const SizedBox(width: 10.0),
                                                 Text(
                                                     'Mark this ${widget.eventSnap.type == 'Academic' ? 'announcement' : 'event'} cancelled',
-                                                    style: const TextStyle(
-                                                      color: lightColor,
+                                                    style: TextStyle(
+                                                      color: darkModeOn ? darkColor : lightColor,
                                                       fontWeight:
                                                           FontWeight.bold,
                                                     ),
@@ -997,26 +972,26 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                   : lightModeGrassColor,
                                             ),
                                             child: _isLoadingMoved
-                                            ? const Center(
+                                            ? Center(
                                                 child:
                                                     CircularProgressIndicator(
                                                 valueColor:
                                                     AlwaysStoppedAnimation<
                                                             Color>(
-                                                        lightColor),
+                                                        darkModeOn ? darkColor : lightColor),
                                               ))
                                             : Row(
                                               mainAxisAlignment: MainAxisAlignment.center,
                                               children: [
-                                              const Icon(
+                                              Icon(
                                                 Icons.update,
-                                                color: lightColor,
+                                                color: darkModeOn ? darkColor : lightColor,
                                               ),
                                               const SizedBox(width: 10.0),
                                               Text(
                                                   'Mark this ${widget.eventSnap.type == 'Academic' ? 'announcement' : 'event'} moved',
-                                                  style: const TextStyle(
-                                                    color: lightColor,
+                                                  style: TextStyle(
+                                                    color: darkModeOn ? darkColor : lightColor,
                                                     fontWeight:
                                                         FontWeight.bold,
                                                   ),
@@ -1051,8 +1026,8 @@ class EditEventScreenState extends State<EditEventScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   type,
-                  style: const TextStyle(
-                      fontSize: kIsWeb ? 20 : 12, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: kIsWeb ? 20 : 12, fontWeight: FontWeight.bold, color: darkModeOn ? lightColor : darkColor),
                 ),
               ),
               ...participants
@@ -1062,7 +1037,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                           ? darkModePrimaryColor
                           : lightModePrimaryColor,
                       checkColor: darkModeOn ? darkColor : lightColor,
-                      title: Text(participant),
+                      title: Text(participant, style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                       value: selectedParticipants[type.toLowerCase()]
                           ?.contains(participant) ?? [],
                       onChanged: (bool? value) {
@@ -1122,8 +1097,8 @@ class EditEventScreenState extends State<EditEventScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   type,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold, color: darkModeOn ? lightColor : darkColor),
                 ),
               ),
               ListView(
@@ -1136,7 +1111,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                             ? darkModePrimaryColor
                             : lightModePrimaryColor,
                         checkColor: darkModeOn ? darkColor : lightColor,
-                        title: Text(participant),
+                        title: Text(participant, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                         value: selectedParticipants[type.toLowerCase()]
                             ?.contains(participant) ?? [],
                         onChanged: (bool? value) {

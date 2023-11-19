@@ -203,7 +203,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         title: Text(
           'Edit Profile',
           style: TextStyle(
-            color: darkModeOn ? white : black,
+            color: darkModeOn ? lightColor : darkColor,
           ),
         ),
         backgroundColor: darkModeOn ? darkColor : lightColor,
@@ -222,13 +222,14 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           const SizedBox(height: 20.0),
-          const Row(
+          Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.edit),
-              SizedBox(width: 10.0),
+              const Icon(Icons.edit),
+              const SizedBox(width: 10.0),
               Text('Edit your Profile',
                 style: TextStyle(
+                  color: darkModeOn ? lightColor : darkColor,
                   fontSize: 24.0,
                   fontWeight: FontWeight.bold,
                 )),
@@ -395,9 +396,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               Expanded(
                 child: Row(
                   children: [
-                    const Text(
+                    Text(
                       '+63',
                       style: TextStyle(
+                        color: darkModeOn ? lightColor : darkColor,
                         fontSize: 16.0,
                         fontWeight: FontWeight.bold,
                       ),
@@ -437,7 +439,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                         child: DropdownButton<String>(
                           isExpanded: true,
                           value: selectedProgramAndDepartment,
-                          style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                          style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                           onChanged: (String? newValue) {
                             setState(() {
                               selectedProgramAndDepartment = newValue ?? programsAndDepartments[0]; // handle null selection
@@ -488,7 +490,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(value),
+                          Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor,),),
                         ],
                       ),
                     );
@@ -612,22 +614,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                   color: darkModeOn ? darkModeGrassColor : lightModeGrassColor,
                 ),
                 child: _isLoading
-                  ? const Center(
+                  ? Center(
                       child: CircularProgressIndicator(
                       valueColor:
                           AlwaysStoppedAnimation<Color>(
-                              lightColor),
+                              darkModeOn ? darkColor : lightColor),
                     ))
-                  : const Row(
+                  : Row(
                       mainAxisAlignment:
                           MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.update_rounded, color: lightColor),
-                      SizedBox(width: 10),
+                      Icon(Icons.update_rounded, color: darkModeOn ? darkColor : lightColor),
+                      const SizedBox(width: 10),
                       Text(
                           'Update Profile',
                           style: TextStyle(
-                            color: lightColor,
+                            color: darkModeOn ? darkColor : lightColor,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
@@ -662,16 +664,16 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ),
                     color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,
                   ),
-                  child: const Row(
+                  child: Row(
                     mainAxisAlignment:
                     MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.delete_forever, color: lightColor),
-                      SizedBox(width: 10),
+                      Icon(Icons.delete_forever, color: darkModeOn ? darkColor : lightColor),
+                      const SizedBox(width: 10),
                       Text(
                         'Delete Your Account',
                         style: TextStyle(
-                          color: lightColor,
+                          color: darkModeOn ? darkColor : lightColor,
                           fontWeight: FontWeight.bold,
                         ),
                       ),

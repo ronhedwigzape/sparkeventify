@@ -62,7 +62,7 @@ class _DarkModeDialogState extends State<DarkModeDialog> {
               Icon(Icons.check_circle, 
               color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
               const SizedBox(width: 10),
-              const Text('Yes'),
+              Text('Yes', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
             ],
           ),
         ),
@@ -72,7 +72,7 @@ class _DarkModeDialogState extends State<DarkModeDialog> {
             children: <Widget>[
               Icon(Icons.cancel, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
               const SizedBox(width: 10),
-              const Text('No'),
+              Text('No', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
             ],
           ),
           onPressed: () {

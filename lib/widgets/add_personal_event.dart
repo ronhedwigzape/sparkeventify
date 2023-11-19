@@ -41,17 +41,18 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
     return showDialog(
         context: context,
         builder: (context) {
+        final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
           return SimpleDialog(
-            title: const Text('Upload an Image'),
+            title: Text('Upload an Image', style: TextStyle(color: darkModeOn ? lightColor : darkColor,),),
             children: [
               !kIsWeb
                   ? SimpleDialogOption(
                       padding: const EdgeInsets.all(20),
-                      child: const Row(
+                      child: Row(
                         children: <Widget>[
-                          Icon(Icons.camera),
-                          SizedBox(width: 10),
-                          Text('Take a photo'),
+                          const Icon(Icons.camera),
+                          const SizedBox(width: 10),
+                          Text('Take a photo', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                         ],
                       ),
                       onPressed: () async {
@@ -70,11 +71,11 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                   : const SizedBox.shrink(),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.image_rounded),
-                    SizedBox(width: 10),
-                    Text('Choose from ${kIsWeb ? 'files' : 'gallery'}'),
+                    const Icon(Icons.image_rounded),
+                    const SizedBox(width: 10),
+                    Text('Choose from ${kIsWeb ? 'files' : 'gallery'}', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () async {
@@ -83,7 +84,7 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                   if (file != null) {
                     _imageFile = file;
                     const SnackBar snackBar =
-                        SnackBar(content: Text('Image is uploaded!'));
+                        SnackBar(content: Text('New image is uploaded!'));
                     ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!)
                         .showSnackBar(snackBar);
                   }
@@ -91,11 +92,11 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
               ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.cancel),
-                    SizedBox(width: 10),
-                    Text('Cancel'),
+                    const Icon(Icons.cancel),
+                    const SizedBox(width: 10),
+                    Text('Cancel', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () {
@@ -111,16 +112,17 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
     showDialog(
         context: context,
         builder: (context) {
+          final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
           return SimpleDialog(
-            title: const Text('Upload a Document'),
+            title: Text('Upload a Document', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
             children: [
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.file_present_rounded),
-                    SizedBox(width: 10),
-                    Text('Choose from files'),
+                    const Icon(Icons.file_present_rounded),
+                    const SizedBox(width: 10),
+                    Text('Choose from files', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () async {
@@ -129,7 +131,7 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                   if (file != null) {
                     _documentFile = file;
                     const SnackBar snackBar =
-                        SnackBar(content: Text('Document is uploaded!'));
+                        SnackBar(content: Text('New document is uploaded!'));
                     ScaffoldMessenger.of(_scaffoldMessengerKey.currentContext!)
                         .showSnackBar(snackBar);
                   }
@@ -137,11 +139,11 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
               ),
               SimpleDialogOption(
                 padding: const EdgeInsets.all(20),
-                child: const Row(
+                child: Row(
                   children: <Widget>[
-                    Icon(Icons.cancel),
-                    SizedBox(width: 10),
-                    Text('Cancel'),
+                    const Icon(Icons.cancel),
+                    const SizedBox(width: 10),
+                    Text('Cancel', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                   ],
                 ),
                 onPressed: () {
@@ -431,7 +433,7 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                                               child: Row(
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  Text(value),
+                                                  Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                                                 ],
                                               ),
                                             );
@@ -492,52 +494,19 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                                     children: [
                                       Expanded(
                                       flex: 2,
-                                      child: DropdownButtonFormField<String>(
-                                        decoration: InputDecoration(
-                                          prefixIcon:
-                                              const Icon(Icons.location_pin),
-                                          labelText:
-                                              '${kIsWeb ? 'Select venue' : 'Venue'}*',
-                                          border: OutlineInputBorder(
-                                              borderSide:
-                                                  Divider.createBorderSide(
-                                            context,
-                                            color: darkModeOn
-                                                ? darkModeTertiaryColor
-                                                : lightModeTertiaryColor,
-                                          )),
-                                        ),
-                                        value:
-                                            _personalEventVenueController.text.isEmpty
-                                                ? null
-                                                : _personalEventVenueController.text,
-                                        items: <String>[
-                                          'Gymnasium',
-                                          'Auditorium'
-                                        ].map((String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Row(
-                                              mainAxisSize: MainAxisSize.min,
-                                              children: [
-                                                Text(value),
-                                              ],
-                                            ),
-                                          );
-                                        }).toList(),
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            _personalEventVenueController.text =
-                                                newValue!;
-                                          });
-                                        },
-                                      ),
+                                      child: TextFieldInput(
+                                        textEditingController:
+                                            _personalEventVenueController,
+                                        labelText: 'Venue*',
+                                        textInputType: TextInputType.text,
+                                      )
                                     )],
                                   ),
                                 ),
                                 const SizedBox(height: 10.0),
                                 Flexible(
                                   child: TextFormField(
+                                    style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                                     controller: _personalEventDescriptionsController,
                                     decoration: InputDecoration(
                                       labelText: 'Description*',

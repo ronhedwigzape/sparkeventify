@@ -4,7 +4,6 @@ import 'package:provider/provider.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/cspc_spinkit_fading_circle.dart';
-import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 import 'package:student_event_calendar/widgets/notification_button.dart';
 import 'package:student_event_calendar/widgets/users_card.dart';
 import 'package:student_event_calendar/utils/global.dart';
@@ -95,12 +94,12 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
           return const Center(child: Text('Something went wrong'));
         }
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: 
+          return Center(child: 
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CSPCFadeLoader(),
-              Text('Loading users...')
+              const CSPCSpinKitFadingCircle(isLogoVisible: false,),
+              Text('Loading users...', style: TextStyle(color: darkModeOn ? lightColor : darkColor,))
             ],
           ));
         }
@@ -176,7 +175,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                                   .map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value.trim(),  // Remove whitespaces
-                                  child: Text(value.trim()),  // Remove whitespaces
+                                  child: Text(value.trim(), style: TextStyle(color: darkModeOn ? lightColor : darkColor,),),  // Remove whitespaces
                                 );
                               }).toList(),
                             );
@@ -199,7 +198,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                                   .map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value.trim(),  // Remove whitespaces
-                                  child: Text(value.trim()),  // Remove whitespaces
+                                  child: Text(value.trim(), style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),  // Remove whitespaces
                                 );
                               }).toList(),
                             );
@@ -222,7 +221,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                                   .map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value.trim(),  // Remove whitespaces
-                                  child: Text(value.trim()),  // Remove whitespaces
+                                  child: Text(value.trim(), style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),  // Remove whitespaces
                                 );
                               }).toList(),
                             );
@@ -245,7 +244,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                                   .map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value.trim(),  // Remove whitespaces
-                                  child: Text(value.trim()),  // Remove whitespaces
+                                  child: Text(value.trim(), style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),  // Remove whitespaces
                                 );
                               }).toList(),
                             );
@@ -268,7 +267,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                                   .map<DropdownMenuItem<String>>((String value) {
                                 return DropdownMenuItem<String>(
                                   value: value.trim(),  // Remove whitespaces
-                                  child: Text(value.trim()),  // Remove whitespaces
+                                  child: Text(value.trim(), style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),  // Remove whitespaces
                                 );
                               }).toList(),
                             );
@@ -307,9 +306,9 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                     children: snapshot.connectionState == ConnectionState.waiting
                     ? <Widget>[
                         const CSPCSpinKitFadingCircle(isLogoVisible: true),
-                        const Text('Loading users...')
+                        Text('Loading users...', style: TextStyle(color: darkModeOn ? lightColor : darkColor,))
                     ] : filteredUsers.isEmpty ? <Widget>[
-                        const Center(child: Text('No user matches your search.')),
+                        Center(child: Text('No user matches your search.', style: TextStyle(color: darkModeOn ? lightColor : darkColor,))),
                     ]
                     : filteredUsers.map((user) => Container(  // Otherwise, display the list of users
                       margin: EdgeInsets.symmetric(

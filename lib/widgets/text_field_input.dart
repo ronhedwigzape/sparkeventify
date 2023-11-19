@@ -124,6 +124,7 @@ class _TextFieldInputState extends State<TextFieldInput> {
             height: widget.height,
             width: widget.width,
             child: TextFormField(
+              style: TextStyle(color: darkModeOn ? lightColor : darkColor),
               controller: widget.textEditingController,
               decoration: InputDecoration(
                 labelText: widget.labelText,
@@ -172,6 +173,7 @@ class _TextFieldInputState extends State<TextFieldInput> {
     );
     return Expanded(
       child: TextFormField(
+        style: TextStyle(color: darkModeOn ? lightColor : darkColor),
         controller: controller,
         decoration: InputDecoration(
           labelText: labelText,

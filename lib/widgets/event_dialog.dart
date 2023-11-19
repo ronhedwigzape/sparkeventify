@@ -61,11 +61,11 @@ class EventDialogState extends State<EventDialog> {
             kIsWeb
                 ? Text(
                     '${widget.selectedDayEvents.length > 1 ? 'Events' : 'Event'} for ${DateFormat('MMMM dd, yyyy').format(widget.adjustedSelectedDay)}',
-                    style: const TextStyle(fontSize: 26))
+                    style: TextStyle(fontSize: 26, color: darkModeOn ? lightColor : darkColor))
                 : Text(
                     DateFormat('MMMM dd, yyyy')
                         .format(widget.adjustedSelectedDay),
-                    style: const TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: 18, color: darkModeOn ? lightColor : darkColor),
                   ),
           ],
         ),
@@ -104,7 +104,8 @@ class EventDialogState extends State<EventDialog> {
                             Expanded(
                               child: Text(
                                 event.title,
-                                style: const TextStyle(
+                                style: TextStyle(
+                                    color: darkModeOn ? lightColor : darkColor,
                                     fontWeight: FontWeight.bold,
                                     fontSize: kIsWeb ? 24 : 22.0),
                               ),

@@ -150,19 +150,20 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
                     flex: 1,
                     child: Container(),
                   ),
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
                     child: Row(
                       children: [
-                        Flexible(
+                        const Flexible(
                           child: CSPCLogo(
                             height: 60.0,
                           ),
                         ),
-                        SizedBox(width: 20.0),
+                        const SizedBox(width: 20.0),
                         Text(
                           'Register as Staff',
                           style: TextStyle(
+                            color: darkModeOn ? lightColor : darkColor,
                             fontSize: 24.0,
                             fontWeight: FontWeight.bold,
                           ),
@@ -206,9 +207,10 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
                   const SizedBox(height: 10.0),
                   Row(
                     children: [
-                      const Text(
+                      Text(
                         '+63',
                         style: TextStyle(
+                          color: darkModeOn ? lightColor : darkColor,
                           fontSize: 16.0,
                           fontWeight: FontWeight.bold,
                         ),
@@ -252,7 +254,7 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
                                 child: DropdownButton<String>(
                                   isExpanded: true,
                                   value: selectedStaffPositions,
-                                  style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                                  style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                                   onChanged: (String? newValue) {
                                     setState(() {
                                       selectedStaffPositions = newValue ?? staffPositions[0]; // handle null selection
@@ -316,7 +318,7 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
                         padding: const EdgeInsets.symmetric(
                           vertical: 15,
                         ),
-                        child: const Text('Already have an account?'),
+                        child: Text('Already have an account?', style: TextStyle(color: darkModeOn ? lightColor : darkColor,),),
                       ),
                       GestureDetector(
                         onTap: navigateToLogin,
@@ -324,9 +326,10 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
                           padding: const EdgeInsets.symmetric(
                             vertical: 8,
                           ),
-                          child: const Text(
+                          child: Text(
                             ' Login here',
                             style: TextStyle(
+                              color: darkModeOn ? lightColor : darkColor,
                               fontWeight: FontWeight.bold,
                             ),
                           ),

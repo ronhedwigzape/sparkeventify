@@ -205,7 +205,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                                   ].map<DropdownMenuItem<String>>((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
-                                      child: Text(value),
+                                      child: Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                                     );
                                   }).toList(),
                                 ),

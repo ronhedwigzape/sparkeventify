@@ -99,7 +99,8 @@ class _PostCardState extends State<PostCard> {
                             children: <Widget>[
                               Text(
                                 author ?? 'Unknown Author',
-                                style: const TextStyle(
+                                style: TextStyle(
+                                  color: darkModeOn ? lightColor : darkColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16
                                 ),
@@ -293,7 +294,7 @@ class _PostCardState extends State<PostCard> {
                                       size: kIsWeb ? 21 : 18,
                                     ),
                                     const SizedBox(width: 5),
-                                    Flexible(child: Text(widget.snap.venue ?? '', textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: kIsWeb ? 14 : 11),)),
+                                    Flexible(child: Text(widget.snap.venue ?? '', textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: kIsWeb ? 14 : 11, color: darkModeOn ? lightColor : darkColor),)),
                                   ],
                                 ), 
                                 const SizedBox(height: 10,),
@@ -307,7 +308,7 @@ class _PostCardState extends State<PostCard> {
                                       size: kIsWeb ? 21 : 18,
                                     ),
                                     const SizedBox(width: 5),
-                                    Flexible(child: Text(formatParticipants(widget.snap.participants), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: kIsWeb ? 14 : 11),)),
+                                    Flexible(child: Text(formatParticipants(widget.snap.participants), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: kIsWeb ? 14 : 11, color: darkModeOn ? lightColor : darkColor),)),
                                   ],
                                 ), 
                                 const SizedBox(height: 10,),
@@ -321,7 +322,7 @@ class _PostCardState extends State<PostCard> {
                                       size: kIsWeb ? 21 : 18,
                                     ),
                                     const SizedBox(width: 5),
-                                    Flexible(child: Text(widget.snap.description, textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: kIsWeb ? 14 : 11),)),
+                                    Flexible(child: Text(widget.snap.description, textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: kIsWeb ? 14 : 11, color: darkModeOn ? lightColor : darkColor),)),
                                   ],
                                 ),    
                                                             
@@ -366,7 +367,8 @@ class _PostCardState extends State<PostCard> {
                             children: <Widget>[
                               Text(
                                 author ?? 'Unknown Author',
-                                style: const TextStyle(
+                                style: TextStyle(
+                                  color: darkModeOn ? lightColor : darkColor,
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16
                                 ),
@@ -556,7 +558,7 @@ class _PostCardState extends State<PostCard> {
                                       size: kIsWeb ? 21 : 18,
                                     ),
                                     const SizedBox(width: 5),
-                                    Flexible(child: Text(widget.snap.venue ?? '', textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: kIsWeb ? 14 : 11),)),
+                                    Flexible(child: Text(widget.snap.venue ?? '', textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: kIsWeb ? 14 : 11, color: darkModeOn ? lightColor : darkColor,),)),
                                   ],
                                 ), 
                                 const SizedBox(height: 10,),
@@ -570,7 +572,7 @@ class _PostCardState extends State<PostCard> {
                                       size: kIsWeb ? 21 : 18,
                                     ),
                                     const SizedBox(width: 5),
-                                    Flexible(child: Text(formatParticipants(widget.snap.participants), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: kIsWeb ? 14 : 11),)),
+                                    Flexible(child: Text(formatParticipants(widget.snap.participants), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: kIsWeb ? 14 : 11, color: darkModeOn ? lightColor : darkColor,),)),
                                   ],
                                 ), 
                                 const SizedBox(height: 10,),
@@ -584,7 +586,7 @@ class _PostCardState extends State<PostCard> {
                                       size: kIsWeb ? 21 : 18,
                                     ),
                                     const SizedBox(width: 5),
-                                    Flexible(child: Text(widget.snap.description, textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: kIsWeb ? 14 : 11),)),
+                                    Flexible(child: Text(widget.snap.description, textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: kIsWeb ? 14 : 11, color: darkModeOn ? lightColor : darkColor,),)),
                                   ],
                                 ),    
                                                             

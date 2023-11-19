@@ -60,8 +60,8 @@ class _UsersCardState extends State<UsersCard> {
                               text: TextSpan(
                                 style: DefaultTextStyle.of(context).style,
                                 children: <TextSpan>[
-                                  TextSpan(text: '${currentProfile.fullName ?? 'N/A'} - '),
-                                  TextSpan(text: widget.user.userType, style: const TextStyle(fontWeight: FontWeight.bold)),
+                                  TextSpan(text: '${currentProfile.fullName ?? 'N/A'} - ', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
+                                  TextSpan(text: widget.user.userType, style: TextStyle(fontWeight: FontWeight.bold, color: darkModeOn ? lightColor : darkColor)),
                                 ],
                               ),
                             )
@@ -114,34 +114,34 @@ class _UsersCardState extends State<UsersCard> {
                                      ...[
                                        Row(
                                          children: [
-                                           const Text('Department:'),
-                                           const SizedBox(width: 10.0,),
-                                           Text(currentProfile.department ?? 'N/A', 
-                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Text('Department:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
+                                            const SizedBox(width: 10.0,),
+                                            Text(currentProfile.department ?? 'N/A', 
+                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                                          ],
                                        ),
                                        Row(
                                          children: [
-                                           const Text('Year:'),
-                                           const SizedBox(width: 10.0,),
-                                           Text(currentProfile.year ?? 'N/A', 
-                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Text('Year:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
+                                            const SizedBox(width: 10.0,),
+                                            Text(currentProfile.year ?? 'N/A', 
+                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                                          ],
                                        ),
                                        Row(
                                          children: [
-                                           const Text('Section:'),
-                                           const SizedBox(width: 10.0,),
-                                           Text(currentProfile.section ?? 'N/A', 
-                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Text('Section:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
+                                            const SizedBox(width: 10.0,),
+                                            Text(currentProfile.section ?? 'N/A', 
+                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                                          ],
                                        ),
                                        Row(
                                          children: [
-                                           const Text('Program:'),
-                                           const SizedBox(width: 10.0,),
-                                           Text(currentProfile.program ?? 'N/A',
-                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Text('Program:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
+                                            const SizedBox(width: 10.0,),
+                                            Text(currentProfile.program ?? 'N/A',
+                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                                          ],
                                        ),
                                      ],
@@ -150,42 +150,42 @@ class _UsersCardState extends State<UsersCard> {
                                     ...[
                                        Row(
                                          children: [
-                                           const Text('Department:'),
-                                           const SizedBox(width: 10.0,),
-                                           Text(currentProfile.department ?? 'N/A', 
-                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Text('Department:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
+                                            const SizedBox(width: 10.0,),
+                                            Text(currentProfile.department ?? 'N/A', 
+                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                                          ],
                                        ),
                                        Row(
                                          children: [
-                                           const Text('Year:'),
-                                           const SizedBox(width: 10.0,),
-                                           Text(currentProfile.year ?? 'N/A', 
-                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Text('Year:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
+                                            const SizedBox(width: 10.0,),
+                                            Text(currentProfile.year ?? 'N/A', 
+                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                                          ],
                                        ),
                                        Row(
                                          children: [
-                                           const Text('Section:'),
-                                           const SizedBox(width: 10.0,),
-                                           Text(currentProfile.section ?? 'N/A', 
-                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Text('Section:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
+                                            const SizedBox(width: 10.0,),
+                                            Text(currentProfile.section ?? 'N/A', 
+                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                                          ],
                                        ),
                                        Row(
                                          children: [
-                                           const Text('Program:'),
-                                           const SizedBox(width: 10.0,),
-                                           Text(currentProfile.program ?? 'N/A',
-                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Text('Program:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
+                                            const SizedBox(width: 10.0,),
+                                            Text(currentProfile.program ?? 'N/A',
+                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                                          ],
                                        ),
                                        Row(
                                          children: [
-                                           const Text('Officer Position:'),
-                                           const SizedBox(width: 10.0,),
-                                           Text(currentProfile.officerPosition ?? 'N/A', 
-                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Text('Officer Position:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
+                                            const SizedBox(width: 10.0,),
+                                            Text(currentProfile.officerPosition ?? 'N/A', 
+                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                                          ],
                                        ),
                                     ],
@@ -193,31 +193,31 @@ class _UsersCardState extends State<UsersCard> {
                                      ...[
                                       Row(
                                          children: [
-                                           const Flexible(child: Text('SASO Staff Position:')),
-                                           const SizedBox(width: 10.0,),
-                                           Text(currentProfile.staffPosition ?? 'N/A', 
-                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Flexible(child: Text('SASO Staff Position:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,))),
+                                            const SizedBox(width: 10.0,),
+                                            Text(currentProfile.staffPosition ?? 'N/A', 
+                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                                          ],
                                        ),
                                        Row(
                                          children: [
-                                           const Flexible(child: Text('Staff Type:')),
-                                           const SizedBox(width: 10.0,),
-                                           Text(currentProfile.staffType ?? 'N/A', 
-                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Flexible(child: Text('Staff Type:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,))),
+                                            const SizedBox(width: 10.0,),
+                                            Text(currentProfile.staffType ?? 'N/A', 
+                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                                          ],
                                        ),
                                        Row(
                                          children: [
-                                           const Flexible(child: Text('Staff Description:')),
-                                           const SizedBox(width: 10.0,),
-                                           Text(currentProfile.staffDescription ?? 'N/A', 
-                                           style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Flexible(child: Text('Staff Description:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,))),
+                                            const SizedBox(width: 10.0,),
+                                            Text(currentProfile.staffDescription ?? 'N/A', 
+                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
                                          ],
                                        ),
                                      ],
                                    if (widget.user.userType != 'Student' && widget.user.userType != 'Officer' && widget.user.userType != 'Staff')
-                                     const Text('User type not found!'),
+                                      Text('User type not found!', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
                                  ],
                                ),
                              ),

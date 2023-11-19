@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:student_event_calendar/providers/darkmode_provider.dart';
+import 'package:student_event_calendar/utils/colors.dart';
 
 class PasswordWidget extends StatefulWidget {
   const PasswordWidget({super.key, required this.password});
@@ -20,6 +23,7 @@ class _PasswordWidgetState extends State<PasswordWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return Flexible(
       child: Row(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -30,6 +34,7 @@ class _PasswordWidgetState extends State<PasswordWidget> {
             _isHidden ? '********' : widget.password,
             style: TextStyle(
               letterSpacing: _isHidden ? 2 : 0,
+              color: darkModeOn ? lightColor : darkColor
             ),
           ),
           const SizedBox(width: 10),
