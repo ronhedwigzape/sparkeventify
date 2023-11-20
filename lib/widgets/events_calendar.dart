@@ -43,7 +43,7 @@ class EventsCalendarState extends State<EventsCalendar> {
       setState(() {
         department = user?.profile!.department;
       });
-      events = kIsWeb ? fireStoreEventMethods.getEventsByDate() : fireStoreEventMethods.getEventsByDateByDepartment(department!);
+      events = user?.userType == 'Admin' || user?.userType == 'Staff' ? fireStoreEventMethods.getEventsByDate() : fireStoreEventMethods.getEventsByDateByDepartment(department!);
     });
   }
 
@@ -61,14 +61,27 @@ class EventsCalendarState extends State<EventsCalendar> {
   final RefreshController _refreshController =
       RefreshController(initialRefresh: false);
 
-  void _onRefresh() async{
-    // monitor network fetch
-    await Future.delayed(const Duration(milliseconds: 1000));
-    // if failed,use refreshFailed()
-    _refreshController.refreshCompleted();
-    setState(() {
-      events = kIsWeb ? fireStoreEventMethods.getEventsByDate() : fireStoreEventMethods.getEventsByDateByDepartment(department!);
-    });
+  void _onRefresh() async {
+    try {
+      // Simulating network fetch. If this is just for UI delay, consider removing it.
+      await Future.delayed(const Duration(milliseconds: 1000));
+
+      final fireStoreUserMethods = FireStoreUserMethods();
+      final user = await fireStoreUserMethods.getCurrentUserDataStream().first;
+
+      setState(() {
+        events = user?.userType == 'Admin' || user?.userType == 'Staff' 
+          ? fireStoreEventMethods.getEventsByDate() 
+          : fireStoreEventMethods.getEventsByDateByDepartment(department!);
+      });
+    } catch (error) {
+      // Handle the error appropriately
+      print('Error fetching data: $error');
+      // If you want to indicate a failure in refresh, uncomment the next line
+      // _refreshController.refreshFailed();
+    } finally {
+      _refreshController.refreshCompleted();
+    }
   }
 
   @override
