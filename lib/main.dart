@@ -10,7 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:student_event_calendar/auth/login_screen.dart';
+import 'package:student_event_calendar/screens/auth/login_screen.dart';
 import 'package:student_event_calendar/firebase_options.dart';
 import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
 import 'package:student_event_calendar/layouts/client_screen_layout.dart';

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:student_event_calendar/auth/officer_signup_screen.dart';
-import 'package:student_event_calendar/auth/staff_signup_screen.dart';
-import 'package:student_event_calendar/auth/student_signup_screen.dart';
+import 'package:student_event_calendar/screens/auth/officer_signup_screen.dart';
+import 'package:student_event_calendar/screens/auth/staff_signup_screen.dart';
+import 'package:student_event_calendar/screens/auth/student_signup_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
-import '../providers/darkmode_provider.dart';
+import '../../providers/darkmode_provider.dart';
 
 class ClientSelectionScreen extends StatefulWidget {
   const ClientSelectionScreen({Key? key}) : super(key: key);

@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:student_event_calendar/models/profile.dart' as model;
 import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/services/firebase_notifications.dart';
@@ -162,6 +163,45 @@ class AuthMethods {
       }
     }
     return response;
+  }
+
+  // Sign in with Google
+  Future<String> signInWithGoogle() async {
+    String res = "Some error occurred";
+    Map<String, String>? deviceTokens = {};
+    try {
+      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      // Obtain the auth details from the request
+      final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
+      // Create a new credential
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth?.accessToken,
+        idToken: googleAuth?.idToken,
+      );
+      // Once signed in, return the UserCredential
+      UserCredential userCredential = await _auth.signInWithCredential(credential);
+      // Initialize deviceToken with empty map
+        await _firestore.collection('users').doc(userCredential.user!.uid).update({'deviceTokens': deviceTokens});
+        // Set devicetoken in Firestore for mobile devices
+        if(!kIsWeb) {
+          // ######### CODE FOR ADDING DEVICE REGISTRATION #########
+          // Get Firebase messaging token for this device
+          var token = await _firebaseMessaging.getToken();
+          // Call the registerDevice method with user's uid and token in mobile device
+          if (token != null && !kIsWeb) {
+            await FirebaseNotificationService().registerDevice(userCredential.user!.uid, token);
+          }
+          // ########################################################    
+        }
+      res = "Success";
+    } on FirebaseAuthException catch (e) {
+      // Handle FirebaseAuthException errors
+      res = e.message ?? "FirebaseAuth error occurred";
+    } catch (e) {
+      // Handle other errors
+      res = e.toString();
+    }
+    return res;
   }
 
   // Sign out user

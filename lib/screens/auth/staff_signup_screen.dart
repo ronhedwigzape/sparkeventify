@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:student_event_calendar/auth/login_screen.dart';
+import 'package:student_event_calendar/screens/auth/login_screen.dart';
 import 'package:student_event_calendar/layouts/client_screen_layout.dart';
 import 'package:student_event_calendar/models/profile.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
@@ -9,7 +9,7 @@ import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
 
-import '../providers/darkmode_provider.dart';
+import '../../providers/darkmode_provider.dart';
 
 class StaffSignupScreen extends StatefulWidget {
   const StaffSignupScreen({super.key});

@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:student_event_calendar/auth/login_screen.dart';
+import 'package:student_event_calendar/screens/auth/login_screen.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 
 import 'global.dart';

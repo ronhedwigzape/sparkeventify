@@ -1,17 +1,21 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:student_event_calendar/auth/admin_signup_screen.dart';
+import 'package:student_event_calendar/screens/auth/admin_signup_screen.dart';
 import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
 import 'package:student_event_calendar/layouts/client_screen_layout.dart';
-import 'package:student_event_calendar/auth/client_selection_screen.dart';
+import 'package:student_event_calendar/screens/auth/client_selection_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
+import 'package:student_event_calendar/widgets/google_signin_button.dart';
+import 'package:student_event_calendar/widgets/login_divider.dart';
+import 'package:student_event_calendar/widgets/signin_button.dart';
+import 'package:student_event_calendar/widgets/signup_navigation.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
 
-import '../data/auth_repository.dart';
-import '../providers/darkmode_provider.dart';
+import '../../data/auth_repository.dart';
+import '../../providers/darkmode_provider.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -51,17 +55,18 @@ class _LoginScreenState extends State<LoginScreen> {
     );
 
     if (dialogContext != null) {
+      // ignore: use_build_context_synchronously
       Navigator.of(dialogContext!).pop();
     }
 
     if (res == 'Success') {
       onSignInSuccess(res);
     } else {
-      onSignInFailure(res); 
+      onSignInFailure(res);
     }
   }
 
-  void onSignInSuccess(String message) async { 
+  void onSignInSuccess(String message) async {
     if (!kIsWeb) {
       Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const ClientScreenLayout()));
@@ -98,10 +103,11 @@ class _LoginScreenState extends State<LoginScreen> {
       child: Scaffold(
         body: SafeArea(
             child: Container(
-              height: MediaQuery.of(context).size.height,
+          height: MediaQuery.of(context).size.height,
           padding: MediaQuery.of(context).size.width > webScreenSize
-              ? EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width / 3) :
-              const EdgeInsets.symmetric(horizontal: 32.0),
+              ? EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width / 3)
+              : const EdgeInsets.symmetric(horizontal: 32.0),
           width: double.infinity,
           child: SingleChildScrollView(
             child: Column(
@@ -115,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 // Logo
                 const Padding(
-                  padding: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                  padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
                   child: CSPCLogo(height: 150.0),
                 ),
                 // School name and address
@@ -128,14 +134,21 @@ class _LoginScreenState extends State<LoginScreen> {
                       ),
                       child: Text(
                         schoolName,
-                        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0, color: darkModeOn ? lightColor : darkColor),
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16.0,
+                            color: darkModeOn ? lightColor : darkColor),
                       ),
                     ),
                     Container(
                       padding: const EdgeInsets.symmetric(
                         vertical: 8,
                       ),
-                      child: Text(schoolAddress, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
+                      child: Text(
+                        schoolAddress,
+                        style: TextStyle(
+                            color: darkModeOn ? lightColor : darkColor),
+                      ),
                     ),
                   ],
                 ),
@@ -148,6 +161,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       fontWeight: FontWeight.bold,
                     )),
                 const SizedBox(height: 24.0),
+                // Text field input for email address
                 TextFieldInput(
                   prefixIcon: const Icon(Icons.email_outlined),
                   textEditingController: _emailController,
@@ -155,7 +169,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   textInputType: TextInputType.emailAddress,
                 ),
                 const SizedBox(height: 16.0),
-                // text field input for password
+                // Text field input for password
                 TextFieldInput(
                   prefixIcon: const Icon(Icons.lock_outline),
                   textEditingController: _passwordController,
@@ -165,57 +179,19 @@ class _LoginScreenState extends State<LoginScreen> {
                   isPass: true,
                 ),
                 const SizedBox(height: 16.0),
-                // button login
-                InkWell(
-                  onTap: signIn,
-                  child: Container(
-                      width: double.infinity,
-                      alignment: Alignment.center,
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      decoration: ShapeDecoration(
-                        shape: const RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                        ),
-                        color: darkModeOn ? darkModePrimaryColor : lightModeBlueColor,
-                      ),
-                      child: const Text('Log in', 
-                        style: TextStyle(
-                            color: lightColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )),
-                ),
+                // Sign in button
+                SignInButton(signIn: signIn),
                 const SizedBox(height: 12.0),
                 Flexible(
                   flex: 2,
                   child: Container(),
                 ),
-                !kIsWeb ? Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 15,
-                      ),
-                      child: Text('Don\'t have an account?', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
-                    ),
-                    GestureDetector(
-                      onTap: navigateToSignup,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 8,
-                        ),
-                        child: Text(
-                          ' Sign up.',
-                          style: TextStyle(
-                            color: darkModeOn ? lightColor : darkColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    )
-                  ],
-                ) : const SizedBox.shrink(),
+                SignUpNavigation(navigateToSignup: navigateToSignup),
+                const SizedBox(height: 10,),
+                // Login Divider
+                const LoginDivider(),
+                const SizedBox(height: 10,),
+                const GoogleSignInButton()
               ],
             ),
           ),
