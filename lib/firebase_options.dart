@@ -26,23 +26,23 @@ class DefaultFirebaseOptions {
 
   // Firebase configuration for Android platform
   static FirebaseOptions get androidPlatform {
-    return FirebaseOptions(
+    return const FirebaseOptions(
       // Replace these with actual values from Firebase console when setting up Firebase for Android app
-      apiKey: dotenv.env['ANDROID_API_KEY']!,
-      appId: dotenv.env['ANDROID_APP_ID']!,
-      messagingSenderId: dotenv.env['ANDROID_MESSAGING_SENDER_ID']!,
-      projectId: dotenv.env['ANDROID_PROJECT_ID']!,
+      apiKey: "AIzaSyDDGkg8ZG26GT2j_wTlOR5Xj2JjLZh8AY0",
+      appId: "1:777878936021:android:980072560145bcc0df855c",
+      messagingSenderId: "777878936021",
+      projectId: "student-event-calendar-dce10",
     );
   }
 
   // Firebase configuration for iOS platform
   static FirebaseOptions get iosPlatform {
-    return FirebaseOptions(
+    return const FirebaseOptions(
       // Replace these with actual values from Firebase console when setting up Firebase for iOS app
-      apiKey: dotenv.env['IOS_API_KEY']!,
-      appId: dotenv.env['IOS_APP_ID']!,
-      messagingSenderId: dotenv.env['IOS_MESSAGING_SENDER_ID']!,
-      projectId: dotenv.env['IOS_PROJECT_ID']!,
+      apiKey: "AIzaSyDDGkg8ZG26GT2j_wTlOR5Xj2JjLZh8AY0",
+      appId: "1:777878936021:ios:d06f0a15a482fe84df855c",
+      messagingSenderId: "777878936021",
+      projectId: "student-event-calendar-dce10",
     );
   }
 
