@@ -37,18 +37,15 @@
     const serviceWorkerVersion = null;
   </script>
 
-  <!-- Firebase App -->
+  <!-- Firebase Modules -->
   <script type="module">
-    // Import the functions you need from the SDKs you need
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-app.js";
     import { getAuth } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-auth.js";
     import { getFirestore } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-firestore.js";
     import { getMessaging } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-messaging.js";
     import { getStorage } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-storage.js";
-    // Add Firebase Analytics only if you're using it
-    // import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js";
+    import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.6.0/firebase-analytics.js"; // Uncomment if using Analytics
 
-    // Firebase configuration
     const firebaseConfig = {
       apiKey: "AIzaSyC8DWmwROAeyPru_SYh3xwDJG2BX_eNcD4",
       authDomain: "student-event-calendar-dce10.firebaseapp.com",
@@ -58,36 +55,32 @@
       appId: "1:777878936021:web:972eba2175a9e6eedf855c",
       measurementId: "G-6ZJTE7VPBD"
     };
-  
-    // Initialize Firebase
+
     const app = initializeApp(firebaseConfig);
-    // Initialize individual services if needed
     const auth = getAuth(app);
     const db = getFirestore(app);
     const messaging = getMessaging(app);
     const storage = getStorage(app);
-    // const analytics = getAnalytics(app); // Only if you're using Analytics
+    const analytics = getAnalytics(app); // Uncomment if using Analytics
   </script>
 
   <script src="flutter.js" defer></script>
 </head>
 <body>
-  <script>
-    window.addEventListener('load', function(ev) {
-      // Flutter app initialization
-      _flutter.loader.loadEntrypoint({
-        serviceWorker: {
-          serviceWorkerVersion: serviceWorkerVersion,
-        },
-        onEntrypointLoaded: function(engineInitializer) {
-          engineInitializer.initializeEngine().then(function(appRunner) {
-            appRunner.runApp();
-          });
-        }
-      });
+<script defer>
+  window.addEventListener('load', function() {
+    // Flutter app initialization
+    _flutter.loader.loadEntrypoint({
+      serviceWorker: {
+        serviceWorkerVersion: serviceWorkerVersion,
+      },
+      onEntrypointLoaded: function(engineInitializer) {
+        engineInitializer.initializeEngine().then(function(appRunner) {
+          appRunner.runApp();
+        });
+      }
     });
-  </script>
-
-  <script src="/main.js" defer></script>
+  });
+</script>
 </body>
 </html>
