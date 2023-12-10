@@ -206,12 +206,14 @@ class EventsCalendarState extends State<EventsCalendar> {
                                       child: Row(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [
-                                          Text(
-                                            '$greeting, $firstName!', 
-                                            style: const TextStyle(
-                                              color: lightColor,
-                                              fontSize: 25.0,
-                                              fontWeight: FontWeight.w900
+                                          Flexible(
+                                            child: Text(
+                                              '$greeting, $firstName!', 
+                                              style: const TextStyle(
+                                                color: lightColor,
+                                                fontSize: 25.0,
+                                                fontWeight: FontWeight.w900
+                                              ),
                                             ),
                                           )
                                         ],
