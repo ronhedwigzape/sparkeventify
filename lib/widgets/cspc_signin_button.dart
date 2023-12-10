@@ -1,11 +1,10 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 
-class SignInButton extends StatelessWidget {
-  const SignInButton({super.key, required this.signIn});
+class CSPCSignInButton extends StatelessWidget {
+  const CSPCSignInButton({super.key, required this.signIn});
 
   final VoidCallback signIn;
 
