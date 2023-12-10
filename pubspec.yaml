@@ -71,6 +71,7 @@ dependencies:
   pull_to_refresh: ^2.0.0
   google_fonts: ^6.1.0
   google_sign_in: ^6.1.6
+  flutter_signin_button: ^2.0.0
 
 dev_dependencies:
   flutter_test:
