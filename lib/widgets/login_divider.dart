@@ -8,7 +8,7 @@ class LoginDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final darkModeOn = Provider.of<DarkModeProvider>(context, listen: false).darkMode;
+    final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return Row(
       children: [
         Expanded(
@@ -20,7 +20,7 @@ class LoginDivider extends StatelessWidget {
             endIndent: 20,
           ),
         ),
-        const Text('or continue with'),
+        Text('or', style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),),
         Expanded(
           child: Divider(
             color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,

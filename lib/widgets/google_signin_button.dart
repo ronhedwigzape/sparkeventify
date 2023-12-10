@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
-import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 
 class GoogleSignInButton extends StatelessWidget {
-  const GoogleSignInButton({super.key});
+  final VoidCallback onGoogleSignIn;
+  const GoogleSignInButton({super.key, required this.onGoogleSignIn});
 
   @override
   Widget build(BuildContext context) {
@@ -14,7 +14,7 @@ class GoogleSignInButton extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         InkWell(
-          onTap: AuthMethods().signInWithGoogle,
+          onTap: onGoogleSignIn,
           child: Container(
             decoration: BoxDecoration(
                 border: Border.all(
@@ -34,9 +34,9 @@ class GoogleSignInButton extends StatelessWidget {
                   const SizedBox(
                     width: 5,
                   ),
-                  const Text(
+                  Text(
                     'Google',
-                    style: TextStyle(fontSize: 15),
+                    style: TextStyle(fontSize: 15, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),
                   )
                 ],
               ),

@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_signin_button/flutter_signin_button.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/screens/auth/admin_signup_screen.dart';
 import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
@@ -8,12 +9,11 @@ import 'package:student_event_calendar/screens/auth/client_selection_screen.dart
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
-import 'package:student_event_calendar/widgets/google_signin_button.dart';
 import 'package:student_event_calendar/widgets/login_divider.dart';
-import 'package:student_event_calendar/widgets/signin_button.dart';
+import 'package:student_event_calendar/widgets/cspc_signin_button.dart';
 import 'package:student_event_calendar/widgets/signup_navigation.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
-
+import 'package:student_event_calendar/resources/auth_methods.dart';
 import '../../data/auth_repository.dart';
 import '../../providers/darkmode_provider.dart';
 
@@ -63,6 +63,22 @@ class _LoginScreenState extends State<LoginScreen> {
       onSignInSuccess(res);
     } else {
       onSignInFailure(res);
+    }
+  }
+
+  Future<void> signInWithGoogle() async {
+    try {
+      String res = await AuthMethods().signInWithGoogle();
+      if (res == "Success") {
+        // Handle successful sign-in
+        onSignInSuccess("Signed in with Google");
+      } else {
+        // Handle sign-in failure
+        onSignInFailure(res);
+        print(res);
+      }
+    } catch (e) {
+      print(e.toString());
     }
   }
 
@@ -180,18 +196,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 16.0),
                 // Sign in button
-                SignInButton(signIn: signIn),
+                CSPCSignInButton(signIn: signIn),
                 const SizedBox(height: 12.0),
                 Flexible(
                   flex: 2,
                   child: Container(),
                 ),
                 SignUpNavigation(navigateToSignup: navigateToSignup),
-                const SizedBox(height: 10,),
+                const SizedBox(
+                  height: 10,
+                ),
                 // Login Divider
                 const LoginDivider(),
-                const SizedBox(height: 10,),
-                const GoogleSignInButton()
+                const SizedBox(
+                  height: 10,
+                ),
+                SignInButton(
+                  Buttons.Google,
+                  text: "Sign up with Google",
+                  onPressed: signInWithGoogle,
+                )
               ],
             ),
           ),
