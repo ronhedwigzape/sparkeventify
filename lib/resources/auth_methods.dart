@@ -94,7 +94,7 @@ class AuthMethods {
         // Set user details in Firebase Firestore
         await _firestore.collection('users').doc(credential.user!.uid).set(user.toJson());
         // Set devicetoken in Firestore for mobile devices 
-        if (!kIsWeb) {
+        
           // ######### CODE FOR ADDING DEVICE REGISTRATION #########
           // Get Firebase messaging token for this device
           var token = await _firebaseMessaging.getToken();
@@ -103,7 +103,7 @@ class AuthMethods {
             await FirebaseNotificationService().registerDevice(credential.user!.uid, token);
           }
           // ######################################################
-        } 
+        
         // Return success response
         res = "Success";
       } 
@@ -137,16 +137,16 @@ class AuthMethods {
         // Initialize deviceToken with empty map
         await _firestore.collection('users').doc(credential.user!.uid).update({'deviceTokens': deviceTokens});
         // Set devicetoken in Firestore for mobile devices
-        if(!kIsWeb) {
+      
           // ######### CODE FOR ADDING DEVICE REGISTRATION #########
           // Get Firebase messaging token for this device
           var token = await _firebaseMessaging.getToken();
           // Call the registerDevice method with user's uid and token in mobile device
-          if (token != null && !kIsWeb) {
+          if (token != null) {
             await FirebaseNotificationService().registerDevice(credential.user!.uid, token);
           }
           // ########################################################    
-        }
+        
         // Return success response
         response = "Success";
       } 
@@ -165,43 +165,57 @@ class AuthMethods {
     return response;
   }
 
-  // Sign in with Google
-  Future<String> signInWithGoogle() async {
-    String res = "Some error occurred";
+  // Sign in with Google account
+  Future<UserCredential?> signInWithGoogle() async {
     Map<String, String>? deviceTokens = {};
     try {
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      // Obtain the auth details from the request
       final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
-      // Create a new credential
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
-      // Once signed in, return the UserCredential
       UserCredential userCredential = await _auth.signInWithCredential(credential);
-      // Initialize deviceToken with empty map
-        await _firestore.collection('users').doc(userCredential.user!.uid).update({'deviceTokens': deviceTokens});
-        // Set devicetoken in Firestore for mobile devices
-        if(!kIsWeb) {
-          // ######### CODE FOR ADDING DEVICE REGISTRATION #########
-          // Get Firebase messaging token for this device
-          var token = await _firebaseMessaging.getToken();
-          // Call the registerDevice method with user's uid and token in mobile device
-          if (token != null && !kIsWeb) {
-            await FirebaseNotificationService().registerDevice(userCredential.user!.uid, token);
-          }
-          // ########################################################    
+      DocumentReference docRef = _firestore.collection('users').doc(userCredential.user!.uid);
+      DocumentSnapshot docSnap = await docRef.get();
+      if (docSnap.exists) {
+        await docRef.update({'deviceTokens': deviceTokens});
+      } else {
+        // Determine the user type based on the email domain and platform
+        String userType = 'Google'; // Default to 'Google'
+        if (userCredential.user!.email!.endsWith('@my.cspc.edu.ph')) {
+          userType = 'Student';
+        } else if (userCredential.user!.email!.endsWith('@cspc.edu.ph')) {
+          userType = kIsWeb ? 'Admin' : 'Staff';
         }
-      res = "Success";
+        // Create a new user object with the Google user's details
+        model.User user = model.User(
+          uid: userCredential.user!.uid,
+          email: userCredential.user!.email,
+          username: userCredential.user!.displayName,
+          userType: userType,
+          profile: model.Profile(fullName: userCredential.user!.displayName), // Set other fields as needed
+          deviceTokens: deviceTokens,
+        );
+        // Set the new user's details in Firestore
+        await docRef.set(user.toJson());
+      }
+      var token = await _firebaseMessaging.getToken();
+      if (token != null) {
+        await FirebaseNotificationService().registerDevice(userCredential.user!.uid, token);
+      }
+      return userCredential;
     } on FirebaseAuthException catch (e) {
-      // Handle FirebaseAuthException errors
-      res = e.message ?? "FirebaseAuth error occurred";
+      if (kDebugMode) {
+        print(e.message ?? "FirebaseAuth error occurred");
+      }
     } catch (e) {
-      // Handle other errors
-      res = e.toString();
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      return null;
     }
-    return res;
+    return null;
   }
 
   // Sign out user

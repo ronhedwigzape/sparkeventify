@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_signin_button/flutter_signin_button.dart';
@@ -68,17 +70,28 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Future<void> signInWithGoogle() async {
     try {
-      String res = await AuthMethods().signInWithGoogle();
-      if (res == "Success") {
+      UserCredential? userCredential = await AuthMethods().signInWithGoogle();
+      if (userCredential != null) {
         // Handle successful sign-in
-        onSignInSuccess("Signed in with Google");
+        final doc = await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).get();
+        final String userType = doc.get('userType');
+        if (userType == 'Admin' && kIsWeb) {
+          mounted ? Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const AdminScreenLayout())) : '';
+        } else if ((userType == 'Student' && !kIsWeb) || (userType == 'Staff' && !kIsWeb) || (userType == 'Officer' && !kIsWeb)) {
+          mounted ? Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const ClientScreenLayout())) : '';
+        } else {
+          // Handle unknown user type or platform
+        }
       } else {
         // Handle sign-in failure
-        onSignInFailure(res);
-        print(res);
+        if (kDebugMode) {
+          print("Sign in failed");
+        }
       }
     } catch (e) {
-      print(e.toString());
+      if (kDebugMode) {
+        print(e.toString());
+      }
     }
   }
 
