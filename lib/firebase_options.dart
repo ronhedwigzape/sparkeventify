@@ -5,22 +5,21 @@ import 'dart:io';
 import 'package:firebase_core/firebase_core.dart';
 // Flutter package for determining platform code is running on
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 // This class provides different Firebase configuration options for different platforms. 
 class DefaultFirebaseOptions {
   // Firebase configuration for web platform
   static FirebaseOptions get webPlatform {
-    return FirebaseOptions(
+    return const FirebaseOptions(
       // These are various configuration parameters needed to setup Firebase for your app
       // Please replace them with your actual values when setting up Firebase for your application
-      apiKey: dotenv.env['WEB_API_KEY']!,
-      authDomain: dotenv.env['WEB_AUTH_DOMAIN']!,
-      projectId: dotenv.env['WEB_PROJECT_ID']!,
-      storageBucket: dotenv.env['WEB_STORAGE_BUCKET']!,
-      messagingSenderId: dotenv.env['WEB_MESSAGING_SENDER_ID']!,
-      appId: dotenv.env['WEB_APP_ID']!,
-      measurementId: dotenv.env['WEB_MEASUREMENT_ID']!,
+      apiKey: "AIzaSyC8DWmwROAeyPru_SYh3xwDJG2BX_eNcD4",
+      authDomain: "student-event-calendar-dce10.firebaseapp.com",
+      projectId: "student-event-calendar-dce10",
+      storageBucket: "student-event-calendar-dce10.appspot.com",
+      messagingSenderId: "777878936021",
+      appId: "1:777878936021:web:972eba2175a9e6eedf855c",
+      measurementId: "G-6ZJTE7VPBD"
     );
   }
 
