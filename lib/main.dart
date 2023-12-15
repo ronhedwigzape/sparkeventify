@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity_plus/connectivity_plus.dart';
+import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
@@ -26,6 +27,7 @@ void main() async {
   timezone.initializeTimeZones();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await FirebaseAppCheck.instance.activate(); // check current device for security purposes
   runApp(const App());
   // FirebaseNotificationService().manageTokenRegistrations();
   final prefs = await SharedPreferences.getInstance();
