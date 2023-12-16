@@ -72,11 +72,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 if (isConnected) {
                   await FirebaseNotificationService().unregisterDevice(FirebaseAuth.instance.currentUser!.uid);
                   await AuthMethods().signOut();
-                  if (mounted) {
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => const LoginScreen()));
-                  }
+                  Navigator.of(context).pop();
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) => const LoginScreen()));
                 } else {
                   // Show a message to the user
                   mounted ? ScaffoldMessenger.of(context).showSnackBar(
