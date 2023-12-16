@@ -27,7 +27,18 @@ void main() async {
   timezone.initializeTimeZones();
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  await FirebaseAppCheck.instance.activate(); // check current device for security purposes
+  
+  // Uncomment the following line for production:
+  // await FirebaseAppCheck.instance.activate();
+  
+  // Uncomment the following line for testing:
+  if (!kIsWeb) {
+    await FirebaseAppCheck.instance.activate(
+      androidProvider: AndroidProvider.debug,
+      appleProvider: AppleProvider.debug,
+    );
+  }
+
   runApp(const App());
   // FirebaseNotificationService().manageTokenRegistrations();
   final prefs = await SharedPreferences.getInstance();
@@ -202,9 +213,12 @@ class AuthScreen extends StatelessWidget {
 
                 if (userType == 'Admin' && runningOnWeb()) {
                   return const AdminScreenLayout();
-                } else if ((userType == 'Student' && runningOnMobile()) ||
-                    (userType == 'Staff' && runningOnMobile()) ||
-                    (userType == 'Officer' && runningOnMobile())) {
+                } else if (
+                  (userType == 'Student' && runningOnMobile()) ||
+                  (userType == 'Staff' && runningOnMobile()) ||
+                  (userType == 'Officer' && runningOnMobile()) ||
+                  (userType == 'Guest' && runningOnMobile())
+                ) {
                   return const ClientScreenLayout();
                 } else {
                   return const UnknownUser();
