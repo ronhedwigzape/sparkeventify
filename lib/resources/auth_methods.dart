@@ -170,17 +170,16 @@ class AuthMethods {
   Future<UserCredential?> signInWithGoogle() async {
     Map<String, String>? deviceTokens = {};
     try {
-      // Authenticate current user with Google account 
+      // Sign out the existing user
+      await signOut();
+
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
-
-      // Sign out the existing user
-      await AuthMethods().signOut();
-
+      
       UserCredential userCredential = await _auth.signInWithCredential(credential);
       DocumentReference docRef = _firestore.collection('users').doc(userCredential.user!.uid);
       DocumentSnapshot docSnap = await docRef.get();
@@ -194,13 +193,39 @@ class AuthMethods {
         } else if (userCredential.user!.email!.endsWith('@cspc.edu.ph')) {
           userType = kIsWeb ? 'Admin' : 'Staff';
         }
+        // Split the displayName into parts
+        List<String> nameParts = userCredential.user!.displayName!.split(' ');
+
+        // The first part is the first name
+        String firstName = nameParts.first;
+
+        // The last part is the last name
+        String lastName = nameParts.last;
+
         // Create a new user object with the Google user's details
         model.User user = model.User(
           uid: userCredential.user!.uid,
           email: userCredential.user!.email,
+          password: "",
           username: userCredential.user!.displayName,
           userType: userType,
-          profile: model.Profile(fullName: userCredential.user!.displayName), // Set other fields as needed
+          profile: model.Profile(
+            fullName: userCredential.user!.displayName,
+            firstName: firstName, // First name from Google
+            middleInitial: "", // Not provided by Google
+            lastName: lastName, // Last name from Google
+            profileImage: userCredential.user!.photoURL, // Provided by Google
+            phoneNumber: "", // Not provided by Google
+            department: "", // Not provided by Google
+            program: "", // Not provided by Google
+            year: "", // Not provided by Google
+            section: "", // Not provided by Google
+            officerPosition: "", // Not provided by Google
+            staffPosition: "", // Not provided by Google
+            staffType: "", // Not provided by Google
+            staffDescription: "", // Not provided by Google
+            organization: "", // Not provided by Google
+          ),
           deviceTokens: deviceTokens,
         );
         // Set the new user's details in Firestore

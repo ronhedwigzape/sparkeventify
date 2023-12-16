@@ -30,6 +30,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final _authRepository = AuthRepository();
+  bool _isLoading = false;
 
   @override
   void dispose() {
@@ -228,8 +229,27 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SignInButton(
                   Buttons.Google,
-                  text: "Sign up with Google",
-                  onPressed: signInWithGoogle,
+                  text: _isLoading ? "Loading..." : "Sign up with Google",
+                  onPressed: () async {
+                    if (!_isLoading) {
+                      setState(() {
+                        _isLoading = true;
+                      });
+                      try {
+                        await signInWithGoogle();
+                      } catch(e) {
+                        if(e is FirebaseAuthException){
+                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                            content: Text(e.message!),
+                            duration: const Duration(seconds: 2),
+                          ));
+                        }
+                      }
+                      setState(() {
+                        _isLoading = false;
+                      });
+                    }
+                  },
                 )
               ],
             ),

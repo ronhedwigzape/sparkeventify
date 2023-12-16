@@ -193,11 +193,12 @@ class AuthScreen extends StatelessWidget {
       stream: FirebaseAuth.instance.authStateChanges(),
       builder: (ctx, userSnapshot) {
         if (userSnapshot.hasData) {
-          return FutureBuilder(
-            future: FirebaseFirestore.instance
+          // StreamBuilder for Firestore user document
+          return StreamBuilder(
+            stream: FirebaseFirestore.instance
                 .collection('users')
                 .doc(FirebaseAuth.instance.currentUser?.uid)
-                .get(),
+                .snapshots(),
             builder: (ctx, AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
