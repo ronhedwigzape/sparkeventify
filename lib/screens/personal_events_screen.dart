@@ -86,14 +86,22 @@ class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
             Future.delayed(Duration.zero, () => showDialog(
               context: context,
               builder: (context) => AlertDialog(
-                title: const Row(
+                title: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Icon(Icons.event_note),
-                    SizedBox(width: 10.0,),
-                    Flexible(child: Text('No personal events found')),
+                    const Icon(Icons.event_note),
+                    const SizedBox(width: 10.0,),
+                    Flexible(
+                      child: Text(
+                        'No personal events found',
+                        style: TextStyle(
+                          color: darkModeOn ? white : black
+                        ),
+                      )
+                    ),
                   ],
                 ),
-                content: const Text('Would you like to create a new one?'),
+                content: Text('Would you like to create a new one?', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                 actions: <Widget>[
                   TextButton(
                     child: Text('Yes', style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),),
@@ -125,10 +133,13 @@ class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
                       children: [
                         Icon(Icons.event_available, size: 25.0, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
                         const SizedBox(width: 10.0,),
-                        const Flexible(
+                        Flexible(
                           child: Text(
                             'Create your first personal event!',
                             textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor
+                            ),
                           )),
                       ],
                     ),
@@ -164,7 +175,7 @@ class _PersonalEventsScreenState extends State<PersonalEventsScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-        child: const Icon(Icons.add, size: 24),
+        child: const Icon(Icons.add, size: 24, color: white,),
         onPressed: () {
           Navigator.push(
             context,
