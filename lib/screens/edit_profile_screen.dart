@@ -56,7 +56,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _firstNameController.text = widget.user.profile!.firstName ?? '';
     _middleInitialController.text = widget.user.profile!.middleInitial?? '';
     _lastNameController.text = widget.user.profile!.lastName?? '';
-    _phoneNumberController.text = widget.user.profile!.phoneNumber!.substring(2);
+    if (widget.user.profile!.phoneNumber!.length > 2) {
+      _phoneNumberController.text = widget.user.profile!.phoneNumber!.substring(2);
+    } else {
+      _phoneNumberController.text = widget.user.profile!.phoneNumber!;
+    }
     department = widget.user.profile!.department?? '';
     program = widget.user.profile!.program?? '';
     _yearController.text = widget.user.profile!.year?? '';
