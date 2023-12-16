@@ -12,7 +12,7 @@ class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(clientId: "777878936021-c9089dk3dt2nomobhobmrncjgqh7502u.apps.googleusercontent.com");
 
   // Get current user details
   Future<model.User?> getCurrentUserDetails() async {
@@ -173,7 +173,7 @@ class AuthMethods {
       // Sign out the existing user
       await signOut();
 
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
