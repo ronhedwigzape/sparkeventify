@@ -12,6 +12,7 @@ class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   // Get current user details
   Future<model.User?> getCurrentUserDetails() async {
@@ -169,12 +170,17 @@ class AuthMethods {
   Future<UserCredential?> signInWithGoogle() async {
     Map<String, String>? deviceTokens = {};
     try {
+      // Authenticate current user with Google account 
       final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
       final GoogleSignInAuthentication? googleAuth = await googleUser?.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth?.accessToken,
         idToken: googleAuth?.idToken,
       );
+
+      // Sign out the existing user
+      await AuthMethods().signOut();
+
       UserCredential userCredential = await _auth.signInWithCredential(credential);
       DocumentReference docRef = _firestore.collection('users').doc(userCredential.user!.uid);
       DocumentSnapshot docSnap = await docRef.get();
@@ -182,7 +188,7 @@ class AuthMethods {
         await docRef.update({'deviceTokens': deviceTokens});
       } else {
         // Determine the user type based on the email domain and platform
-        String userType = 'Google'; // Default to 'Google'
+        String userType = 'Guest'; // Default to 'Google'
         if (userCredential.user!.email!.endsWith('@my.cspc.edu.ph')) {
           userType = 'Student';
         } else if (userCredential.user!.email!.endsWith('@cspc.edu.ph')) {
@@ -220,6 +226,14 @@ class AuthMethods {
 
   // Sign out user
   Future<void> signOut() async {
-    await _auth.signOut();
+    try {
+      await _auth.signOut();
+      await _googleSignIn.signOut();
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+    
   }
 }

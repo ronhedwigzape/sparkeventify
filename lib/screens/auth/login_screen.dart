@@ -77,18 +77,20 @@ class _LoginScreenState extends State<LoginScreen> {
         final String userType = doc.get('userType');
         if (userType == 'Admin' && kIsWeb) {
           mounted ? Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const AdminScreenLayout())) : '';
-        } else if ((userType == 'Student' && !kIsWeb) || (userType == 'Staff' && !kIsWeb) || (userType == 'Officer' && !kIsWeb)) {
+        } else if ((userType == 'Student' && !kIsWeb) || (userType == 'Staff' && !kIsWeb) || (userType == 'Officer' && !kIsWeb) || (userType == 'Guest' && !kIsWeb)) {
           mounted ? Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const ClientScreenLayout())) : '';
         } else {
           // Handle unknown user type or platform
         }
       } else {
         // Handle sign-in failure
+        onSignInFailure("Sign in failed");
         if (kDebugMode) {
           print("Sign in failed");
         }
       }
     } catch (e) {
+      onSignInFailure(e.toString());
       if (kDebugMode) {
         print(e.toString());
       }
