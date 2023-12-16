@@ -217,8 +217,7 @@ class AuthScreen extends StatelessWidget {
                 } else if (
                   (userType == 'Student' && runningOnMobile()) ||
                   (userType == 'Staff' && runningOnMobile()) ||
-                  (userType == 'Officer' && runningOnMobile()) ||
-                  (userType == 'Guest' && runningOnMobile())
+                  (userType == 'Officer' && runningOnMobile())
                 ) {
                   return const ClientScreenLayout();
                 } else {
