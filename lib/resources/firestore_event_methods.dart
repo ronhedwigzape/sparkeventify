@@ -201,6 +201,51 @@ class FireStoreEventMethods {
     });
   }
 
+  Stream<Map<DateTime, List<Event>>> getEventsByDateByDepartmentByProgram(String department, String program) {
+    // Return a stream from the events collection.
+    return _eventsCollection.snapshots().asyncMap((snapshot) async {
+      // Initialize an empty map to store the events.
+      Map<DateTime, List<Event>> events = {};
+
+      // Check if the snapshot contains any documents.
+      if (snapshot.docs.isNotEmpty) {
+        // Loop through each document in the snapshot.
+        for (var doc in snapshot.docs) {
+          // Convert the document snapshot to an Event object.
+          Event event = await Event.fromSnap(doc);
+
+          // Check if the event's department and program matches the provided department and program.
+          if (event.participants != null && event.participants!['department'].contains(department) && event.participants!['program'].contains(program)) {
+            // Get the start and end dates of the event and adjust the time to the start and end of the day respectively.
+            DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+                .toLocal();
+            DateTime endDate = DateTime(event.endDate.year, event.endDate.month, event.endDate.day, 23, 59, 59)
+                .toLocal();
+
+            // Loop through each day between the start and end dates.
+            for (var day = startDate; day.isBefore(endDate) || day.isAtSameMomentAs(endDate);
+            day = day.add(const Duration(days: 1))) {
+              // Adjust the time of the day to the start of the day.
+              DateTime adjustedDay = DateTime(day.year, day.month, day.day, 0, 0, 0)
+                  .toLocal();
+
+              // Check if the events map already contains the adjusted day as a key.
+              if (events.containsKey(adjustedDay)) {
+                // If the key exists, add the event to the list of events for that day.
+                events[adjustedDay]!.add(event);
+              } else {
+                // If the key does not exist, create a new list with the event and add it to the map.
+                events[adjustedDay] = [event];
+              }
+            }
+          }
+        }
+      }
+      // Return the map of events.
+      return events;
+    });
+  }
+
   // Method that gets event by event id
   Future<Event> getEventById(String eventId) async {
     // Reference the document in the 'events' collection with the specified id
