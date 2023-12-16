@@ -23,11 +23,13 @@ class _DarkModeDialogState extends State<DarkModeDialog> {
           Icon(darkModeOn ? Icons.light_mode : Icons.dark_mode,
             color: darkModeOn ? lightColor : darkColor,),
           const SizedBox(width: 10),
-          Text(
-            'Switch to ${darkModeOn ? 'Light' : 'Dark'} Mode',
-            style: TextStyle(
-              color: darkModeOn ? lightColor : darkColor,
-              fontWeight: FontWeight.bold,
+          Flexible(
+            child: Text(
+              'Switch to ${darkModeOn ? 'Light' : 'Dark'} Mode',
+              style: TextStyle(
+                color: darkModeOn ? lightColor : darkColor,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
