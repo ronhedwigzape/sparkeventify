@@ -159,14 +159,16 @@ class EventDialogState extends State<EventDialog> {
                                                 size: 15,
                                               ),
                                               const SizedBox(width: 5),
-                                              Text(
-                                                '${snapshot.data?.profile?.fullName}',
-                                                overflow: TextOverflow.ellipsis,
-                                                style: TextStyle(
-                                                    color: darkModeOn
-                                                        ? darkModeSecondaryColor
-                                                        : lightModeSecondaryColor,
-                                                    fontSize: 13.5),
+                                              Flexible(
+                                                child: Text(
+                                                  '${snapshot.data?.profile?.fullName}',
+                                                  overflow: TextOverflow.ellipsis,
+                                                  style: TextStyle(
+                                                      color: darkModeOn
+                                                          ? darkModeSecondaryColor
+                                                          : lightModeSecondaryColor,
+                                                      fontSize: 13.5),
+                                                ),
                                               ),
                                             ],
                                           ),
