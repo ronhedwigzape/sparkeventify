@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -8,6 +9,7 @@ import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/resources/storage_methods.dart';
 import 'package:student_event_calendar/services/connectivity_service.dart';
+import 'package:student_event_calendar/services/firebase_notifications.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
@@ -35,6 +37,8 @@ class EditEventScreenState extends State<EditEventScreen> {
   final _endTimeController = TextEditingController();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
+  final FirebaseNotificationService _firebaseNotificationService = FirebaseNotificationService();
+
   Future<model.User?> currentUser = AuthMethods().getCurrentUserDetails();
   Uint8List? _documentFile;
   Uint8List? _imageFile;
@@ -193,7 +197,6 @@ class EditEventScreenState extends State<EditEventScreen> {
           .updateEventStatus(widget.eventSnap.id, true, null, startDate, endDate, startTime, endTime);
       if (kDebugMode) {
         print('Update Event Response Cancelled: $response');
-
       }
       // Check if the response is a success or a failure
       if (response == 'Success') {
@@ -201,6 +204,19 @@ class EditEventScreenState extends State<EditEventScreen> {
         setState(() {
           _isLoadingCancel = false;
         });
+
+        String senderId = FirebaseAuth.instance.currentUser!.uid;
+
+        // Send a notification to all participants
+        if (widget.eventSnap.participants != null) {
+          for (var participant in widget.eventSnap.participants!['department']) {
+            for (var participantProgram in widget.eventSnap.participants!['program']) {
+              await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
+                senderId, participant, participantProgram, 'Event Cancelled', 'The event "${widget.eventSnap.title}" has been cancelled.'
+              );
+            }
+          }
+        }
       } else {
         onPostFailure(response);
       }
@@ -227,6 +243,19 @@ class EditEventScreenState extends State<EditEventScreen> {
         setState(() {
           _isLoadingMoved = false;
         });
+
+        String senderId = FirebaseAuth.instance.currentUser!.uid;
+
+        // Send a notification to all participants
+        if (widget.eventSnap.participants != null) {
+          for (var participant in widget.eventSnap.participants!['department']) {
+            for (var participantProgram in widget.eventSnap.participants!['program']) {
+              await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
+                senderId, participant, participantProgram, 'Event Cancelled', 'The event "${widget.eventSnap.title}" has been cancelled.'
+              );
+            }
+          }
+        }
       } else {
         onPostFailure(response);
       }

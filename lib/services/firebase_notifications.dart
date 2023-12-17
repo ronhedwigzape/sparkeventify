@@ -233,6 +233,11 @@ class FirebaseNotificationService {
     return userDoc.exists ? model.User.fromSnap(userDoc) : null;
   }
 
+  Future<List<model.User>> fetchAllUsers() async {
+    var userDocs = await FirebaseFirestore.instance.collection('users').get();
+    return userDocs.docs.map((doc) => model.User.fromSnap(doc)).toList();
+  }
+
   Future<String?> sendAppNotification(model.User user, String title, String body) async {
     if (user.deviceTokens != null) {
       for (var token in user.deviceTokens!.values) {
@@ -271,6 +276,15 @@ class FirebaseNotificationService {
     );
 
     await notificationCollection.doc(notificationId).set(notification.toJson());
+  }
+
+  Future<void> sendNotificationToUsersInDepartmentAndProgram(String senderId, String department, String program, String title, String body) async {
+    List<model.User> users = await fetchAllUsers();
+    for (var user in users) {
+      if (user.profile?.department == department && user.profile?.program == program) {
+        await sendNotificationToUser(senderId, user.uid, title, body);
+      }
+    }
   }
 
   Future<void> sendSmsNotification(model.User user, String body) async {
