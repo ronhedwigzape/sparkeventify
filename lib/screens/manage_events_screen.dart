@@ -4,7 +4,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:rxdart/rxdart.dart';
+import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/utils/global.dart';
+import 'package:student_event_calendar/widgets/cspc_spinkit_fading_circle.dart';
 import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 import 'package:student_event_calendar/widgets/post_card.dart';
 import '../models/event.dart';
@@ -22,15 +24,21 @@ class ManageEventsScreen extends StatefulWidget {
 
 class _ManageEventsScreenState extends State<ManageEventsScreen> {
   String dropdownEventType = 'All';
+  String dropdownDepartment = 'All'; 
   late TextEditingController _searchController;
   final _searchSubject = BehaviorSubject<String>();
-  ScrollController _scrollController = ScrollController();
+  final ScrollController _scrollController = ScrollController();
+  final FireStoreUserMethods _fireStoreUserMethods = FireStoreUserMethods(); 
 
   @override
   void initState() {
     super.initState();
     _searchController = TextEditingController();
     _searchController.addListener(_onSearchChanged);
+  }
+
+  Stream<List<String>> getUniqueDepartmentsStream() {
+    return _fireStoreUserMethods.getUniqueDepartments();
   }
 
   @override
@@ -112,7 +120,12 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                 return (dropdownEventType == 'All' || event.type == dropdownEventType);
               }).toList();
 
-              List<Event> searchTermFilteredEvents = filterEvents(filteredEvents, searchTerm);
+              // Filter events by department
+              List<Event> departmentFilteredEvents = filteredEvents.where((event) {
+                return (dropdownDepartment == 'All' || (event.participants != null && event.participants!['department'].contains(dropdownDepartment)));
+              }).toList();
+
+              List<Event> searchTermFilteredEvents = filterEvents(departmentFilteredEvents, searchTerm);
               List<Event> eventsUserType = allEvents.where((event) => event.createdBy == 
               FirebaseAuth.instance.currentUser!.uid).toList();
 
@@ -151,7 +164,9 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                 Padding(
                   padding: const EdgeInsets.fromLTRB(0, 15, 0, 10),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    mainAxisAlignment: kIsWeb 
+                    ? MainAxisAlignment.center 
+                    : MainAxisAlignment.spaceBetween,
                     children: [
                       kIsWeb ? Flexible(
                         child: Row(
@@ -172,35 +187,60 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                             ),
                           ],
                         )) : const SizedBox.shrink(),
-                      !kIsWeb ? Expanded(
-                        child: Text(
-                        'Event Type',
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 21.0,
-                          color: darkModeOn ? lightColor : darkColor,
+                        Flexible(
+                          child: DropdownButton<String>(
+                            value: dropdownEventType,
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                dropdownEventType = newValue!;
+                              });
+                            },
+                            items: <String>[
+                              'All',
+                              'Non-academic',
+                              'Academic'
+                            ].map<DropdownMenuItem<String>>((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
+                              );
+                            }).toList(),
+                          ),
                         ),
-                      )) : const SizedBox.shrink(),
-                      Flexible(
-                        child: DropdownButton<String>(
-                          value: dropdownEventType,
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              dropdownEventType = newValue!;
-                            });
-                          },
-                          items: <String>[
-                            'All',
-                            'Non-academic',
-                            'Academic'
-                          ].map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value,
-                              child: Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
+                        StreamBuilder<List<String>>(
+                          stream: getUniqueDepartmentsStream(),
+                          builder: (BuildContext context, AsyncSnapshot<List<String>> departmentSnapshot) {
+                            if (!departmentSnapshot.hasData) {
+                              return const CircularProgressIndicator();
+                            }
+                            if (departmentSnapshot.hasError) {
+                              return const CSPCSpinKitFadingCircle();
+                            }
+                        
+                            List<String> departments = departmentSnapshot.data!;
+                            departments.insert(0, 'All');
+                        
+                            return Flexible(
+                              child: Container(
+                                width: 140,
+                                child: DropdownButton<String>(
+                                  value: dropdownDepartment,
+                                  onChanged: (String? newValue) {
+                                    setState(() {
+                                      dropdownDepartment = newValue!;
+                                    });
+                                  },
+                                  items: departments.map<DropdownMenuItem<String>>((String value) {
+                                    return DropdownMenuItem<String>(
+                                      value: value,
+                                      child: Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
+                                    );
+                                  }).toList(),
+                                ),
+                              ),
                             );
-                          }).toList(),
-                        ),
-                      )
+                          },
+                        )
                     ],
                   )
                 ),
