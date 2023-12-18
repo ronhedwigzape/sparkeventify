@@ -243,7 +243,7 @@ class _UsersCardState extends State<UsersCard> {
                              ),
                              value: widget.selectedUsers.contains(widget.user.uid),
                              onChanged: (bool? value) {
-                               widget.onSelectedChanged(widget.user.uid);
+                               widget.onSelectedChanged(widget.user.uid!);
                              },
                            ),
                          ),

@@ -2,8 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_event_calendar/models/profile.dart';
 
 class User {
-  String uid;
-  String userType;
+  String? uid;
+  String? userType;
   String? username;
   String? password;
   String? email;
@@ -11,8 +11,8 @@ class User {
   Profile? profile;
 
   User({
-    required this.uid,
-    required this.userType,
+    this.uid,
+    this.userType,
     this.username,
     this.password,
     this.email,

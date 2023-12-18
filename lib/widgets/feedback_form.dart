@@ -61,7 +61,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
       eventFeedbackUid = await FirestoreFeedbackMethods().addEmptyFeedback(widget.eventId); 
 
       EvaluatorFeedback evaluatorFeedback = EvaluatorFeedback(
-        userUid: user.uid,
+        userUid: user.uid!,
         userFullName: user.profile?.fullName ?? '',
         userProgram: user.profile?.program ?? '',
         userDepartment: user.profile?.department ?? '',
@@ -87,7 +87,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
     // Else if feedback is present and has user
     else if (user != null) {
       EvaluatorFeedback evaluatorFeedback = EvaluatorFeedback(
-        userUid: user.uid,
+        userUid: user.uid!,
         userFullName: user.profile?.fullName ?? '',
         userProgram: user.profile?.program ?? '',
         userDepartment: user.profile?.department ?? '',

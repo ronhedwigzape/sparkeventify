@@ -43,7 +43,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
   @override
   void initState() {
     super.initState();
-    userTypeController.text = widget.user.userType;
+    userTypeController.text = widget.user.userType!;
     firstNameController.text = widget.user.profile!.firstName ?? '';
     middleInitialController.text = widget.user.profile!.middleInitial?? '';
     lastNameController.text = widget.user.profile!.lastName?? '';
@@ -99,7 +99,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
 
     try {
       String response = await FireStoreUserMethods().updateUserProfile(
-        uid: widget.user.uid,
+        uid: widget.user.uid!,
         userType: userTypeController.text,
         email: widget.user.email,
         password: widget.user.password,

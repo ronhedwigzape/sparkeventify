@@ -59,7 +59,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
 
   void toggleAllSelected() {
     setState(() {
-      List<String> allUserUids = filteredUsers.map((user) => user.uid).toList();
+      List<String> allUserUids = filteredUsers.map((user) => user.uid!).toList();
       if (_allUsersSelected) {
         // If every user is already selected, clear the selection
         selectedUsers.clear();

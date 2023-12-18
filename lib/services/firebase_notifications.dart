@@ -282,7 +282,7 @@ class FirebaseNotificationService {
     List<model.User> users = await fetchAllUsers();
     for (var user in users) {
       if (user.profile?.department == department && user.profile?.program == program) {
-        await sendNotificationToUser(senderId, user.uid, title, body);
+        await sendNotificationToUser(senderId, user.uid!, title, body);
       }
     }
   }

@@ -138,8 +138,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
         profile: profile,
-        userType: widget.user.userType, 
-        uid: widget.user.uid,
+        userType: widget.user.userType!, 
+        uid: widget.user.uid!,
         currentPassword: widget.user.password!);
 
     if (res == 'Success') {
@@ -309,7 +309,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       onPressed: () async {
                         bool isConnected = await ConnectivityService().isConnected();
                         if (isConnected) {
-                          await FireStoreUserMethods().updateProfileImage(_pickedImage!, widget.user.uid); 
+                          await FireStoreUserMethods().updateProfileImage(_pickedImage!, widget.user.uid!); 
                           setState(() {
                             _isImageUpdated = true;
                           });
@@ -649,7 +649,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     context: context,
                     builder: (context) {
                       return DeleteUserDialog(
-                        uid: widget.user.uid,
+                        uid: widget.user.uid!,
                         email: _emailController.text.trim(),
                         password: _passwordController.text.trim(),
                       );
