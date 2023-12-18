@@ -249,6 +249,15 @@ class AuthMethods {
     return null;
   }
 
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
+
   // Sign out user
   Future<void> signOut() async {
     try {

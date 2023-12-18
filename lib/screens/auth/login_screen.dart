@@ -8,6 +8,7 @@ import 'package:student_event_calendar/screens/auth/admin_signup_screen.dart';
 import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
 import 'package:student_event_calendar/layouts/client_screen_layout.dart';
 import 'package:student_event_calendar/screens/auth/client_selection_screen.dart';
+import 'package:student_event_calendar/screens/auth/password_recovery_screen.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo.dart';
@@ -148,12 +149,12 @@ class _LoginScreenState extends State<LoginScreen> {
               children: [
                 Flexible(
                   fit: FlexFit.loose,
-                  flex: 2,
+                  flex: 1,
                   child: Container(),
                 ),
                 // Logo
                 const Padding(
-                  padding: EdgeInsets.fromLTRB(0, 30, 0, 0),
+                  padding: EdgeInsets.only(top: 25),
                   child: CSPCLogo(height: 150.0),
                 ),
                 // School name and address
@@ -209,6 +210,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   textInputType: TextInputType.visiblePassword,
                   isRegistration: false,
                   isPass: true,
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PasswordRecoveryScreen()));
+                      },
+                      child: Text(
+                        'Forgot Password?',
+                        style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                      ),
+                    ),
+                  ],
                 ),
                 const SizedBox(height: 16.0),
                 // Sign in button
