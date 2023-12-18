@@ -246,12 +246,19 @@ class EditEventScreenState extends State<EditEventScreen> {
 
         String senderId = FirebaseAuth.instance.currentUser!.uid;
 
+        // Format the dates and times
+        String formattedStartDate = DateFormat('yyyy-MM-dd').format(startDate);
+        String formattedEndDate = DateFormat('yyyy-MM-dd').format(endDate);
+        String formattedStartTime = DateFormat('h:mm a').format(startTime);
+        String formattedEndTime = DateFormat('h:mm a').format(endTime);
+
         // Send a notification to all participants
         if (widget.eventSnap.participants != null) {
           for (var participant in widget.eventSnap.participants!['department']) {
             for (var participantProgram in widget.eventSnap.participants!['program']) {
               await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
-                senderId, participant, participantProgram, 'Event Cancelled', 'The event "${widget.eventSnap.title}" has been cancelled.'
+                senderId, participant, participantProgram, 'Event Moved', 
+                'The event "${widget.eventSnap.title}" has been moved. It will now start on $formattedStartDate at $formattedStartTime and end on $formattedEndDate at $formattedEndTime.'
               );
             }
           }
