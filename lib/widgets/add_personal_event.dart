@@ -6,10 +6,13 @@ import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_personal_event_methods.dart';
+import 'package:student_event_calendar/resources/firestore_user_methods.dart';
+import 'package:student_event_calendar/services/firebase_notifications.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
 import 'package:student_event_calendar/widgets/cspc_spinner.dart';
+import 'package:student_event_calendar/widgets/search_user_delegate.dart';
 import 'package:student_event_calendar/widgets/text_field_input.dart';
 import '../providers/darkmode_provider.dart';
 import '../utils/global.dart';
@@ -32,11 +35,13 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
   final _endTimeController = TextEditingController();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
+  FireStoreUserMethods userMethods = FireStoreUserMethods();
   Future<model.User?> currentUser = AuthMethods().getCurrentUserDetails();
+  List<model.User> invitedUsers = [];
   Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
-  
+
   void _selectImage(BuildContext context) async {
     return showDialog(
         context: context,
@@ -154,6 +159,22 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
           );
         });
   }
+  Future<model.User?> _showSearch(BuildContext context, List<model.User> users) async {
+    return await showSearch(
+      context: context,
+      delegate: SearchUserDelegate(users),
+    );
+  }
+
+  void _showUserSearch(BuildContext context) async {
+    List<model.User> users = await userMethods.getAllInvitableUsers();
+    model.User? selectedUser = await _showSearch(context, users);
+    if (selectedUser != null) {
+      setState(() {
+        invitedUsers.add(selectedUser);
+      });
+    }
+  }
 
   _post() async {
     if (kDebugMode) {
@@ -207,6 +228,18 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
             _personalEventTypeController.text,
             'Upcoming',
             false);
+
+            // After the event is created, send a notification to each invited user.
+            for (var user in invitedUsers) {
+              String message = 'You have been invited to the event "${_personalEventTitleController.text}" '
+                              'which will take place from ${_startDateController.text} ${_startTimeController.text} '
+                              'to ${_endDateController.text} ${_endTimeController.text} at ${_personalEventVenueController.text}. '
+                              'Event details: ${_personalEventDescriptionsController.text}';
+              await FirebaseNotificationService().sendNotificationToUser(
+                FirebaseAuth.instance.currentUser!.uid, user.uid!, 'Event Invitation', message
+              );
+            }
+
         if (kDebugMode) {
           print('Add Personal Event Response: $response');
         }
@@ -554,6 +587,34 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                                     ))
                                   ]),
                                 ),
+                                const SizedBox(height: 20,),
+                                SizedBox(
+                                  width: double.infinity,
+                                  child: ElevatedButton(
+                                    child: const Row(
+                                      mainAxisAlignment: MainAxisAlignment.center,
+                                      children: [
+                                        Icon(Icons.add_to_queue, size: 15,),
+                                        SizedBox(width: 5,),
+                                        Text('Invite User/s'),
+                                      ],
+                                    ),
+                                    onPressed: () => _showUserSearch(context),
+                                  ),
+                                ),
+                                const SizedBox(height: 10,),
+                                // New widget to display the invited users
+                                ...invitedUsers.map((user) => ListTile(
+                                  title: Text(user.profile!.fullName!),
+                                  trailing: IconButton(
+                                    icon: const Icon(Icons.remove_circle_outline, color: red,),
+                                    onPressed: () {
+                                      setState(() {
+                                        invitedUsers.remove(user);
+                                      });
+                                    },
+                                  ),
+                                )).toList(),
                                 const SizedBox(height: 20.0),
                                 Center(
                                   child: InkWell(

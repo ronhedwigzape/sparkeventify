@@ -402,7 +402,7 @@ class FireStoreUserMethods {
     return getAllUsers().map((users) {
       Set<String> userTypes = <String>{};
       for (var user in users) {
-        userTypes.add(user.userType);
+        userTypes.add(user.userType!);
       }
       return userTypes.toList();
     });
@@ -458,6 +458,28 @@ class FireStoreUserMethods {
       }
       return sections.toList();
     });
+  }
+
+  // Get all users by user type
+  Stream<List<model.User>> getUsersByUserType(String userType) {
+    return _usersCollection
+      .where('userType', isEqualTo: userType)
+      .snapshots()
+      .map((snapshot) {
+        return snapshot.docs.map((doc) => model.User.fromSnap(doc)).toList();
+      });
+  }
+
+  Future<List<model.User>> getAllInvitableUsers() async {
+    List<model.User> users = [];
+    List<String> userTypes = ['Student', 'Officer', 'Staff'];
+
+    for (String userType in userTypes) {
+      List<model.User> usersOfType = await getUsersByUserType(userType).first;
+      users.addAll(usersOfType);
+    }
+
+    return users;
   }
 
 }
