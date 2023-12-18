@@ -1,12 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
+import 'package:intl/intl.dart';
 import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/resources/storage_methods.dart';
+import 'package:student_event_calendar/services/firebase_notifications.dart';
 import 'package:uuid/uuid.dart';
 
 class FireStoreEventMethods {
   // Reference to the 'events' collection in Firestore
   final CollectionReference _eventsCollection = FirebaseFirestore.instance.collection('events');
+  final FirebaseNotificationService _firebaseNotificationService = FirebaseNotificationService();
 
   // Method to add a new event to the 'events' collection
   Future<String> postEvent(
@@ -64,6 +68,23 @@ class FireStoreEventMethods {
         eventId, false, false, startDate, endDate, startTime, endTime);
         
       response = 'Success';
+
+      String senderId = FirebaseAuth.instance.currentUser!.uid;
+
+      // Send a notification to all participants
+      if (participants['department'] != null && participants['program'] != null) {
+        for (var department in participants['department']!) {
+          for (var program in participants['program']!) {
+            await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
+              senderId, 
+              department, 
+              program, 
+              'New Event', 
+              'A new event "$title" has been posted. It will start on ${DateFormat('yyyy-MM-dd').format(startDate)} at ${DateFormat('h:mm a').format(startTime)} and end on ${DateFormat('yyyy-MM-dd').format(endDate)} at ${DateFormat('h:mm a').format(endTime)}. Description: $description. Venue: $venue.'
+            );
+          }
+        }
+      }
     } on FirebaseException catch (err) {
       // Handle any errors that occur
       if (err.code == 'permission-denied') {
