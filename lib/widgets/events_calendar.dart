@@ -45,7 +45,7 @@ class EventsCalendarState extends State<EventsCalendar> {
         department = user?.profile!.department;
         program = user?.profile!.program;
       });
-      events = user?.userType == 'Admin' || user?.userType == 'Staff' 
+      events = user?.userType == 'Admin' || user?.userType == 'SuperAdmin' || user?.userType == 'Staff' 
       ? fireStoreEventMethods.getEventsByDate() 
       : fireStoreEventMethods.getEventsByDateByDepartmentByProgram(department!, program!);
     });
@@ -74,7 +74,7 @@ class EventsCalendarState extends State<EventsCalendar> {
       final user = await fireStoreUserMethods.getCurrentUserDataStream().first;
 
       setState(() {
-        events = user?.userType == 'Admin' || user?.userType == 'Staff' 
+        events = user?.userType == 'Admin' || user?.userType == 'SuperAdmin' || user?.userType == 'Staff' 
           ? fireStoreEventMethods.getEventsByDate() 
           : fireStoreEventMethods.getEventsByDateByDepartmentByProgram(department!, program!);
       });

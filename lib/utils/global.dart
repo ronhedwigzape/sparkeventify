@@ -106,35 +106,35 @@ Map<String, List<String>> selectedParticipants = {
 
 // List all associated program for departments
 Map<String, String> programDepartmentMap = {
-  'BSCS':'CCS',
-  'BSIT':'CCS',
-  'BSIS':'CCS',
-  'BLIS':'CCS',
-  'BSN':'CHS',
-  'BSM':'CHS',
-  'BSME':'CEA',
-  'BSEE':'CEA',
-  'BSECE':'CEA',
-  'BSCoE':'CEA',
-  'BSCiE':'CEA',
-  'BSA':'CEA',
-  'BSOA':'CTHBM',
-  'BSHM':'CTHBM',
-  'BSTM':'CTHBM',
-  'BSE':'CTHBM',
-  'BSBA':'CTHBM',
-  'BAEL':'CAS',
-  'BSMa':'CAS',
-  'BSAM':'CAS',
-  'BSDC':'CAS',
-  'BPA':'CAS',
-  'BHS':'CAS',
-  'BTVTEFP':'CTDE',
-  'BTVTEFS':'CTDE',
-  'BTVTEET':'CTDE',
-  'BPE':'CTDE',
-  'BCAE':'CTDE',
-  'BSNE':'CTDE'
+  'BSCS': 'CCS',
+  'BSIT': 'CCS',
+  'BSIS': 'CCS',
+  'BLIS': 'CCS',
+  'BSN': 'CHS',
+  'BSM': 'CHS',
+  'BSME': 'CEA',
+  'BSEE': 'CEA',
+  'BSECE': 'CEA',
+  'BSCoE': 'CEA',
+  'BSCiE': 'CEA',
+  'BSA': 'CEA',
+  'BSOA': 'CTHBM',
+  'BSHM': 'CTHBM',
+  'BSTM': 'CTHBM',
+  'BSE': 'CTHBM',
+  'BSBA': 'CTHBM',
+  'BAEL': 'CAS',
+  'BSMa': 'CAS',
+  'BSAM': 'CAS',
+  'BSDC': 'CAS',
+  'BPA': 'CAS',
+  'BHS': 'CAS',
+  'BTVTEFP': 'CTDE',
+  'BTVTEFS': 'CTDE',
+  'BTVTEET': 'CTDE',
+  'BPE': 'CTDE',
+  'BCAE': 'CTDE',
+  'BSNE': 'CTDE'
 };
 
 final List<String> staffPositions = [
@@ -151,7 +151,7 @@ final List<String> staffPositions = [
 Future<List<Widget>> homeScreenItems() async {
   final String userType = await AuthMethods().getCurrentUserType();
 
-  if (userType == 'Staff') {
+  if (userType == 'Staff' && !kIsWeb) {
     // Widgets for 'Staff'
     return [
       const EventsCalendar(),
@@ -170,7 +170,13 @@ Future<List<Widget>> homeScreenItems() async {
       const FeedbackScreen(),
       const ProfileScreen(),
     ];
-  } else if (userType == 'Officer') {
+  } else if (userType == 'SuperAdmin' && kIsWeb) {
+    // Widgets for 'SuperAdmin' only when app is running on Web platform
+    return [
+      const AdminDashboardScreen(),
+      const ProfileScreen(),
+    ];
+  } else if (userType == 'Officer' && !kIsWeb) {
     // Widgets for 'Officer'
     return [
       const EventsCalendar(),
@@ -180,13 +186,16 @@ Future<List<Widget>> homeScreenItems() async {
       const ProfileScreen(),
       const NotificationScreen(),
     ];
+  } else if (userType == 'Student' && !kIsWeb) {
+    // Widgets for Students
+    return [
+      const EventsCalendar(),
+      const FeedbackScreen(),
+      const PersonalEventsScreen(),
+      const ProfileScreen(),
+      const NotificationScreen(),
+    ];
+  } else {
+    return [];
   }
-  // Widgets for Students
-  return [
-    const EventsCalendar(),
-    const FeedbackScreen(),
-    const PersonalEventsScreen(),
-    const ProfileScreen(),
-    const NotificationScreen(),
-  ];
 }

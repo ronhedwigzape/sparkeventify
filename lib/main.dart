@@ -212,7 +212,10 @@ class AuthScreen extends StatelessWidget {
               if (snapshot.hasData && snapshot.data!.exists) {
                 final String userType = snapshot.data!.get('userType');
 
-                if (userType == 'Admin' && runningOnWeb()) {
+                if (
+                  userType == 'Admin' && runningOnWeb() ||
+                  userType == 'SuperAdmin' && runningOnWeb()
+                ) {
                   return const AdminScreenLayout();
                 } else if (
                   (userType == 'Student' && runningOnMobile()) ||

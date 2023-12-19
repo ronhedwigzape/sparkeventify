@@ -58,8 +58,8 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
             return Center(child: Text('Error: ${snapshot.error}'));
           } else {
             model.User? currentUser = snapshot.data;
-            return currentUser?.userType == 'Admin'
-                ? Scaffold(
+            String? userType = currentUser?.userType;
+            return Scaffold(
               appBar: AppBar(
                 automaticallyImplyLeading: false,
                 title: const Padding(
@@ -94,19 +94,72 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                     navigationTapped(0);
                   }),
                   tooltip: 'Refresh', 
-                  icon: Icon(Icons.refresh, color: darkModeOn ? lightColor : darkColor),),
+                  icon: Icon(
+                    Icons.refresh, 
+                    color: darkModeOn ? lightColor : darkColor),
+                  ),
                   const SizedBox(width: 10.0),
-                  buildAppBarButton(icon: Icons.dashboard, label: "Dashboard", pageIndex: 0, onTap: () => navigationTapped(0)),
+                  userType == 'Admin' || userType == 'SuperAdmin'
+                    ? buildAppBarButton(
+                        icon: Icons.dashboard, 
+                        label: "Dashboard", 
+                        pageIndex: 0, 
+                        onTap: () => navigationTapped(0)
+                      )
+                    : const SizedBox.shrink(),
+                  userType == 'Admin' 
+                    ? const SizedBox(width: 10.0) 
+                    : const SizedBox.shrink(),
+                  userType == 'Admin' 
+                    ? buildAppBarButton(
+                        icon: Icons.add_circle, 
+                        label: "Post", 
+                        pageIndex: 1, 
+                        onTap: () => navigationTapped(1)
+                      )
+                    : const SizedBox.shrink(),
+                  userType == 'Admin' 
+                    ? const SizedBox(width: 10.0) 
+                    : const SizedBox.shrink(),
+                  userType == 'Admin' 
+                    ? buildAppBarButton(
+                        icon: Icons.event, 
+                        label: "Events", 
+                        pageIndex: 2, 
+                        onTap: () => navigationTapped(2)
+                      )
+                    : const SizedBox.shrink(),
+                  userType == 'Admin' 
+                    ? const SizedBox(width: 10.0)
+                    : const SizedBox.shrink(),
+                  userType == 'Admin' 
+                    ? buildAppBarButton(
+                        icon: Icons.group, 
+                        label: "Users", 
+                        pageIndex: 3, 
+                        onTap: () => navigationTapped(3)
+                      )
+                    : const SizedBox.shrink(),
+                  userType == 'Admin' 
+                    ? const SizedBox(width: 10.0) 
+                    : const SizedBox.shrink(),
+                  userType == 'Admin' 
+                    ? buildAppBarButton(
+                        icon: Icons.feedback, 
+                        label: "Feedbacks", 
+                        pageIndex: 4, 
+                        onTap: () => navigationTapped(4)
+                      )
+                    : const SizedBox.shrink(),
                   const SizedBox(width: 10.0),
-                  buildAppBarButton(icon: Icons.add_circle, label: "Post", pageIndex: 1, onTap: () => navigationTapped(1)),
-                  const SizedBox(width: 10.0),
-                  buildAppBarButton(icon: Icons.event, label: "Events", pageIndex: 2, onTap: () => navigationTapped(2)),
-                  const SizedBox(width: 10.0),
-                  buildAppBarButton(icon: Icons.group, label: "Users", pageIndex: 3, onTap: () => navigationTapped(3)),
-                  const SizedBox(width: 10.0),
-                  buildAppBarButton(icon: Icons.feedback, label: "Feedbacks", pageIndex: 4, onTap: () => navigationTapped(4)),
-                  const SizedBox(width: 10.0),
-                  buildAppBarButton(icon: Icons.settings, label: "Settings", pageIndex: 5, onTap: () => navigationTapped(5)),
+                  userType == 'Admin' || userType == 'SuperAdmin'
+                    ? buildAppBarButton(
+                        icon: Icons.settings, 
+                        label: "Settings",
+                        pageIndex: 5, 
+                        onTap: () => navigationTapped(5)
+                      )
+                    : const SizedBox.shrink(),
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0),
                     child: Row(
@@ -153,8 +206,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                   );
                 },
               ),
-            )
-                : const Center(child: CSPCFadeLoader());
+            );
           }
         }
     );
