@@ -34,6 +34,7 @@ class EventsCalendarState extends State<EventsCalendar> {
   Stream<Map<DateTime, List<Event>>>? events; 
   String currentMonth = DateFormat('MMMM yyyy').format(DateTime.now());
   String? department;
+  String? program;
 
   @override
   void initState() {
@@ -42,8 +43,11 @@ class EventsCalendarState extends State<EventsCalendar> {
     fireStoreUserMethods.getCurrentUserDataStream().listen((user) {
       setState(() {
         department = user?.profile!.department;
+        program = user?.profile!.program;
       });
-      events = user?.userType == 'Admin' || user?.userType == 'Staff' ? fireStoreEventMethods.getEventsByDate() : fireStoreEventMethods.getEventsByDateByDepartment(department!);
+      events = user?.userType == 'Admin' || user?.userType == 'Staff' 
+      ? fireStoreEventMethods.getEventsByDate() 
+      : fireStoreEventMethods.getEventsByDateByDepartmentByProgram(department!, program!);
     });
   }
 
@@ -72,7 +76,7 @@ class EventsCalendarState extends State<EventsCalendar> {
       setState(() {
         events = user?.userType == 'Admin' || user?.userType == 'Staff' 
           ? fireStoreEventMethods.getEventsByDate() 
-          : fireStoreEventMethods.getEventsByDateByDepartment(department!);
+          : fireStoreEventMethods.getEventsByDateByDepartmentByProgram(department!, program!);
       });
     } catch (error) {
       // Handle the error appropriately
