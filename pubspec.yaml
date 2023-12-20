@@ -60,7 +60,7 @@ dependencies:
   rxdart: ^0.27.7
   another_flushbar: ^1.12.30
   pdf: ^3.10.6
-  printing: ^5.11.0
+  printing: ^5.11.1
   universal_io: ^2.2.2
   flutter_file_saver: ^0.6.2
   timeago: ^3.5.0
