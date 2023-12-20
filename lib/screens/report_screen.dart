@@ -1,22 +1,53 @@
 import 'dart:async';
-import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_file_saver/flutter_file_saver.dart';
 import 'package:http/io_client.dart';
 import 'package:intl/intl.dart';
+import 'package:pdf/pdf.dart';
 import 'package:student_event_calendar/models/event.dart' as model;
-import 'package:student_event_calendar/utils/colors.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:universal_io/io.dart';
-import 'package:pdf/pdf.dart';
 
-
-class ReportScreen extends StatelessWidget {
+class ReportScreen extends StatefulWidget {
   final List<model.Event> events;
   final String currentMonth;
-  const ReportScreen({super.key, required this.events, required this.currentMonth});
+
+  const ReportScreen({Key? key, required this.events, required this.currentMonth}) : super(key: key);
+
+  @override
+  State<ReportScreen> createState() => _ReportScreenState();
+}
+
+class _ReportScreenState extends State<ReportScreen> {
+  List<model.Event> filteredEvents = [];
+  final GlobalKey<State<StatefulWidget>> _printKey = GlobalKey();
+
+  @override
+  void initState() {
+    super.initState();
+    filteredEvents = widget.events;
+  }
+
+  Future<void> selectDateRange() async {
+    DateTimeRange? picked = await showDateRangePicker(
+      context: context,
+      firstDate: DateTime(DateTime.now().year - 10),
+      lastDate: DateTime(DateTime.now().year + 10),
+    );
+
+    if (picked != null) {
+      final startDate = picked.start;
+      final endDate = picked.end;
+
+      setState(() {
+        filteredEvents = widget.events.where((event) =>
+          event.startDate.isAfter(startDate) && event.endDate.isBefore(endDate)
+        ).toList();
+      });
+    }
+  }
 
   Future<pw.MemoryImage?> _fetchImage(String url) async {
     try {
@@ -35,69 +66,28 @@ class ReportScreen extends StatelessWidget {
   Future<void> generatePdf(List<model.Event> events) async {
     final pdf = pw.Document();
     final font = pw.Font.ttf(await rootBundle.load("fonts/OpenSans-Regular.ttf"));
-
-    // Define a smaller font size
     const double fontSize = 10.0;
+    const cellPadding = pw.EdgeInsets.all(4.0);
+    var myPageFormat = PdfPageFormat.a4.portrait;
 
-    // Define consistent padding for table cells
-    const cellPadding = pw.EdgeInsets.all(4.0);  // Adjust this value as needed for padding
-
-    // Define the width for each column
-    // const double columnWidth = 0.125; // This represents a fraction of the total table width
-    // final columnWidths = <int, pw.TableColumnWidth>{
-    //   0: pw.FlexColumnWidth(columnWidth),
-    //   1: pw.FlexColumnWidth(columnWidth),
-    //   2: pw.FlexColumnWidth(columnWidth),
-    //   3: pw.FlexColumnWidth(columnWidth),
-    //   4: pw.FlexColumnWidth(columnWidth),
-    //   5: pw.FlexColumnWidth(columnWidth),
-    //   6: pw.FlexColumnWidth(columnWidth),
-    //   7: pw.FlexColumnWidth(columnWidth),
-    //   // Add or remove columns based on your table
-    // };
-    
-    // Predefined A4 size - most common for documents
-    var myPageFormat = PdfPageFormat.a4;
-
-    // Custom shorter page format - for example, A5 size
-    // var myShortPageFormat = PdfPageFormat.a5;
-
-    // Custom longer page format - you can specify the size you need
-    // var myLongPageFormat = const PdfPageFormat(
-    //   21.0 * PdfPageFormat.cm,
-    //   29.7 * PdfPageFormat.cm,
-    //   marginAll: 2.0 * PdfPageFormat.cm,
-    // );
-
-    // Decide which format to use
-    // myPageFormat = myShortPageFormat; // Uncomment to use short format
-    myPageFormat = PdfPageFormat.legal;  // Uncomment to use long format
-
-    // Fetch all images first and store them in a map
     Map<model.Event, pw.MemoryImage?> images = {};
     for (var event in events) {
       images[event] = event.image != null ? await _fetchImage(event.image!) : null;
     }
 
-    // Creating table headers
-    final headers = ['Event Title', 'Start Date', 'End Date', 'Start Time', 'End Time', 'Description', 'Venue', 'Type',];
+    final headers = ['Event Date', 'Event Title', 'Start Time', 'Venue', 'Participants'];
 
-    // Function to create a row for each event
     List<pw.TableRow> createEventRows(List<model.Event> events, Map<model.Event, pw.MemoryImage?> images) {
       return events.map((event) {
         return pw.TableRow(
           children: [
             pw.Padding(
               padding: cellPadding,
+              child: pw.Text(DateFormat('yyyy-MM-dd').format(event.startDate) + ' to ' + DateFormat('yyyy-MM-dd').format(event.endDate), style: pw.TextStyle(font: font, fontSize: fontSize)),
+            ),
+            pw.Padding(
+              padding: cellPadding,
               child: pw.Text(event.title, style: pw.TextStyle(font: font, fontSize: fontSize)),
-            ),
-            pw.Padding(
-              padding: cellPadding,            
-              child: pw.Text(DateFormat('yyyy-MM-dd').format(event.startDate), style: pw.TextStyle(font: font, fontSize: fontSize)),
-            ),
-            pw.Padding(
-              padding: cellPadding, 
-              child: pw.Text(DateFormat('yyyy-MM-dd').format(event.endDate), style: pw.TextStyle(font: font, fontSize: fontSize)),
             ),
             pw.Padding(
               padding: cellPadding, 
@@ -105,66 +95,56 @@ class ReportScreen extends StatelessWidget {
             ),
             pw.Padding(
               padding: cellPadding, 
-              child: pw.Text(DateFormat('hh:mm a').format(event.endTime), style: pw.TextStyle(font: font, fontSize: fontSize)),
-            ),
-            pw.Padding(
-              padding: cellPadding, 
-              child: pw.Text(event.description, style: pw.TextStyle(font: font, fontSize: fontSize)),
-            ),
-            pw.Padding(
-              padding: cellPadding, 
               child: pw.Text(event.venue ?? 'N/A', style: pw.TextStyle(font: font, fontSize: fontSize)),
             ),
             pw.Padding(
               padding: cellPadding, 
-              child: pw.Text(event.type, style: pw.TextStyle(font: font, fontSize: fontSize)),
+              child: pw.Text(event.participants!['department'].join(", "), style: pw.TextStyle(font: font, fontSize: fontSize)),
             ),
           ],
         );
       }).toList();
     }
 
-    // Adding the table to the PDF
+    List<pw.Widget> pages = [];
+    for (int i = 0; i < events.length; i += 10) {
+      pages.add(
+        pw.Table(
+          border: pw.TableBorder.all(),
+          children: [
+            pw.TableRow(
+              children: headers.map((header) => 
+                pw.Padding(
+                  padding: const pw.EdgeInsets.all(4.0),
+                  child: pw.Text(header, style: pw.TextStyle(font: font, fontSize: fontSize)),
+                )
+              ).toList(),
+            ),
+            ...createEventRows(events.sublist(i, i + 10 < events.length ? i + 10 : events.length), images),
+          ],
+        ),
+      );
+    }
+
     pdf.addPage(
       pw.MultiPage(
-        pageFormat: myPageFormat.copyWith(
-                      marginBottom: 10, // Adjust bottom margin
-                      marginLeft: 10,   // Adjust left margin
-                      marginRight: 10,  // Adjust right margin
-                      marginTop: 10,    // Adjust top margin
-                    ).landscape,
-        build: (pw.Context context) => [
-          pw.Padding(
-            padding: const pw.EdgeInsets.all(2.0), 
-            child: pw.Header(
-              level: 0,
-              child: pw.Center(
-                child: pw.Text('Report for $currentMonth', style: pw.TextStyle(font: font)),
-              ),
-            ),
-          ),
-          pw.Table(
-            border: pw.TableBorder.all(),
-            children: [
-               pw.TableRow(
-                children: headers.map((header) => 
-                  pw.Padding(
-                    padding: const pw.EdgeInsets.all(4.0), // Adjust padding as needed
-                    child: pw.Text(header, style: pw.TextStyle(font: font, fontSize: fontSize)),
-                  )
-                ).toList(),
-              ),
-              ...createEventRows(events, images),
-            ],
-          ),
-        ],
+        pageFormat: myPageFormat,
+        header: (pw.Context context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.center,
+          children: [
+            pw.Center(child: pw.Text('Camarines Sur Polytechnic Colleges', style: pw.TextStyle(font: font, fontSize: fontSize))),
+            pw.SizedBox(height: 10.0),
+            pw.Center(child: pw.Text('MONTHLY MONITORING SHEET OF STUDENTS’ ACTIVITY CONDUCTED', style: pw.TextStyle(font: font, fontSize: fontSize))),
+            pw.SizedBox(height: 10.0),
+            pw.Center(child: pw.Text(widget.currentMonth, style: pw.TextStyle(font: font, fontSize: fontSize))),
+          ],
+        ),
+        build: (pw.Context context) => pages,
       ),
     );
 
-    // Finalize the PDF and get the file content as a Uint8List
     final pdfContentBytes = await pdf.save();
 
-    // Save the file using flutter_file_saver
     await FlutterFileSaver().writeFileAsBytes(
       fileName: 'Event Report.pdf',
       bytes: pdfContentBytes,
@@ -174,52 +154,90 @@ class ReportScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final uniqueEvents = events.toSet().toList();
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints constraints) {
-     
-        final maxWidth = min(1600, constraints.maxWidth).toDouble();
-        return Scaffold(
-          backgroundColor: white,
-          appBar: AppBar(
-            title: Text('Report for $currentMonth'),
-            actions: [
-              IconButton(
-                onPressed: () async {
-                  await generatePdf(uniqueEvents);
-                },
-                icon: const Icon(Icons.print),
-                tooltip: 'Generate PDF',
-              )
-            ],
-          ), // remove AppBar in print version
-          body: Center(
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxWidth),
-              child: ListView.builder(
-                itemCount: uniqueEvents.length,
-                itemBuilder: (context, index) {
-                  return Container(
-                    margin: const EdgeInsets.all(10), 
-                    padding: const EdgeInsets.all(10), 
-                    decoration: BoxDecoration(
-                      border: Border.all(color: black, width: 1), 
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Report for ${widget.currentMonth}'),
+        actions: [
+          IconButton(
+            onPressed: selectDateRange,
+            icon: const Icon(Icons.date_range),
+            tooltip: 'Select Date Range',
+          ),
+          const SizedBox(width: 10,),
+          IconButton(
+            onPressed: () => generatePdf(filteredEvents),
+            icon: const Icon(Icons.print),
+            tooltip: 'Generate PDF',
+          ),
+          const SizedBox(width: 10,),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: RepaintBoundary(
+          key: _printKey,
+          child: SizedBox(
+            width: MediaQuery.of(context).size.width,
+            child: Column(
+              children: [
+                const Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('MONTHLY MONITORING SHEET OF STUDENTS’ ACTIVITY CONDUCTED'),
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(widget.currentMonth)
+                  ],
+                ),
+                const SizedBox(height: 20,),
+                DataTable(
+                  dataRowMinHeight: 100,  // Adjust this to change the minimum row height
+                  dataRowMaxHeight: 100, // Adjust this to change the row height
+                  headingRowColor: MaterialStateProperty.resolveWith<Color>((Set<MaterialState> states) {
+                    if (Theme.of(context).brightness == Brightness.dark) {
+                      return Colors.grey.shade800;  // choose the color for dark mode
+                    } else {
+                      return Colors.grey.shade200;  // choose the color for light mode
+                    }
+                  }),
+                  columns: const <DataColumn>[
+                    DataColumn(label: Text('Event Date')),
+                    DataColumn(label: Text('Event Title')),
+                    DataColumn(label: Text('Start Time')),
+                    DataColumn(label: Text('Venue')),
+                    DataColumn(label: Text('Participants')),
+                  ],
+                  rows: filteredEvents.map(
+                    (event) => DataRow(
+                      cells: <DataCell>[
+                        DataCell(Text(DateFormat('yyyy-MM-dd').format(event.startDate), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color))),
+                        DataCell(Text(event.title, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color))),
+                        DataCell(Text(DateFormat('hh:mm a').format(event.startTime), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color))),
+                        DataCell(Text(event.venue ?? 'N/A', style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color))),
+                        DataCell(
+                          SizedBox(
+                            height: 100,  // Match this with dataRowHeight
+                            child: SingleChildScrollView(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  ...event.participants!['department'].map<Widget>((dept) => Text(dept, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color))).toList(),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
-                    child: ListTile(
-                      title: Text(
-                        uniqueEvents[index].title, 
-                        style: const TextStyle(color: black)),
-                      subtitle: Text(
-                        uniqueEvents[index].description, 
-                        style: const TextStyle(color: black)),
-                    ),
-                  );
-                }
-              ),
+                  ).toList(),
+                ),
+              ],
             ),
-          )
-        );
-      }
+          ),
+        ),
+      ),
     );
   }
 }
