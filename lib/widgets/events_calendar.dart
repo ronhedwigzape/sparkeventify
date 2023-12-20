@@ -373,7 +373,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                                         markersMaxCount: 10,
                                         todayDecoration: BoxDecoration(
                                           color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-                                          shape: BoxShape.rectangle,
+                                          shape: kIsWeb ? BoxShape.rectangle : BoxShape.circle,
                                         ),
                                         tableBorder: TableBorder(
                                           verticalInside: BorderSide(
@@ -441,7 +441,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                                         });
                                       },
 
-                                      calendarBuilders: CalendarBuilders(
+                                      calendarBuilders: kIsWeb ? CalendarBuilders(
                                         defaultBuilder: (context, dateTime, focusedDay) {
                                           DateTime adjustedDay = DateTime(dateTime.year, dateTime.month, dateTime.day, 0, 0, 0).toLocal();
                                           bool hasEvents = _events.containsKey(adjustedDay);
@@ -505,6 +505,41 @@ class EventsCalendarState extends State<EventsCalendar> {
                                                   );
                                                 }).toList() ?? [];
                                               }).toList(),
+                                            ),
+                                          );
+                                        },
+                                      ) : CalendarBuilders(
+                                        defaultBuilder: (context, dateTime, focusedDay) {
+                                          DateTime adjustedDay = DateTime(dateTime.year,
+                                                  dateTime.month, dateTime.day, 0, 0, 0)
+                                              .toLocal();
+
+                                          bool hasEvents = _events.containsKey(adjustedDay);
+
+                                          if (_events.containsKey(adjustedDay)) {
+                                            return Container(
+                                              decoration: const BoxDecoration(
+                                                color: lightModeIndigo,
+                                                shape: BoxShape.circle,
+                                              ),
+                                              margin: const EdgeInsets.all(4.0),
+                                              alignment: Alignment.center,
+                                              child: Text(
+                                                dateTime.day.toString(),
+                                                style: TextStyle(
+                                                  color: darkModeOn ? (hasEvents ? darkColor : lightColor) : (hasEvents ? lightColor : darkColor), 
+                                                  fontWeight: FontWeight.bold),
+                                              ),
+                                            );
+                                          }
+                                          return Container(
+                                            margin: const EdgeInsets.all(4.0),
+                                            alignment: Alignment.center,
+                                            child: Text(
+                                              dateTime.day.toString(),
+                                              style: TextStyle(
+                                                color: darkModeOn ? (hasEvents ? darkColor : lightColor) : (hasEvents ? lightColor : darkColor),
+                                                fontWeight: FontWeight.bold),
                                             ),
                                           );
                                         },
