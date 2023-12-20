@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -35,6 +37,9 @@ class EventsCalendarState extends State<EventsCalendar> {
   String currentMonth = DateFormat('MMMM yyyy').format(DateTime.now());
   String? department;
   String? program;
+  final RefreshController _refreshController = RefreshController(initialRefresh: false);
+  int maxEventsPerDay = 1;
+  double rowHeight = 90.0;  // Default value
 
   @override
   void initState() {
@@ -45,16 +50,20 @@ class EventsCalendarState extends State<EventsCalendar> {
         department = user?.profile!.department;
         program = user?.profile!.program;
       });
-      events = user?.userType == 'Admin' || user?.userType == 'SuperAdmin' || user?.userType == 'Staff' 
+      events = user?.userType == 'Admin' || 
+               user?.userType == 'SuperAdmin' || 
+               user?.userType == 'Staff' 
       ? fireStoreEventMethods.getEventsByDate() 
       : fireStoreEventMethods.getEventsByDateByDepartmentByProgram(department!, program!);
     });
   }
 
+  // Function to get the events for the day
   List<Event> _getEventsForDay(DateTime day) {
     return _events[DateTime(day.year, day.month, day.day)] ?? [];
   }
 
+  // Function to get current time
   Stream<DateTime> getCurrentTime() {
     return Stream<DateTime>.periodic(
       const Duration(seconds: 1),
@@ -62,9 +71,11 @@ class EventsCalendarState extends State<EventsCalendar> {
     );
   }
 
-  final RefreshController _refreshController =
-      RefreshController(initialRefresh: false);
+  bool isSameMonth(DateTime date1, DateTime date2) {
+    return date1.month == date2.month && date1.year == date2.year;
+  }
 
+  // Function to refresh data from Firestore
   void _onRefresh() async {
     try {
       // Simulating network fetch. If this is just for UI delay, consider removing it.
@@ -98,9 +109,11 @@ class EventsCalendarState extends State<EventsCalendar> {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return Stack(
       children: [
+        // School background image 
         !kIsWeb ? Positioned.fill(
           child: CSPCBackground(height: MediaQuery.of(context).size.height),
         ) : const SizedBox.shrink(),
+        // Gradient background effects
         !kIsWeb ? Container(
           decoration: BoxDecoration(
             gradient: LinearGradient(
@@ -124,7 +137,8 @@ class EventsCalendarState extends State<EventsCalendar> {
               currentFocus.unfocus();
             }
           },
-          child: events != null ? StreamBuilder<Map<DateTime, List<Event>>>(
+          child: events != null 
+          ? StreamBuilder<Map<DateTime, List<Event>>>(
             stream: events,
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
@@ -281,6 +295,42 @@ class EventsCalendarState extends State<EventsCalendar> {
                                     ) : const SizedBox.shrink(),
                                   ),
                                 ),
+                                kIsWeb ? Padding(
+                                  padding: const EdgeInsets.all(10.0),
+                                  child: Card(
+
+                                    child: Padding(
+                                      padding: const EdgeInsets.fromLTRB(20, 10, 0, 8),
+                                      child: Row(
+                                        children: [
+                                          Text(
+                                            'Legend:',
+                                            style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                                          ),
+                                          const SizedBox(width: 20,),
+                                          ...eventColors.entries.map((entry) {
+                                          return Row(
+                                            children: [
+                                              Container(
+                                                height: 10,
+                                                width: 10,
+                                                decoration: BoxDecoration(
+                                                  border: Border.all(color: darkModeOn ? lightColor : darkColor),
+                                                  shape: BoxShape.circle,
+                                                  color: entry.value,
+                                                ),
+                                              ),
+                                              const SizedBox(width: 5),
+                                              Text(entry.key, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
+                                              const SizedBox(width: 10),
+                                            ],
+                                          );
+                                        }).toList(),
+                                        ]
+                                      ),
+                                    ),
+                                  ),
+                                ) : const SizedBox.shrink(),
                                 Padding(
                                 padding: const EdgeInsets.all(10.0),
                                   child: Container(
@@ -317,13 +367,13 @@ class EventsCalendarState extends State<EventsCalendar> {
                                                 .toLocal(); // Set the time by midnight
                                         return isSameDay(_selectedDay, adjustedDay);
                                       },
-                                      rowHeight: 60,
-                                      daysOfWeekHeight: 50.0,
+                                      rowHeight: kIsWeb ? rowHeight : 60,
+                                      daysOfWeekHeight: kIsWeb ? 60 : 50,
                                       calendarStyle: CalendarStyle(
                                         markersMaxCount: 10,
                                         todayDecoration: BoxDecoration(
                                           color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-                                          shape: BoxShape.circle,
+                                          shape: BoxShape.rectangle,
                                         ),
                                         tableBorder: TableBorder(
                                           verticalInside: BorderSide(
@@ -377,21 +427,30 @@ class EventsCalendarState extends State<EventsCalendar> {
                                         _focusedDay = focusedDay;
                                         setState(() {
                                           currentMonth = DateFormat('MMMM yyyy').format(focusedDay);
+
+                                          // Calculate the max number of events in a single day for the currently displayed month
+                                          maxEventsPerDay = _events.entries
+                                              .where((entry) => isSameMonth(entry.key, focusedDay))
+                                              .map((entry) => entry.value.length)
+                                              .reduce(max);
+
+                                          // You can then use maxEventsPerDay to adjust the rowHeight
+                                          // For example, if you want the row height to be 50.0 for a day with no events,
+                                          // and increase by 20.0 for each additional event, you can do:
+                                          rowHeight = 50.0 + maxEventsPerDay * 20.0;
                                         });
                                       },
+
                                       calendarBuilders: CalendarBuilders(
                                         defaultBuilder: (context, dateTime, focusedDay) {
-                                          DateTime adjustedDay = DateTime(dateTime.year,
-                                                  dateTime.month, dateTime.day, 0, 0, 0)
-                                              .toLocal();
-
+                                          DateTime adjustedDay = DateTime(dateTime.year, dateTime.month, dateTime.day, 0, 0, 0).toLocal();
                                           bool hasEvents = _events.containsKey(adjustedDay);
 
                                           if (_events.containsKey(adjustedDay)) {
                                             return Container(
                                               decoration: const BoxDecoration(
                                                 color: lightModeIndigo,
-                                                shape: BoxShape.circle,
+                                                shape: BoxShape.rectangle,
                                               ),
                                               margin: const EdgeInsets.all(4.0),
                                               alignment: Alignment.center,
@@ -403,14 +462,49 @@ class EventsCalendarState extends State<EventsCalendar> {
                                               ),
                                             );
                                           }
-                                          return Container(
-                                            margin: const EdgeInsets.all(4.0),
-                                            alignment: Alignment.center,
-                                            child: Text(
-                                              dateTime.day.toString(),
-                                              style: TextStyle(
-                                                color: darkModeOn ? (hasEvents ? darkColor : lightColor) : (hasEvents ? lightColor : darkColor),
-                                                fontWeight: FontWeight.bold),
+
+                                          return Stack(
+                                            children: [
+                                              Container(
+                                                margin: const EdgeInsets.all(4.0),
+                                                alignment: Alignment.center,
+                                                child: Text(
+                                                  dateTime.day.toString(),
+                                                  style: TextStyle(
+                                                    color: darkModeOn ? (hasEvents ? darkColor : lightColor) : (hasEvents ? lightColor : darkColor),
+                                                    fontWeight: FontWeight.bold
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          );
+                                        },
+                                        markerBuilder: (context, date, events) {
+                                          return Positioned(
+                                            bottom: 1,
+                                            child: Row(
+                                              children: events.expand<Widget>((event) {
+                                                return (event as Event).participants?['department'].map<Widget>((dept) {
+                                                  return Padding(
+                                                    padding: const EdgeInsets.symmetric(horizontal: 1.0),
+                                                    child: Padding(
+                                                      padding: const EdgeInsets.symmetric(vertical: 2.0),
+                                                      child: Chip(
+                                                        label: Text(
+                                                          dept,
+                                                          style: const TextStyle(
+                                                            fontSize: 8,
+                                                            color: white,
+                                                          ),
+                                                        ),
+                                                        backgroundColor: eventColors[event.status],
+                                                        padding: const EdgeInsets.all(0),
+                                                        labelPadding: EdgeInsets.symmetric(horizontal: 2),
+                                                      ),
+                                                    ),
+                                                  );
+                                                }).toList() ?? [];
+                                              }).toList(),
                                             ),
                                           );
                                         },

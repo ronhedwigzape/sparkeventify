@@ -30,3 +30,12 @@ const black = Colors.black;
 const white = Colors.white;
 const light = Color.fromRGBO(190, 190, 190, 1);
 const red = Colors.red;
+
+final Map<String, Color> eventColors = {
+  'Moved': Colors.grey,
+  'Cancelled': Colors.red,
+  'Upcoming': Colors.blue,
+  'Past': Colors.black,
+  'Ongoing': Colors.green,
+};
+
