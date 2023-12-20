@@ -83,7 +83,11 @@ class _ReportScreenState extends State<ReportScreen> {
           children: [
             pw.Padding(
               padding: cellPadding,
-              child: pw.Text(DateFormat('yyyy-MM-dd').format(event.startDate) + ' to ' + DateFormat('yyyy-MM-dd').format(event.endDate), style: pw.TextStyle(font: font, fontSize: fontSize)),
+              child: pw.Text(
+                event.startDate.isAtSameMomentAs(event.endDate)
+                  ? DateFormat('yyyy-MM-dd').format(event.startDate)
+                  : '${DateFormat('yyyy-MM-dd').format(event.startDate)} to ${DateFormat('yyyy-MM-dd').format(event.endDate)}', 
+                style: pw.TextStyle(font: font, fontSize: fontSize)),
             ),
             pw.Padding(
               padding: cellPadding,
