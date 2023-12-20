@@ -141,6 +141,7 @@ class _ReportScreenState extends State<ReportScreen> {
             pw.Center(child: pw.Text('MONTHLY MONITORING SHEET OF STUDENTS’ ACTIVITY CONDUCTED', style: pw.TextStyle(font: font, fontSize: fontSize))),
             pw.SizedBox(height: 10.0),
             pw.Center(child: pw.Text(widget.currentMonth, style: pw.TextStyle(font: font, fontSize: fontSize))),
+            pw.SizedBox(height: 15.0),
           ],
         ),
         build: (pw.Context context) => pages,
