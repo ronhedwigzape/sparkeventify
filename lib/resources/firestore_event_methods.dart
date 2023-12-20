@@ -30,15 +30,30 @@ class FireStoreEventMethods {
   ) async {
     String response = 'Some error occurred';
     try {
+      // Check for conflicting events
+      QuerySnapshot querySnapshot = await _eventsCollection
+          .where('startDate', isEqualTo: startDate)
+          .where('endDate', isEqualTo: endDate)
+          .where('venue', isEqualTo: venue)
+          .get();
+          
+      for (var doc in querySnapshot.docs) {
+        Event existingEvent = await Event.fromSnap(doc);
+        if (existingEvent.startTime.isAtSameMomentAs(startTime) &&
+            existingEvent.endTime.isAtSameMomentAs(endTime)) {
+          return 'Conflicting event exists';
+        }
+      }
+
       // If the image is not null, upload it to storage and get the URL
       String imageUrl = '';
       if (image != null) {
-         imageUrl = await StorageMethods().uploadImageToStorage('images', image, true);
+        imageUrl = await StorageMethods().uploadImageToStorage('images', image, true);
       }
       // If the document is not null, upload it to storage and get the URL
       String documentUrl = '';
       if (document != null) {
-         documentUrl = await StorageMethods().uploadFileToStorage('documents', document);
+        documentUrl = await StorageMethods().uploadFileToStorage('documents', document);
       }
       // Generate a unique ID for the event
       String eventId = const Uuid().v4();
