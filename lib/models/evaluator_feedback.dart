@@ -1,22 +1,22 @@
 class EvaluatorFeedback {
-  String userUid;
-  String userFullName;
-  String userProgram;
-  String userDepartment;
-  bool satisfactionStatus;
-  String studentEvaluation;
-  bool attendanceStatus;
-  bool isFeedbackDone;
+  String? userUid;
+  String? userFullName;
+  String? userProgram;
+  String? userDepartment;
+  bool? satisfactionStatus;
+  String? studentEvaluation;
+  bool? attendanceStatus;
+  bool? isFeedbackDone;
 
   EvaluatorFeedback({
-    required this.userUid,
-    required this.userFullName,
-    required this.userProgram,
-    required this.userDepartment,
-    required this.satisfactionStatus,
-    required this.studentEvaluation,
-    required this.attendanceStatus,
-    required this.isFeedbackDone,
+    this.userUid,
+    this.userFullName,
+    this.userProgram,
+    this.userDepartment,
+    this.satisfactionStatus,
+    this.studentEvaluation,
+    this.attendanceStatus,
+    this.isFeedbackDone,
   });
 
   // Convert Evaluator object to JSON

@@ -129,7 +129,7 @@ class FirestoreFeedbackMethods {
             EventFeedbacks.fromMap(doc.data());
         for (var evaluatorFeedback in feedback.evaluatorFeedbacks) {
           if (evaluatorFeedback.userUid == userId) {
-            isFeedbackDone = evaluatorFeedback.isFeedbackDone;
+            isFeedbackDone = evaluatorFeedback.isFeedbackDone!;
             break; // Break the loop if the user's feedback is found
           }
         }
@@ -320,7 +320,7 @@ class FirestoreFeedbackMethods {
         totalEvaluators++;
 
         // Count satisfied and dissatisfied evaluators
-        if (evaluatorFeedback.satisfactionStatus) {
+        if (evaluatorFeedback.satisfactionStatus!) {
           satisfiedEvaluators++;
         } else {
           dissatisfiedEvaluators++;
@@ -328,16 +328,16 @@ class FirestoreFeedbackMethods {
 
         // Count programs
         if (programs.containsKey(evaluatorFeedback.userProgram)) {
-          programs[evaluatorFeedback.userProgram] = programs[evaluatorFeedback.userProgram]! + 1;
+          programs[evaluatorFeedback.userProgram!] = programs[evaluatorFeedback.userProgram]! + 1;
         } else {
-          programs[evaluatorFeedback.userProgram] = 1;
+          programs[evaluatorFeedback.userProgram!] = 1;
         }
 
         // Count departments
         if (departments.containsKey(evaluatorFeedback.userDepartment)) {
-          departments[evaluatorFeedback.userDepartment] = departments[evaluatorFeedback.userDepartment]! + 1;
+          departments[evaluatorFeedback.userDepartment!] = departments[evaluatorFeedback.userDepartment]! + 1;
         } else {
-          departments[evaluatorFeedback.userDepartment] = 1;
+          departments[evaluatorFeedback.userDepartment!] = 1;
         }
       }
     }
