@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
@@ -39,7 +37,6 @@ class EventsCalendarState extends State<EventsCalendar> {
   String? program;
   final RefreshController _refreshController = RefreshController(initialRefresh: false);
   int maxEventsPerDay = 1;
-  double rowHeight = 90.0;  // Default value
 
   @override
   void initState() {
@@ -367,7 +364,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                                                 .toLocal(); // Set the time by midnight
                                         return isSameDay(_selectedDay, adjustedDay);
                                       },
-                                      rowHeight: kIsWeb ? rowHeight : 60,
+                                      rowHeight: kIsWeb ? 90 : 60,
                                       daysOfWeekHeight: kIsWeb ? 60 : 50,
                                       calendarStyle: CalendarStyle(
                                         markersMaxCount: 10,
@@ -431,17 +428,6 @@ class EventsCalendarState extends State<EventsCalendar> {
                                         _focusedDay = focusedDay;
                                         setState(() {
                                           currentMonth = DateFormat('MMMM yyyy').format(focusedDay);
-
-                                          // Calculate the max number of events in a single day for the currently displayed month
-                                          maxEventsPerDay = _events.entries
-                                              .where((entry) => isSameMonth(entry.key, focusedDay))
-                                              .map((entry) => entry.value.length)
-                                              .reduce(max);
-
-                                          // You can then use maxEventsPerDay to adjust the rowHeight
-                                          // For example, if you want the row height to be 50.0 for a day with no events,
-                                          // and increase by 20.0 for each additional event, you can do:
-                                          rowHeight = 50.0 + maxEventsPerDay * 20.0;
                                         });
                                       },
 
