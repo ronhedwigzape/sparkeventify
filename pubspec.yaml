@@ -72,6 +72,7 @@ dependencies:
   google_sign_in: ^6.1.6
   flutter_signin_button: ^2.0.0
   firebase_app_check: ^0.2.1+8
+  pie_chart: ^5.4.0
 
 dev_dependencies:
   flutter_test:
