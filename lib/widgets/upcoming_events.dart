@@ -86,9 +86,13 @@ class UpcomingEventsState extends State<UpcomingEvents> {
                     textAlign: TextAlign.center,
                   ),
                   ...(upcomingEvents.isEmpty) ? [
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: Text('No upcoming events for now..', textAlign: TextAlign.center,),
+                      child: Text(
+                        'No upcoming events for now..', 
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                      ),
                     )]
                   : upcomingEvents.map((event) {
                     DateTime startDate = event.startDate.isBefore(now) ? now.add(const Duration(days: 1)) : event.startDate;

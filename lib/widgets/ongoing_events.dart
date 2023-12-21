@@ -112,9 +112,13 @@ class OngoingEventsState extends State<OngoingEvents> {
                     textAlign: TextAlign.center,
                   ),
                   ...(ongoingEvents.isEmpty) ? [
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.all(8.0),
-                      child: Text('No ongoing events for now..', textAlign: TextAlign.center,),
+                      child: Text(
+                        'No ongoing events for now..', 
+                        textAlign: TextAlign.center,
+                        style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                      ),
                     )]
                   : ongoingEvents.map((event) {
                     DateTime startDate = event.startDate.isBefore(now) ? now.add(const Duration(days: 1)) : event.startDate;

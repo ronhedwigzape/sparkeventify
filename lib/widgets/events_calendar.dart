@@ -373,7 +373,11 @@ class EventsCalendarState extends State<EventsCalendar> {
                                         markersMaxCount: 10,
                                         todayDecoration: BoxDecoration(
                                           color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-                                          shape: kIsWeb ? BoxShape.rectangle : BoxShape.circle,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        todayTextStyle: const TextStyle(
+                                          fontSize: 14, 
+                                          color: white,
                                         ),
                                         tableBorder: TableBorder(
                                           verticalInside: BorderSide(
@@ -450,9 +454,9 @@ class EventsCalendarState extends State<EventsCalendar> {
                                             return Container(
                                               decoration: const BoxDecoration(
                                                 color: lightModeIndigo,
-                                                shape: BoxShape.rectangle,
+                                                shape: BoxShape.circle,
                                               ),
-                                              margin: const EdgeInsets.all(4.0),
+                                              margin: const EdgeInsets.all(20.0),
                                               alignment: Alignment.center,
                                               child: Text(
                                                 dateTime.day.toString(),
@@ -477,6 +481,23 @@ class EventsCalendarState extends State<EventsCalendar> {
                                                 ),
                                               ),
                                             ],
+                                          );
+                                        },
+                                        todayBuilder: (context, date, _) {
+                                          return Container(
+                                            margin: const EdgeInsets.all(20.0),
+                                            alignment: Alignment.center,
+                                            decoration: BoxDecoration(
+                                              color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: Text(
+                                              date.day.toString(),
+                                              style: TextStyle(
+                                                color: darkModeOn ? darkColor : lightColor,
+                                                fontWeight: FontWeight.w900
+                                              ),
+                                            ),
                                           );
                                         },
                                         markerBuilder: (context, date, events) {
