@@ -103,14 +103,14 @@ class _EventFeedbackScreenState extends State<EventFeedbackScreen> {
                         const SizedBox(height: 20,),
                       PieChart(
                         dataMap: dataMap,
-                        animationDuration: Duration(milliseconds: 800),
+                        animationDuration: const Duration(milliseconds: 800),
                         chartLegendSpacing: 32,
                         chartRadius: MediaQuery.of(context).size.width / 3.2,
                         initialAngleInDegree: 0,
                         chartType: ChartType.ring,
                         ringStrokeWidth: 32,
                         centerText: "Satisfaction",
-                        legendOptions: LegendOptions(
+                        legendOptions: const LegendOptions(
                           showLegendsInRow: false,
                           legendPosition: LegendPosition.right,
                           showLegends: true,
@@ -119,7 +119,7 @@ class _EventFeedbackScreenState extends State<EventFeedbackScreen> {
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                        chartValuesOptions: ChartValuesOptions(
+                        chartValuesOptions: const ChartValuesOptions(
                           showChartValueBackground: true,
                           showChartValues: true,
                           showChartValuesInPercentage: true,
