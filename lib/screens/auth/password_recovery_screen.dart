@@ -18,13 +18,25 @@ class PasswordRecoveryScreenState extends State<PasswordRecoveryScreen> {
 
   Future<void> sendPasswordResetEmail() async {
     final scaffoldMessenger = ScaffoldMessenger.of(context);
-    if (_emailController.text.isNotEmpty) {
-      await _authMethods.sendPasswordResetEmail(_emailController.text.trim());
-      scaffoldMessenger.showSnackBar(const SnackBar(
-        content: Text('Password reset email sent'),
-        duration: Duration(seconds: 2),
-      ));
-      _emailController.clear();
+    String email = _emailController.text.trim();
+
+    // RegEx pattern to match the desired email domain
+    RegExp pattern = RegExp(r"\b[\w\.-]+@my\.cspc\.edu\.ph$|\b[\w\.-]+@cspc\.edu\.ph$", caseSensitive: false);
+
+    if (email.isNotEmpty) {
+      if (pattern.hasMatch(email)) {
+        await _authMethods.sendPasswordResetEmail(email);
+        scaffoldMessenger.showSnackBar(const SnackBar(
+          content: Text('Password reset email sent'),
+          duration: Duration(seconds: 2),
+        ));
+        _emailController.clear();
+      } else {
+        scaffoldMessenger.showSnackBar(const SnackBar(
+          content: Text('Invalid domain name. Use @my.cspc.edu.ph or @cspc.edu.ph'),
+          duration: Duration(seconds: 2),
+        ));
+      }
     } else {
       scaffoldMessenger.showSnackBar(const SnackBar(
         content: Text('Please enter your email'),
