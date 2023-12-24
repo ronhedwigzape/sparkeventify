@@ -28,19 +28,20 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final _authRepository = AuthRepository();
-  bool _isLoading = false;
+  final TextEditingController _emailController = TextEditingController(); // Controller for the email input field
+  final TextEditingController _passwordController = TextEditingController(); // Controller for the password input field
+  final _authRepository = AuthRepository(); // Instance of the AuthRepository class
+  bool _isLoading = false; // State variable for loading status
 
   @override
   void dispose() {
     super.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
+    _emailController.dispose(); // Dispose email controller
+    _passwordController.dispose(); // Dispose password controller
   }
 
   Future<void> signIn() async {
+    // Show a loading dialog
     BuildContext? dialogContext;
     showDialog(
       context: context,
@@ -54,10 +55,11 @@ class _LoginScreenState extends State<LoginScreen> {
     await Future.delayed(const Duration(milliseconds: 100));
 
     String res = await _authRepository.signIn(
-      email: _emailController.text.trim(),
-      password: _passwordController.text.trim(),
+      email: _emailController.text.trim(), // Trimmed email input
+      password: _passwordController.text.trim(), // Trimmed password input
     );
 
+    // Handle sign-in result
     if (dialogContext != null) {
       // ignore: use_build_context_synchronously
       Navigator.of(dialogContext!).pop();
@@ -71,6 +73,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> signInWithGoogle() async {
+    // Handle Google sign-in
     try {
       UserCredential? userCredential = await AuthMethods().signInWithGoogle();
       if (userCredential != null) {
@@ -100,6 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void onSignInSuccess(String message) async {
+    // Handle successful sign-in
     if (!kIsWeb) {
       Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const ClientScreenLayout()));
@@ -110,6 +114,7 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void onSignInFailure(String message) {
+    // Handle sign-in failure
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(message),
       duration: const Duration(seconds: 2),
@@ -125,6 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Build the login screen UI
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return GestureDetector(
       onTap: () {
