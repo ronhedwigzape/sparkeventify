@@ -25,6 +25,7 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _retypePasswordController = TextEditingController();
   late String selectedStaffPositions = staffPositions[0];
   late String position = '';
   late String staffType = '';
@@ -39,6 +40,7 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
     _middleInitialController.dispose();
     _lastNameController.dispose();
     _phoneNumberController.dispose();
+    _retypePasswordController.dispose();
   }
 
   Future<void> signUpAsClient() async {
@@ -62,6 +64,12 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
 
     if (selectedStaffPositions == staffPositions[0] || staffType.isEmpty || staffDescription.isEmpty || position.isEmpty) {
       onSignupFailure('Please select your position.');
+      return;
+    }
+
+    // Validation for password
+    if (_passwordController.text.trim() != _retypePasswordController.text.trim()) {
+      onSignupFailure('Passwords do not match.');
       return;
     }
 
@@ -151,7 +159,7 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
                     child: Container(),
                   ),
                   Padding(
-                    padding: const EdgeInsets.fromLTRB(0, 50, 0, 0),
+                    padding: const EdgeInsets.fromLTRB(0, 20, 0, 0),
                     child: Row(
                       children: [
                         const Flexible(
@@ -285,6 +293,14 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
                     prefixIcon: const Icon(Icons.lock),
                     textEditingController: _passwordController,
                     labelText: 'Password*',
+                    textInputType: TextInputType.visiblePassword,
+                    isPass: true,
+                  ),
+                  const SizedBox(height: 10.0),
+                  TextFieldInput(
+                    prefixIcon: const Icon(Icons.lock),
+                    textEditingController: _retypePasswordController,
+                    labelText: 'Retype Password*',
                     textInputType: TextInputType.visiblePassword,
                     isPass: true,
                   ),

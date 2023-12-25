@@ -24,18 +24,8 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
   final TextEditingController _middleInitialController = TextEditingController();
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
+  final TextEditingController _retypePasswordController = TextEditingController();
   bool _isLoading = false;
-
-  @override
-  void dispose() {
-    super.dispose();
-    _emailController.dispose();
-    _passwordController.dispose();
-    _firstNameController.dispose();
-    _middleInitialController.dispose();
-    _lastNameController.dispose();
-    _phoneNumberController.dispose();
-  }
 
   Future<void> signUpAsAdmin() async {
     setState(() {
@@ -46,6 +36,12 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
     String phoneNumber = _phoneNumberController.text.trim();
     if (!RegExp(r'^9[0-9]{9}$').hasMatch(phoneNumber)) {
       onSignupFailure('Please enter a valid phone number.');
+      return;
+    }
+
+    // Validation for password
+    if (_passwordController.text.trim() != _retypePasswordController.text.trim()) {
+      onSignupFailure('Passwords do not match.');
       return;
     }
 
@@ -97,6 +93,18 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
   void navigateToLogin() {
     Navigator.of(context)
         .push(MaterialPageRoute(builder: (context) => const LoginScreen()));
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _emailController.dispose();
+    _passwordController.dispose();
+    _firstNameController.dispose();
+    _middleInitialController.dispose();
+    _lastNameController.dispose();
+    _phoneNumberController.dispose();
+    _retypePasswordController.dispose();
   }
 
   @override
@@ -225,6 +233,14 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
             TextFieldInput(
               textEditingController: _passwordController,
               labelText: 'Password',
+              textInputType: TextInputType.visiblePassword,
+              isPass: true,
+            ),
+            const SizedBox(height: 10.0),
+            TextFieldInput(
+              prefixIcon: const Icon(Icons.lock),
+              textEditingController: _retypePasswordController,
+              labelText: 'Retype Password*',
               textInputType: TextInputType.visiblePassword,
               isPass: true,
             ),
