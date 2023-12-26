@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
@@ -71,6 +72,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
     Stream<List<Event>> getEventsStream() {
       return FirebaseFirestore.instance
           .collection('events')
+          .where('approvalStatus', isEqualTo: 'approved')
           .orderBy('datePublished', descending: true)
           .snapshots()
           .map((QuerySnapshot query) {
@@ -110,6 +112,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
               if (eventSnapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CSPCFadeLoader());
               } else if (eventSnapshot.hasError) {
+                print(eventSnapshot.error.toString());
                 return const Center(child: Text('Something went wrong'));
               } else if (!eventSnapshot.hasData || eventSnapshot.data!.isEmpty) {
                 return const Center(child: Text('No events found.'));
@@ -145,10 +148,11 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                         children: [
                           Icon(Icons.event_busy, size: 25.0, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
                           const SizedBox(width: 10),
-                          const Flexible(
+                          Flexible(
                             child: Text(
                             'You haven\'t made any events yet.',
                             textAlign: TextAlign.center,
+                            style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                           )),
                         ],
                       ),
@@ -221,7 +225,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                             departments.insert(0, 'All');
                         
                             return Flexible(
-                              child: Container(
+                              child: SizedBox(
                                 width: 140,
                                 child: DropdownButton<String>(
                                   value: dropdownDepartment,
