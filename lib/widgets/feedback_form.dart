@@ -243,6 +243,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
                               DropdownButtonFormField<String>(
+                                style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                                 decoration: InputDecoration(
                                   border: OutlineInputBorder(
                                     borderSide: Divider.createBorderSide(
