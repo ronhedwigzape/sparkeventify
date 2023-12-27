@@ -18,6 +18,8 @@ class Event {
   DateTime? dateUpdated;
   DateTime? datePublished;
   bool? hasFeedback;
+  String approvalStatus;
+  Map<String, dynamic>? pendingUpdate;
 
   Event({
     required this.id,
@@ -36,7 +38,9 @@ class Event {
     required this.status,
     this.dateUpdated,
     this.datePublished,
-    this.hasFeedback = false
+    this.hasFeedback = false,
+    this.approvalStatus = 'pending',
+    this.pendingUpdate
   });
 
   // Convert Event object to JSON
@@ -57,7 +61,9 @@ class Event {
         'status': status,
         'dateUpdated': dateUpdated,
         'datePublished': datePublished,
-        'hasFeedback': hasFeedback
+        'hasFeedback': hasFeedback,
+        'approvalStatus': approvalStatus,
+        'pendingUpdate': pendingUpdate,
       };
 
   // Create Event object from DocumentSnapshot
@@ -80,7 +86,10 @@ class Event {
       status: snapshot['status'],
       hasFeedback: snapshot['hasFeedback'],
       dateUpdated: (snapshot['dateUpdated'] as Timestamp).toDate().toUtc(),
-      datePublished: (snapshot['datePublished'] as Timestamp).toDate().toUtc());
+      datePublished: (snapshot['datePublished'] as Timestamp).toDate().toUtc(),
+      approvalStatus: snapshot['approvalStatus'],
+      pendingUpdate: snapshot['pendingUpdate'],
+      );
   }
 
   static Event fromSnapStream(DocumentSnapshot snap) {
@@ -103,6 +112,8 @@ class Event {
       hasFeedback: snapshot['hasFeedback'],
       dateUpdated: (snapshot['dateUpdated'] as Timestamp).toDate().toUtc(),
       datePublished: (snapshot['datePublished'] as Timestamp).toDate().toUtc(),
+      approvalStatus: snapshot['approvalStatus'],
+      pendingUpdate: snapshot['pendingUpdate'],
     );
   }
 
