@@ -273,7 +273,7 @@ class EditEventScreenState extends State<EditEventScreen> {
     }
   }
 
-  _update() async {
+  _update(String userType) async {
     if (kDebugMode) {
       print('Post function started!');
     }
@@ -367,7 +367,7 @@ class EditEventScreenState extends State<EditEventScreen> {
 
         // Add the event to the database
         String response = await FireStoreEventMethods()
-            .updateEvent(widget.eventSnap.id, event);
+            .updateEvent(widget.eventSnap.id, event, userType);
 
         await FireStoreEventMethods().updateEventStatus(
             widget.eventSnap.id, false, false, startDatePart, endDatePart, startTime12, endTime12);
@@ -818,7 +818,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                                           onTap: () async {
                                             bool isConnected = await ConnectivityService().isConnected();
                                             if (isConnected) {
-                                              await _update();
+                                              await _update(currentUser!.userType!);
                                             } else {
                                               // Show a message to the user
                                               mounted ? Navigator.of(context).pop() : '';

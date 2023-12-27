@@ -159,7 +159,7 @@ class _PostScreenState extends State<PostScreen> {
         });
   }
 
-  _post() async {
+  _post(String userType) async {
     if (kDebugMode) {
       print('Post function started!');
     }
@@ -209,7 +209,9 @@ class _PostScreenState extends State<PostScreen> {
             selectedParticipants,
             _eventVenueController.text,
             _eventTypeController.text,
-            'Upcoming');
+            'Upcoming',
+            userType
+          );
         if (kDebugMode) {
           print('Add Event Response: $response');
         }
@@ -625,7 +627,7 @@ class _PostScreenState extends State<PostScreen> {
                                               onTap: () async {
                                                 bool isConnected = await ConnectivityService().isConnected();
                                                 if (isConnected) {
-                                                  await _post();
+                                                  await _post(currentUser!.userType!);
                                                 } else {
                                                   // Show a message to the user
                                                   mounted ? ScaffoldMessenger.of(context).showSnackBar(
