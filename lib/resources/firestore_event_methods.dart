@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:student_event_calendar/models/event.dart';
+import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/resources/storage_methods.dart';
 import 'package:student_event_calendar/services/firebase_notifications.dart';
 import 'package:uuid/uuid.dart';
@@ -27,6 +28,7 @@ class FireStoreEventMethods {
     String venue,
     String type,
     String status,
+    String userType,
   ) async {
     String response = 'Some error occurred';
     try {
@@ -75,6 +77,7 @@ class FireStoreEventMethods {
         status: status,
         dateUpdated: DateTime.now(),
         datePublished: DateTime.now(),
+        approvalStatus: (userType == 'Admin' || userType == 'Staff') ? 'approved' : 'pending', // Set approvalStatus based on userType
       );
       // Add the event to the 'events' collection in Firestore
       _eventsCollection.doc(eventId).set(event.toJson());
@@ -84,18 +87,18 @@ class FireStoreEventMethods {
         
       response = 'Success';
 
-      String senderId = FirebaseAuth.instance.currentUser!.uid;
-
-      // Send a notification to all participants
-      if (participants['department'] != null && participants['program'] != null) {
-        for (var department in participants['department']!) {
-          for (var program in participants['program']!) {
-            await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
-              senderId, 
-              department, 
-              program, 
-              'New Event', 
-              'A new event "$title" has been posted. It will start on ${DateFormat('yyyy-MM-dd').format(startDate)} at ${DateFormat('h:mm a').format(startTime)} and end on ${DateFormat('yyyy-MM-dd').format(endDate)} at ${DateFormat('h:mm a').format(endTime)}. Description: $description. Venue: $venue.'
+      // If the user is an officer, send a notification to admin/staff
+      if (userType == 'Officer') {
+        // Fetch all users
+        List<model.User> users = await FirebaseNotificationService().fetchAllUsers();
+        for (var user in users) {
+          // If the user is an admin or staff, send them a notification
+          if (user.userType == 'Admin' || user.userType == 'Staff') {
+            await FirebaseNotificationService().sendNotificationToUser(
+              createdBy, // senderId
+              user.uid!, // userId
+              'New Event Pending Approval', // title
+              'A new event "$title" has been posted by $createdBy and is pending your approval.' // body
             );
           }
         }
@@ -110,12 +113,32 @@ class FireStoreEventMethods {
     return response;
   }
 
-  Future<String> updateEvent(String eventId, Event event) async {
+  // Method to update event details from Firebase Firestore
+  Future<String> updateEvent(String eventId, Event event, String userType) async {
     String response = 'Some error occurred';
 
     try {
-      // Update the event in the 'events' collection in Firestore
-      await _eventsCollection.doc(eventId).update(event.toJson());
+      // If the user is an officer, store the updated details in pendingUpdate
+      if (userType == 'Officer') {
+        await _eventsCollection.doc(eventId).update({
+          'pendingUpdate': event.toJson(),
+        });
+        // Notify admin/staff about the pending update
+        List<model.User> users = await FirebaseNotificationService().fetchAllUsers();
+        for (var user in users) {
+          if (user.userType == 'Admin' || user.userType == 'Staff') {
+            await FirebaseNotificationService().sendNotificationToUser(
+              event.createdBy, // senderId
+              user.uid!, // userId
+              'Event Update Pending Approval', // title
+              'An update to the event "${event.title}" has been posted by ${event.createdBy} and is pending your approval.' // body
+            );
+          }
+        }
+      } else {
+        // If the user is an admin or staff, update the event directly
+        await _eventsCollection.doc(eventId).update(event.toJson());
+      }
 
       response = 'Success';
     } on FirebaseException catch (err) {
@@ -125,9 +148,12 @@ class FireStoreEventMethods {
       }
       response = err.toString();
     }
+
     return response;
   }
 
+
+  // Method to removes the specified event
   Future<String> removeEvent(String eventId) async {
     String response = 'Some error occurred';
 
@@ -148,10 +174,10 @@ class FireStoreEventMethods {
     return response;
   }
 
-  // Method that has a key of type event's DateTime and a value of type List<Event>
+  // Method to get all events of users(event participants) in real-time by event date
   Stream<Map<DateTime, List<Event>>> getEventsByDate() {
     // Return a stream from the events collection.
-    return _eventsCollection.snapshots().asyncMap((snapshot) async {
+    return _eventsCollection.where('approvalStatus', isEqualTo: 'approved').snapshots().asyncMap((snapshot) async {
       // Initialize an empty map to store the events.
       Map<DateTime, List<Event>> events = {};
 
@@ -191,9 +217,10 @@ class FireStoreEventMethods {
     });
   }
 
+  // Method to get all events of users(event participants) in real-time that have the specified department by event date
   Stream<Map<DateTime, List<Event>>> getEventsByDateByDepartment(String department) {
     // Return a stream from the events collection.
-    return _eventsCollection.snapshots().asyncMap((snapshot) async {
+    return _eventsCollection.where('approvalStatus', isEqualTo: 'approved').snapshots().asyncMap((snapshot) async {
       // Initialize an empty map to store the events.
       Map<DateTime, List<Event>> events = {};
 
@@ -237,9 +264,10 @@ class FireStoreEventMethods {
     });
   }
 
+  // Method to get all events of users(event participants) in real-time that have the specified department and program by event date
   Stream<Map<DateTime, List<Event>>> getEventsByDateByDepartmentByProgram(String department, String program) {
     // Return a stream from the events collection.
-    return _eventsCollection.snapshots().asyncMap((snapshot) async {
+    return _eventsCollection.where('approvalStatus', isEqualTo: 'approved').snapshots().asyncMap((snapshot) async {
       // Initialize an empty map to store the events.
       Map<DateTime, List<Event>> events = {};
 
@@ -294,7 +322,7 @@ class FireStoreEventMethods {
     return Event.fromSnap(doc);
   }
 
-
+  // Method to handle automatic update for event's status
   Future<String> updateEventStatus(
     String eventId,
     bool? isCancelled,
@@ -349,6 +377,7 @@ class FireStoreEventMethods {
     return response;
   }
 
+  // Method to handle realtime updates for updating events
   Stream<String> updateEventStatusByStream(
     String eventId,
     bool? isCancelled,
@@ -399,6 +428,203 @@ class FireStoreEventMethods {
         yield err.toString();
       }
     }
+  }
+
+  // Method to make approval or rejection for the specified event
+  Future<String> approveOrRejectEvent(String eventId, bool approve) async {
+    String response = 'Some error occurred';
+
+    try {
+      DocumentSnapshot doc = await _eventsCollection.doc(eventId).get();
+      Event event = await Event.fromSnap(doc);
+
+      // If the event is approved, send notifications to participants
+      if (approve) {
+        await _eventsCollection.doc(eventId).update({
+          'approvalStatus': 'approved',
+        });
+
+        if (event.participants != null) {
+          for (var department in event.participants!['department']!) {
+            for (var program in event.participants!['program']!) {
+              await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
+                event.createdBy, 
+                department, 
+                program, 
+                'New Event', 
+                'A new event "${event.title}" has been posted. It will start on ${DateFormat('yyyy-MM-dd').format(event.startDate)} at ${DateFormat('h:mm a').format(event.startTime)} and end on ${DateFormat('yyyy-MM-dd').format(event.endDate)} at ${DateFormat('h:mm a').format(event.endTime)}. Description: ${event.description}. Venue: ${event.venue}.'
+              );
+            }
+          }
+        }
+      } else {
+        // If the event is rejected, just update the status
+        await _eventsCollection.doc(eventId).update({
+          'approvalStatus': 'rejected',
+        });
+      }
+
+      response = 'Success';
+    } on FirebaseException catch (err) {
+      // Handle any errors that occur
+      if (err.code == 'permission-denied') {
+        response = 'Permission denied';
+      }
+      response = err.toString();
+    }
+
+    return response;
+  }
+
+  // Method for approving updated event from the non-admin/staff users
+  Future<String> approveEventUpdate(String eventId) async {
+    String response = 'Some error occurred';
+
+    try {
+      DocumentSnapshot doc = await _eventsCollection.doc(eventId).get();
+      Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
+      Map<String, dynamic>? pendingUpdate = data?['pendingUpdate'];
+      if (pendingUpdate != null) {
+        await _eventsCollection.doc(eventId).update(pendingUpdate);
+        await _eventsCollection.doc(eventId).update({'pendingUpdate': null});
+
+        // Fetch the updated event
+        Event event = await Event.fromSnap(doc);
+
+        // Send a notification to all participants
+        if (event.participants != null) {
+          for (var department in event.participants!['department']!) {
+            for (var program in event.participants!['program']!) {
+              await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
+                event.createdBy, 
+                department, 
+                program, 
+                'Event Updated', 
+                'The event "${event.title}" has been updated. It will start on ${DateFormat('yyyy-MM-dd').format(event.startDate)} at ${DateFormat('h:mm a').format(event.startTime)} and end on ${DateFormat('yyyy-MM-dd').format(event.endDate)} at ${DateFormat('h:mm a').format(event.endTime)}. Description: ${event.description}. Venue: ${event.venue}.'
+              );
+            }
+          }
+        }
+      }
+
+      response = 'Success';
+    } on FirebaseException catch (err) {
+      // Handle any errors that occur
+      if (err.code == 'permission-denied') {
+        response = 'Permission denied';
+      }
+      response = err.toString();
+    }
+
+    return response;
+  }
+
+  // Function to get all pending events by date
+  Stream<Map<DateTime, List<Event>>> getPendingEventsByDate() {
+    return _eventsCollection
+        .where('approvalStatus', isEqualTo: 'pending')
+        .orderBy('datePublished', descending: true)
+        .snapshots()
+        .asyncMap((snapshot) async {
+      Map<DateTime, List<Event>> events = {};
+
+      if (snapshot.docs.isNotEmpty) {
+        for (var doc in snapshot.docs) {
+          Event event = await Event.fromSnap(doc);
+          DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+              .toLocal();
+          if (events.containsKey(startDate)) {
+            events[startDate]!.add(event);
+          } else {
+            events[startDate] = [event];
+          }
+        }
+      }
+
+      return events;
+    });
+  }
+
+  // Function to get all rejected events by date
+  Stream<Map<DateTime, List<Event>>> getRejectedEventsByDate() {
+    return _eventsCollection
+        .where('approvalStatus', isEqualTo: 'rejected')
+        .orderBy('datePublished', descending: true)
+        .snapshots()
+        .asyncMap((snapshot) async {
+      Map<DateTime, List<Event>> events = {};
+
+      if (snapshot.docs.isNotEmpty) {
+        for (var doc in snapshot.docs) {
+          Event event = await Event.fromSnap(doc);
+          DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+              .toLocal();
+          if (events.containsKey(startDate)) {
+            events[startDate]!.add(event);
+          } else {
+            events[startDate] = [event];
+          }
+        }
+      }
+
+      return events;
+    });
+  }
+
+  // Function to get all pending events by date for a specific department and program
+  Stream<Map<DateTime, List<Event>>> getPendingEventsByDateByDepartmentByProgram(String department, String program) {
+    return _eventsCollection
+        .where('approvalStatus', isEqualTo: 'pending')
+        .where('participants.department', arrayContains: department)
+        .where('participants.program', arrayContains: program)
+        .orderBy('datePublished', descending: true)
+        .snapshots()
+        .asyncMap((snapshot) async {
+      Map<DateTime, List<Event>> events = {};
+
+      if (snapshot.docs.isNotEmpty) {
+        for (var doc in snapshot.docs) {
+          Event event = await Event.fromSnap(doc);
+          DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+              .toLocal();
+          if (events.containsKey(startDate)) {
+            events[startDate]!.add(event);
+          } else {
+            events[startDate] = [event];
+          }
+        }
+      }
+
+      return events;
+    });
+  }
+
+  // Function to get all rejected events by date for a specific department and program
+  Stream<Map<DateTime, List<Event>>> getRejectedEventsByDateByDepartmentByProgram(String department, String program) {
+    return _eventsCollection
+        .where('approvalStatus', isEqualTo: 'rejected')
+        .where('participants.department', arrayContains: department)
+        .where('participants.program', arrayContains: program)
+        .orderBy('datePublished', descending: true)
+        .snapshots()
+        .asyncMap((snapshot) async {
+      Map<DateTime, List<Event>> events = {};
+
+      if (snapshot.docs.isNotEmpty) {
+        for (var doc in snapshot.docs) {
+          Event event = await Event.fromSnap(doc);
+          DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+              .toLocal();
+          if (events.containsKey(startDate)) {
+            events[startDate]!.add(event);
+          } else {
+            events[startDate] = [event];
+          }
+        }
+      }
+
+      return events;
+    });
   }
 
 }
