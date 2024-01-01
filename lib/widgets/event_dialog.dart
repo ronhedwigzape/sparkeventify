@@ -502,9 +502,43 @@ class EventDialogState extends State<EventDialog> {
                             ),
                           ],
                         ),
+                        const SizedBox(height: 10.0),
+                        Row(
+                          children: [
+                            Icon(
+                              Icons.approval,
+                              color: darkModeOn
+                                  ? darkModeSecondaryColor
+                                  : lightModeSecondaryColor,
+                              size: kIsWeb ? 18 : 15,
+                            ),
+                            Text(
+                              ' Approved by',
+                              style: TextStyle(
+                                  color: darkModeOn ? lightColor : darkColor,
+                                  fontSize: kIsWeb ? 18 : 15),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(
+                          height: 5,
+                        ),
+                        Column(
+                          children: [
+                            Text(
+                              event.approvedBy!,
+                              style: TextStyle(
+                                  fontSize: kIsWeb ? 16.0 : 13,
+                                  color: darkModeOn
+                                      ? darkModeTertiaryColor
+                                      : lightModeTertiaryColor),
+                            ),
+                          ],
+                        ),
                         const SizedBox(
                           height: 15.0,
-                        )
+                        ),
+
                       ],
                     ),
                   );

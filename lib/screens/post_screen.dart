@@ -217,7 +217,7 @@ class _PostScreenState extends State<PostScreen> {
         }
         // Check if the response is a success or a failure
         if (response == 'Success') {
-          onPostSuccess();
+          onPostSuccess(userType);
         } else {
           onPostFailure(response);
         }
@@ -246,10 +246,13 @@ class _PostScreenState extends State<PostScreen> {
   }
 
 
-  void onPostSuccess() {
+  void onPostSuccess(String userType) {
     setState(() {
       _isLoading = false;
     });
+    if (userType == 'Officer') {
+      showSnackBar('Post sent for approval successfully', context);
+    }
     showSnackBar('Post uploaded successfully', context);
     if (!kIsWeb) {
       Navigator.of(context).push(

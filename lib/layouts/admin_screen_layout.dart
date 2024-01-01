@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student_event_calendar/resources/firestore_event_methods.dart';
+import 'package:student_event_calendar/services/firebase_notifications.dart';
 import 'package:student_event_calendar/widgets/cspc_logo_white.dart';
 import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 import '../models/user.dart' as model;
@@ -17,14 +20,22 @@ class AdminScreenLayout extends StatefulWidget {
 
 class _AdminScreenLayoutState extends State<AdminScreenLayout> {
   Future<model.User?> currentUser = AuthMethods().getCurrentUserDetails();
+  final firestoreNotification = FirebaseNotificationService();
+  final firestoreEventMethods = FireStoreEventMethods();
+  late Stream<int> notificationCount;
   int _page = 0;
   PageController pageController = PageController();
   late var _refreshKey = UniqueKey();
+  late Stream<int> pendingCount;
 
   @override
   void initState() {
     super.initState();
     pageController = PageController();
+    notificationCount = firestoreNotification.getUnreadNotificationCount(
+      FirebaseAuth.instance.currentUser?.uid ?? '',
+    );
+    pendingCount = firestoreEventMethods.getPendingEventsCount();
   }
 
   @override
@@ -160,6 +171,103 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                         onTap: () => navigationTapped(5)
                       )
                     : const SizedBox.shrink(),
+                    const SizedBox(width: 10.0),
+                  userType == 'Admin' 
+                    ? IconButton(
+                        onPressed: () => navigationTapped(6),
+                        icon: Stack(
+                          children: <Widget>[
+                            Icon(
+                              Icons.event_busy,
+                              color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,
+                            ),
+                            StreamBuilder<int>(
+                              stream: pendingCount,
+                              builder:
+                                  (BuildContext context, AsyncSnapshot<int> snapshot) {
+                                if (!snapshot.hasData) {
+                                  return const SizedBox.shrink();
+                                }
+                                final int count = snapshot.data!;
+                                return count == 0
+                                    ? const SizedBox.shrink()
+                                    : Positioned(
+                                        right: 0,
+                                        child: Container(
+                                          padding: const EdgeInsets.all(1),
+                                          decoration: BoxDecoration(
+                                            color: red,
+                                            borderRadius: BorderRadius.circular(6),
+                                          ),
+                                          constraints: const BoxConstraints(
+                                            minWidth: 12,
+                                            minHeight: 12,
+                                          ),
+                                          child: Text(
+                                            count.toString(),
+                                            style: const TextStyle(
+                                              color: white,
+                                              fontSize: 8,
+                                            ),
+                                            textAlign: TextAlign.center,
+                                          ),
+                                        ),
+                                      );
+                              },
+                            ),
+                          ],
+                        ),
+                      ) : const SizedBox.shrink(),
+                  userType == 'Admin' 
+                  ? const SizedBox(width: 10.0)
+                  : const SizedBox.shrink(),
+                  userType == 'Admin' || userType == 'SuperAdmin'
+                  ? IconButton(
+                    onPressed: () => navigationTapped(7),
+                    icon: Stack(
+                      children: <Widget>[
+                        Icon(
+                          Icons.notifications,
+                          color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,
+                        ),
+                        StreamBuilder<int>(
+                          stream: notificationCount,
+                          builder:
+                              (BuildContext context, AsyncSnapshot<int> snapshot) {
+                            if (!snapshot.hasData) {
+                              return const SizedBox.shrink();
+                            }
+                            final int count = snapshot.data!;
+                            return count == 0
+                                ? const SizedBox.shrink()
+                                : Positioned(
+                                    right: 0,
+                                    child: Container(
+                                      padding: const EdgeInsets.all(1),
+                                      decoration: BoxDecoration(
+                                        color: red,
+                                        borderRadius: BorderRadius.circular(6),
+                                      ),
+                                      constraints: const BoxConstraints(
+                                        minWidth: 12,
+                                        minHeight: 12,
+                                      ),
+                                      child: Text(
+                                        count.toString(),
+                                        style: const TextStyle(
+                                          color: white,
+                                          fontSize: 8,
+                                        ),
+                                        textAlign: TextAlign.center,
+                                      ),
+                                    ),
+                                  );
+                            },
+                          ),
+                        ],
+                      ),
+                    ) : const SizedBox.shrink(),
+
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0),
                     child: Row(

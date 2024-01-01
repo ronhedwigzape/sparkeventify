@@ -8,6 +8,7 @@ import 'package:student_event_calendar/screens/notification_screen.dart';
 import 'package:student_event_calendar/screens/personal_events_screen.dart';
 import 'package:student_event_calendar/screens/post_screen.dart';
 import 'package:student_event_calendar/screens/profile_screen.dart';
+import 'package:student_event_calendar/screens/pending_events_screen.dart';
 import 'package:student_event_calendar/widgets/events_calendar.dart';
 import '../resources/auth_methods.dart';
 
@@ -158,6 +159,7 @@ Future<List<Widget>> homeScreenItems() async {
       const PostScreen(),
       const ManageEventsScreen(),
       const ProfileScreen(),
+      PendingEventsScreen(),
       const NotificationScreen(),
     ];
   } else if (userType == 'Admin' && kIsWeb) {
@@ -169,12 +171,15 @@ Future<List<Widget>> homeScreenItems() async {
       const ManageUsersScreen(),
       const FeedbackScreen(),
       const ProfileScreen(),
+      PendingEventsScreen(),
+      const NotificationScreen()
     ];
   } else if (userType == 'SuperAdmin' && kIsWeb) {
     // Widgets for 'SuperAdmin' only when app is running on Web platform
     return [
       const AdminDashboardScreen(),
       const ProfileScreen(),
+      const NotificationScreen()
     ];
   } else if (userType == 'Officer' && !kIsWeb) {
     // Widgets for 'Officer'

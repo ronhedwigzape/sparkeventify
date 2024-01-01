@@ -104,8 +104,12 @@ class _NotificationCardState extends State<NotificationCard> {
                     radius: 20,
                     backgroundColor: darkColor,
                     backgroundImage: NetworkImage(
-                      senderData?.profile?.profileImage ??
-                          'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png',
+                      senderData != null && 
+                      senderData?.profile != null && 
+                      senderData!.profile?.profileImage != null && 
+                      senderData!.profile!.profileImage!.isNotEmpty
+                      ? senderData!.profile!.profileImage!
+                      : 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'
                     ),
                   ),
                   const SizedBox(width: 10),

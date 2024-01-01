@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
+import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/resources/storage_methods.dart';
 import 'package:student_event_calendar/services/firebase_notifications.dart';
 import 'package:uuid/uuid.dart';
@@ -84,8 +85,9 @@ class FireStoreEventMethods {
 
       await FireStoreEventMethods().updateEventStatus(
         eventId, false, false, startDate, endDate, startTime, endTime);
-        
-      response = 'Success';
+
+      // Fetch the officer who created the event
+      model.User officer = await FireStoreUserMethods().getUserById(createdBy);
 
       // If the user is an officer, send a notification to admin/staff
       if (userType == 'Officer') {
@@ -98,11 +100,33 @@ class FireStoreEventMethods {
               createdBy, // senderId
               user.uid!, // userId
               'New Event Pending Approval', // title
-              'A new event "$title" has been posted by $createdBy and is pending your approval.' // body
+              'A new event "$title" has been posted by ${officer.userType} and is pending your approval.' // body
             );
           }
         }
+      } 
+
+      // If the user is an administrator or staff, send a notification to all participants
+      if (userType == 'Admin' || userType == 'Staff') {
+        String senderId = FirebaseAuth.instance.currentUser!.uid;
+
+        // Send a notification to all participants
+        if (participants['department'] != null && participants['program'] != null) {
+          for (var department in participants['department']!) {
+            for (var program in participants['program']!) {
+              await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
+                senderId, 
+                department, 
+                program, 
+                'New Event', 
+                'A new event "$title" has been posted. It will start on ${DateFormat('yyyy-MM-dd').format(startDate)} at ${DateFormat('h:mm a').format(startTime)} and end on ${DateFormat('yyyy-MM-dd').format(endDate)} at ${DateFormat('h:mm a').format(endTime)}. Description: $description. Venue: $venue.'
+              );
+            }
+          }
+        }
       }
+
+      response = 'Success';
     } on FirebaseException catch (err) {
       // Handle any errors that occur
       if (err.code == 'permission-denied') {
@@ -158,8 +182,22 @@ class FireStoreEventMethods {
     String response = 'Some error occurred';
 
     try {
+      // Reference to the event document in Firestore
+      DocumentReference eventDocRef = _eventsCollection.doc(eventId);
+
+      // Reference to the 'feedbacks' subcollection
+      CollectionReference feedbackSubcollection = eventDocRef.collection('feedbacks');
+
+      // Query all documents in the 'feedback' subcollection
+      QuerySnapshot querySnapshot = await feedbackSubcollection.get();
+
+      // Delete all documents in the 'feedback' subcollection
+      for (final doc in querySnapshot.docs) {
+        await doc.reference.delete();
+      }
+
       // Remove the event from the 'events' collection in Firestore
-      await _eventsCollection.doc(eventId).delete();
+      await eventDocRef.delete();
       await StorageMethods().deleteImageFromStorage('images/$eventId');
       await StorageMethods().deleteFileFromStorage('documents/$eventId');
 
@@ -431,19 +469,43 @@ class FireStoreEventMethods {
   }
 
   // Method to make approval or rejection for the specified event
-  Future<String> approveOrRejectEvent(String eventId, bool approve) async {
-    String response = 'Some error occurred';
-
+  Future<bool> approveOrRejectEvent(String eventId, bool approve) async {
     try {
       DocumentSnapshot doc = await _eventsCollection.doc(eventId).get();
       Event event = await Event.fromSnap(doc);
 
-      // If the event is approved, send notifications to participants
-      if (approve) {
+      // Fetch the details of the officer who created the event
+      model.User officer = await FireStoreUserMethods().getUserById(event.createdBy);
+
+      // If the event is rejected, remove the event
+      if (!approve) {
+        await removeEvent(eventId);
+      } else {
+        // If the event is approved, send notifications to participants
+        // Fetch current user's details
+        String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+        model.User currentUser = await FireStoreUserMethods().getUserById(currentUserId);
+
+        String? approvedByPosition = currentUser.userType;
+        if (currentUser.userType == 'Staff') {
+          approvedByPosition = '${currentUser.profile!.staffType}, ${currentUser.profile!.staffPosition}, ${currentUser.profile!.staffDescription}';
+        }
+
         await _eventsCollection.doc(eventId).update({
           'approvalStatus': 'approved',
+          'approvedBy': currentUser.profile!.fullName,
+          'approvedByPosition': approvedByPosition,
         });
 
+        // Send a notification to the officer who created the event
+        FirebaseNotificationService().sendNotificationToUser(
+          currentUser.uid!, // senderId
+          officer.uid!, // userId
+          'Event Approved', // title
+          'Your event "${event.title}" has been approved by ${currentUser.profile!.fullName}, $approvedByPosition.', // body
+        );
+
+        // Send to all event student participants which contains similar department and programs 
         if (event.participants != null) {
           for (var department in event.participants!['department']!) {
             for (var program in event.participants!['program']!) {
@@ -457,24 +519,16 @@ class FireStoreEventMethods {
             }
           }
         }
-      } else {
-        // If the event is rejected, just update the status
-        await _eventsCollection.doc(eventId).update({
-          'approvalStatus': 'rejected',
-        });
       }
 
-      response = 'Success';
+      return true;
     } on FirebaseException catch (err) {
       // Handle any errors that occur
-      if (err.code == 'permission-denied') {
-        response = 'Permission denied';
-      }
-      response = err.toString();
+      print(err.toString());
+      return false;
     }
-
-    return response;
   }
+
 
   // Method for approving updated event from the non-admin/staff users
   Future<String> approveEventUpdate(String eventId) async {
@@ -517,6 +571,28 @@ class FireStoreEventMethods {
     }
 
     return response;
+  }
+
+  Stream<List<Event>> getApprovedEvents() {
+  return FirebaseFirestore.instance
+    .collection('events')
+    .where('approvalStatus', isEqualTo: 'approved')
+    .orderBy('datePublished', descending: true)
+    .snapshots()
+    .map((QuerySnapshot query) {
+      return query.docs.map((doc) => Event.fromSnapStream(doc)).toList();
+    });
+  }
+
+  Stream<List<Event>> getPendingEvents() {
+  return FirebaseFirestore.instance
+    .collection('events')
+    .where('approvalStatus', isEqualTo: 'pending')
+    .orderBy('datePublished', descending: true)
+    .snapshots()
+    .map((QuerySnapshot query) {
+      return query.docs.map((doc) => Event.fromSnapStream(doc)).toList();
+    });
   }
 
   // Function to get all pending events by date
@@ -626,5 +702,22 @@ class FireStoreEventMethods {
       return events;
     });
   }
+
+  // Function to get the count of all pending events
+  Stream<int> getPendingEventsCount() {
+    return _eventsCollection
+        .where('approvalStatus', isEqualTo: 'pending')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
+
+  // Function to get the count of all rejected events
+  Stream<int> getRejectedEventsCount() {
+    return _eventsCollection
+        .where('approvalStatus', isEqualTo: 'rejected')
+        .snapshots()
+        .map((snapshot) => snapshot.docs.length);
+  }
+
 
 }

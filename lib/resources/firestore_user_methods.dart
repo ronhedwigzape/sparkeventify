@@ -4,11 +4,23 @@ import 'package:flutter/foundation.dart';
 import 'package:student_event_calendar/models/profile.dart' as model;
 import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/resources/storage_methods.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class FireStoreUserMethods {
   // Reference to the 'users' collection in Firestore
   final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users');
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<model.User> getUserById(String userId) async {
+    DocumentSnapshot userSnapshot = await _usersCollection.doc(userId).get();
+    if (!userSnapshot.exists) {
+      throw Exception('No user found with id $userId');
+    }
+    // Create a User object from the document snapshot
+    model.User user = model.User.fromSnap(userSnapshot);
+    // Return the User object
+    return user;
+  }
 
   Future<model.User?> getCurrentUserData() async {
     model.User? user;
@@ -323,6 +335,20 @@ class FireStoreUserMethods {
     String res = "Enter valid credentials";
     try {
       if (email.isNotEmpty && password.isNotEmpty) {
+        // Retrieve the stored tokens
+        const storage = FlutterSecureStorage();
+        final storedIdToken = await storage.read(key: 'idToken');
+        final storedAccessToken = await storage.read(key: 'accessToken');
+
+        // Re-authenticate the user
+        await FirebaseAuth.instance.currentUser?.reauthenticateWithCredential(
+          GoogleAuthProvider.credential(
+            idToken: storedIdToken,
+            accessToken: storedAccessToken,
+          ),
+        );
+
+        // Delete the user
         await _usersCollection.doc(uid).delete();
         await _auth.currentUser!.delete();
         await StorageMethods().deleteImageFromStorage('profileImages/$uid');

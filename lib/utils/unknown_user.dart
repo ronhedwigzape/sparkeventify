@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/screens/auth/login_screen.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 
@@ -10,11 +11,28 @@ class UnknownUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void navigateToLogin() {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (context) => const LoginScreen()));
-      AuthMethods().signOut();
+  void navigateToLogin() async {
+    // Navigate to the login screen
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (context) => const LoginScreen()));
+
+    // Get the current user's data
+    final currentUserData = await FireStoreUserMethods().getCurrentUserData();
+
+    // Check if the data is not null
+    if (currentUserData != null) {
+      // Delete the user
+      await FireStoreUserMethods().deleteUser(
+        uid: currentUserData.uid!,
+        email: currentUserData.email!,
+        password: currentUserData.password!,
+      );
     }
+
+    // Sign out the user
+    AuthMethods().signOut();
+  }
+
 
     return Center(
       child: Scaffold(

@@ -113,9 +113,9 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                 return const Center(child: CSPCFadeLoader());
               } else if (eventSnapshot.hasError) {
                 print(eventSnapshot.error.toString());
-                return const Center(child: Text('Something went wrong'));
+                return Center(child: Text('Something went wrong', style: TextStyle(color: darkModeOn ? lightColor : darkColor),));
               } else if (!eventSnapshot.hasData || eventSnapshot.data!.isEmpty) {
-                return const Center(child: Text('No events found.'));
+                return Center(child: Text('No events found.', style: TextStyle(color: darkModeOn ? lightColor : darkColor),));
               }
 
               List<Event> allEvents = eventSnapshot.data!;

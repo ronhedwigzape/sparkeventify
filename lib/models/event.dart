@@ -20,6 +20,8 @@ class Event {
   bool? hasFeedback;
   String approvalStatus;
   Map<String, dynamic>? pendingUpdate;
+  String? approvedBy;
+  String? approvedByPosition;
 
   Event({
     required this.id,
@@ -40,34 +42,65 @@ class Event {
     this.datePublished,
     this.hasFeedback = false,
     this.approvalStatus = 'pending',
-    this.pendingUpdate
+    this.pendingUpdate,
+    this.approvedBy,
+    this.approvedByPosition,
   });
 
   // Convert Event object to JSON
   Map<String, dynamic> toJson() => {
-        'id': id,
-        'title': title,
-        'startDate': startDate,
-        'endDate': endDate,
-        'startTime': startTime,
-        'endTime': endTime,
-        'description': description,
-        'createdBy': createdBy,
-        'image': image,
-        'document': document,
-        'participants': participants,
-        'venue': venue,
-        'type': type,
-        'status': status,
-        'dateUpdated': dateUpdated,
-        'datePublished': datePublished,
-        'hasFeedback': hasFeedback,
-        'approvalStatus': approvalStatus,
-        'pendingUpdate': pendingUpdate,
-      };
+    'id': id,
+    'title': title,
+    'startDate': startDate,
+    'endDate': endDate,
+    'startTime': startTime,
+    'endTime': endTime,
+    'description': description,
+    'createdBy': createdBy,
+    'image': image,
+    'document': document,
+    'participants': participants,
+    'venue': venue,
+    'type': type,
+    'status': status,
+    'dateUpdated': dateUpdated,
+    'datePublished': datePublished,
+    'hasFeedback': hasFeedback,
+    'approvalStatus': approvalStatus,
+    'pendingUpdate': pendingUpdate,
+    'approvedBy': approvedBy,
+    'approvedByPosition': approvedByPosition,
+  };
+
+  // Create Event object from a map
+  static Event fromJson(Map<String, dynamic> json) {
+    return Event(
+      id: json['id'],
+      title: json['title'],
+      startDate: (json['startDate'] as Timestamp).toDate().toLocal(),
+      endDate: (json['endDate'] as Timestamp).toDate().toLocal(),
+      startTime: (json['startTime'] as Timestamp).toDate().toLocal(),
+      endTime: (json['endTime'] as Timestamp).toDate().toLocal(),
+      description: json['description'],
+      createdBy: json['createdBy'],
+      image: json['image'],
+      document: json['document'],
+      participants: Map<String, List<dynamic>>.from(json['participants']),
+      venue: json['venue'],
+      type: json['type'],
+      status: json['status'],
+      hasFeedback: json['hasFeedback'],
+      dateUpdated: (json['dateUpdated'] as Timestamp).toDate().toUtc(),
+      datePublished: (json['datePublished'] as Timestamp).toDate().toUtc(),
+      approvalStatus: json['approvalStatus'],
+      pendingUpdate: json['pendingUpdate'],
+      approvedBy: json['approvedBy'],
+      approvedByPosition: json['approvedByPosition'],
+    );
+  }
 
   // Create Event object from DocumentSnapshot
-  static Future<Event> fromSnap(DocumentSnapshot snap) async {
+  static Event fromSnap(DocumentSnapshot snap) {
     var snapshot = snap.data() as Map<String, dynamic>;
     return Event(
       id: snapshot['id'],
@@ -89,7 +122,9 @@ class Event {
       datePublished: (snapshot['datePublished'] as Timestamp).toDate().toUtc(),
       approvalStatus: snapshot['approvalStatus'],
       pendingUpdate: snapshot['pendingUpdate'],
-      );
+      approvedBy: snapshot['approvedBy'],
+      approvedByPosition: snapshot['approvedByPosition'],
+    );
   }
 
   static Event fromSnapStream(DocumentSnapshot snap) {
@@ -114,7 +149,8 @@ class Event {
       datePublished: (snapshot['datePublished'] as Timestamp).toDate().toUtc(),
       approvalStatus: snapshot['approvalStatus'],
       pendingUpdate: snapshot['pendingUpdate'],
+      approvedBy: snapshot['approvedBy'],
+      approvedByPosition: snapshot['approvedByPosition'],
     );
   }
-
 }
