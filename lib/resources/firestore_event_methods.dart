@@ -523,7 +523,7 @@ class FireStoreEventMethods {
           currentUser.uid!, // senderId
           officer.uid!, // userId
           'Event Rejected', // title
-          'Your event "${event.title}" has been rejected by ${currentUser.profile!.fullName}, $approvedByPosition.', // body
+          'Your event "${event.title}" has been rejected and removed by ${currentUser.profile!.fullName}, $approvedByPosition.', // body
         );
       } else {
         // If the event is approved, add the approver details to event details
@@ -544,7 +544,7 @@ class FireStoreEventMethods {
                   department, 
                   program, 
                   'Event Updated', 
-                  'The event "${event.title}" has been updated. It will start on ${DateFormat('yyyy-MM-dd').format(event.startDate)} at ${DateFormat('h:mm a').format(event.startTime)} and end on ${DateFormat('yyyy-MM-dd').format(event.endDate)} at ${DateFormat('h:mm a').format(event.endTime)}. Description: ${event.description}. Venue: ${event.venue}.'
+                  'The event "${event.title}" has been updated and approved by ${currentUser.profile!.fullName}, $approvedByPosition. It will start on ${DateFormat('yyyy-MM-dd').format(event.startDate)} at ${DateFormat('h:mm a').format(event.startTime)} and end on ${DateFormat('yyyy-MM-dd').format(event.endDate)} at ${DateFormat('h:mm a').format(event.endTime)}. Description: ${event.description}. Venue: ${event.venue}.'
                 );
               }
             }
@@ -567,7 +567,7 @@ class FireStoreEventMethods {
                   department, 
                   program, 
                   'New Event', 
-                  'A new event "${event.title}" has been posted. It will start on ${DateFormat('yyyy-MM-dd').format(event.startDate)} at ${DateFormat('h:mm a').format(event.startTime)} and end on ${DateFormat('yyyy-MM-dd').format(event.endDate)} at ${DateFormat('h:mm a').format(event.endTime)}. Description: ${event.description}. Venue: ${event.venue}.'
+                  'A new event "${event.title}" has been posted and approved by ${currentUser.profile!.fullName}, $approvedByPosition. It will start on ${DateFormat('yyyy-MM-dd').format(event.startDate)} at ${DateFormat('h:mm a').format(event.startTime)} and end on ${DateFormat('yyyy-MM-dd').format(event.endDate)} at ${DateFormat('h:mm a').format(event.endTime)}. Description: ${event.description}. Venue: ${event.venue}.'
                 );
               }
             }
