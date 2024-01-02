@@ -80,6 +80,20 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
           });
     }
 
+    Stream<List<Event>> getPendingEventsStream() {
+      return FirebaseFirestore.instance
+          .collection('events')
+          .where('approvalStatus', isEqualTo: 'pending')
+          .where('createdBy', isEqualTo: FirebaseAuth.instance.currentUser!.uid)
+          .orderBy('datePublished', descending: true)
+          .snapshots()
+          .map((QuerySnapshot query) {
+             List<Event> events = query.docs.map((doc) => Event.fromSnapStream(doc)).toList();
+              print(events); // Add this line
+              return events;
+          });
+    }
+
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 8),
       child: Scaffold(
@@ -115,7 +129,60 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                 print(eventSnapshot.error.toString());
                 return Center(child: Text('Something went wrong', style: TextStyle(color: darkModeOn ? lightColor : darkColor),));
               } else if (!eventSnapshot.hasData || eventSnapshot.data!.isEmpty) {
-                return Center(child: Text('No events found.', style: TextStyle(color: darkModeOn ? lightColor : darkColor),));
+                return StreamBuilder<List<Event>>(
+                  stream: getPendingEventsStream(),
+                  builder: (BuildContext context, AsyncSnapshot<List<Event>> pendingEventSnapshot) {
+                    if (pendingEventSnapshot.hasData && pendingEventSnapshot.data!.isNotEmpty) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(50.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.event_busy, size: 25.0, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
+                                  const SizedBox(width: 10),
+                                  Flexible(
+                                    child: Text(
+                                    'You have an event pending approval.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                                  )),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ); 
+                    } else {
+                      return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(50.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.event_busy, size: 25.0, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
+                                const SizedBox(width: 10),
+                                Flexible(
+                                  child: Text(
+                                  'You haven\'t made any events yet.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                                )),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ); 
+                    }
+                  },
+                );
               }
 
               List<Event> allEvents = eventSnapshot.data!;
@@ -137,29 +204,60 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
               }
 
               if (eventsUserType.isEmpty) {
-                return Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(50.0),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(Icons.event_busy, size: 25.0, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
-                          const SizedBox(width: 10),
-                          Flexible(
-                            child: Text(
-                            'You haven\'t made any events yet.',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(color: darkModeOn ? lightColor : darkColor),
-                          )),
-                        ],
+                return StreamBuilder<List<Event>>(
+                  stream: getPendingEventsStream(),
+                  builder: (BuildContext context, AsyncSnapshot<List<Event>> pendingEventSnapshot) {
+                    if (pendingEventSnapshot.hasData && pendingEventSnapshot.data!.isNotEmpty) {
+                      return Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(50.0),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(Icons.event_busy, size: 25.0, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
+                                  const SizedBox(width: 10),
+                                  Flexible(
+                                    child: Text(
+                                    'You have an event pending approval.',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                                  )),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ); 
+                    } else {
+                      return Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(50.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.event_busy, size: 25.0, color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,),
+                                const SizedBox(width: 10),
+                                Flexible(
+                                  child: Text(
+                                  'You haven\'t made any events yet.',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                                )),
+                              ],
+                            ),
+                          ],
+                        ),
                       ),
-                    ],
-                  ),
-                ),
-              ); 
+                    ); 
+                    }
+                  },
+                );
               }
 
               return Column(

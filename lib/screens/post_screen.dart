@@ -251,9 +251,10 @@ class _PostScreenState extends State<PostScreen> {
       _isLoading = false;
     });
     if (userType == 'Officer') {
-      showSnackBar('Post sent for approval successfully', context);
+      showSnackBar('Post sent for approval successfully!', context);
+    } else {
+      showSnackBar('Post uploaded successfully!', context);
     }
-    showSnackBar('Post uploaded successfully', context);
     if (!kIsWeb) {
       Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const ClientScreenLayout()));

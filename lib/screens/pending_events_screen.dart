@@ -36,8 +36,8 @@ class PendingEventsScreen extends StatelessWidget {
             itemCount: events.length,
             itemBuilder: (context, index) {
               Event event = events[index];
-              return FutureBuilder(
-                future: _fireStoreUserMethods.getUserByEventsCreatedBy(event.createdBy),
+              return StreamBuilder(
+                stream: _fireStoreUserMethods.getUserByEventsCreatedByStream(event.createdBy),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
@@ -48,7 +48,7 @@ class PendingEventsScreen extends StatelessWidget {
                   }
 
                   var user = snapshot.data;
-                  Event displayEvent = event.pendingUpdate != null ? Event.fromJson(event.pendingUpdate!) : event;
+                  Event displayEvent = event;
                   return Card(
                     child: Column(
                       children: [

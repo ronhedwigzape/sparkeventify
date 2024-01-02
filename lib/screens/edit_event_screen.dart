@@ -405,12 +405,20 @@ class EditEventScreenState extends State<EditEventScreen> {
     }
   }
 
-  void onPostSuccess() {
+  void onPostSuccess() async {
     setState(() {
       _isLoading = false;
     });
     Navigator.pop(context);
-    showSnackBar('Event updated successfully!', context);
+    if ((await AuthMethods().getCurrentUserType()) == 'Officer') {
+      if (mounted) {
+        showSnackBar('Update sent for approval successfully!', context);
+      }
+    } else {
+      if (mounted) {
+        showSnackBar('Event updated successfully!', context);
+      }
+    }
     clearInputs();
   }
 

@@ -19,7 +19,6 @@ class Event {
   DateTime? datePublished;
   bool? hasFeedback;
   String approvalStatus;
-  Map<String, dynamic>? pendingUpdate;
   String? approvedBy;
   String? approvedByPosition;
 
@@ -42,7 +41,6 @@ class Event {
     this.datePublished,
     this.hasFeedback = false,
     this.approvalStatus = 'pending',
-    this.pendingUpdate,
     this.approvedBy,
     this.approvedByPosition,
   });
@@ -67,7 +65,6 @@ class Event {
     'datePublished': datePublished,
     'hasFeedback': hasFeedback,
     'approvalStatus': approvalStatus,
-    'pendingUpdate': pendingUpdate,
     'approvedBy': approvedBy,
     'approvedByPosition': approvedByPosition,
   };
@@ -93,7 +90,6 @@ class Event {
       dateUpdated: (json['dateUpdated'] as Timestamp).toDate().toUtc(),
       datePublished: (json['datePublished'] as Timestamp).toDate().toUtc(),
       approvalStatus: json['approvalStatus'],
-      pendingUpdate: json['pendingUpdate'],
       approvedBy: json['approvedBy'],
       approvedByPosition: json['approvedByPosition'],
     );
@@ -121,7 +117,6 @@ class Event {
       dateUpdated: (snapshot['dateUpdated'] as Timestamp).toDate().toUtc(),
       datePublished: (snapshot['datePublished'] as Timestamp).toDate().toUtc(),
       approvalStatus: snapshot['approvalStatus'],
-      pendingUpdate: snapshot['pendingUpdate'],
       approvedBy: snapshot['approvedBy'],
       approvedByPosition: snapshot['approvedByPosition'],
     );
@@ -148,7 +143,6 @@ class Event {
       dateUpdated: (snapshot['dateUpdated'] as Timestamp).toDate().toUtc(),
       datePublished: (snapshot['datePublished'] as Timestamp).toDate().toUtc(),
       approvalStatus: snapshot['approvalStatus'],
-      pendingUpdate: snapshot['pendingUpdate'],
       approvedBy: snapshot['approvedBy'],
       approvedByPosition: snapshot['approvedByPosition'],
     );

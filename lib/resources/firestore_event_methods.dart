@@ -100,7 +100,7 @@ class FireStoreEventMethods {
               createdBy, // senderId
               user.uid!, // userId
               'New Event Pending Approval', // title
-              'A new event "$title" has been posted by ${officer.userType} and is pending your approval.' // body
+              'A new event "$title" has been posted by ${officer.profile!.fullName}, ${officer.profile!.officerPosition}, ${officer.profile!.organization} and is pending your approval.' // body
             );
           }
         }
@@ -142,20 +142,29 @@ class FireStoreEventMethods {
     String response = 'Some error occurred';
 
     try {
-      // If the user is an officer, store the updated details in pendingUpdate
+      // Fetch the details of the officer who created the event
+      model.User officer = await FireStoreUserMethods().getUserById(event.createdBy);
+
+      // If the user is an officer, make the event pending again
       if (userType == 'Officer') {
+
+        // Update the event
+        await _eventsCollection.doc(eventId).update(event.toJson());
+
+        // Make the event pending again
         await _eventsCollection.doc(eventId).update({
-          'pendingUpdate': event.toJson(),
+          'approvalStatus': 'pending',
         });
+
         // Notify admin/staff about the pending update
         List<model.User> users = await FirebaseNotificationService().fetchAllUsers();
         for (var user in users) {
           if (user.userType == 'Admin' || user.userType == 'Staff') {
             await FirebaseNotificationService().sendNotificationToUser(
-              event.createdBy, // senderId
+              officer.uid!, // senderId
               user.uid!, // userId
               'Event Update Pending Approval', // title
-              'An update to the event "${event.title}" has been posted by ${event.createdBy} and is pending your approval.' // body
+              'An update to the event "${event.title}" has been posted by ${officer.profile!.fullName}, ${officer.profile!.officerPosition}, ${officer.profile!.organization} and is pending your approval.' // body
             );
           }
         }
@@ -185,6 +194,10 @@ class FireStoreEventMethods {
       // Reference to the event document in Firestore
       DocumentReference eventDocRef = _eventsCollection.doc(eventId);
 
+      // Fetch the event details
+      DocumentSnapshot doc = await eventDocRef.get();
+      Event event = await Event.fromSnap(doc);
+
       // Reference to the 'feedbacks' subcollection
       CollectionReference feedbackSubcollection = eventDocRef.collection('feedbacks');
 
@@ -200,6 +213,21 @@ class FireStoreEventMethods {
       await eventDocRef.delete();
       await StorageMethods().deleteImageFromStorage('images/$eventId');
       await StorageMethods().deleteFileFromStorage('documents/$eventId');
+
+      // Send a notification to all participants
+      if (event.participants != null) {
+        for (var department in event.participants!['department']!) {
+          for (var program in event.participants!['program']!) {
+            await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
+              event.createdBy, 
+              department, 
+              program, 
+              'Event Removed', 
+              'The event "${event.title}" has been removed.'
+            );
+          }
+        }
+      }
 
       response = 'Success';
     } on FirebaseException catch (err) {
@@ -505,17 +533,43 @@ class FireStoreEventMethods {
           'Your event "${event.title}" has been approved by ${currentUser.profile!.fullName}, $approvedByPosition.', // body
         );
 
-        // Send to all event student participants which contains similar department and programs 
-        if (event.participants != null) {
-          for (var department in event.participants!['department']!) {
-            for (var program in event.participants!['program']!) {
-              await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
-                event.createdBy, 
-                department, 
-                program, 
-                'New Event', 
-                'A new event "${event.title}" has been posted. It will start on ${DateFormat('yyyy-MM-dd').format(event.startDate)} at ${DateFormat('h:mm a').format(event.startTime)} and end on ${DateFormat('yyyy-MM-dd').format(event.endDate)} at ${DateFormat('h:mm a').format(event.endTime)}. Description: ${event.description}. Venue: ${event.venue}.'
-              );
+        // Check if the event has been updated
+        if (event.dateUpdated!.isAfter(event.datePublished!)) {
+          // If the event has been updated, send a different notification to participants
+          if (event.participants != null) {
+            for (var department in event.participants!['department']!) {
+              for (var program in event.participants!['program']!) {
+                await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
+                  event.createdBy, 
+                  department, 
+                  program, 
+                  'Event Updated', 
+                  'The event "${event.title}" has been updated. It will start on ${DateFormat('yyyy-MM-dd').format(event.startDate)} at ${DateFormat('h:mm a').format(event.startTime)} and end on ${DateFormat('yyyy-MM-dd').format(event.endDate)} at ${DateFormat('h:mm a').format(event.endTime)}. Description: ${event.description}. Venue: ${event.venue}.'
+                );
+              }
+            }
+          }
+
+          // Send a notification to the officer who updated the event
+          FirebaseNotificationService().sendNotificationToUser(
+            currentUser.uid!, // senderId
+            officer.uid!, // userId
+            'Updated Event Approved', // title
+            'Your updated event "${event.title}" has been approved by ${currentUser.profile!.fullName}, $approvedByPosition.', // body
+          );
+        } else {
+          // If the event has not been updated, send the original notification to participants
+          if (event.participants != null) {
+            for (var department in event.participants!['department']!) {
+              for (var program in event.participants!['program']!) {
+                await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
+                  event.createdBy, 
+                  department, 
+                  program, 
+                  'New Event', 
+                  'A new event "${event.title}" has been posted. It will start on ${DateFormat('yyyy-MM-dd').format(event.startDate)} at ${DateFormat('h:mm a').format(event.startTime)} and end on ${DateFormat('yyyy-MM-dd').format(event.endDate)} at ${DateFormat('h:mm a').format(event.endTime)}. Description: ${event.description}. Venue: ${event.venue}.'
+                );
+              }
             }
           }
         }
@@ -527,50 +581,6 @@ class FireStoreEventMethods {
       print(err.toString());
       return false;
     }
-  }
-
-
-  // Method for approving updated event from the non-admin/staff users
-  Future<String> approveEventUpdate(String eventId) async {
-    String response = 'Some error occurred';
-
-    try {
-      DocumentSnapshot doc = await _eventsCollection.doc(eventId).get();
-      Map<String, dynamic>? data = doc.data() as Map<String, dynamic>?;
-      Map<String, dynamic>? pendingUpdate = data?['pendingUpdate'];
-      if (pendingUpdate != null) {
-        await _eventsCollection.doc(eventId).update(pendingUpdate);
-        await _eventsCollection.doc(eventId).update({'pendingUpdate': null});
-
-        // Fetch the updated event
-        Event event = await Event.fromSnap(doc);
-
-        // Send a notification to all participants
-        if (event.participants != null) {
-          for (var department in event.participants!['department']!) {
-            for (var program in event.participants!['program']!) {
-              await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
-                event.createdBy, 
-                department, 
-                program, 
-                'Event Updated', 
-                'The event "${event.title}" has been updated. It will start on ${DateFormat('yyyy-MM-dd').format(event.startDate)} at ${DateFormat('h:mm a').format(event.startTime)} and end on ${DateFormat('yyyy-MM-dd').format(event.endDate)} at ${DateFormat('h:mm a').format(event.endTime)}. Description: ${event.description}. Venue: ${event.venue}.'
-              );
-            }
-          }
-        }
-      }
-
-      response = 'Success';
-    } on FirebaseException catch (err) {
-      // Handle any errors that occur
-      if (err.code == 'permission-denied') {
-        response = 'Permission denied';
-      }
-      response = err.toString();
-    }
-
-    return response;
   }
 
   Stream<List<Event>> getApprovedEvents() {
