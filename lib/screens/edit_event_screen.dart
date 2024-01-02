@@ -369,23 +369,83 @@ class EditEventScreenState extends State<EditEventScreen> {
           datePublished: widget.eventSnap.datePublished,
         );
 
-        // Add the event to the database
-        String response = await FireStoreEventMethods()
-            .updateEvent(widget.eventSnap.id, event, userType);
+        // Show a dialog to enter the user's password
+        String? password = await showDialog<String>(
+          context: context,
+          builder: (BuildContext context) {
+            final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
+            String? password;
+            return AlertDialog(
+              title: Text(
+                'Enter your password',
+                style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+              ),
+              content: TextField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                ),
+                onChanged: (value) => password = value,
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  },
+                ),
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop(password);
+                  },
+                ),
+              ],
+            );
+          },
+        );
 
-        await FireStoreEventMethods().updateEventStatus(
-            widget.eventSnap.id, false, false, startDatePart, endDatePart, startTime12, endTime12);
+        String? response;
 
-        if (kDebugMode) {
-          print('Update Event Response: $response');
+        // If the password is not null, re-authenticate the user
+        if (password != null) {
+          User? user = FirebaseAuth.instance.currentUser;
+          AuthCredential credential = EmailAuthProvider.credential(
+            email: user!.email!,
+            password: password,
+          );
+
+          // Re-authenticate the user
+          try {
+            await user.reauthenticateWithCredential(credential);
+
+            // Add the event to the database
+            response = await FireStoreEventMethods()
+                .updateEvent(widget.eventSnap.id, event, userType);
+
+            await FireStoreEventMethods().updateEventStatus(
+                widget.eventSnap.id, false, false, startDatePart, endDatePart, startTime12, endTime12);
+
+            if (kDebugMode) {
+              print('Update Event Response: $response');
+            }
+            // Check if the response is a success or a failure
+            if (response == 'Success') {
+              onPostSuccess();
+            } else {
+              onPostFailure(response);
+            }
+          } catch (e) {
+            // If the re-authentication fails, show an error message
+            showSnackBar('Incorrect password. Please try again.', context);
+          }
         }
-        // Check if the response is a success or a failure
-        if (response == 'Success') {
-          onPostSuccess();
-        } else {
-          onPostFailure(response);
-        }
+
         return response;
+
       } else {
         if (kDebugMode) {
           print('Complete all required parameters!');
@@ -398,14 +458,10 @@ class EditEventScreenState extends State<EditEventScreen> {
             ? showSnackBar('Please complete the required fields.*', context)
             : '';
       }
-    } catch (err) {
+    } catch (e) {
       if (kDebugMode) {
-        print('Error caught: ${err.toString() + err.runtimeType.toString()}');
+        print(e);
       }
-      setState(() {
-        _isLoading = false;
-      });
-      return err.toString();
     }
   }
 
