@@ -277,6 +277,10 @@ class EditEventScreenState extends State<EditEventScreen> {
     if (kDebugMode) {
       print('Post function started!');
     }
+
+    // Show a SnackBar with a loading message
+    showSnackBar('Updating event...', context);
+
     setState(() {
       _isLoading = true;
     });

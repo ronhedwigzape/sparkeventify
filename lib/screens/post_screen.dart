@@ -163,6 +163,10 @@ class _PostScreenState extends State<PostScreen> {
     if (kDebugMode) {
       print('Post function started!');
     }
+
+    // Show a SnackBar with a loading message
+    showSnackBar('Creating event...', context);
+
     setState(() {
       _isLoading = true;
     });
