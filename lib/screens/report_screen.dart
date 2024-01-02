@@ -68,7 +68,11 @@ class _ReportScreenState extends State<ReportScreen> {
     final font = pw.Font.ttf(await rootBundle.load("fonts/OpenSans-Regular.ttf"));
     const double fontSize = 10.0;
     const cellPadding = pw.EdgeInsets.all(4.0);
-    var myPageFormat = PdfPageFormat.a4.portrait;
+
+    // var myPageFormat = PdfPageFormat.a4; // for A4
+    // var myPageFormat = PdfPageFormat.legal; // for Legal
+    // var myPageFormat = PdfPageFormat.letter; // for Letter
+    var myPageFormat = PdfPageFormat.a4.landscape;
 
     Map<model.Event, pw.MemoryImage?> images = {};
     for (var event in events) {
