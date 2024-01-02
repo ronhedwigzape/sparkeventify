@@ -505,33 +505,33 @@ class FireStoreEventMethods {
       // Fetch the details of the officer who created the event
       model.User officer = await FireStoreUserMethods().getUserById(event.createdBy);
 
-      // If the event is rejected, remove the event
+      // Fetch current user's details
+      String currentUserId = FirebaseAuth.instance.currentUser!.uid;
+      model.User currentUser = await FireStoreUserMethods().getUserById(currentUserId);
+
+      String? approvedByPosition = currentUser.userType;
+      if (currentUser.userType == 'Staff') {
+        approvedByPosition = '${currentUser.profile!.staffType}, ${currentUser.profile!.staffPosition}, ${currentUser.profile!.staffDescription}';
+      }
+
       if (!approve) {
+        // If the event is rejected, remove the event
         await removeEvent(eventId);
+
+        // Send a rejection notification to the officer who created the event
+        FirebaseNotificationService().sendNotificationToUser(
+          currentUser.uid!, // senderId
+          officer.uid!, // userId
+          'Event Rejected', // title
+          'Your event "${event.title}" has been rejected by ${currentUser.profile!.fullName}, $approvedByPosition.', // body
+        );
       } else {
-        // If the event is approved, send notifications to participants
-        // Fetch current user's details
-        String currentUserId = FirebaseAuth.instance.currentUser!.uid;
-        model.User currentUser = await FireStoreUserMethods().getUserById(currentUserId);
-
-        String? approvedByPosition = currentUser.userType;
-        if (currentUser.userType == 'Staff') {
-          approvedByPosition = '${currentUser.profile!.staffType}, ${currentUser.profile!.staffPosition}, ${currentUser.profile!.staffDescription}';
-        }
-
+        // If the event is approved, add the approver details to event details
         await _eventsCollection.doc(eventId).update({
           'approvalStatus': 'approved',
           'approvedBy': currentUser.profile!.fullName,
           'approvedByPosition': approvedByPosition,
         });
-
-        // Send a notification to the officer who created the event
-        FirebaseNotificationService().sendNotificationToUser(
-          currentUser.uid!, // senderId
-          officer.uid!, // userId
-          'Event Approved', // title
-          'Your event "${event.title}" has been approved by ${currentUser.profile!.fullName}, $approvedByPosition.', // body
-        );
 
         // Check if the event has been updated
         if (event.dateUpdated!.isAfter(event.datePublished!)) {
@@ -572,6 +572,14 @@ class FireStoreEventMethods {
               }
             }
           }
+
+          // Send a notification to the officer who created the event
+          FirebaseNotificationService().sendNotificationToUser(
+            currentUser.uid!, // senderId
+            officer.uid!, // userId
+            'Event Approved', // title
+            'Your event "${event.title}" has been approved by ${currentUser.profile!.fullName}, $approvedByPosition.', // body
+          );
         }
       }
 
