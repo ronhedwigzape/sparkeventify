@@ -169,7 +169,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                   userType == 'SuperAdmin'
                     ? buildAppBarButton(
                         icon: Icons.school, 
-                        label: "Manage Programs and Departments",
+                        label: "Manage Programs & Departments",
                         pageIndex: 1, 
                         onTap: () => navigationTapped(1)
                       )
@@ -179,10 +179,21 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                     : const SizedBox.shrink(),
                   userType == 'SuperAdmin'
                     ? buildAppBarButton(
-                        icon: Icons.verified_user, 
+                        icon: Icons.supervised_user_circle, 
                         label: "Manage Staff Positions",
                         pageIndex: 2, 
                         onTap: () => navigationTapped(2)
+                      )
+                    : const SizedBox.shrink(),
+                  userType == 'SuperAdmin' 
+                    ? const SizedBox(width: 10.0) 
+                    : const SizedBox.shrink(),
+                  userType == 'SuperAdmin'
+                    ? buildAppBarButton(
+                        icon: Icons.supervised_user_circle, 
+                        label: "Create Admin",
+                        pageIndex: 3, 
+                        onTap: () => navigationTapped(3)
                       )
                     : const SizedBox.shrink(),
                   const SizedBox(width: 10.0),
@@ -190,8 +201,8 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                     ? buildAppBarButton(
                         icon: Icons.settings, 
                         label: "Settings",
-                        pageIndex: userType == 'Admin' ? 5 : 3, 
-                        onTap: () => navigationTapped(userType == 'Admin' ? 5 : 3)
+                        pageIndex: userType == 'Admin' ? 5 : 4, 
+                        onTap: () => navigationTapped(userType == 'Admin' ? 5 : 4)
                       )
                     : const SizedBox.shrink(),
                     const SizedBox(width: 10.0),
@@ -244,7 +255,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                   userType == 'Admin' 
                   ? const SizedBox(width: 10.0)
                   : const SizedBox.shrink(),
-                  userType == 'Admin' || userType == 'SuperAdmin'
+                  userType == 'Admin'
                   ? IconButton(
                     onPressed: () => navigationTapped(7),
                     icon: Stack(
@@ -290,7 +301,6 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                         ],
                       ),
                     ) : const SizedBox.shrink(),
-
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 30.0),
                     child: Row(

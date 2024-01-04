@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/screens/admin_dashboard_screen.dart';
+import 'package:student_event_calendar/screens/create_admin_screen.dart';
 import 'package:student_event_calendar/screens/feedback_screen.dart';
 import 'package:student_event_calendar/screens/manage_program_department_screen.dart';
 import 'package:student_event_calendar/screens/manage_events_screen.dart';
@@ -114,6 +115,7 @@ Future<List<Widget>> homeScreenItems() async {
       const AdminDashboardScreen(),
       const ManageProgramDepartmentScreen(),
       const ManageStaffPositionsScreen(),
+      const CreateAdminScreen(),
       const ProfileScreen(),
       const NotificationScreen()
     ];
