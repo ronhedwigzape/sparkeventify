@@ -41,8 +41,8 @@ class Event {
     this.datePublished,
     this.hasFeedback = false,
     this.approvalStatus = 'pending',
-    this.approvedBy,
-    this.approvedByPosition,
+    this.approvedBy = "",
+    this.approvedByPosition = "",
   });
 
   // Convert Event object to JSON
