@@ -503,7 +503,7 @@ class EventDialogState extends State<EventDialog> {
                           ],
                         ),
                         const SizedBox(height: 10.0),
-                        Row(
+                        event.approvedBy!.isNotEmpty ? Row(
                           children: [
                             Icon(
                               Icons.approval,
@@ -519,11 +519,11 @@ class EventDialogState extends State<EventDialog> {
                                   fontSize: kIsWeb ? 18 : 15),
                             ),
                           ],
-                        ),
+                        ) : const SizedBox.shrink(),
                         const SizedBox(
                           height: 5,
                         ),
-                        Column(
+                        event.approvedBy!.isNotEmpty ? Column(
                           children: [
                             Text(
                               event.approvedBy!,
@@ -534,11 +534,10 @@ class EventDialogState extends State<EventDialog> {
                                       : lightModeTertiaryColor),
                             ),
                           ],
-                        ),
+                        ) : const SizedBox.shrink(),
                         const SizedBox(
                           height: 15.0,
                         ),
-
                       ],
                     ),
                   );
