@@ -103,47 +103,81 @@ class GlobalMethods {
   }
 
   // Insert program, department, and major description
-  Future<void> insertProgramAndDepartment(String program, String department, String major) async {
-    String programAndDepartment = '$program - $department - $major';
+  Future<bool> insertProgramAndDepartment(String program, String department, String major) async {
+    try {
+      String programAndDepartment = '$program - $department - $major';
 
-    await firestoreInstance.collection('global').doc('constants').set({
-      'programsAndDepartments': FieldValue.arrayUnion([programAndDepartment]),
-      'programParticipants': FieldValue.arrayUnion([program]),
-      'departmentParticipants': FieldValue.arrayUnion([department]),
-      'programDepartmentMap': {program: department},
-    }, SetOptions(merge: true));
+      await firestoreInstance.collection('global').doc('constants').update({
+        'programsAndDepartments': FieldValue.arrayUnion([programAndDepartment]),
+        'programParticipants': FieldValue.arrayUnion([program]),
+        'departmentParticipants': FieldValue.arrayUnion([department]),
+        'programDepartmentMap': {program: department},
+      });
+
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   // Update program, department, and major description
-  Future<void> updateProgramAndDepartment(String oldProgram, String oldDepartment, String oldMajor, String newProgram, String newDepartment, String newMajor) async {
-    String oldProgramAndDepartment = '$oldProgram - $oldDepartment - $oldMajor';
-    String newProgramAndDepartment = '$newProgram - $newDepartment - $newMajor';
+  Future<bool> updateProgramAndDepartment(String oldProgram, String oldDepartment, String oldMajor, String newProgram, String newDepartment, String newMajor) async {
+    try {
+      String oldProgramAndDepartment = '$oldProgram - $oldDepartment - $oldMajor';
+      String newProgramAndDepartment = '$newProgram - $newDepartment - $newMajor';
 
-    await firestoreInstance.collection('global').doc('constants').update({
-      'programsAndDepartments': FieldValue.arrayRemove([oldProgramAndDepartment]),
-      'programParticipants': FieldValue.arrayRemove([oldProgram]),
-      'departmentParticipants': FieldValue.arrayRemove([oldDepartment]),
-      'programDepartmentMap': {oldProgram: FieldValue.delete()},
-    });
+      DocumentSnapshot documentSnapshot = await getConstants();
+      Map<String, dynamic> constants = documentSnapshot.data() as Map<String, dynamic>;
+      Map<String, String> programDepartmentMap = Map<String, String>.from(constants['programDepartmentMap']);
 
-    await firestoreInstance.collection('global').doc('constants').update({
-      'programsAndDepartments': FieldValue.arrayUnion([newProgramAndDepartment]),
-      'programParticipants': FieldValue.arrayUnion([newProgram]),
-      'departmentParticipants': FieldValue.arrayUnion([newDepartment]),
-      'programDepartmentMap': {newProgram: newDepartment},
-    });
+      programDepartmentMap.remove(oldProgram);
+      programDepartmentMap[newProgram] = newDepartment;
+
+      await firestoreInstance.collection('global').doc('constants').update({
+        'programsAndDepartments': FieldValue.arrayRemove([oldProgramAndDepartment]),
+        'programParticipants': FieldValue.arrayRemove([oldProgram]),
+        'departmentParticipants': FieldValue.arrayRemove([oldDepartment]),
+        'programDepartmentMap': programDepartmentMap,
+      });
+
+      await firestoreInstance.collection('global').doc('constants').update({
+        'programsAndDepartments': FieldValue.arrayUnion([newProgramAndDepartment]),
+        'programParticipants': FieldValue.arrayUnion([newProgram]),
+        'departmentParticipants': FieldValue.arrayUnion([newDepartment]),
+        'programDepartmentMap': programDepartmentMap,
+      });
+
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   // Remove program, department, and major description
-  Future<void> emptyProgramAndDepartment(String program, String department, String major) async {
-    String programAndDepartment = '$program - $department - $major';
+  Future<bool> emptyProgramAndDepartment(String program, String department, String major) async {
+    try {
+      String programAndDepartment = '$program - $department - $major';
 
-    await firestoreInstance.collection('global').doc('constants').update({
-      'programsAndDepartments': FieldValue.arrayRemove([programAndDepartment]),
-      'programParticipants': FieldValue.arrayRemove([program]),
-      'departmentParticipants': FieldValue.arrayRemove([department]),
-      'programDepartmentMap': {program: FieldValue.delete()},
-    });
+      DocumentSnapshot documentSnapshot = await getConstants();
+      Map<String, dynamic> constants = documentSnapshot.data() as Map<String, dynamic>;
+      Map<String, String> programDepartmentMap = Map<String, String>.from(constants['programDepartmentMap']);
+
+      programDepartmentMap.remove(program);
+
+      await firestoreInstance.collection('global').doc('constants').update({
+        'programsAndDepartments': FieldValue.arrayRemove([programAndDepartment]),
+        'programParticipants': FieldValue.arrayRemove([program]),
+        'departmentParticipants': FieldValue.arrayRemove([department]),
+        'programDepartmentMap': programDepartmentMap,
+      });
+
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   // Insert Staff Position details
