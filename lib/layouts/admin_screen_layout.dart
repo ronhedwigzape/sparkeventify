@@ -31,6 +31,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
   @override
   void initState() {
     super.initState();
+    fetchAndSetConstantsStream();
     pageController = PageController();
     notificationCount = firestoreNotification.getUnreadNotificationCount(
       FirebaseAuth.instance.currentUser?.uid ?? '',
@@ -73,20 +74,20 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
             return Scaffold(
               appBar: AppBar(
                 automaticallyImplyLeading: false,
-                title: const Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 10.0),
+                title: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
                   child: Row(
                     children: [
-                      CSPCLogoWhite(
+                      const CSPCLogoWhite(
                         height: 30.0,
                       ),
-                      SizedBox(
+                      const SizedBox(
                         width: 20.0,
                       ),
                       Expanded(
                         child: Text(
-                          appName,
-                          style: TextStyle(
+                          appName ?? 'CSPC Announce',
+                          style: const TextStyle(
                             color: lightModeSecondaryColor,
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,
@@ -162,13 +163,24 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                         onTap: () => navigationTapped(4)
                       )
                     : const SizedBox.shrink(),
+                    userType == 'SuperAdmin' 
+                    ? const SizedBox(width: 10.0) 
+                    : const SizedBox.shrink(),
+                  userType == 'SuperAdmin'
+                    ? buildAppBarButton(
+                        icon: Icons.settings, 
+                        label: "Manage System",
+                        pageIndex: 1, 
+                        onTap: () => navigationTapped(1)
+                      )
+                    : const SizedBox.shrink(),
                   const SizedBox(width: 10.0),
                   userType == 'Admin' || userType == 'SuperAdmin'
                     ? buildAppBarButton(
                         icon: Icons.settings, 
                         label: "Settings",
-                        pageIndex: 5, 
-                        onTap: () => navigationTapped(5)
+                        pageIndex: userType == 'Admin' ? 5 : 2, 
+                        onTap: () => navigationTapped(userType == 'Admin' ? 5 : 2)
                       )
                     : const SizedBox.shrink(),
                     const SizedBox(width: 10.0),
