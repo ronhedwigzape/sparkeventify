@@ -13,7 +13,8 @@ class FireStoreEventMethods {
   // Reference to the 'events' collection in Firestore
   final CollectionReference _eventsCollection = FirebaseFirestore.instance.collection('events');
   final FirebaseNotificationService _firebaseNotificationService = FirebaseNotificationService();
-
+  final CollectionReference _deletedEventsCollection = FirebaseFirestore.instance.collection('deletedEvents');
+  
   // Method to add a new event to the 'events' collection
   Future<String> postEvent(
     String title,
@@ -186,8 +187,8 @@ class FireStoreEventMethods {
   }
 
 
-  // Method to removes the specified event
-  Future<String> removeEvent(String eventId) async {
+  // Method to move the specified event to the trash
+  Future<String> trashEvent(String eventId) async {
     String response = 'Some error occurred';
 
     try {
@@ -198,19 +199,75 @@ class FireStoreEventMethods {
       DocumentSnapshot doc = await eventDocRef.get();
       Event event = await Event.fromSnap(doc);
 
-      // Reference to the 'feedbacks' subcollection
-      CollectionReference feedbackSubcollection = eventDocRef.collection('feedbacks');
+      // Store the event in the 'deletedEvents' collection
+      await _deletedEventsCollection.doc(eventId).set(event.toJson());
 
-      // Query all documents in the 'feedback' subcollection
+      // Remove the event from the 'events' collection in Firestore
+      await eventDocRef.delete();
+
+      response = 'Success';
+    } on FirebaseException catch (err) {
+      // Handle any errors that occur
+      if (err.code == 'permission-denied') {
+        response = 'Permission denied';
+      }
+      response = err.toString();
+    }
+    return response;
+  }
+
+  // Method to restore a deleted event
+  Future<String> restoreEvent(String eventId) async {
+    String response = 'Some error occurred';
+
+    try {
+      // Reference to the deleted event document in Firestore
+      DocumentReference deletedEventDocRef = _deletedEventsCollection.doc(eventId);
+
+      // Fetch the deleted event details
+      DocumentSnapshot doc = await deletedEventDocRef.get();
+      Event event = await Event.fromSnap(doc);
+
+      // Restore the event to the 'events' collection in Firestore
+      await _eventsCollection.doc(eventId).set(event.toJson());
+
+      // Remove the event from the 'deletedEvents' collection
+      await deletedEventDocRef.delete();
+
+      response = 'Success';
+    } on FirebaseException catch (err) {
+      // Handle any errors that occur
+      if (err.code == 'permission-denied') {
+        response = 'Permission denied';
+      }
+      response = err.toString();
+    }
+    return response;
+  }
+
+  // Method to permanently remove a trashed event
+  Future<String> removeEventPermanently(String eventId) async {
+    String response = 'Some error occurred';
+
+    try {
+      // Reference to the deleted event document in Firestore
+      DocumentReference deletedEventDocRef = _deletedEventsCollection.doc(eventId);
+
+      // Fetch the deleted event details
+      DocumentSnapshot doc = await deletedEventDocRef.get();
+      Event event = await Event.fromSnap(doc);
+
+      // Delete all documents in the 'feedbacks' subcollection
+      CollectionReference feedbackSubcollection = deletedEventDocRef.collection('feedbacks');
       QuerySnapshot querySnapshot = await feedbackSubcollection.get();
-
-      // Delete all documents in the 'feedback' subcollection
       for (final doc in querySnapshot.docs) {
         await doc.reference.delete();
       }
 
-      // Remove the event from the 'events' collection in Firestore
-      await eventDocRef.delete();
+      // Remove the event from the 'deletedEvents' collection
+      await deletedEventDocRef.delete();
+
+      // Delete the event's image and document from storage
       await StorageMethods().deleteImageFromStorage('images/$eventId');
       await StorageMethods().deleteFileFromStorage('documents/$eventId');
 
@@ -516,7 +573,7 @@ class FireStoreEventMethods {
 
       if (!approve) {
         // If the event is rejected, remove the event
-        await removeEvent(eventId);
+        await trashEvent(eventId);
 
         // Send a rejection notification to the officer who created the event
         FirebaseNotificationService().sendNotificationToUser(
