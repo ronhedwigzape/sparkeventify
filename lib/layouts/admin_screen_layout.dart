@@ -163,15 +163,26 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                         onTap: () => navigationTapped(4)
                       )
                     : const SizedBox.shrink(),
-                    userType == 'SuperAdmin' 
+                  userType == 'SuperAdmin' 
                     ? const SizedBox(width: 10.0) 
                     : const SizedBox.shrink(),
                   userType == 'SuperAdmin'
                     ? buildAppBarButton(
-                        icon: Icons.settings, 
-                        label: "Manage System",
+                        icon: Icons.school, 
+                        label: "Manage Programs and Departments",
                         pageIndex: 1, 
                         onTap: () => navigationTapped(1)
+                      )
+                    : const SizedBox.shrink(),
+                  userType == 'SuperAdmin' 
+                    ? const SizedBox(width: 10.0) 
+                    : const SizedBox.shrink(),
+                  userType == 'SuperAdmin'
+                    ? buildAppBarButton(
+                        icon: Icons.verified_user, 
+                        label: "Manage Staff Positions",
+                        pageIndex: 2, 
+                        onTap: () => navigationTapped(2)
                       )
                     : const SizedBox.shrink(),
                   const SizedBox(width: 10.0),
@@ -179,8 +190,8 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                     ? buildAppBarButton(
                         icon: Icons.settings, 
                         label: "Settings",
-                        pageIndex: userType == 'Admin' ? 5 : 2, 
-                        onTap: () => navigationTapped(userType == 'Admin' ? 5 : 2)
+                        pageIndex: userType == 'Admin' ? 5 : 3, 
+                        onTap: () => navigationTapped(userType == 'Admin' ? 5 : 3)
                       )
                     : const SizedBox.shrink(),
                     const SizedBox(width: 10.0),

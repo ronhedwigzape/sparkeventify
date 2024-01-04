@@ -181,32 +181,53 @@ class GlobalMethods {
   }
 
   // Insert Staff Position details
-  Future<void> insertStaffPosition(String staffPosition, String staffDescription, String staffType) async {
-    String fullStaffPosition = '$staffPosition - $staffDescription - $staffType';
+  Future<bool> insertStaffPosition(String staffPosition, String staffDescription, String staffType) async {
+    try {
+      String fullStaffPosition = '$staffPosition - $staffDescription - $staffType';
 
-    await firestoreInstance.collection('global').doc('constants').set({
-      'staffPositions': FieldValue.arrayUnion([fullStaffPosition]),
-    }, SetOptions(merge: true));
+      await firestoreInstance.collection('global').doc('constants').update({
+        'staffPositions': FieldValue.arrayUnion([fullStaffPosition]),
+      });
+
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   // Update Staff Position details
-  Future<void> updateStaffPosition(String oldStaffPosition, String newStaffPosition, String newStaffDescription, String newStaffType) async {
-    String fullNewStaffPosition = '$newStaffPosition - $newStaffDescription - $newStaffType';
+  Future<bool> updateStaffPosition(String oldStaffPosition, String newStaffPosition, String newStaffDescription, String newStaffType) async {
+    try {
+      String fullNewStaffPosition = '$newStaffPosition - $newStaffDescription - $newStaffType';
 
-    await firestoreInstance.collection('global').doc('constants').update({
-      'staffPositions': FieldValue.arrayRemove([oldStaffPosition]),
-    });
+      await firestoreInstance.collection('global').doc('constants').update({
+        'staffPositions': FieldValue.arrayRemove([oldStaffPosition]),
+      });
 
-    await firestoreInstance.collection('global').doc('constants').update({
-      'staffPositions': FieldValue.arrayUnion([fullNewStaffPosition]),
-    });
+      await firestoreInstance.collection('global').doc('constants').update({
+        'staffPositions': FieldValue.arrayUnion([fullNewStaffPosition]),
+      });
+
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
   // Remove Staff Position
-  Future<void> emptyStaffPosition(String staffPosition) async {
-    await firestoreInstance.collection('global').doc('constants').update({
-      'staffPositions': FieldValue.arrayRemove([staffPosition]),
-    });
+  Future<bool> emptyStaffPosition(String staffPosition) async {
+    try {
+      await firestoreInstance.collection('global').doc('constants').update({
+        'staffPositions': FieldValue.arrayRemove([staffPosition]),
+      });
+
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
   }
 
 }
