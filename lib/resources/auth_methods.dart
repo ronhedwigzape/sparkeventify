@@ -195,7 +195,7 @@ class AuthMethods {
       
       UserCredential userCredential = await _auth.signInWithCredential(credential);
 
-      // Check if the email domain(@cspc.edu.ph or @my.cspc.edu.ph) is valid
+      // Check if the email domain(@cspc.edu.ph or @my.cspc.edu.ph) is valid or else the account will be deleted
       if (!userCredential.user!.email!.endsWith('@cspc.edu.ph') && !userCredential.user!.email!.endsWith('@my.cspc.edu.ph')) {
         await userCredential.user!.delete();  // Delete the user from Firebase Auth
         return null;  // Return null or some error message
