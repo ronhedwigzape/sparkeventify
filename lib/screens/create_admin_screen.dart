@@ -241,7 +241,7 @@ class CreateAdminScreenState extends State<CreateAdminScreen> {
                           valueColor: AlwaysStoppedAnimation<Color>(lightColor),
                         ))
                       : const Text(
-                          'Sign up',
+                          'Create Admin',
                           style: TextStyle(
                             color: lightColor,
                             fontWeight: FontWeight.bold,
