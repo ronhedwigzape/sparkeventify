@@ -213,43 +213,51 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
         DateFormat time12Format = DateFormat('h:mm a');
         DateTime startTime12 = time12Format.parse(pickedStartTime);
         DateTime endTime12 = time12Format.parse(pickedEndTime);
-        // Add the personal event to the database
-        String response = await FireStorePersonalEventMethods().postPersonalEvent(
-            _personalEventTitleController.text,
-            _imageFile,
-            _personalEventDescriptionsController.text,
-            FirebaseAuth.instance.currentUser!.uid,
-            _documentFile,
-            startDatePart,
-            endDatePart,
-            startTime12,
-            endTime12,
-            _personalEventVenueController.text,
-            _personalEventTypeController.text,
-            'Upcoming',
-            false);
+        
+        // Null safety check for currentUser
+        String? uid = FirebaseAuth.instance.currentUser?.uid;
+        if (uid != null) {
+          // Add the personal event to the database
+          String response = await FireStorePersonalEventMethods().postPersonalEvent(
+              _personalEventTitleController.text,
+              _imageFile,
+              _personalEventDescriptionsController.text,
+              uid,
+              _documentFile,
+              startDatePart,
+              endDatePart,
+              startTime12,
+              endTime12,
+              _personalEventVenueController.text,
+              _personalEventTypeController.text,
+              'Upcoming',
+              false);
 
-            // After the event is created, send a notification to each invited user.
-            for (var user in invitedUsers) {
-              String message = 'You have been invited to the event "${_personalEventTitleController.text}" '
-                              'which will take place from ${_startDateController.text} ${_startTimeController.text} '
-                              'to ${_endDateController.text} ${_endTimeController.text} at ${_personalEventVenueController.text}. '
-                              'Event details: ${_personalEventDescriptionsController.text}';
-              await FirebaseNotificationService().sendNotificationToUser(
-                FirebaseAuth.instance.currentUser!.uid, user.uid!, 'Event Invitation', message
-              );
-            }
+          // After the event is created, send a notification to each invited user.
+          for (var user in invitedUsers) {
+            String message = 'You have been invited to the event "${_personalEventTitleController.text}" '
+                            'which will take place from ${_startDateController.text} ${_startTimeController.text} '
+                            'to ${_endDateController.text} ${_endTimeController.text} at ${_personalEventVenueController.text}. '
+                            'Event details: ${_personalEventDescriptionsController.text}';
+            await FirebaseNotificationService().sendNotificationToUser(
+              uid, user.uid!, 'Event Invitation', message
+            );
+          }
 
-        if (kDebugMode) {
-          print('Add Personal Event Response: $response');
-        }
-        // Check if the response is a success or a failure
-        if (response == 'Success') {
-          onPostSuccess();
+          if (kDebugMode) {
+            print('Add Personal Event Response: $response');
+          }
+          // Check if the response is a success or a failure
+          if (response == 'Success') {
+            onPostSuccess();
+          } else {
+            onPostFailure(response);
+          }
+          return response;
         } else {
-          onPostFailure(response);
+          // Handle the case when uid is null
+          print('User is not logged in');
         }
-        return response;
       } else {
         if (kDebugMode) {
           print('Complete all required parameters!');
@@ -383,7 +391,7 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                     child: Container(
                       margin: EdgeInsets.symmetric(
                           horizontal: kIsWeb
-                              ? (width > webScreenSize ? width * 0.2 : 0)
+                              ? (width > webScreenSize! ? width * 0.2 : 0)
                               : 0),
                       child: Padding(
                         padding: const EdgeInsets.all(kIsWeb ? 8.0 : 2),
@@ -605,7 +613,7 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                                 const SizedBox(height: 10,),
                                 // New widget to display the invited users
                                 ...invitedUsers.map((user) => ListTile(
-                                  title: Text(user.profile!.fullName!),
+                                  title: Text(user.profile?.fullName ?? 'Unknown'),
                                   trailing: IconButton(
                                     icon: const Icon(Icons.remove_circle_outline, color: red,),
                                     onPressed: () {
