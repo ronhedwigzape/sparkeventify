@@ -209,6 +209,7 @@ class _PostScreenState extends State<PostScreen> {
 
         // Show a dialog to enter the user's password
         String? password = await showDialog<String>(
+          barrierDismissible: false,
           context: context,
           builder: (BuildContext context) {
             final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
