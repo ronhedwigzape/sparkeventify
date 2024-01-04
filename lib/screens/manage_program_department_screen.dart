@@ -35,80 +35,89 @@ class _ManageConstantsScreenState extends State<ManageProgramDepartmentScreen> {
           Map<String, dynamic> constants = snapshot.data!.data() as Map<String, dynamic>;
           List<String> programsAndDepartments = List<String>.from(constants['programsAndDepartments']);
 
-          return ListView.builder(
-            itemCount: programsAndDepartments.length,
-            itemBuilder: (context, index) {
-              String programAndDepartment = programsAndDepartments[index];
-              return ListTile(
-                title: Text(programAndDepartment),
-                trailing: IconButton(
-                  icon: Icon(Icons.delete),
-                  onPressed: () {
-                    globalMethods.emptyProgramAndDepartment(
-                      programAndDepartment.split(' - ')[0],
-                      programAndDepartment.split(' - ')[1],
-                      programAndDepartment.split(' - ')[2],
-                    );
-                  },
-                ),
-                onTap: () {
-                  programController.text = programAndDepartment.split(' - ')[0];
-                  departmentController.text = programAndDepartment.split(' - ')[1];
-                  majorController.text = programAndDepartment.split(' - ')[2];
-
-                  showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        title: Text('Update Program and Department'),
-                        content: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            TextField(
-                              controller: programController,
-                              decoration: InputDecoration(labelText: 'Program'),
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 70.0),
+            child: ListView.builder(
+              itemCount: programsAndDepartments.length,
+              itemBuilder: (context, index) {
+                String programAndDepartment = programsAndDepartments[index];
+                return ListTile(
+                  title: Text(programAndDepartment),
+                  trailing: IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () async {
+                        bool success = await globalMethods.emptyProgramAndDepartment(
+                        programAndDepartment.split(' - ')[0],
+                        programAndDepartment.split(' - ')[1],
+                        programAndDepartment.split(' - ')[2],
+                      );
+                      mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(success ? 'Delete successful' : 'Delete failed')),
+                      ) : '';
+                    },
+                  ),
+                  onTap: () {
+                    programController.text = programAndDepartment.split(' - ')[0];
+                    departmentController.text = programAndDepartment.split(' - ')[1];
+                    majorController.text = programAndDepartment.split(' - ')[2];
+            
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('Update Program and Department'),
+                          content: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              TextField(
+                                controller: programController,
+                                decoration: InputDecoration(labelText: 'Program'),
+                              ),
+                              TextField(
+                                controller: departmentController,
+                                decoration: InputDecoration(labelText: 'Department'),
+                              ),
+                              TextField(
+                                controller: majorController,
+                                decoration: InputDecoration(labelText: 'Major'),
+                              ),
+                            ],
+                          ),
+                          actions: [
+                            ElevatedButton(
+                              child: Text('UPDATE'),
+                              onPressed: () async {
+                                bool success = await globalMethods.updateProgramAndDepartment(
+                                  programAndDepartment.split(' - ')[0],
+                                  programAndDepartment.split(' - ')[1],
+                                  programAndDepartment.split(' - ')[2],
+                                  programController.text,
+                                  departmentController.text,
+                                  majorController.text,
+                                );
+                                mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(content: Text(success ? 'Update successful' : 'Update failed')),
+                                ) : '';
+                                programController.clear();
+                                departmentController.clear();
+                                majorController.clear();
+                                Navigator.of(context).pop();
+                              },
                             ),
-                            TextField(
-                              controller: departmentController,
-                              decoration: InputDecoration(labelText: 'Department'),
-                            ),
-                            TextField(
-                              controller: majorController,
-                              decoration: InputDecoration(labelText: 'Major'),
+                            TextButton(
+                              child: Text('CANCEL'),
+                              onPressed: () {
+                                Navigator.of(context).pop();
+                              },
                             ),
                           ],
-                        ),
-                        actions: [
-                          ElevatedButton(
-                            child: Text('UPDATE'),
-                            onPressed: () {
-                              globalMethods.updateProgramAndDepartment(
-                                programAndDepartment.split(' - ')[0],
-                                programAndDepartment.split(' - ')[1],
-                                programAndDepartment.split(' - ')[2],
-                                programController.text,
-                                departmentController.text,
-                                majorController.text,
-                              );
-                              programController.clear();
-                              departmentController.clear();
-                              majorController.clear();
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                          TextButton(
-                            child: Text('CANCEL'),
-                            onPressed: () {
-                              Navigator.of(context).pop();
-                            },
-                          ),
-                        ],
-                      );
-                    },
-                  );
-                },
-              );
-            },
+                        );
+                      },
+                    );
+                  },
+                );
+              },
+            ),
           );
         },
       ),
@@ -144,12 +153,15 @@ class _ManageConstantsScreenState extends State<ManageProgramDepartmentScreen> {
                 actions: [
                   ElevatedButton(
                     child: Text('ADD'),
-                    onPressed: () {
-                      globalMethods.insertProgramAndDepartment(
+                    onPressed: () async {
+                      bool success = await globalMethods.insertProgramAndDepartment(
                         programController.text,
                         departmentController.text,
                         majorController.text,
                       );
+                      mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(success ? 'Adding successful' : 'Adding failed')),
+                      ) : '';
                       programController.clear();
                       departmentController.clear();
                       majorController.clear();
