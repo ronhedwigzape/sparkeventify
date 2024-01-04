@@ -10,6 +10,7 @@ class FireStoreUserMethods {
   // Reference to the 'users' collection in Firestore
   final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users');
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   Future<model.User> getUserById(String userId) async {
     DocumentSnapshot userSnapshot = await _usersCollection.doc(userId).get();
@@ -334,11 +335,15 @@ class FireStoreUserMethods {
   }) async {
     String res = "Enter valid credentials";
     try {
-      if (email.isNotEmpty && password.isNotEmpty) {
+      if (email.isNotEmpty && uid.isNotEmpty) {
         // Retrieve the stored tokens
-        const storage = FlutterSecureStorage();
         final storedIdToken = await storage.read(key: 'idToken');
         final storedAccessToken = await storage.read(key: 'accessToken');
+
+        // Check if the tokens are null
+        if (storedIdToken == null || storedAccessToken == null) {
+          return 'Failed to retrieve stored tokens for re-authentication';
+        }
 
         // Re-authenticate the user
         await FirebaseAuth.instance.currentUser?.reauthenticateWithCredential(
@@ -365,6 +370,7 @@ class FireStoreUserMethods {
         }
       } else {
         res = err.toString();
+        print(res);
       }
     }
     return res;
@@ -430,7 +436,9 @@ class FireStoreUserMethods {
       for (var user in users) {
         userTypes.add(user.userType!);
       }
-      return userTypes.toList();
+      List<String> userTypesList = userTypes.toList();
+      userTypesList.removeWhere((item) => item == 'Admin' || item == 'SuperAdmin' || item == 'Guest');
+      return userTypesList;
     });
   }
 
