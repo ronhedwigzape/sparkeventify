@@ -22,8 +22,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
   deleteUser() async {
     if (
       widget.uid.isEmpty ||
-      widget.email.isEmpty ||
-      widget.password.isEmpty
+      widget.email.isEmpty
     ) return onDeleteFailure('Some error occurred.');
 
     String res = await FireStoreUserMethods().deleteUser(
