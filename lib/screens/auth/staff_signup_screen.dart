@@ -26,10 +26,16 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _retypePasswordController = TextEditingController();
-  late String selectedStaffPositions = staffPositions[0];
+  late String selectedStaffPositions = staffPositions![0];
   late String position = '';
   late String staffType = '';
   late String staffDescription = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAndSetConstants();
+  }
 
   @override
   void dispose() {
@@ -62,7 +68,7 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
       return;
     }
 
-    if (selectedStaffPositions == staffPositions[0] || staffType.isEmpty || staffDescription.isEmpty || position.isEmpty) {
+    if (selectedStaffPositions == staffPositions![0] || staffType.isEmpty || staffDescription.isEmpty || position.isEmpty) {
       onSignupFailure('Please select your position.');
       return;
     }
@@ -265,7 +271,7 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
                                   style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                                   onChanged: (String? newValue) {
                                     setState(() {
-                                      selectedStaffPositions = newValue ?? staffPositions[0]; // handle null selection
+                                      selectedStaffPositions = newValue ?? staffPositions![0]; // handle null selection
 
                                       List<String> splitValue = selectedStaffPositions.split(' - ');
                                       position = splitValue[0];
@@ -273,7 +279,7 @@ class _StaffSignupScreenState extends State<StaffSignupScreen> {
                                       staffDescription = splitValue[2];
                                     });
                                   },
-                                  items: staffPositions.map<DropdownMenuItem<String>>((String value) {
+                                  items: staffPositions!.map<DropdownMenuItem<String>>((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value.isEmpty ? null : value,
                                       child: Text(value),

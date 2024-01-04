@@ -34,6 +34,13 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false; // State variable for loading status
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchAndSetConstants();
+  }
+
+  @override
   void dispose() {
     super.dispose();
     _emailController.dispose(); // Dispose email controller
@@ -132,151 +139,161 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     // Build the login screen UI
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-    return GestureDetector(
-      onTap: () {
-        FocusScopeNode currentFocus = FocusScope.of(context);
-        if (!currentFocus.hasPrimaryFocus) {
-          currentFocus.unfocus();
+    return FutureBuilder(
+      future: fetchAndSetConstants(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else {
+          return GestureDetector(
+            onTap: () {
+              FocusScopeNode currentFocus = FocusScope.of(context);
+              if (!currentFocus.hasPrimaryFocus) {
+                currentFocus.unfocus();
+              }
+            },
+            child: Scaffold(
+              body: SafeArea(
+                child: Container(
+                  height: MediaQuery.of(context).size.height,
+                  padding: MediaQuery.of(context).size.width > webScreenSize!
+                      ? EdgeInsets.symmetric(
+                          horizontal: MediaQuery.of(context).size.width / 3)
+                      : const EdgeInsets.symmetric(horizontal: 32.0),
+                  width: double.infinity,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Flexible(
+                          fit: FlexFit.loose,
+                          flex: 1,
+                          child: Container(),
+                        ),
+                        // Logo
+                        const Padding(
+                          padding: EdgeInsets.only(top: 25),
+                          child: CSPCLogo(height: 150.0),
+                        ),
+                        // School name and address
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 8,
+                              ),
+                              child: Text(
+                                schoolName ?? 'CSPC',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: 16.0,
+                                    color: darkModeOn ? lightColor : darkColor),
+                              ),
+                            ),
+                            Container(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 8,
+                              ),
+                              child: Text(
+                                schoolAddress ?? 'Nabua',
+                                style: TextStyle(
+                                    color: darkModeOn ? lightColor : darkColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 20.0),
+                        // text field input for email
+                        Text('Log in',
+                            style: TextStyle(
+                              color: darkModeOn ? lightColor : darkColor,
+                              fontSize: 24.0,
+                              fontWeight: FontWeight.bold,
+                            )),
+                        const SizedBox(height: 24.0),
+                        // Text field input for email address
+                        TextFieldInput(
+                          prefixIcon: const Icon(Icons.email_outlined),
+                          textEditingController: _emailController,
+                          labelText: 'Email',
+                          textInputType: TextInputType.emailAddress,
+                        ),
+                        const SizedBox(height: 16.0),
+                        // Text field input for password
+                        TextFieldInput(
+                          prefixIcon: const Icon(Icons.lock_outline),
+                          textEditingController: _passwordController,
+                          labelText: 'Password',
+                          textInputType: TextInputType.visiblePassword,
+                          isRegistration: false,
+                          isPass: true,
+                        ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PasswordRecoveryScreen()));
+                              },
+                              child: Text(
+                                'Forgot Password?',
+                                style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16.0),
+                        // Sign in button
+                        CSPCSignInButton(signIn: signIn),
+                        const SizedBox(height: 12.0),
+                        Flexible(
+                          flex: 2,
+                          child: Container(),
+                        ),
+                        SignUpNavigation(navigateToSignup: navigateToSignup),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        // Login Divider
+                        const LoginDivider(),
+                        const SizedBox(
+                          height: 10,
+                        ),
+                        SignInButton(
+                          Buttons.Google,
+                          text: _isLoading ? "Loading..." : "Sign up with Google",
+                          onPressed: () async {
+                            if (!_isLoading) {
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              try {
+                                await signInWithGoogle();
+                              } catch(e) {
+                                if(e is FirebaseAuthException){
+                                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                    content: Text(e.message!),
+                                    duration: const Duration(seconds: 2),
+                                  ));
+                                }
+                              }
+                              setState(() {
+                                _isLoading = false;
+                              });
+                            }
+                          },
+                        )
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          );
         }
       },
-      child: Scaffold(
-        body: SafeArea(
-            child: Container(
-          height: MediaQuery.of(context).size.height,
-          padding: MediaQuery.of(context).size.width > webScreenSize
-              ? EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width / 3)
-              : const EdgeInsets.symmetric(horizontal: 32.0),
-          width: double.infinity,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Flexible(
-                  fit: FlexFit.loose,
-                  flex: 1,
-                  child: Container(),
-                ),
-                // Logo
-                const Padding(
-                  padding: EdgeInsets.only(top: 25),
-                  child: CSPCLogo(height: 150.0),
-                ),
-                // School name and address
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                      ),
-                      child: Text(
-                        schoolName,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 16.0,
-                            color: darkModeOn ? lightColor : darkColor),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                      ),
-                      child: Text(
-                        schoolAddress,
-                        style: TextStyle(
-                            color: darkModeOn ? lightColor : darkColor),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20.0),
-                // text field input for email
-                Text('Log in',
-                    style: TextStyle(
-                      color: darkModeOn ? lightColor : darkColor,
-                      fontSize: 24.0,
-                      fontWeight: FontWeight.bold,
-                    )),
-                const SizedBox(height: 24.0),
-                // Text field input for email address
-                TextFieldInput(
-                  prefixIcon: const Icon(Icons.email_outlined),
-                  textEditingController: _emailController,
-                  labelText: 'Email',
-                  textInputType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 16.0),
-                // Text field input for password
-                TextFieldInput(
-                  prefixIcon: const Icon(Icons.lock_outline),
-                  textEditingController: _passwordController,
-                  labelText: 'Password',
-                  textInputType: TextInputType.visiblePassword,
-                  isRegistration: false,
-                  isPass: true,
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    TextButton(
-                      onPressed: () {
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const PasswordRecoveryScreen()));
-                      },
-                      child: Text(
-                        'Forgot Password?',
-                        style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16.0),
-                // Sign in button
-                CSPCSignInButton(signIn: signIn),
-                const SizedBox(height: 12.0),
-                Flexible(
-                  flex: 2,
-                  child: Container(),
-                ),
-                SignUpNavigation(navigateToSignup: navigateToSignup),
-                const SizedBox(
-                  height: 10,
-                ),
-                // Login Divider
-                const LoginDivider(),
-                const SizedBox(
-                  height: 10,
-                ),
-                SignInButton(
-                  Buttons.Google,
-                  text: _isLoading ? "Loading..." : "Sign up with Google",
-                  onPressed: () async {
-                    if (!_isLoading) {
-                      setState(() {
-                        _isLoading = true;
-                      });
-                      try {
-                        await signInWithGoogle();
-                      } catch(e) {
-                        if(e is FirebaseAuthException){
-                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                            content: Text(e.message!),
-                            duration: const Duration(seconds: 2),
-                          ));
-                        }
-                      }
-                      setState(() {
-                        _isLoading = false;
-                      });
-                    }
-                  },
-                )
-              ],
-            ),
-          ),
-        )),
-      ),
     );
   }
 }

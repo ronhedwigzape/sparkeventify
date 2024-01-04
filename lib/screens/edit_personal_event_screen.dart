@@ -43,6 +43,7 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
   @override
   void initState() {
     super.initState();
+    fetchAndSetConstants();
     _personalEventTypeController.text = widget.eventSnap.type;
     _personalEventTitleController.text = widget.eventSnap.title;
     _personalEventDescriptionsController.text = widget.eventSnap.description;
@@ -411,7 +412,7 @@ class EditPersonalEventScreenState extends State<EditPersonalEventScreen> {
                           child: Container(
                             margin: EdgeInsets.symmetric(
                                 horizontal: kIsWeb
-                                    ? (width > webScreenSize ? width * 0.2 : 0)
+                                    ? (width > webScreenSize! ? width * 0.2 : 0)
                                     : 0),
                             child: Padding(
                               padding: const EdgeInsets.all(kIsWeb ? 8.0 : 2),

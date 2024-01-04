@@ -54,6 +54,7 @@ class EditEventScreenState extends State<EditEventScreen> {
   @override
   void initState() {
     super.initState();
+    fetchAndSetConstants();
     _eventTypeController.text = widget.eventSnap.type;
     _eventTitleController.text = widget.eventSnap.title;
     _eventDescriptionsController.text = widget.eventSnap.description;
@@ -573,7 +574,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                           child: Container(
                             margin: EdgeInsets.symmetric(
                                 horizontal: kIsWeb
-                                    ? (width > webScreenSize ? width * 0.2 : 0)
+                                    ? (width > webScreenSize! ? width * 0.2 : 0)
                                     : 0),
                             child: Padding(
                               padding: const EdgeInsets.all(kIsWeb ? 8.0 : 2),
@@ -844,11 +845,11 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                             Expanded(
                                                                 child: _buildParticipant(
                                                                     'Program',
-                                                                    programParticipants)),
+                                                                    programParticipants!)),
                                                             Expanded(
                                                                 child: _buildParticipant(
                                                                     'Department',
-                                                                    departmentParticipants)),
+                                                                    departmentParticipants!)),
                                                           ],
                                                         ),
                                                       )
@@ -863,10 +864,10 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                             children: [
                                                               _buildParticipant(
                                                                   'Program',
-                                                                  programParticipants),
+                                                                  programParticipants!),
                                                               _buildParticipant(
                                                                   'Department',
-                                                                  departmentParticipants),
+                                                                  departmentParticipants!),
                                                             ],
                                                           ),
                                                         ),
@@ -1146,7 +1147,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                           ?.contains(participant) ?? [],
                       onChanged: (bool? value) {
                         setState(() {
-                          String? dept = programDepartmentMap[participant];
+                          String? dept = programDepartmentMap![participant];
                           if (value!) {
                             selectedParticipants[type.toLowerCase()]
                                 ?.add(participant);
@@ -1161,13 +1162,13 @@ class EditEventScreenState extends State<EditEventScreen> {
                             if (type.toLowerCase() == 'program' &&
                                 selectedParticipants['program']!
                                     .where((program) =>
-                                        programDepartmentMap[program] == dept)
+                                        programDepartmentMap![program] == dept)
                                     .isEmpty) {
                               selectedParticipants['department']?.remove(dept);
                             }
                           }
                           if (type.toLowerCase() == 'department') {
-                            var associatedPrograms = programDepartmentMap.entries
+                            var associatedPrograms = programDepartmentMap!.entries
                                 .where((entry) => entry.value == participant)
                                 .map((entry) => entry.key)
                                 .toList();
@@ -1220,7 +1221,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                             ?.contains(participant) ?? [],
                         onChanged: (bool? value) {
                           setState(() {
-                            String? dept = programDepartmentMap[participant];
+                            String? dept = programDepartmentMap![participant];
                             if (value!) {
                               selectedParticipants[type.toLowerCase()]
                                   ?.add(participant);
@@ -1235,14 +1236,14 @@ class EditEventScreenState extends State<EditEventScreen> {
                               if (type.toLowerCase() == 'program' &&
                                   selectedParticipants['program']!
                                       .where((program) =>
-                                          programDepartmentMap[program] == dept)
+                                          programDepartmentMap![program] == dept)
                                       .isEmpty) {
                                 selectedParticipants['department']
                                     ?.remove(dept);
                               }
                             }
                             if (type.toLowerCase() == 'department') {
-                              var associatedPrograms = programDepartmentMap
+                              var associatedPrograms = programDepartmentMap!
                                   .entries
                                   .where((entry) => entry.value == participant)
                                   .map((entry) => entry.key)

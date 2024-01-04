@@ -41,6 +41,13 @@ class _PostScreenState extends State<PostScreen> {
   Uint8List? _imageFile;
   bool _isLoading = false;
 
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchAndSetConstants();
+  }
+
   void _selectImage(BuildContext context) async {
     return showDialog(
         context: context,
@@ -369,7 +376,7 @@ class _PostScreenState extends State<PostScreen> {
                           Center(
                             child: SingleChildScrollView(
                               child: Container(
-                                margin: EdgeInsets.symmetric(horizontal: kIsWeb ? (width > webScreenSize ? width * 0.2 : 0) : 0),
+                                margin: EdgeInsets.symmetric(horizontal: kIsWeb ? (width > webScreenSize! ? width * 0.2 : 0) : 0),
                                 child: Padding(
                                   padding: const EdgeInsets.all(kIsWeb ? 8.0 : 2),
                                   child: Card(
@@ -608,8 +615,8 @@ class _PostScreenState extends State<PostScreen> {
                                                         crossAxisAlignment: CrossAxisAlignment.start,
                                                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                         children: [
-                                                          Expanded(child: _buildParticipant('Program', programParticipants)),
-                                                          Expanded(child: _buildParticipant('Department', departmentParticipants)),
+                                                          Expanded(child: _buildParticipant('Program', programParticipants!)),
+                                                          Expanded(child: _buildParticipant('Department', departmentParticipants!)),
                                                         ],
                                                       ),
                                                     ) : Flexible(
@@ -618,8 +625,8 @@ class _PostScreenState extends State<PostScreen> {
                                                         child: Column(
                                                           mainAxisSize: MainAxisSize.min,
                                                           children: [
-                                                            _buildParticipant('Program', programParticipants),
-                                                            _buildParticipant('Department', departmentParticipants),
+                                                            _buildParticipant('Program', programParticipants!),
+                                                            _buildParticipant('Department', departmentParticipants!),
                                                           ],
                                                         ),
                                                       ),
@@ -719,7 +726,7 @@ class _PostScreenState extends State<PostScreen> {
             value: selectedParticipants[type.toLowerCase()]?.contains(participant),
             onChanged: (bool? value) {
               setState(() {
-                String? dept = programDepartmentMap[participant];
+                String? dept = programDepartmentMap![participant];
                 if (value!) {
                   selectedParticipants[type.toLowerCase()]?.add(participant);
                   if (type.toLowerCase() == 'program'
@@ -730,13 +737,13 @@ class _PostScreenState extends State<PostScreen> {
                   selectedParticipants[type.toLowerCase()]?.remove(participant);
                   if (type.toLowerCase() == 'program'
                       && selectedParticipants['program']!
-                        .where((program) => programDepartmentMap[program] == dept)
+                        .where((program) => programDepartmentMap![program] == dept)
                         .isEmpty) {
                     selectedParticipants['department']?.remove(dept);
                   }
                 }
                 if (type.toLowerCase() == 'department') {
-                  var associatedPrograms = programDepartmentMap.entries
+                  var associatedPrograms = programDepartmentMap!.entries
                       .where((entry) => entry.value == participant)
                       .map((entry) => entry.key)
                       .toList();
@@ -779,7 +786,7 @@ class _PostScreenState extends State<PostScreen> {
               value: selectedParticipants[type.toLowerCase()]?.contains(participant),
               onChanged: (bool? value) {
                 setState(() {
-                  String? dept = programDepartmentMap[participant];
+                  String? dept = programDepartmentMap![participant];
                   if (value!) {
                     selectedParticipants[type.toLowerCase()]?.add(participant);
                     if (type.toLowerCase() == 'program'
@@ -790,13 +797,13 @@ class _PostScreenState extends State<PostScreen> {
                     selectedParticipants[type.toLowerCase()]?.remove(participant);
                     if (type.toLowerCase() == 'program'
                         && selectedParticipants['program']!
-                          .where((program) => programDepartmentMap[program] == dept)
+                          .where((program) => programDepartmentMap![program] == dept)
                           .isEmpty) {
                       selectedParticipants['department']?.remove(dept);
                     }
                   }
                   if (type.toLowerCase() == 'department') {
-                    var associatedPrograms = programDepartmentMap.entries
+                    var associatedPrograms = programDepartmentMap!.entries
                         .where((entry) => entry.value == participant)
                         .map((entry) => entry.key)
                         .toList();

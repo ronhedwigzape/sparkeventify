@@ -31,8 +31,8 @@ class _EditUserDialogState extends State<EditUserDialog> {
   final TextEditingController officerPositionController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  late String selectedProgramAndDepartment = programsAndDepartments[0];
-  late String selectedStaffPosition = staffPositions[0];
+  late String selectedProgramAndDepartment = programsAndDepartments![0];
+  late String selectedStaffPosition = staffPositions![0];
   late String profileImage;
   late String program;
   late String department;
@@ -60,7 +60,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
     staffDescription = widget.user.profile!.staffDescription?? '';
 
     // Set the default value for the dropdown
-    for (String programAndDepartment in programsAndDepartments) {
+    for (String programAndDepartment in programsAndDepartments!) {
       List<String> splitValue = programAndDepartment.split(' - ');
       if (splitValue[0] == program && splitValue[1] == department) {
         selectedProgramAndDepartment = programAndDepartment;
@@ -68,7 +68,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
       }
     }
 
-    for (String staff in staffPositions) {
+    for (String staff in staffPositions!) {
       List<String> splitValue = staff.split(' - ');
       if (splitValue[0] == staffPosition && splitValue[1] == staffType && splitValue[2] == staffDescription) {
         selectedStaffPosition = staff;
@@ -266,7 +266,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                           ),
                           onChanged: (String? newValue) {
                             setState(() {
-                              selectedProgramAndDepartment = newValue ?? programsAndDepartments[0]; // Handle null selection
+                              selectedProgramAndDepartment = newValue ?? programsAndDepartments![0]; // Handle null selection
 
                               // Split the selected value:
                               List<String> splitValue = selectedProgramAndDepartment.split(' - ');
@@ -274,7 +274,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                               department = splitValue[1];
                             });
                           },
-                          items: programsAndDepartments.map<DropdownMenuItem<String>>((String value) {
+                          items: programsAndDepartments!.map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value.isEmpty ? null : value,
                               child: Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
@@ -318,7 +318,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                             ),
                             onChanged: (String? newValue) {
                               setState(() {
-                                selectedStaffPosition = newValue ?? staffPositions[0]; // Handle null selection
+                                selectedStaffPosition = newValue ?? staffPositions![0]; // Handle null selection
 
                                 // Split the selected value:
                                 List<String> splitValue = selectedStaffPosition.split(' - ');
@@ -327,7 +327,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
                                 staffDescription = splitValue[2];
                               });
                             },
-                            items: staffPositions.map<DropdownMenuItem<String>>((String value) {
+                            items: staffPositions!.map<DropdownMenuItem<String>>((String value) {
                               return DropdownMenuItem<String>(
                                 value: value.isEmpty ? null : value,
                                 child: Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),

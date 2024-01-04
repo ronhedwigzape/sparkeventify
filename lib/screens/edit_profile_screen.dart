@@ -35,8 +35,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _organizationController = TextEditingController();
   final TextEditingController _officerPositionController = TextEditingController();
 
-  late String selectedProgramAndDepartment = programsAndDepartments[0];
-  late String selectedStaffPosition = staffPositions[0];
+  late String selectedProgramAndDepartment = programsAndDepartments![0];
+  late String selectedStaffPosition = staffPositions![0];
   late String program;
   late String department;
   late String profileImage;
@@ -51,6 +51,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   void initState() {
     super.initState();
+    fetchAndSetConstants();
     _emailController.text = widget.user.email!;
     _passwordController.text = widget.user.password!;
     _firstNameController.text = widget.user.profile!.firstName ?? '';
@@ -73,7 +74,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     staffDescription = widget.user.profile!.staffDescription?? '';
 
     // Set the default value for the dropdown
-    for (String programAndDepartment in programsAndDepartments) {
+    for (String programAndDepartment in programsAndDepartments!) {
       List<String> splitValue = programAndDepartment.split(' - ');
       if (splitValue[0] == program && splitValue[1] == department) {
         selectedProgramAndDepartment = programAndDepartment;
@@ -81,7 +82,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       }
     }
 
-    for (String staff in staffPositions) {
+    for (String staff in staffPositions!) {
       List<String> splitValue = staff.split(' - ');
       if (splitValue[0] == staffPosition && splitValue[1] == staffType && splitValue[2] == staffDescription) {
         selectedStaffPosition = staff;
@@ -446,7 +447,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                           onChanged: (String? newValue) {
                             setState(() {
-                              selectedProgramAndDepartment = newValue ?? programsAndDepartments[0]; // handle null selection
+                              selectedProgramAndDepartment = newValue ?? programsAndDepartments![0]; // handle null selection
 
                               // split the selected value:
                               List<String> splitValue = selectedProgramAndDepartment.split(' - ');
@@ -454,7 +455,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               department = splitValue[1];
                             });
                           },
-                          items: programsAndDepartments.map<DropdownMenuItem<String>>((String value) {
+                          items: programsAndDepartments!.map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value.isEmpty ? null : value,
                               child: Text(value),
@@ -556,7 +557,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                           style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
                           onChanged: (String? newValue) {
                             setState(() {
-                              selectedStaffPosition = newValue ?? staffPositions[0]; // handle null selection
+                              selectedStaffPosition = newValue ?? staffPositions![0]; // handle null selection
 
                               List<String> splitValue = selectedStaffPosition.split(' - ');
                               staffPosition = splitValue[0];
@@ -564,7 +565,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                               staffDescription = splitValue[2];
                             });
                           },
-                          items: staffPositions.map<DropdownMenuItem<String>>((String value) {
+                          items: staffPositions!.map<DropdownMenuItem<String>>((String value) {
                             return DropdownMenuItem<String>(
                               value: value.isEmpty ? null : value,
                               child: Text(value),

@@ -6,7 +6,8 @@ import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/utils/global.dart';
 
 // Define a StatelessWidget as it has no mutable state
-class CSPCLogoWhite extends StatelessWidget {
+class CSPCLogoWhite extends StatefulWidget {
+
   // Define the properties of the widget
   const CSPCLogoWhite({
     super.key,
@@ -14,6 +15,18 @@ class CSPCLogoWhite extends StatelessWidget {
   });
   final double height;
 
+  @override
+  State<CSPCLogoWhite> createState() => _CSPCLogoWhiteState();
+}
+
+class _CSPCLogoWhiteState extends State<CSPCLogoWhite> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchAndSetConstantsStream();
+  }
 // Build method for the widget
   @override
   Widget build(BuildContext context) {
@@ -29,7 +42,7 @@ class CSPCLogoWhite extends StatelessWidget {
             // If the data is not null, return an Image widget
             return Image.memory(
               snapshot.data as Uint8List, // Convert the data to a Uint8List
-              height: height.toDouble(), // Set the height of the image
+              height: widget.height.toDouble(), // Set the height of the image
             );
           } else {
             // If the data is null, return an empty widget
@@ -43,13 +56,12 @@ class CSPCLogoWhite extends StatelessWidget {
     );
   }
 
-
   // Method to load the image
   Future<Uint8List> loadImage(bool darkMode) async {
     
     try {
       // Load the image data into a ByteData object
-      final byteData = await rootBundle.load(kIsWeb ? (darkMode ? schoolLogoWhite : schoolLogoBlack) : schoolLogoWhite);
+      final byteData = await rootBundle.load(kIsWeb ? (darkMode ? schoolLogoWhite! : schoolLogoBlack!) : schoolLogoWhite!);
       // Convert the ByteData to a Uint8List and return it
       return byteData.buffer.asUint8List();
     } catch (e, stacktrace) {

@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:student_event_calendar/utils/global.dart';
 
 // Define a StatelessWidget as it has no mutable state
-class CSPCLogo extends StatelessWidget {
+class CSPCLogo extends StatefulWidget {
   // Define the properties of the widget
   const CSPCLogo({
     super.key,
@@ -12,6 +12,18 @@ class CSPCLogo extends StatelessWidget {
   });
   final double height;
 
+  @override
+  State<CSPCLogo> createState() => _CSPCLogoState();
+}
+
+class _CSPCLogoState extends State<CSPCLogo> {
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    fetchAndSetConstantsStream();
+  }
 // Build method for the widget
   @override
   Widget build(BuildContext context) {
@@ -26,7 +38,7 @@ class CSPCLogo extends StatelessWidget {
             // If the data is not null, return an Image widget
             return Image.memory(
               snapshot.data as Uint8List,
-              height: height.toDouble(), // Set the height of the image
+              height: widget.height.toDouble(), // Set the height of the image
             );
           } else {
             // If the data is null, return an empty widget
@@ -40,12 +52,11 @@ class CSPCLogo extends StatelessWidget {
     );
   }
 
-
   // Method to load the image
   Future<Uint8List> loadImage() async {
     try {
       // Load the image data into a ByteData object
-      final byteData = await rootBundle.load(schoolLogo);
+      final byteData = await rootBundle.load(schoolLogo!);
       // Convert the ByteData to a Uint8List and return it
       return byteData.buffer.asUint8List();
     } catch (e, stacktrace) {

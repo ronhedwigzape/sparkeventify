@@ -29,9 +29,15 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
   final TextEditingController _organizationController = TextEditingController();
   final TextEditingController _positionController = TextEditingController();
   final TextEditingController _retypePasswordController = TextEditingController();
-  late String selectedProgramAndDepartment = programsAndDepartments[0];
+  late String selectedProgramAndDepartment = programsAndDepartments![0];
   late String program = '';
   late String department = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAndSetConstants();
+  }
 
   Future<void> signUpAsClient() async {
     if (_firstNameController.text.trim().isEmpty ||
@@ -302,7 +308,7 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
                                       style: TextStyle(color: darkModeOn ? lightColor : darkColor,),
                                       onChanged: (String? newValue) {
                                         setState(() {
-                                          selectedProgramAndDepartment = newValue ?? programsAndDepartments[0]; // handle null selection
+                                          selectedProgramAndDepartment = newValue ?? programsAndDepartments![0]; // handle null selection
 
                                           // split the selected value:
                                           List<String> splitValue = selectedProgramAndDepartment.split(' - ');
@@ -310,7 +316,7 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
                                           department = splitValue[1];
                                         });
                                       },
-                                      items: programsAndDepartments.map<DropdownMenuItem<String>>((String value) {
+                                      items: programsAndDepartments!.map<DropdownMenuItem<String>>((String value) {
                                         return DropdownMenuItem<String>(
                                           value: value.isEmpty ? null : value,
                                           child: Text(value),

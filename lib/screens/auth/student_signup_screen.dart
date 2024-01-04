@@ -26,10 +26,16 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
   final TextEditingController _phoneNumberController = TextEditingController();
   final TextEditingController _yearController = TextEditingController();
   final TextEditingController _sectionController = TextEditingController();
-  late String selectedProgramAndDepartment = programsAndDepartments[0];
+  late String selectedProgramAndDepartment = programsAndDepartments![0];
   final TextEditingController _retypePasswordController = TextEditingController();
   late String program = '';
   late String department = '';
+
+  @override
+  void initState() {
+    super.initState();
+    fetchAndSetConstants();
+  }
 
   Future<void> signUpAsClient() async {
 
@@ -295,7 +301,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                                   style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                                   onChanged: (String? newValue) {
                                     setState(() {
-                                      selectedProgramAndDepartment = newValue ?? programsAndDepartments[0]; // handle null selection
+                                      selectedProgramAndDepartment = newValue ?? programsAndDepartments![0]; // handle null selection
 
                                       // split the selected value:
                                       List<String> splitValue = selectedProgramAndDepartment.split(' - ');
@@ -303,7 +309,7 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                                       department = splitValue[1];
                                     });
                                   },
-                                  items: programsAndDepartments.map<DropdownMenuItem<String>>((String value) {
+                                  items: programsAndDepartments!.map<DropdownMenuItem<String>>((String value) {
                                     return DropdownMenuItem<String>(
                                       value: value.isEmpty ? null : value,
                                       child: Text(value),

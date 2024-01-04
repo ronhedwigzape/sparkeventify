@@ -48,7 +48,7 @@ class CSPCBackground extends StatelessWidget {
   Future<Uint8List> loadImage() async {
     try {
       // Load the image data into a ByteData object
-      final byteData = await rootBundle.load(schoolBackground);
+      final byteData = await rootBundle.load(schoolBackground!);
       // Convert the ByteData to a Uint8List and return it
       return byteData.buffer.asUint8List();
     } catch (e, stacktrace) {

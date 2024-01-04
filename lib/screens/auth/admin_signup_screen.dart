@@ -27,6 +27,12 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
   final TextEditingController _retypePasswordController = TextEditingController();
   bool _isLoading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    fetchAndSetConstants();
+  }
+
   Future<void> signUpAsAdmin() async {
     setState(() {
       _isLoading = true;
@@ -113,7 +119,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
     return Scaffold(
       body: SafeArea(
           child: Container(
-        padding: MediaQuery.of(context).size.width > webScreenSize
+        padding: MediaQuery.of(context).size.width > webScreenSize!
             ?
             // Web screen
             EdgeInsets.symmetric(
@@ -140,17 +146,17 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
                   padding: const EdgeInsets.symmetric(
                     vertical: 8,
                   ),
-                  child: const Text(
-                    schoolName,
+                  child: Text(
+                    schoolName!,
                     style:
-                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                        const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     vertical: 8,
                   ),
-                  child: const Text(schoolAddress),
+                  child: Text(schoolAddress!),
                 ),
               ],
             ),

@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:student_event_calendar/screens/admin_dashboard_screen.dart';
 import 'package:student_event_calendar/screens/feedback_screen.dart';
+import 'package:student_event_calendar/screens/manage_program_department_screen.dart';
 import 'package:student_event_calendar/screens/manage_events_screen.dart';
 import 'package:student_event_calendar/screens/manage_users_screen.dart';
 import 'package:student_event_calendar/screens/notification_screen.dart';
@@ -12,141 +14,72 @@ import 'package:student_event_calendar/screens/pending_events_screen.dart';
 import 'package:student_event_calendar/widgets/events_calendar.dart';
 import '../resources/auth_methods.dart';
 
-// Constant variables for the app
-const webScreenSize = 600;
-const schoolName = 'Camarines Sur Polytechnic Colleges';
-const schoolAddress = 'Nabua, Camarines Sur';
-const schoolLogoWhite = 'assets/icon/monochrome_cspc_launcher_icon_white.png';
-const schoolLogoBlack = 'assets/icon/monochrome_cspc_launcher_icon_black.png';
-const schoolLogo = 'assets/images/cspc_logo.png';
-const schoolBackground = 'assets/images/cspc_background.png';
-const appName = 'Announce';
+final firestoreInstance = FirebaseFirestore.instance;
 
-// Global Programs and Departments
-final List<String> programsAndDepartments = [
-  'Select your program and department',
-  'BSCS - CCS - Computer Science',
-  'BSIT - CCS - Information Technology',
-  'BSIS - CCS - Information Systems',
-  'BLIS - CCS - Information Science',
-  'BSN - CHS - Nursing',
-  'BSM - CHS - Midwifery',
-  'BSME - CEA - Mechanical Engineering',
-  'BSEE - CEA - Electrical Engineering',
-  'BSECE - CEA - Electronics Communication Engineering',
-  'BSCoE - CEA - Computer Engineering',
-  'BSCiE - CEA - Civil Engineering',
-  'BSA - CEA - Architecture',
-  'BSOA - CTHBM - Office Administration',
-  'BSHM - CTHBM - Hospitality Management',
-  'BSTM - CTHBM - Tourism Management',
-  'BSE - CTHBM - Entreprenuership',
-  'BSBA - CTHBM - Business Administration Major in Financial Management',
-  'BAEL - CAS - English Language Studies',
-  'BSMa - CAS - Mathematics',
-  'BSAM - CAS - Applied Mathematics',
-  'BSDC - CAS - Development Communication',
-  'BPA - CAS - Public Administration',
-  'BHS - CAS - Human Services',
-  'BTVTEFP - CTDE - Major in Fish Processing',
-  'BTVTEFS - CTDE - Major in Food Service Management',
-  'BTVTEET - CTDE - Major in Electronics Technology',
-  'BPE - CTDE - Physical Education',
-  'BCAE - CTDE - Culture and Arts Education',
-  'BSNE - CTDE - Special Needs Education'
-];
+int? webScreenSize; 
+String? schoolName; 
+String? schoolAddress; 
+String? schoolLogoWhite; 
+String? schoolLogoBlack;
+String? schoolLogo;
+String? schoolBackground;
+String? appName;
+List<String>? programsAndDepartments; 
+List<String>? programParticipants; 
+List<String>? departmentParticipants; 
+List<String>? staffPositions;
+Map<String, String>? programDepartmentMap; 
 
-// Programs
-List<String> programParticipants = [
-  'BSCS',
-  'BSIT',
-  'BSIS',
-  'BLIS',
-  'BSN',
-  'BSM',
-  'BSME',
-  'BSEE',
-  'BSECE',
-  'BSCoE',
-  'BSCiE',
-  'BSA',
-  'BSOA',
-  'BSHM',
-  'BSTM',
-  'BSE',
-  'BSBA',
-  'BAEL',
-  'BSMa',
-  'BSAM',
-  'BSDC',
-  'BPA',
-  'BHS',
-  'BTVTEFP',
-  'BTVTEFS',
-  'BTVTEET',
-  'BPE',
-  'BCAE',
-  'BSNE'
-];
-
-// Departments
-List<String> departmentParticipants = [
-  'CCS',
-  'CHS',
-  'CEA',
-  'CTHBM',
-  'CAS',
-  'CTDE'
-];
-
-// Selected Participants
+// Placeholder for selected participants
 Map<String, List<String>> selectedParticipants = {
   'program': [],
   'department': []
 };
 
-// List all associated program for departments
-Map<String, String> programDepartmentMap = {
-  'BSCS': 'CCS',
-  'BSIT': 'CCS',
-  'BSIS': 'CCS',
-  'BLIS': 'CCS',
-  'BSN': 'CHS',
-  'BSM': 'CHS',
-  'BSME': 'CEA',
-  'BSEE': 'CEA',
-  'BSECE': 'CEA',
-  'BSCoE': 'CEA',
-  'BSCiE': 'CEA',
-  'BSA': 'CEA',
-  'BSOA': 'CTHBM',
-  'BSHM': 'CTHBM',
-  'BSTM': 'CTHBM',
-  'BSE': 'CTHBM',
-  'BSBA': 'CTHBM',
-  'BAEL': 'CAS',
-  'BSMa': 'CAS',
-  'BSAM': 'CAS',
-  'BSDC': 'CAS',
-  'BPA': 'CAS',
-  'BHS': 'CAS',
-  'BTVTEFP': 'CTDE',
-  'BTVTEFS': 'CTDE',
-  'BTVTEET': 'CTDE',
-  'BPE': 'CTDE',
-  'BCAE': 'CTDE',
-  'BSNE': 'CTDE'
-};
+Future<void> fetchAndSetConstants() async {
+  DocumentSnapshot documentSnapshot = 
+      await firestoreInstance.collection('global').doc('constants').get();
 
-final List<String> staffPositions = [
-  'Select your position',
-  'Director - Student Affairs and Services - SASO',
-  'Administrative Aide VI - Head of Staff - SASO',
-  'Administrative Aide III - Support Staff - Student Development',
-  'Administrative Aide III - Support Staff - Scholarships(TES) & Financial Assist.',
-  'Administrative Aide II - Support Staff - Scholarships(CSP/TDP) & Financial Assist.',
-  'Administrative Aide II - Support Staff - Information Services',
-];
+  appName = documentSnapshot.get('appName') as String;
+  webScreenSize = documentSnapshot.get('webScreenSize') as int;
+  schoolName = documentSnapshot.get('schoolName') as String;
+  schoolAddress = documentSnapshot.get('schoolAddress') as String;
+  schoolLogoWhite = documentSnapshot.get('schoolLogoWhite') as String;
+  schoolLogoBlack = documentSnapshot.get('schoolLogoBlack') as String;
+  schoolLogo = documentSnapshot.get('schoolLogo') as String;
+  schoolBackground = documentSnapshot.get('schoolBackground') as String;
+  programsAndDepartments = List<String>.from(documentSnapshot.get('programsAndDepartments'));
+  programParticipants = List<String>.from(documentSnapshot.get('programParticipants'));
+  departmentParticipants = List<String>.from(documentSnapshot.get('departmentParticipants'));
+  programDepartmentMap = Map<String, String>.from(documentSnapshot.get('programDepartmentMap'));
+  staffPositions = List<String>.from(documentSnapshot.get('staffPositions'));
+
+  // Place a select option on programs and departments and staff positions
+  programsAndDepartments!.insert(0, 'Select your program and department');
+  staffPositions!.insert(0, 'Select your SASO position');
+}
+
+Stream<void> fetchAndSetConstantsStream() {
+ return firestoreInstance.collection('global').doc('constants').snapshots().map((snapshot) {
+    appName = snapshot.get('appName') as String;
+    webScreenSize = snapshot.get('webScreenSize') as int;
+    schoolName = snapshot.get('schoolName') as String;
+    schoolAddress = snapshot.get('schoolAddress') as String;
+    schoolLogoWhite = snapshot.get('schoolLogoWhite') as String;
+    schoolLogoBlack = snapshot.get('schoolLogoBlack') as String;
+    schoolLogo = snapshot.get('schoolLogo') as String;
+    schoolBackground = snapshot.get('schoolBackground') as String;
+    programsAndDepartments = List<String>.from(snapshot.get('programsAndDepartments'));
+    programParticipants = List<String>.from(snapshot.get('programParticipants'));
+    departmentParticipants = List<String>.from(snapshot.get('departmentParticipants'));
+    programDepartmentMap = Map<String, String>.from(snapshot.get('programDepartmentMap'));
+    staffPositions = List<String>.from(snapshot.get('staffPositions'));
+
+    // Place a select option on programs and departments and staff positions
+    programsAndDepartments!.insert(0, 'Select your program and department');
+    staffPositions!.insert(0, 'Select your SASO position');
+ });
+}
 
 // Global key for the events calendar
 Future<List<Widget>> homeScreenItems() async {
@@ -178,6 +111,7 @@ Future<List<Widget>> homeScreenItems() async {
     // Widgets for 'SuperAdmin' only when app is running on Web platform
     return [
       const AdminDashboardScreen(),
+      const ManageProgramDepartmentScreen(),
       const ProfileScreen(),
       const NotificationScreen()
     ];
