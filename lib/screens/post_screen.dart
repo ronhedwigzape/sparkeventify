@@ -206,33 +206,90 @@ class _PostScreenState extends State<PostScreen> {
         DateFormat time12Format = DateFormat('h:mm a');
         DateTime startTime12 = time12Format.parse(pickedStartTime);
         DateTime endTime12 = time12Format.parse(pickedEndTime);
-        // Add the event to the database
-        String response = await FireStoreEventMethods().postEvent(
-            _eventTitleController.text,
-            _imageFile,
-            _eventDescriptionsController.text,
-            FirebaseAuth.instance.currentUser!.uid,
-            _documentFile,
-            startDatePart,
-            endDatePart,
-            startTime12,
-            endTime12,
-            selectedParticipants,
-            _eventVenueController.text,
-            _eventTypeController.text,
-            'Upcoming',
-            userType
+
+        // Show a dialog to enter the user's password
+        String? password = await showDialog<String>(
+          context: context,
+          builder: (BuildContext context) {
+            final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
+            String? password;
+            return AlertDialog(
+              title: Text(
+                'Enter your password',
+                style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+              ),
+              content: TextField(
+                obscureText: true,
+                decoration: InputDecoration(
+                  hintText: 'Password',
+                ),
+                onChanged: (value) => password = value,
+              ),
+              actions: <Widget>[
+                TextButton(
+                  child: Text('Cancel'),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    setState(() {
+                      _isLoading = false;
+                    });
+                  },
+                ),
+                TextButton(
+                  child: Text('OK'),
+                  onPressed: () {
+                    Navigator.of(context).pop(password);
+                  },
+                ),
+              ],
+            );
+          },
+        );
+
+        // If the password is not null, re-authenticate the user
+        if (password != null) {
+          User? user = FirebaseAuth.instance.currentUser;
+          AuthCredential credential = EmailAuthProvider.credential(
+            email: user!.email!,
+            password: password,
           );
-        if (kDebugMode) {
-          print('Add Event Response: $response');
+
+          // Re-authenticate the user
+          try {
+            await user.reauthenticateWithCredential(credential);
+
+            // Add the event to the database
+            String response = await FireStoreEventMethods().postEvent(
+                _eventTitleController.text,
+                _imageFile,
+                _eventDescriptionsController.text,
+                FirebaseAuth.instance.currentUser!.uid,
+                _documentFile,
+                startDatePart,
+                endDatePart,
+                startTime12,
+                endTime12,
+                selectedParticipants,
+                _eventVenueController.text,
+                _eventTypeController.text,
+                'Upcoming',
+                userType
+              );
+            if (kDebugMode) {
+              print('Add Event Response: $response');
+            }
+            // Check if the response is a success or a failure
+            if (response == 'Success') {
+              onPostSuccess(userType);
+            } else {
+              onPostFailure(response);
+            }
+            return response;
+          } catch (e) {
+            // If the re-authentication fails, show an error message
+            showSnackBar('Incorrect password. Please try again.', context);
+          }
         }
-        // Check if the response is a success or a failure
-        if (response == 'Success') {
-          onPostSuccess(userType);
-        } else {
-          onPostFailure(response);
-        }
-        return response;
       } else {
         if (kDebugMode) {
           print('Complete all required parameters!');
