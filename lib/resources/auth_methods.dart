@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:student_event_calendar/models/profile.dart' as model;
 import 'package:student_event_calendar/models/user.dart' as model;
@@ -13,6 +14,7 @@ class AuthMethods {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn(clientId: "777878936021-c9089dk3dt2nomobhobmrncjgqh7502u.apps.googleusercontent.com");
+  final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   // Get current user details
   Future<model.User?> getCurrentUserDetails() async {
@@ -65,6 +67,11 @@ class AuthMethods {
           return 'Invalid email format. Please use an email ending with @cspc.edu.ph';
         } else if ((userType == 'Student' || userType == 'Officer') && !email.endsWith('@my.cspc.edu.ph')) {
           return 'Invalid email format. Please use an email ending with @my.cspc.edu.ph';
+        }
+
+        // Check if it's only an cspc email
+        if (!email.endsWith('@cspc.edu.ph') && !email.endsWith('@my.cspc.edu.ph')) {
+          return 'Invalid email format. Please use an email ending with @cspc.edu.ph or @my.cspc.edu.ph';
         }
 
         // Additional condition to check for unique officer position in an organization
@@ -133,6 +140,12 @@ class AuthMethods {
     try {
       // Check if email and password is not empty
       if (email.isNotEmpty || password.isNotEmpty) {
+
+        // Check cspc email format
+        if (!email.endsWith('@cspc.edu.ph') && !email.endsWith('@my.cspc.edu.ph')) {
+          return 'Invalid email format. Please use an email ending with @cspc.edu.ph or @my.cspc.edu.ph';
+        }
+
         // Sign in with Firebase Authentication
         UserCredential credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
         // Initialize deviceToken with empty map
@@ -181,6 +194,13 @@ class AuthMethods {
       );
       
       UserCredential userCredential = await _auth.signInWithCredential(credential);
+
+      // Check if the email domain(@cspc.edu.ph or @my.cspc.edu.ph) is valid
+      if (!userCredential.user!.email!.endsWith('@cspc.edu.ph') && !userCredential.user!.email!.endsWith('@my.cspc.edu.ph')) {
+        await userCredential.user!.delete();  // Delete the user from Firebase Auth
+        return null;  // Return null or some error message
+      }
+
       DocumentReference docRef = _firestore.collection('users').doc(userCredential.user!.uid);
       DocumentSnapshot docSnap = await docRef.get();
       if (docSnap.exists) {
@@ -230,6 +250,10 @@ class AuthMethods {
         );
         // Set the new user's details in Firestore
         await docRef.set(user.toJson());
+
+        // Store the tokens after successful sign-in
+        await storage.write(key: 'idToken', value: googleAuth?.idToken);
+        await storage.write(key: 'accessToken', value: googleAuth?.accessToken);
       }
       var token = await _firebaseMessaging.getToken();
       if (token != null) {
