@@ -30,13 +30,10 @@ class _EventFeedbackScreenState extends State<EventFeedbackScreen> {
         final departmentCell = row.cells[2].child as Text;
         final attendanceCell = row.cells[3].child as Text;
         final satisfactionCell = row.cells[4].child as Text;
-        return (attendanceFilter == null ||
-                attendanceCell.data == attendanceFilter) &&
-            (satisfactionFilter == null ||
-                satisfactionCell.data == satisfactionFilter) &&
+        return (attendanceFilter == null || attendanceCell.data == attendanceFilter) &&
+            (satisfactionFilter == null || satisfactionCell.data == satisfactionFilter) &&
             (programFilter == null || programCell.data == programFilter) &&
-            (departmentFilter == null ||
-                departmentCell.data == departmentFilter);
+            (departmentFilter == null || departmentCell.data == departmentFilter);
       }).toList();
     });
   }
@@ -46,8 +43,8 @@ class _EventFeedbackScreenState extends State<EventFeedbackScreen> {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     return Scaffold(
         appBar: AppBar(title: const Text('Event Feedback Evaluation')),
-        body: FutureBuilder<List<EventFeedbacks>>(
-            future: FirestoreFeedbackMethods().getAllFeedbacks(widget.eventId),
+        body: StreamBuilder<List<EventFeedbacks>>(
+            stream: FirestoreFeedbackMethods().streamAllFeedbacks(widget.eventId),
             builder: (context, snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return Center(
