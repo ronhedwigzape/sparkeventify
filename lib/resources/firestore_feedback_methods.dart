@@ -98,6 +98,12 @@ class FirestoreFeedbackMethods {
     return snapshot.docs.map((doc) => EventFeedbacks.fromMap(doc.data() as Map<String, dynamic>)).toList();
   }
 
+  Stream<List<EventFeedbacks>> streamAllFeedbacks(String eventId) {
+    return _eventRef.doc(eventId).collection('feedbacks').snapshots().map((snapshot) {
+      return snapshot.docs.map((doc) => EventFeedbacks.fromMap(doc.data())).toList();
+    });
+  }
+
   // Method to get all evaluator's feedback from a specific event feedback
   Future<List<EvaluatorFeedback>> getAllEvaluatorsFeedback(String eventId, String feedbackId) async {
     DocumentSnapshot snapshot = await _eventRef.doc(eventId).collection('feedbacks').doc(feedbackId).get();
