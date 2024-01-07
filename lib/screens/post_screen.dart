@@ -221,14 +221,14 @@ class _PostScreenState extends State<PostScreen> {
               ),
               content: TextField(
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Password',
                 ),
                 onChanged: (value) => password = value,
               ),
               actions: <Widget>[
                 TextButton(
-                  child: Text('Cancel'),
+                  child: const Text('Cancel'),
                   onPressed: () {
                     Navigator.of(context).pop();
                     setState(() {
@@ -237,7 +237,7 @@ class _PostScreenState extends State<PostScreen> {
                   },
                 ),
                 TextButton(
-                  child: Text('OK'),
+                  child: const Text('OK'),
                   onPressed: () {
                     Navigator.of(context).pop(password);
                   },
@@ -288,6 +288,7 @@ class _PostScreenState extends State<PostScreen> {
             return response;
           } catch (e) {
             // If the re-authentication fails, show an error message
+            // ignore: use_build_context_synchronously
             showSnackBar('Incorrect password. Please try again.', context);
           }
         }

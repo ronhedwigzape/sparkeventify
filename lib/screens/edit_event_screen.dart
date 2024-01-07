@@ -371,6 +371,7 @@ class EditEventScreenState extends State<EditEventScreen> {
         );
 
         // Show a dialog to enter the user's password
+        // ignore: use_build_context_synchronously
         String? password = await showDialog<String>(
           barrierDismissible: false,
           context: context,
@@ -384,14 +385,14 @@ class EditEventScreenState extends State<EditEventScreen> {
               ),
               content: TextField(
                 obscureText: true,
-                decoration: InputDecoration(
+                decoration: const InputDecoration(
                   hintText: 'Password',
                 ),
                 onChanged: (value) => password = value,
               ),
               actions: <Widget>[
                 TextButton(
-                  child: Text('Cancel'),
+                  child: const Text('Cancel'),
                   onPressed: () {
                     Navigator.of(context).pop();
                     setState(() {
@@ -400,7 +401,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                   },
                 ),
                 TextButton(
-                  child: Text('OK'),
+                  child: const Text('OK'),
                   onPressed: () {
                     Navigator.of(context).pop(password);
                   },
@@ -442,6 +443,7 @@ class EditEventScreenState extends State<EditEventScreen> {
             }
           } catch (e) {
             // If the re-authentication fails, show an error message
+            // ignore: use_build_context_synchronously
             showSnackBar('Incorrect password. Please try again.', context);
           }
         }

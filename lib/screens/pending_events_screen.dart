@@ -23,7 +23,7 @@ class PendingEventsScreen extends StatelessWidget {
         stream: _fireStoreEventMethods.getPendingEvents(),
         builder: (BuildContext context, AsyncSnapshot<List<Event>> snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           } else if (snapshot.hasError) {
             return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: darkModeOn ? lightColor : darkColor)));
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -40,7 +40,7 @@ class PendingEventsScreen extends StatelessWidget {
                 stream: _fireStoreUserMethods.getUserByEventsCreatedByStream(event.createdBy),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return Center(child: CircularProgressIndicator());
+                    return const Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}', style: TextStyle(color: darkModeOn ? lightColor : darkColor)));
                   } else if (!snapshot.hasData) {
@@ -54,7 +54,7 @@ class PendingEventsScreen extends StatelessWidget {
                       children: [
                         if (displayEvent.image != null && displayEvent.image!.isNotEmpty)
                           TextButton(
-                            child: Text('View Image'),
+                            child: const Text('View Image'),
                             onPressed: () {
                               Navigator.push(
                                 context,
@@ -65,13 +65,13 @@ class PendingEventsScreen extends StatelessWidget {
                             },
                           ),
                         ListTile(
-                          title: Text(displayEvent.title, style: TextStyle(fontSize: 20),),
+                          title: Text(displayEvent.title, style: const TextStyle(fontSize: 20),),
                           subtitle: Text('Created by: ${user.profile.fullName}\nUser type: ${user.userType}\nStart date: ${displayEvent.startDate}\nEnd date: ${displayEvent.endDate}\nStart time: ${displayEvent.startTime}\nEnd time: ${displayEvent.endTime}\nDescription: ${displayEvent.description}\nVenue: ${displayEvent.venue}\nType: ${displayEvent.type}\nStatus: ${displayEvent.status}\nHas feedback: ${displayEvent.hasFeedback}\nApproval status: ${displayEvent.approvalStatus}'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               IconButton(
-                                icon: Icon(Icons.check, color: Colors.green),
+                                icon: const Icon(Icons.check, color: Colors.green),
                                 onPressed: () {
                                   showDialog(
                                     context: context,
@@ -81,22 +81,25 @@ class PendingEventsScreen extends StatelessWidget {
                                         content: Text('Are you sure you want to approve this event? This event will be displayed in the calendar after approval.', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                                         actions: <Widget>[
                                           TextButton(
-                                            child: Text('Cancel'),
+                                            child: const Text('Cancel'),
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
                                           ),
                                           TextButton(
-                                            child: Text('Approve'),
+                                            child: const Text('Approve'),
                                             onPressed: () async {
                                               bool success = await _fireStoreEventMethods.approveOrRejectEvent(event.id, true);
+                                               // ignore: use_build_context_synchronously
                                                if (Navigator.canPop(context)) {
+                                                  // ignore: use_build_context_synchronously
                                                   Navigator.of(context).pop();
                                                 }
 
                                               if (success) {
+                                                // ignore: use_build_context_synchronously
                                                 ScaffoldMessenger.of(context).showSnackBar(
-                                                  SnackBar(content: Text('Event approved')),
+                                                  const SnackBar(content: Text('Event approved')),
                                                 );
                                               }
                                             },
