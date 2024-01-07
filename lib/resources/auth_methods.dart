@@ -134,13 +134,11 @@ class AuthMethods {
 
   // Sign in user (Admin, Student, SASO Staff, Organization Officer)
   Future<String> signIn({required String email, required String password}) async {
-    // Initialize values
     String response = "Enter valid credentials";
     Map<String, String>? deviceTokens = {};
     try {
       // Check if email and password is not empty
       if (email.isNotEmpty || password.isNotEmpty) {
-
         // Check cspc email format
         if (!email.endsWith('@cspc.edu.ph') && !email.endsWith('@my.cspc.edu.ph')) {
           return 'Invalid email format. Please use an email ending with @cspc.edu.ph or @my.cspc.edu.ph';
@@ -159,26 +157,34 @@ class AuthMethods {
             return 'Your account has been disabled. Please contact support for further assistance.';
           }
         }
-        
+
+        // Check if the user is in the 'trashedUsers' collection
+        DocumentSnapshot trashedUserSnapshot = await _firestore.collection('trashedUsers').doc(credential.user!.uid).get();
+        if (trashedUserSnapshot.exists) {
+          // User is trashed, do not proceed with sign-in
+          await _auth.signOut();
+          return 'Your account has been disabled. Please contact support for further assistance.';
+        }
+
         // Initialize deviceToken with empty map
         await _firestore.collection('users').doc(credential.user!.uid).update({'deviceTokens': deviceTokens});
-        // Set devicetoken in Firestore for mobile devices
-      
-          // ######### CODE FOR ADDING DEVICE REGISTRATION #########
-          // Get Firebase messaging token for this device
-          var token = await _firebaseMessaging.getToken();
-          // Call the registerDevice method with user's uid and token in mobile device
-          if (token != null) {
-            await FirebaseNotificationService().registerDevice(credential.user!.uid, token);
-          }
-          // ########################################################    
-        
+
+        // If the user is not disabled or trashed, proceed with the sign-in process
+        // Get Firebase messaging token for this device
+        var token = await _firebaseMessaging.getToken();
+        // Call the registerDevice method with user's uid and token in mobile device
+        if (token != null) {
+          await FirebaseNotificationService().registerDevice(credential.user!.uid, token);
+        }
+
         // Return success response
         response = "Success";
-      } 
+      } else {
+        response = "Please enter both email and password.";
+      }
     } catch (err) {
       // Handle different error types from FirebaseAuth
-      if (err is FirebaseAuthException) {  
+      if (err is FirebaseAuthException) {
         if (err.code == 'user-not-found') {
           response = 'No user found for that email.';
         } else if (err.code == 'wrong-password') {

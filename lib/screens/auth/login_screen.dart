@@ -80,33 +80,68 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> signInWithGoogle() async {
-    // Handle Google sign-in
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       UserCredential? userCredential = await AuthMethods().signInWithGoogle();
       if (userCredential != null) {
+        // Check if the user is in the 'users' collection and if they are disabled
+        DocumentSnapshot userSnapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(userCredential.user!.uid)
+            .get();
+
+        if (userSnapshot.exists && userSnapshot.data() != null) {
+          Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+          if (userData['disabled'] == true) {
+            // User is disabled, do not proceed with sign-in
+            setState(() {
+              _isLoading = false;
+            });
+            onSignInFailure('Your account has been disabled. Please contact support for further assistance.');
+            return;
+          }
+        }
+
+        // Check if the user is in the 'trashedUsers' collection
+        DocumentSnapshot trashedUserSnapshot = await FirebaseFirestore.instance
+            .collection('trashedUsers')
+            .doc(userCredential.user!.uid)
+            .get();
+
+        if (trashedUserSnapshot.exists) {
+          // User is trashed, do not proceed with sign-in
+          setState(() {
+            _isLoading = false;
+          });
+          onSignInFailure('Your account has been disabled. Please contact support for further assistance.');
+          return;
+        }
+
+        // User is not disabled or trashed, proceed with sign-in
         // Handle successful sign-in
-        final doc = await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).get();
-        final String userType = doc.get('userType');
+        final String userType = userSnapshot.get('userType');
         if (userType == 'Admin' && kIsWeb) {
           mounted ? Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const AdminScreenLayout())) : '';
         } else if ((userType == 'Student' && !kIsWeb) || (userType == 'Staff' && !kIsWeb) || (userType == 'Officer' && !kIsWeb) || (userType == 'Guest' && !kIsWeb)) {
           mounted ? Navigator.of(context).pushReplacement(MaterialPageRoute(builder: (context) => const ClientScreenLayout())) : '';
         } else {
           // Handle unknown user type or platform
+          onSignInFailure('Unknown user type or platform');
         }
       } else {
         // Handle sign-in failure
         onSignInFailure("Sign in failed");
-        if (kDebugMode) {
-          print("Sign in failed");
-        }
       }
     } catch (e) {
       onSignInFailure(e.toString());
-      if (kDebugMode) {
-        print(e.toString());
-      }
     }
+
+    setState(() {
+      _isLoading = false;
+    });
   }
 
   void onSignInSuccess(String message) async {
