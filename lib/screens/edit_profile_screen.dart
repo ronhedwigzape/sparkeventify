@@ -673,7 +673,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     mainAxisAlignment:
                     MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.delete_forever, color: darkModeOn ? darkColor : lightColor),
+                      Icon(Icons.delete, color: darkModeOn ? darkColor : lightColor),
                       const SizedBox(width: 10),
                       Text(
                         'Delete Your Account',

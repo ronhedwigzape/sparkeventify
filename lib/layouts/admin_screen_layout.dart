@@ -111,99 +111,67 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                     color: darkModeOn ? lightColor : darkColor),
                   ),
                   const SizedBox(width: 10.0),
+                  // For Admin or Super Admin
                   userType == 'Admin' || userType == 'SuperAdmin'
-                    ? buildAppBarButton(
-                        icon: Icons.dashboard, 
-                        label: "Dashboard", 
-                        pageIndex: 0, 
-                        onTap: () => navigationTapped(0)
-                      )
+                    ? buildAppBarButton(icon: Icons.dashboard, label: "Dashboard", pageIndex: 0, onTap: () => navigationTapped(0)) 
                     : const SizedBox.shrink(),
                   userType == 'Admin' 
                     ? const SizedBox(width: 10.0) 
                     : const SizedBox.shrink(),
                   userType == 'Admin' 
-                    ? buildAppBarButton(
-                        icon: Icons.add_circle, 
-                        label: "Post", 
-                        pageIndex: 1, 
-                        onTap: () => navigationTapped(1)
-                      )
+                    ? buildAppBarButton(icon: Icons.add_circle, label: "Post", pageIndex: 1, onTap: () => navigationTapped(1))
                     : const SizedBox.shrink(),
                   userType == 'Admin' 
                     ? const SizedBox(width: 10.0) 
                     : const SizedBox.shrink(),
                   userType == 'Admin' 
-                    ? buildAppBarButton(
-                        icon: Icons.event, 
-                        label: "Events", 
-                        pageIndex: 2, 
-                        onTap: () => navigationTapped(2)
-                      )
+                    ? buildAppBarButton(icon: Icons.event, label: "Events", pageIndex: 2, onTap: () => navigationTapped(2))
                     : const SizedBox.shrink(),
                   userType == 'Admin' 
                     ? const SizedBox(width: 10.0)
                     : const SizedBox.shrink(),
                   userType == 'Admin' 
-                    ? buildAppBarButton(
-                        icon: Icons.group, 
-                        label: "Users", 
-                        pageIndex: 3, 
-                        onTap: () => navigationTapped(3)
-                      )
+                    ? buildAppBarButton(icon: Icons.group, label: "Users", pageIndex: 3, onTap: () => navigationTapped(3))
                     : const SizedBox.shrink(),
                   userType == 'Admin' 
                     ? const SizedBox(width: 10.0) 
                     : const SizedBox.shrink(),
                   userType == 'Admin' 
-                    ? buildAppBarButton(
-                        icon: Icons.feedback, 
-                        label: "Feedbacks", 
-                        pageIndex: 4, 
-                        onTap: () => navigationTapped(4)
-                      )
+                    ? buildAppBarButton(icon: Icons.feedback, label: "Feedbacks", pageIndex: 4, onTap: () => navigationTapped(4))
                     : const SizedBox.shrink(),
                   userType == 'SuperAdmin' 
                     ? const SizedBox(width: 10.0) 
                     : const SizedBox.shrink(),
                   userType == 'SuperAdmin'
-                    ? buildAppBarButton(
-                        icon: Icons.school, 
-                        label: "Manage Programs & Departments",
-                        pageIndex: 1, 
-                        onTap: () => navigationTapped(1)
-                      )
+                    ? buildAppBarButton(icon: Icons.school, label: "Manage Programs & Departments", pageIndex: 1, onTap: () => navigationTapped(1))
                     : const SizedBox.shrink(),
                   userType == 'SuperAdmin' 
                     ? const SizedBox(width: 10.0) 
                     : const SizedBox.shrink(),
                   userType == 'SuperAdmin'
-                    ? buildAppBarButton(
-                        icon: Icons.supervised_user_circle, 
-                        label: "Manage Staff Positions",
-                        pageIndex: 2, 
-                        onTap: () => navigationTapped(2)
-                      )
+                    ? buildAppBarButton(icon: Icons.supervised_user_circle, label: "Manage Staff Positions", pageIndex: 2, onTap: () => navigationTapped(2))
                     : const SizedBox.shrink(),
                   userType == 'SuperAdmin' 
                     ? const SizedBox(width: 10.0) 
                     : const SizedBox.shrink(),
                   userType == 'SuperAdmin'
-                    ? buildAppBarButton(
-                        icon: Icons.supervised_user_circle, 
-                        label: "Create Admin",
-                        pageIndex: 3, 
-                        onTap: () => navigationTapped(3)
-                      )
+                    ? buildAppBarButton(icon: Icons.supervised_user_circle, label: "Create Admin", pageIndex: 3, onTap: () => navigationTapped(3))
+                    : const SizedBox.shrink(),
+                  userType == 'SuperAdmin' 
+                    ? const SizedBox(width: 10.0) 
+                    : const SizedBox.shrink(),
+                  userType == 'SuperAdmin'
+                    ? buildAppBarButton(icon: Icons.delete, label: "Deleted Events", pageIndex: 4, onTap: () => navigationTapped(4))
+                    : const SizedBox.shrink(),
+                  userType == 'SuperAdmin' 
+                    ? const SizedBox(width: 10.0) 
+                    : const SizedBox.shrink(),
+                  userType == 'SuperAdmin'
+                    ? buildAppBarButton(icon: Icons.person_remove, label: "Deleted Users", pageIndex: 5, onTap: () => navigationTapped(5))
                     : const SizedBox.shrink(),
                   const SizedBox(width: 10.0),
                   userType == 'Admin' || userType == 'SuperAdmin'
-                    ? buildAppBarButton(
-                        icon: Icons.settings, 
-                        label: "Settings",
-                        pageIndex: userType == 'Admin' ? 5 : 4, 
-                        onTap: () => navigationTapped(userType == 'Admin' ? 5 : 4)
-                      )
+                    ? buildAppBarButton(icon: Icons.settings, label: "Settings", pageIndex: userType == 'Admin' ? 5 : 6, onTap: () => navigationTapped(userType == 'Admin' ? 5 : 6))
                     : const SizedBox.shrink(),
                     const SizedBox(width: 10.0),
                   userType == 'Admin' 

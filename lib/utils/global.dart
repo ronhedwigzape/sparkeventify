@@ -13,6 +13,8 @@ import 'package:student_event_calendar/screens/personal_events_screen.dart';
 import 'package:student_event_calendar/screens/post_screen.dart';
 import 'package:student_event_calendar/screens/profile_screen.dart';
 import 'package:student_event_calendar/screens/pending_events_screen.dart';
+import 'package:student_event_calendar/screens/trashed_events_screen.dart';
+import 'package:student_event_calendar/screens/trashed_users_screen.dart';
 import 'package:student_event_calendar/widgets/events_calendar.dart';
 import '../resources/auth_methods.dart';
 
@@ -116,6 +118,8 @@ Future<List<Widget>> homeScreenItems() async {
       const ManageProgramDepartmentScreen(),
       const ManageStaffPositionsScreen(),
       const CreateAdminScreen(),
+      const TrashedEventsScreen(),
+      const TrashedUsersScreen(),
       const ProfileScreen(),
       const NotificationScreen()
     ];

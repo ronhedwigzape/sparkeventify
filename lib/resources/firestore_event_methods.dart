@@ -186,8 +186,19 @@ class FireStoreEventMethods {
     return response;
   }
 
+  // Method to get a stream of all trashed events
+  Stream<List<Event>> getTrashedEvents() {
+    return _deletedEventsCollection.snapshots().map((QuerySnapshot query) {
+      List<Event> trashedEvents = [];
+      for (var doc in query.docs) {
+        Event event = Event.fromSnap(doc);
+        trashedEvents.add(event);
+      }
+      return trashedEvents;
+    });
+  }
 
-  // Method to move the specified event to the trash
+  // Method to trash an event (move to 'deletedEvents' collection and set 'dateUpdated')
   Future<String> trashEvent(String eventId) async {
     String response = 'Some error occurred';
 
@@ -197,12 +208,15 @@ class FireStoreEventMethods {
 
       // Fetch the event details
       DocumentSnapshot doc = await eventDocRef.get();
-      Event event = await Event.fromSnap(doc);
+      Event event = Event.fromSnap(doc);
 
-      // Store the event in the 'deletedEvents' collection
-      await _deletedEventsCollection.doc(eventId).set(event.toJson());
+      // Add the event to the 'deletedEvents' collection with the current date and time
+      await _deletedEventsCollection.doc(eventId).set({
+        ...event.toJson(),
+        'dateUpdated': FieldValue.serverTimestamp(), // Set the current date and time
+      });
 
-      // Remove the event from the 'events' collection in Firestore
+      // Remove the event from the 'events' collection
       await eventDocRef.delete();
 
       response = 'Success';
@@ -216,7 +230,7 @@ class FireStoreEventMethods {
     return response;
   }
 
-  // Method to restore a deleted event
+  // Method to restore a deleted event (move back to 'events' collection and set 'dateUpdated')
   Future<String> restoreEvent(String eventId) async {
     String response = 'Some error occurred';
 
@@ -226,10 +240,13 @@ class FireStoreEventMethods {
 
       // Fetch the deleted event details
       DocumentSnapshot doc = await deletedEventDocRef.get();
-      Event event = await Event.fromSnap(doc);
+      Event event = Event.fromSnap(doc);
 
-      // Restore the event to the 'events' collection in Firestore
-      await _eventsCollection.doc(eventId).set(event.toJson());
+      // Restore the event to the 'events' collection with the current date and time
+      await _eventsCollection.doc(eventId).set({
+        ...event.toJson(),
+        'dateUpdated': FieldValue.serverTimestamp(), // Set the current date and time
+      });
 
       // Remove the event from the 'deletedEvents' collection
       await deletedEventDocRef.delete();
@@ -244,6 +261,7 @@ class FireStoreEventMethods {
     }
     return response;
   }
+
 
   // Method to permanently remove a trashed event
   Future<String> removeEventPermanently(String eventId) async {

@@ -148,6 +148,18 @@ class AuthMethods {
 
         // Sign in with Firebase Authentication
         UserCredential credential = await _auth.signInWithEmailAndPassword(email: email, password: password);
+
+        // Check if the user is disabled in the Firestore 'users' collection
+        DocumentSnapshot userSnapshot = await _firestore.collection('users').doc(credential.user!.uid).get();
+        if (userSnapshot.exists && userSnapshot.data() != null) {
+          Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+          if (userData.containsKey('disabled') && userData['disabled'] == true) {
+            // Sign out the user immediately if the account is disabled
+            await _auth.signOut();
+            return 'Your account has been disabled. Please contact support for further assistance.';
+          }
+        }
+        
         // Initialize deviceToken with empty map
         await _firestore.collection('users').doc(credential.user!.uid).update({'deviceTokens': deviceTokens});
         // Set devicetoken in Firestore for mobile devices

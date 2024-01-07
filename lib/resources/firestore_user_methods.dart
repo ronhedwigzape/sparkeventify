@@ -9,6 +9,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 class FireStoreUserMethods {
   // Reference to the 'users' collection in Firestore
   final CollectionReference _usersCollection = FirebaseFirestore.instance.collection('users');
+  // Reference to the 'trashedUsers' collection in Firestore
+  final CollectionReference _trashedUsersCollection = FirebaseFirestore.instance.collection('trashedUsers');
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
@@ -241,12 +243,13 @@ class FireStoreUserMethods {
   }) async {
     String res = "Enter valid credentials";
     Map<String, String>? deviceTokens = {};
-    print('UpdateUser Function Called');
-    print('Email: $email');
-    print('Password: $password');
-    print('UserType: $userType');
-    print('Initial Response: $res');
-
+    if (kDebugMode) {
+      print('UpdateUser Function Called');
+      print('Email: $email');
+      print('Password: $password');
+      print('UserType: $userType');
+      print('Initial Response: $res');
+    }
     try {
       // Reauthenticate before performing sensitive operations
       bool reauthResult = await reauthenticateUser(email, currentPassword);
@@ -258,33 +261,45 @@ class FireStoreUserMethods {
       }
       // Validate if all required fields are provided
       if (email.isEmpty || password.isEmpty || userType.isEmpty) {
-        print('Error: Email, Password, or UserType is empty');
+        if (kDebugMode) {
+          print('Error: Email, Password, or UserType is empty');
+        }
         return res;
       }
 
       // Email format validation
       if ((userType == 'Admin' || userType == 'Staff') && !email.endsWith('@cspc.edu.ph')) {
-        print('Error: Invalid email format for Admin/Staff');
+        if (kDebugMode) {
+          print('Error: Invalid email format for Admin/Staff');
+        }
         return 'Invalid email format. Please use an email ending with @cspc.edu.ph';
       } else if ((userType == 'Student' || userType == 'Officer') && !email.endsWith('@my.cspc.edu.ph')) {
-        print('Error: Invalid email format for Student/Officer');
+        if (kDebugMode) {
+          print('Error: Invalid email format for Student/Officer');
+        }
         return 'Invalid email format. Please use an email ending with @my.cspc.edu.ph';
       }
 
       // Phone number validation
       if (!RegExp(r"^639\d{9}$").hasMatch(profile?.phoneNumber ?? '')) {
-        print('Error: Invalid phone number format');
+        if (kDebugMode) {
+          print('Error: Invalid phone number format');
+        }
         return 'Please enter a valid phone number. (e.g. 639123456789)';
       }
 
       // Section and Year validation for non-Staff and non-Admin
       if (userType != "Staff" && userType != "Admin") {
         if (!RegExp(r"^[A-Z]$").hasMatch(profile?.section ?? '')) {
-          print('Error: Invalid section format');
+          if (kDebugMode) {
+            print('Error: Invalid section format');
+          }
           return 'Section should be a single letter A-Z';
         }
         if (!RegExp(r"^[1-4]$").hasMatch(profile?.year ?? '')) {
-          print('Error: Invalid year format');
+          if (kDebugMode) {
+            print('Error: Invalid year format');
+          }
           return 'Year should be 1-4';
         }
       }
@@ -370,7 +385,9 @@ class FireStoreUserMethods {
         }
       } else {
         res = err.toString();
-        print(res);
+        if (kDebugMode) {
+          print(res);
+        }
       }
     }
     return res;
@@ -515,5 +532,122 @@ class FireStoreUserMethods {
 
     return users;
   }
+
+  // Method to trash a user (move to 'trashedUsers' collection, set 'dateUpdated', and set 'disabled' flag)
+  Future<String> trashUser(String userId) async {
+    String response = 'Some error occurred';
+    try {
+      // Reference to the user document in Firestore
+      DocumentReference userDocRef = _usersCollection.doc(userId);
+
+      // Fetch the user details
+      DocumentSnapshot userSnapshot = await userDocRef.get();
+      if (!userSnapshot.exists) {
+        throw Exception('No user found with id $userId');
+      }
+      model.User user = model.User.fromSnap(userSnapshot);
+
+      // Set the 'disabled' flag to true in the user's Firestore document
+      await userDocRef.update({'disabled': true});
+
+      // Add the user to the 'trashedUsers' collection with the current date and time
+      await _trashedUsersCollection.doc(userId).set({
+        ...user.toJson(),
+        'dateUpdated': FieldValue.serverTimestamp(), // Set the current date and time
+      });
+
+      // Remove the user from the 'users' collection
+      await userDocRef.delete();
+
+      response = 'Success';
+    } on FirebaseException catch (err) {
+      response = err.toString();
+    }
+    return response;
+  }
+
+  // Method to restore a trashed user (move back to 'users' collection, set 'dateUpdated', and clear 'disabled' flag)
+  Future<String> restoreUser(String userId) async {
+    String response = 'Some error occurred';
+    try {
+      // Reference to the trashed user document in Firestore
+      DocumentReference trashedUserDocRef = _trashedUsersCollection.doc(userId);
+
+      // Fetch the trashed user details
+      DocumentSnapshot trashedUserSnapshot = await trashedUserDocRef.get();
+      if (!trashedUserSnapshot.exists) {
+        throw Exception('No trashed user found with id $userId');
+      }
+      model.User user = model.User.fromSnap(trashedUserSnapshot);
+
+      // Clear the 'disabled' flag in the user's Firestore document
+      await _usersCollection.doc(userId).update({'disabled': false});
+
+      // Restore the user to the 'users' collection with the current date and time
+      await _usersCollection.doc(userId).set({
+        ...user.toJson(),
+        'dateUpdated': FieldValue.serverTimestamp(), // Set the current date and time
+      });
+
+      // Remove the user from the 'trashedUsers' collection
+      await trashedUserDocRef.delete();
+
+      response = 'Success';
+    } on FirebaseException catch (err) {
+      response = err.toString();
+    }
+    return response;
+  }
+
+  // Method to permanently remove a trashed user
+  Future<String> removeUserPermanently(String userId) async {
+    String response = 'Some error occurred';
+    try {
+      // Reference to the trashed user document in Firestore
+      DocumentReference trashedUserDocRef = _trashedUsersCollection.doc(userId);
+
+      // Fetch the trashed user details
+      DocumentSnapshot trashedUserSnapshot = await trashedUserDocRef.get();
+      if (!trashedUserSnapshot.exists) {
+        throw Exception('No trashed user found with id $userId');
+      }
+      model.User user = model.User.fromSnap(trashedUserSnapshot);
+
+      // Delete the user's Firestore document
+      await trashedUserDocRef.delete();
+
+      // Delete the user's image from storage if necessary
+      await StorageMethods().deleteImageFromStorage('profileImages/$userId');
+
+      // Delete the user's account
+      String deleteUserResponse = await deleteUser(
+        uid: user.uid!,
+        email: user.email!,
+        password: user.password!,
+      );
+
+      if (deleteUserResponse == "Success") {
+        response = 'User permanently removed';
+      } else {
+        response = deleteUserResponse;
+      }
+    } on FirebaseException catch (err) {
+      response = err.toString();
+    }
+    return response;
+  }
+
+  // Method to get a stream of all trashed users
+  Stream<List<model.User>> getTrashedUsers() {
+    return _trashedUsersCollection.snapshots().map((QuerySnapshot query) {
+      List<model.User> trashedUsers = [];
+      for (var doc in query.docs) {
+        model.User user = model.User.fromSnap(doc);
+        trashedUsers.add(user);
+      }
+      return trashedUsers;
+    });
+  }
+
 
 }

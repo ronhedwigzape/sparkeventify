@@ -25,10 +25,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
       widget.email.isEmpty
     ) return onDeleteFailure('Some error occurred.');
 
-    String res = await FireStoreUserMethods().deleteUser(
-        email: widget.email,
-        password: widget.password,
-        uid: widget.uid);
+    String res = await FireStoreUserMethods().trashUser(widget.uid);
 
     if (res == 'Success') {
       onDeleteSuccess();
@@ -63,11 +60,13 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
           Icon(darkModeOn ? Icons.delete_forever : Icons.delete_forever,
             color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,),
           const SizedBox(width: 10),
-          Text(
-            'Delete your Account',
-            style: TextStyle(
-              color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,
-              fontWeight: FontWeight.bold,
+          Flexible(
+            child: Text(
+              'Delete your Account',
+              style: TextStyle(
+                color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,
+                fontWeight: FontWeight.bold,
+              ),
             ),
           ),
         ],
@@ -76,7 +75,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
           child: Text(
-            'Are you sure you want to delete your account? This action cannot be undone.',
+            'Are you sure you want to delete your account? Please note that your account can be restored at any time by contacting the administrator. We value your participation and hope you reconsider.',
             style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),
           ),
         ),
@@ -98,8 +97,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
           },
           child: Row(
             children: <Widget>[
-              Icon(Icons.check_circle,
-                  color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+              Icon(Icons.check_circle, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
               const SizedBox(width: 10),
               const Text('Yes'),
             ],
@@ -109,7 +107,7 @@ class _DeleteUserDialogState extends State<DeleteUserDialog> {
           padding: const EdgeInsets.all(20),
           child: Row(
             children: <Widget>[
-              Icon(Icons.cancel, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
+              Icon(Icons.cancel,color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
               const SizedBox(width: 10),
               const Text('No'),
             ],
