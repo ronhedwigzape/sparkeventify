@@ -9,6 +9,7 @@ class User {
   String? email;
   Map<String, String>? deviceTokens;
   Profile? profile;
+  final bool signedInWithGoogle;
 
   User({
     this.uid,
@@ -18,6 +19,7 @@ class User {
     this.email,
     this.deviceTokens,
     this.profile, 
+    this.signedInWithGoogle = false
   });
 
   // Convert User object to JSON
@@ -29,6 +31,7 @@ class User {
         'email': email,
         'deviceTokens': deviceTokens,
         'profile': profile?.toJson(),
+        'signedInWithGoogle': signedInWithGoogle,
       };
 
   // Create User object from DocumentSnapshot
@@ -44,6 +47,7 @@ class User {
       email: snapshot['email'],
       deviceTokens: Map<String, String>.from(snapshot['deviceTokens']),
       profile: Profile.fromMap(profileSnap),
+      signedInWithGoogle: snapshot['signedInWithGoogle'] ?? false,
     );
   }
 }

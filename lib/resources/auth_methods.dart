@@ -222,7 +222,10 @@ class AuthMethods {
       DocumentReference docRef = _firestore.collection('users').doc(userCredential.user!.uid);
       DocumentSnapshot docSnap = await docRef.get();
       if (docSnap.exists) {
-        await docRef.update({'deviceTokens': deviceTokens});
+        await docRef.update({
+          'deviceTokens': deviceTokens,
+          'signedInWithGoogle': true,
+        });
       } else {
         // Determine the user type based on the email domain and platform
         String userType = 'Guest'; // Default to 'Google'
@@ -265,6 +268,7 @@ class AuthMethods {
             organization: "", // Not provided by Google
           ),
           deviceTokens: deviceTokens,
+          signedInWithGoogle: true,
         );
         // Set the new user's details in Firestore
         await docRef.set(user.toJson());
