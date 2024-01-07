@@ -173,8 +173,8 @@ class _PostCardState extends State<PostCard> {
                                   onPressed: () async {
                                     bool isConnected = await ConnectivityService().isConnected();
                                     if (isConnected) {
-                                      await FireStoreEventMethods().trashEvent(widget.snap.id);
                                       mounted ? Navigator.of(context).pop() : '';
+                                      await FireStoreEventMethods().trashEvent(widget.snap.id);
                                     } else {
                                       // Show a message to the user
                                       mounted ? Navigator.of(context).pop() : '';
@@ -441,8 +441,8 @@ class _PostCardState extends State<PostCard> {
                                   onPressed: () async {
                                     bool isConnected = await ConnectivityService().isConnected();
                                     if (isConnected) {
-                                      await FireStoreEventMethods().trashEvent(widget.snap.id);
                                       mounted ? Navigator.of(context).pop() : '';
+                                      await FireStoreEventMethods().trashEvent(widget.snap.id);
                                     } else {
                                       // Show a message to the user
                                       mounted ? Navigator.of(context).pop() : '';
