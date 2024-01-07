@@ -98,9 +98,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     });
 
     if (
-      _firstNameController.text.trim().isEmpty ||
-      _lastNameController.text.trim().isEmpty ||
-      _emailController.text.trim().isEmpty ||
       _passwordController.text.trim().isEmpty ||
       _phoneNumberController.text.trim().isEmpty
     ) return onUpdateFailure('Please complete all required fields.');
@@ -203,461 +200,208 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   @override
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'Edit Profile',
-          style: TextStyle(
-            color: darkModeOn ? lightColor : darkColor,
-          ),
-        ),
-        backgroundColor: darkModeOn ? darkColor : lightColor,
-        iconTheme: IconThemeData(
-          color: darkModeOn ? white : black,
-        ),
-      ),
-      body: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 32.0),
-            width: double.infinity,
-            height: MediaQuery.of(context).size.height,
-            child: SingleChildScrollView(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          const SizedBox(height: 20.0),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Icon(Icons.edit),
-              const SizedBox(width: 10.0),
-              Text('Edit your Profile',
-                style: TextStyle(
-                  color: darkModeOn ? lightColor : darkColor,
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
-                )),
-            ],
-          ),
-          const SizedBox(height: 24.0),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-            child: Stack(
-              alignment: AlignmentDirectional.center,
-              children: [
-                // if _pickedImage is not null, display the _pickedImage
-                _pickedImage != null
-                  ? CircleAvatar(
-                      radius: 40,
-                      backgroundImage: MemoryImage(_pickedImage!),
-                      onBackgroundImageError: (exception, stackTrace) {
-                        setState(() {
-                          _isError = true;
-                        });
-                      },
-                      backgroundColor: darkColor,
-                      child: _isError ? const Icon(Icons.error, color: lightColor,) : null,)
-                  // else if _pickedImage is null, display the profileImage
-                  : profileImage.isNotEmpty
-                  ? CircleAvatar(
-                      radius: 40,
-                      backgroundImage: NetworkImage(profileImage),
-                      onBackgroundImageError: (exception, stackTrace) {
-                        setState(() {
-                          _isError = true;
-                        });
-                      },
-                      backgroundColor: darkColor,
-                      child: _isError ? const Icon(Icons.error, color: lightColor,) : null,
-                    )
-                  // else display the default profile image
-                  : CircleAvatar(
-                      radius: 40,
-                      backgroundColor: darkColor,
-                      backgroundImage: const NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
-                      onBackgroundImageError: (exception, stackTrace) {
-                        setState(() {
-                          _isError = true;
-                        });
-                      },
-                      child: _isError ? const Icon(Icons.error, color: lightColor,) : null,
-                    ),
-                Positioned(
-                  bottom: -10,
-                  left: 42,
-                  child: IconButton(
-                    onPressed: _pickedImage == null ? selectImage : () {},
-                    icon: Icon(
-                      Icons.add_a_photo,
-                      color: darkModeOn ? white : black,
-                    ),
-                    tooltip: 'Change profile picture',
-                  )
-                ),  
-              ],
-            ), 
-          ),
-          _pickedImage != null && !_isImageUpdated ? Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text('Update profile picture?'),
-              Flexible(
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      onPressed: () async {
-                        bool isConnected = await ConnectivityService().isConnected();
-                        if (isConnected) {
-                          await FireStoreUserMethods().updateProfileImage(_pickedImage!, widget.user.uid!); 
-                          setState(() {
-                            _isImageUpdated = true;
-                          });
-                          _showSuccessMessage();
-                        } else {
-                          // Show a message to the user
-                          mounted ? ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
-                              duration: const Duration(seconds: 5),
-                            ),
-                          ) : '';
-                        }
-                      },
-                      icon: const Icon(Icons.check_circle, color: darkModeGrassColor,)
-                    ),
-                    IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _pickedImage = null;
-                          _isImageUpdated = false;
-                        });
-                      }, 
-                      icon: const Icon(Icons.cancel, color: darkModeMaroonColor,)
-                    ),  
-                  ],
-                ),
-              ),
-            ],
-          ) : const SizedBox.shrink(),
-          const SizedBox(height: 20.0),
-          Row(
-            children: [
-              // text field input for first name
-              Expanded(
-                child: TextFieldInput(
-                  prefixIcon: const Icon(Icons.person),
-                  textEditingController: _firstNameController,
-                  labelText: 'First name*',
-                  textInputType: TextInputType.text
-                ),
-              ),
-          ]),
-          const SizedBox(height: 10.0),
-          Row(
-            children: [
-              // text field input for middle initial
-              Expanded(
-                child: TextFieldInput(
-                  prefixIcon: const Icon(Icons.person),
-                  textEditingController: _middleInitialController,
-                  labelText: 'Middle Initial*',
-                  textInputType: TextInputType.text
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10.0),
-          Row(
-            children: [
-              // text field input for last name
-              Expanded(
-                child: TextFieldInput(
-                  prefixIcon: const Icon(Icons.person),
-                  textEditingController: _lastNameController,
-                  labelText: 'Last name*',
-                  textInputType: TextInputType.text
-                ),
-              ),
-            ]),
-            const SizedBox(height: 10.0),
-            // text field input for email
-            Row(
-            children: [
-              Expanded(
-                child: TextFieldInput(
-                  prefixIcon: const Icon(Icons.email),
-                  textEditingController: _emailController,
-                  labelText: 'Email*',
-                  textInputType: TextInputType.emailAddress
-                ),
-              )
-            ],
-          ),
-          const SizedBox(height: 10.0),
-          Row(
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    Text(
-                      '+63',
-                      style: TextStyle(
-                        color: darkModeOn ? lightColor : darkColor,
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(width: 5.0),
-                    Expanded(
-                      child: TextFieldInput(
-                        prefixIcon: const Icon(Icons.phone),
-                        textEditingController: _phoneNumberController,
-                        labelText: '9123456789*',
-                        textInputType: TextInputType.phone
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 10.0),
-          widget.user.userType != 'Staff' && 
-          widget.user.userType != 'Admin'  ? Row(
-            children: [
-              Flexible(
-                child: FormField<String>(
-                  builder: (FormFieldState<String> state) {
-                    return InputDecorator(
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.school),
-                        labelText: 'Program and Department*',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
-                          ),
-                        ),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          isExpanded: true,
-                          value: selectedProgramAndDepartment,
-                          style: TextStyle(color: darkModeOn ? lightColor : darkColor),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedProgramAndDepartment = newValue ?? programsAndDepartments![0]; // handle null selection
-
-                              // split the selected value:
-                              List<String> splitValue = selectedProgramAndDepartment.split(' - ');
-                              program = splitValue[0];
-                              department = splitValue[1];
-                            });
-                          },
-                          items: programsAndDepartments!.map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value.isEmpty ? null : value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ) : const SizedBox.shrink(),
-          widget.user.userType != 'Staff' && 
-          widget.user.userType != 'Admin'  ? const SizedBox(height: 10,) : const SizedBox.shrink(),
-          widget.user.userType != 'Staff' && 
-          widget.user.userType != 'Admin'  ? Row(
-            children: [
-              Flexible(
-                child: DropdownButtonFormField<String>(
-                  decoration: InputDecoration(
-                    border: OutlineInputBorder(
-                      borderSide: Divider.createBorderSide(
-                        context,
-                        color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
-                    ),
-                    prefixIcon: const Icon(Icons.school),
-                    labelText: 'Year*',
-                  ),
-                  value: _yearController.text.isEmpty
-                      ? null
-                      : _yearController.text,
-                  items: <String>['1', '2', '3', '4']
-                      .map((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor,),),
-                        ],
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _yearController.text = newValue!;
-                    });
-                  },
-                )
-              ),
-              // text field for section
-              const SizedBox(width: 10.0),
-              Flexible(
-                child: TextFieldInput(
-                  prefixIcon: const Icon(Icons.school),
-                  textEditingController: _sectionController,
-                  labelText: 'Section (ex: A)*',
-                  textInputType: TextInputType.text
-                ),
-              )
-            ],
-          ) : const SizedBox.shrink(),
-          widget.user.userType != 'Staff' ? const SizedBox(height: 10.0) : const SizedBox.shrink(),
-          widget.user.userType == 'Officer' ? TextFieldInput(
-            prefixIcon: const Icon(Icons.group),
-            textEditingController: _organizationController,
-            labelText: 'Organization (e.g. JPCS Chapter)*',
-            textInputType: TextInputType.text,
-          ) : const SizedBox.shrink(),
-          widget.user.userType == 'Officer' ? const SizedBox(height: 10.0) : const SizedBox.shrink(),
-          // text field input for organization position
-          widget.user.userType == 'Officer' ?  TextFieldInput(
-            prefixIcon: const Icon(Icons.person_2),
-            textEditingController: _officerPositionController,
-            labelText: 'Organization position',
-            textInputType: TextInputType.text,
-          ) : const SizedBox.shrink(),
-          widget.user.userType == 'Officer' ? const SizedBox(height: 10.0) : const SizedBox.shrink(),
-          widget.user.userType == 'Staff' ? Row(
-            children: [
-              Flexible(
-                child: FormField<String>(
-                  builder: (FormFieldState<String> state) {
-                    return InputDecorator(
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.person_4),
-                        labelText: 'Position*',
-                        border: OutlineInputBorder(
-                          borderSide: BorderSide(
-                            color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
-                          ),
-                        ),
-                      ),
-                      child: DropdownButtonHideUnderline(
-                        child: DropdownButton<String>(
-                          isExpanded: true,
-                          value: selectedStaffPosition,
-                          style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedStaffPosition = newValue ?? staffPositions![0]; // handle null selection
-
-                              List<String> splitValue = selectedStaffPosition.split(' - ');
-                              staffPosition = splitValue[0];
-                              staffType = splitValue[1];
-                              staffDescription = splitValue[2];
-                            });
-                          },
-                          items: staffPositions!.map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value.isEmpty ? null : value,
-                              child: Text(value),
-                            );
-                          }).toList(),
-                        ),
-                      ),
-                    );
-                  },
-                ),
-              ),
-            ],
-          ) : const SizedBox.shrink(),
-          widget.user.userType == 'Staff' ? const SizedBox(height: 10.0) : const SizedBox.shrink(),
-          // text field input for password
-          TextFieldInput(
-            prefixIcon: const Icon(Icons.lock),
-            textEditingController: _passwordController,
-            labelText: 'Password*',
-            textInputType: TextInputType.visiblePassword,
-            isPass: true,
-          ),
-          const SizedBox(height: 12.0),
-          const SizedBox(height: 10.0),
-          Center(
-            child: InkWell(
-              onTap: () async {
-                bool isConnected = await ConnectivityService().isConnected();
-                if (isConnected) {
-                  await update();
-                } else {
-                  // Show a message to the user
-                  mounted ? ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
-                      duration: const Duration(seconds: 5),
-                    ),
-                  ) : '';
-                }
-              },
-              child: Container(
-                width: double.infinity,
-                alignment: Alignment.center,
-                padding: const EdgeInsets.symmetric(
-                    vertical: 16.0),
-                decoration: ShapeDecoration(
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(
-                        Radius.circular(5.0)),
-                  ),
-                  color: darkModeOn ? darkModeGrassColor : lightModeGrassColor,
-                ),
-                child: _isLoading
-                  ? Center(
-                      child: CircularProgressIndicator(
-                      valueColor:
-                          AlwaysStoppedAnimation<Color>(
-                              darkModeOn ? darkColor : lightColor),
-                    ))
-                  : Row(
-                      mainAxisAlignment:
-                          MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.update_rounded, color: darkModeOn ? darkColor : lightColor),
-                      const SizedBox(width: 10),
-                      Text(
-                          'Update Profile',
-                          style: TextStyle(
-                            color: darkModeOn ? darkColor : lightColor,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                    ],
-                  )),
+    return GestureDetector(
+      onTap: () {
+        FocusScopeNode currentFocus = FocusScope.of(context);
+        if (!currentFocus.hasPrimaryFocus) {
+          currentFocus.unfocus();
+        }
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Edit your profile',
+            style: TextStyle(
+              color: darkModeOn ? lightColor : darkColor,
             ),
           ),
-          const SizedBox(height: 10.0),
-          Center(
-            child: InkWell(
-              onTap: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return DeleteUserDialog(
-                        uid: widget.user.uid!,
-                        email: _emailController.text.trim(),
-                        password: _passwordController.text.trim(),
-                      );
-                    }
-                );
-              },
-              child: Container(
+          backgroundColor: darkModeOn ? darkColor : lightColor,
+          iconTheme: IconThemeData(
+            color: darkModeOn ? white : black,
+          ),
+        ),
+        body: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 32.0),
+              width: double.infinity,
+              height: MediaQuery.of(context).size.height,
+              child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const SizedBox(height: 20.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Icon(Icons.edit),
+                const SizedBox(width: 10.0),
+                Text("${widget.user.profile!.firstName ?? ''} ${widget.user.profile!.lastName ?? ''}",
+                  style: TextStyle(
+                    color: darkModeOn ? lightColor : darkColor,
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                  )),
+              ],
+            ),
+            const SizedBox(height: 24.0),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+              child: Stack(
+                alignment: AlignmentDirectional.center,
+                children: [
+                  // if _pickedImage is not null, display the _pickedImage
+                  _pickedImage != null
+                    ? CircleAvatar(
+                        radius: 40,
+                        backgroundImage: MemoryImage(_pickedImage!),
+                        onBackgroundImageError: (exception, stackTrace) {
+                          setState(() {
+                            _isError = true;
+                          });
+                        },
+                        backgroundColor: darkColor,
+                        child: _isError ? const Icon(Icons.error, color: lightColor,) : null,)
+                    // else if _pickedImage is null, display the profileImage
+                    : profileImage.isNotEmpty
+                    ? CircleAvatar(
+                        radius: 40,
+                        backgroundImage: NetworkImage(profileImage),
+                        onBackgroundImageError: (exception, stackTrace) {
+                          setState(() {
+                            _isError = true;
+                          });
+                        },
+                        backgroundColor: darkColor,
+                        child: _isError ? const Icon(Icons.error, color: lightColor,) : null,
+                      )
+                    // else display the default profile image
+                    : CircleAvatar(
+                        radius: 40,
+                        backgroundColor: darkColor,
+                        backgroundImage: const NetworkImage('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Windows_10_Default_Profile_Picture.svg/2048px-Windows_10_Default_Profile_Picture.svg.png'),
+                        onBackgroundImageError: (exception, stackTrace) {
+                          setState(() {
+                            _isError = true;
+                          });
+                        },
+                        child: _isError ? const Icon(Icons.error, color: lightColor,) : null,
+                      ),
+                  Positioned(
+                    bottom: -10,
+                    left: 42,
+                    child: IconButton(
+                      onPressed: _pickedImage == null ? selectImage : () {},
+                      icon: Icon(
+                        Icons.add_a_photo,
+                        color: darkModeOn ? white : black,
+                      ),
+                      tooltip: 'Change profile picture',
+                    )
+                  ),  
+                ],
+              ), 
+            ),
+            _pickedImage != null && !_isImageUpdated ? Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Update profile picture?'),
+                Flexible(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      IconButton(
+                        onPressed: () async {
+                          bool isConnected = await ConnectivityService().isConnected();
+                          if (isConnected) {
+                            await FireStoreUserMethods().updateProfileImage(_pickedImage!, widget.user.uid!); 
+                            setState(() {
+                              _isImageUpdated = true;
+                            });
+                            _showSuccessMessage();
+                          } else {
+                            // Show a message to the user
+                            mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
+                                duration: const Duration(seconds: 5),
+                              ),
+                            ) : '';
+                          }
+                        },
+                        icon: const Icon(Icons.check_circle, color: darkModeGrassColor,)
+                      ),
+                      IconButton(
+                        onPressed: () {
+                          setState(() {
+                            _pickedImage = null;
+                            _isImageUpdated = false;
+                          });
+                        }, 
+                        icon: const Icon(Icons.cancel, color: darkModeMaroonColor,)
+                      ),  
+                    ],
+                  ),
+                ),
+              ],
+            ) : const SizedBox.shrink(),
+            const SizedBox(height: 20.0),
+            const SizedBox(height: 10.0),
+            Row(
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      Text(
+                        '+63',
+                        style: TextStyle(
+                          color: darkModeOn ? lightColor : darkColor,
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(width: 5.0),
+                      Expanded(
+                        child: TextFieldInput(
+                          prefixIcon: const Icon(Icons.phone),
+                          textEditingController: _phoneNumberController,
+                          labelText: '9123456789*',
+                          textInputType: TextInputType.phone
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 10.0),
+            // text field input for password
+            TextFieldInput(
+              prefixIcon: const Icon(Icons.lock),
+              textEditingController: _passwordController,
+              labelText: 'Password*',
+              textInputType: TextInputType.visiblePassword,
+              isPass: true,
+            ),
+            const SizedBox(height: 12.0),
+            const SizedBox(height: 10.0),
+            Center(
+              child: InkWell(
+                onTap: () async {
+                  bool isConnected = await ConnectivityService().isConnected();
+                  if (isConnected) {
+                    await update();
+                  } else {
+                    // Show a message to the user
+                    mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
+                        duration: const Duration(seconds: 5),
+                      ),
+                    ) : '';
+                  }
+                },
+                child: Container(
                   width: double.infinity,
                   alignment: Alignment.center,
                   padding: const EdgeInsets.symmetric(
@@ -667,29 +411,81 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                       borderRadius: BorderRadius.all(
                           Radius.circular(5.0)),
                     ),
-                    color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,
+                    color: darkModeOn ? darkModeGrassColor : lightModeGrassColor,
                   ),
-                  child: Row(
-                    mainAxisAlignment:
-                    MainAxisAlignment.center,
-                    children: [
-                      Icon(Icons.delete, color: darkModeOn ? darkColor : lightColor),
-                      const SizedBox(width: 10),
-                      Text(
-                        'Delete Your Account',
-                        style: TextStyle(
-                          color: darkModeOn ? darkColor : lightColor,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  )),
+                  child: _isLoading
+                    ? Center(
+                        child: CircularProgressIndicator(
+                        valueColor:
+                            AlwaysStoppedAnimation<Color>(
+                                darkModeOn ? darkColor : lightColor),
+                      ))
+                    : Row(
+                        mainAxisAlignment:
+                            MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.update_rounded, color: darkModeOn ? darkColor : lightColor),
+                        const SizedBox(width: 10),
+                        Text(
+                            'Update Profile',
+                            style: TextStyle(
+                              color: darkModeOn ? darkColor : lightColor,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                      ],
+                    )),
+              ),
             ),
+            const SizedBox(height: 10.0),
+            Center(
+              child: InkWell(
+                onTap: () {
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return DeleteUserDialog(
+                          uid: widget.user.uid!,
+                          email: _emailController.text.trim(),
+                          password: _passwordController.text.trim(),
+                        );
+                      }
+                  );
+                },
+                child: Container(
+                    width: double.infinity,
+                    alignment: Alignment.center,
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 16.0),
+                    decoration: ShapeDecoration(
+                      shape: const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(
+                            Radius.circular(5.0)),
+                      ),
+                      color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,
+                    ),
+                    child: Row(
+                      mainAxisAlignment:
+                      MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.delete, color: darkModeOn ? darkColor : lightColor),
+                        const SizedBox(width: 10),
+                        Text(
+                          'Delete Your Account',
+                          style: TextStyle(
+                            color: darkModeOn ? darkColor : lightColor,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    )),
+              ),
+            ),
+            const SizedBox(height: 10.0),
+          ],
+        ),
+      
           ),
-          const SizedBox(height: 10.0),
-        ],
-      ),
-
         ),
       ),
     );
