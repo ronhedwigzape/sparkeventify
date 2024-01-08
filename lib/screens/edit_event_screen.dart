@@ -1150,7 +1150,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                           ?.contains(participant) ?? [],
                       onChanged: (bool? value) {
                         setState(() {
-                          String? dept = programDepartmentMap![participant];
+                          String? dept = programDepartmentMap[participant];
                           if (value!) {
                             selectedParticipants[type.toLowerCase()]
                                 ?.add(participant);
@@ -1171,7 +1171,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                             }
                           }
                           if (type.toLowerCase() == 'department') {
-                            var associatedPrograms = programDepartmentMap!.entries
+                            var associatedPrograms = programDepartmentMap.entries
                                 .where((entry) => entry.value == participant)
                                 .map((entry) => entry.key)
                                 .toList();
@@ -1246,7 +1246,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                               }
                             }
                             if (type.toLowerCase() == 'department') {
-                              var associatedPrograms = programDepartmentMap!
+                              var associatedPrograms = programDepartmentMap
                                   .entries
                                   .where((entry) => entry.value == participant)
                                   .map((entry) => entry.key)

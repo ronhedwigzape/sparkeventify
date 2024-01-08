@@ -32,7 +32,6 @@ List<String>? programsAndDepartments;
 List<String>? programParticipants; 
 List<String>? departmentParticipants; 
 List<String>? staffPositions;
-Map<String, String>? programDepartmentMap; 
 
 // Placeholder for selected participants
 Map<String, List<String>> selectedParticipants = {
@@ -55,7 +54,6 @@ Future<void> fetchAndSetConstants() async {
   programsAndDepartments = List<String>.from(documentSnapshot.get('programsAndDepartments'));
   programParticipants = List<String>.from(documentSnapshot.get('programParticipants'));
   departmentParticipants = List<String>.from(documentSnapshot.get('departmentParticipants'));
-  programDepartmentMap = Map<String, String>.from(documentSnapshot.get('programDepartmentMap'));
   staffPositions = List<String>.from(documentSnapshot.get('staffPositions'));
 
   // Place a select option on programs and departments and staff positions
@@ -84,6 +82,40 @@ Stream<void> fetchAndSetConstantsStream() {
     staffPositions!.insert(0, 'Select your SASO position');
  });
 }
+
+// List all associated program for departments
+Map<String, String> programDepartmentMap = {
+  'BSCS': 'CCS',
+  'BSIT': 'CCS',
+  'BSIS': 'CCS',
+  'BLIS': 'CCS',
+  'BSN': 'CHS',
+  'BSM': 'CHS',
+  'BSME': 'CEA',
+  'BSEE': 'CEA',
+  'BSECE': 'CEA',
+  'BSCoE': 'CEA',
+  'BSCiE': 'CEA',
+  'BSA': 'CEA',
+  'BSOA': 'CTHBM',
+  'BSHM': 'CTHBM',
+  'BSTM': 'CTHBM',
+  'BSE': 'CTHBM',
+  'BSBA': 'CTHBM',
+  'BAEL': 'CAS',
+  'BSMa': 'CAS',
+  'BSAM': 'CAS',
+  'BSDC': 'CAS',
+  'BPA': 'CAS',
+  'BHS': 'CAS',
+  'BTVTEFP': 'CTDE',
+  'BTVTEFS': 'CTDE',
+  'BTVTEET': 'CTDE',
+  'BPE': 'CTDE',
+  'BCAE': 'CTDE',
+  'BSNE': 'CTDE'
+};
+
 
 // Global key for the events calendar
 Future<List<Widget>> homeScreenItems() async {
