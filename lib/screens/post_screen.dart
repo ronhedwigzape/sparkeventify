@@ -785,7 +785,7 @@ class _PostScreenState extends State<PostScreen> {
             value: selectedParticipants[type.toLowerCase()]?.contains(participant),
             onChanged: (bool? value) {
               setState(() {
-                String? dept = programDepartmentMap![participant];
+                String? dept = programDepartmentMap[participant];
                 if (value!) {
                   selectedParticipants[type.toLowerCase()]?.add(participant);
                   if (type.toLowerCase() == 'program'
@@ -796,13 +796,13 @@ class _PostScreenState extends State<PostScreen> {
                   selectedParticipants[type.toLowerCase()]?.remove(participant);
                   if (type.toLowerCase() == 'program'
                       && selectedParticipants['program']!
-                        .where((program) => programDepartmentMap![program] == dept)
+                        .where((program) => programDepartmentMap[program] == dept)
                         .isEmpty) {
                     selectedParticipants['department']?.remove(dept);
                   }
                 }
                 if (type.toLowerCase() == 'department') {
-                  var associatedPrograms = programDepartmentMap!.entries
+                  var associatedPrograms = programDepartmentMap.entries
                       .where((entry) => entry.value == participant)
                       .map((entry) => entry.key)
                       .toList();
@@ -845,7 +845,7 @@ class _PostScreenState extends State<PostScreen> {
               value: selectedParticipants[type.toLowerCase()]?.contains(participant),
               onChanged: (bool? value) {
                 setState(() {
-                  String? dept = programDepartmentMap![participant];
+                  String? dept = programDepartmentMap[participant];
                   if (value!) {
                     selectedParticipants[type.toLowerCase()]?.add(participant);
                     if (type.toLowerCase() == 'program'
@@ -856,13 +856,13 @@ class _PostScreenState extends State<PostScreen> {
                     selectedParticipants[type.toLowerCase()]?.remove(participant);
                     if (type.toLowerCase() == 'program'
                         && selectedParticipants['program']!
-                          .where((program) => programDepartmentMap![program] == dept)
+                          .where((program) => programDepartmentMap[program] == dept)
                           .isEmpty) {
                       selectedParticipants['department']?.remove(dept);
                     }
                   }
                   if (type.toLowerCase() == 'department') {
-                    var associatedPrograms = programDepartmentMap!.entries
+                    var associatedPrograms = programDepartmentMap.entries
                         .where((entry) => entry.value == participant)
                         .map((entry) => entry.key)
                         .toList();
