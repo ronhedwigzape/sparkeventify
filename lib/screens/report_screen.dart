@@ -68,30 +68,32 @@ class _ReportScreenState extends State<ReportScreen> {
     final font = pw.Font.ttf(await rootBundle.load("fonts/OpenSans-Regular.ttf"));
     const double fontSize = 10.0;
     const cellPadding = pw.EdgeInsets.all(4.0);
-
-    // var myPageFormat = PdfPageFormat.a4; // for A4
-    // var myPageFormat = PdfPageFormat.legal; // for Legal
-    // var myPageFormat = PdfPageFormat.letter; // for Letter
     var myPageFormat = PdfPageFormat.a4.landscape;
 
-    Map<model.Event, pw.MemoryImage?> images = {};
+    final headers = ['Event Date', 'Event Title', 'Start Time', 'End Time', 'Venue', 'Participants'];
+
+    // Create a set of unique events based on a unique identifier, e.g., title and date
+    final uniqueEvents = <String>{};
+    final uniqueEventList = <model.Event>[];
+
     for (var event in events) {
-      images[event] = event.image != null ? await _fetchImage(event.image!) : null;
+      String uniqueId = '${event.title}-${event.startDate}';
+      if (!uniqueEvents.contains(uniqueId)) {
+        uniqueEvents.add(uniqueId);
+        uniqueEventList.add(event);
+      }
     }
 
-    final headers = ['Event Date', 'Event Title', 'Start Time', 'Venue', 'Participants'];
-
-    List<pw.TableRow> createEventRows(List<model.Event> events, Map<model.Event, pw.MemoryImage?> images) {
-      return events.map((event) {
+    List<pw.TableRow> createEventRows(Set<model.Event> uniqueEvents) {
+      return uniqueEvents.map((event) {
+        final eventDate = event.startDate.isAtSameMomentAs(event.endDate)
+          ? DateFormat('yyyy-MM-dd').format(event.startDate)
+          : '${DateFormat('yyyy-MM-dd').format(event.startDate)} to ${DateFormat('yyyy-MM-dd').format(event.endDate)}';
         return pw.TableRow(
           children: [
             pw.Padding(
               padding: cellPadding,
-              child: pw.Text(
-                event.startDate.isAtSameMomentAs(event.endDate)
-                  ? DateFormat('yyyy-MM-dd').format(event.startDate)
-                  : '${DateFormat('yyyy-MM-dd').format(event.startDate)} to ${DateFormat('yyyy-MM-dd').format(event.endDate)}', 
-                style: pw.TextStyle(font: font, fontSize: fontSize)),
+              child: pw.Text(eventDate, style: pw.TextStyle(font: font, fontSize: fontSize)),
             ),
             pw.Padding(
               padding: cellPadding,
@@ -103,35 +105,22 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
             pw.Padding(
               padding: cellPadding, 
+              child: pw.Text(DateFormat('hh:mm a').format(event.endTime), style: pw.TextStyle(font: font, fontSize: fontSize)),
+            ),
+            pw.Padding(
+              padding: cellPadding, 
               child: pw.Text(event.venue ?? 'N/A', style: pw.TextStyle(font: font, fontSize: fontSize)),
             ),
             pw.Padding(
               padding: cellPadding, 
-              child: pw.Text(event.participants!['department'].join(", "), style: pw.TextStyle(font: font, fontSize: fontSize)),
+              child: pw.Text(
+                event.participants?['department']?.join(", ") ?? 'N/A',
+                style: pw.TextStyle(font: font, fontSize: fontSize)
+              ),
             ),
           ],
         );
       }).toList();
-    }
-
-    List<pw.Widget> pages = [];
-    for (int i = 0; i < events.length; i += 10) {
-      pages.add(
-        pw.Table(
-          border: pw.TableBorder.all(),
-          children: [
-            pw.TableRow(
-              children: headers.map((header) => 
-                pw.Padding(
-                  padding: const pw.EdgeInsets.all(4.0),
-                  child: pw.Text(header, style: pw.TextStyle(font: font, fontSize: fontSize)),
-                )
-              ).toList(),
-            ),
-            ...createEventRows(events.sublist(i, i + 10 < events.length ? i + 10 : events.length), images),
-          ],
-        ),
-      );
     }
 
     pdf.addPage(
@@ -148,12 +137,34 @@ class _ReportScreenState extends State<ReportScreen> {
             pw.SizedBox(height: 15.0),
           ],
         ),
-        build: (pw.Context context) => pages,
+        build: (pw.Context context) => [
+          pw.Table(
+            border: pw.TableBorder.all(),
+            children: [
+              pw.TableRow(
+                children: headers.map((header) => 
+                  pw.Padding(
+                    padding: const pw.EdgeInsets.all(4.0),
+                    child: pw.Text(header, style: pw.TextStyle(font: font, fontSize: fontSize)),
+                  )
+                ).toList(),
+              ),
+              ...createEventRows(uniqueEventList.toSet()), // Pass unique events to create rows
+            ],
+          ),
+        ],
       ),
     );
 
     final pdfContentBytes = await pdf.save();
 
+    // Use the appropriate method to save the PDF file
+    // For example, using the path_provider and flutter_file_saver packages
+    // final output = await getTemporaryDirectory();
+    // final file = File("${output.path}/Event Report.pdf");
+    // await file.writeAsBytes(pdfContentBytes);
+
+    // If you want to share the PDF or open it using another app
     await FlutterFileSaver().writeFileAsBytes(
       fileName: 'Event Report.pdf',
       bytes: pdfContentBytes,
