@@ -292,42 +292,58 @@ class EventsCalendarState extends State<EventsCalendar> {
                                     ) : const SizedBox.shrink(),
                                   ),
                                 ),
-                                kIsWeb ? Padding(
-                                  padding: const EdgeInsets.all(10.0),
+                                Padding(
+                                  padding: const EdgeInsets.all(!kIsWeb ? 6 : 10.0),
                                   child: Card(
-
                                     child: Padding(
-                                      padding: const EdgeInsets.fromLTRB(20, 10, 0, 8),
+                                      padding: const EdgeInsets.fromLTRB(
+                                        !kIsWeb ? 0 : 20, 
+                                        !kIsWeb ? 3 : 10, 
+                                        0, 
+                                        !kIsWeb ? 3 : 8),
                                       child: Row(
                                         children: [
-                                          Text(
+                                          kIsWeb ? Text(
                                             'Legend:',
-                                            style: TextStyle(color: darkModeOn ? lightColor : darkColor),
-                                          ),
-                                          const SizedBox(width: 20,),
+                                            style: TextStyle(
+                                              color: darkModeOn ? lightColor : darkColor,),
+                                          ) : const SizedBox.shrink(),
+                                          const SizedBox(width: !kIsWeb ? 10 : 20,),
                                           ...eventColors.entries.map((entry) {
-                                          return Row(
-                                            children: [
-                                              Container(
-                                                height: 10,
-                                                width: 10,
-                                                decoration: BoxDecoration(
-                                                  border: Border.all(color: darkModeOn ? lightColor : darkColor),
-                                                  shape: BoxShape.circle,
-                                                  color: entry.value,
+                                          return Flexible(
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                Container(
+                                                  height: !kIsWeb ? 8 : 10,
+                                                  width: !kIsWeb ? 8 : 10,
+                                                  decoration: BoxDecoration(
+                                                    border: Border.all(
+                                                      color: darkModeOn ? lightColor : darkColor,
+                                                      ),
+                                                    shape: BoxShape.circle,
+                                                    color: entry.value,
+                                                  ),
                                                 ),
-                                              ),
-                                              const SizedBox(width: 5),
-                                              Text(entry.key, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
-                                              const SizedBox(width: 10),
-                                            ],
+                                                const SizedBox(width: !kIsWeb ? 1.5 : 5),
+                                                Flexible(
+                                                  child: Text(
+                                                    entry.key, 
+                                                    style: TextStyle(
+                                                      color: darkModeOn ? lightColor : darkColor,
+                                                      fontSize: !kIsWeb ? 8 : null
+                                                      ),),
+                                                ),
+                                                const SizedBox(width: 10),
+                                              ],
+                                            ),
                                           );
                                         }).toList(),
                                         ]
                                       ),
                                     ),
                                   ),
-                                ) : const SizedBox.shrink(),
+                                ),
                                 Padding(
                                 padding: const EdgeInsets.all(10.0),
                                   child: Container(
@@ -549,6 +565,33 @@ class EventsCalendarState extends State<EventsCalendar> {
                                                 fontWeight: FontWeight.bold),
                                             ),
                                           );
+                                        },
+                                       markerBuilder: (context, date, events) {
+                                          if (events.isNotEmpty) {
+                                            // Cast the events to a list of your Event type
+                                            List<Event> typedEvents = events.cast<Event>();
+                                            List<Widget> eventMarkers = typedEvents.map((event) {
+                                              // Use the event's status color
+                                              return Container(
+                                                margin: const EdgeInsets.symmetric(horizontal: 1.0),
+                                                decoration: BoxDecoration(
+                                                  shape: BoxShape.circle,
+                                                  color: eventColors[event.status], // Use the event's status color
+                                                ),
+                                                width: 7.0, // Smaller dots for mobile
+                                                height: 7.0, // Smaller dots for mobile
+                                              );
+                                            }).toList();
+
+                                            return Positioned(
+                                              bottom: 1,
+                                              child: Row(
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: eventMarkers,
+                                              ),
+                                            );
+                                          }
+                                          return null;
                                         },
                                       ),
                                     ),
