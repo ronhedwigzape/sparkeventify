@@ -461,6 +461,42 @@ class FireStoreUserMethods {
     return res;
   }
 
+  Future<String> updateUserProfileDetails({
+    required String uid,
+    required String userType,
+    required String program,
+    required String department,
+    required String year,
+    required String section,
+    String? officerPosition,
+    String? organization,
+  }) async {
+    try {
+      // Create a map of the profile data to update
+      Map<String, dynamic> profileData = {
+        'profile.program': program,
+        'profile.department': department,
+        'profile.year': year,
+        'profile.section': section,
+      };
+
+      // If the user is an Officer, add additional fields
+      if (userType == 'Officer') {
+        profileData.addAll({
+          'profile.officerPosition': officerPosition,
+          'profile.organization': organization,
+        });
+      }
+
+      // Update the user's profile in Firestore
+      await _usersCollection.doc(uid).update(profileData);
+      return "Success";
+    } on FirebaseException catch (e) {
+      return "Failed to update profile: ${e.message}";
+    }
+  }
+
+
   // Stream function to get all users
   Stream<List<model.User>> getAllUsers() {
     return _usersCollection.snapshots().map((snapshot) {

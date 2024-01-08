@@ -2,6 +2,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student_event_calendar/models/profile.dart' as model;
+import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
@@ -10,6 +12,7 @@ import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
 import 'package:student_event_calendar/widgets/cspc_logo_white.dart';
 import 'package:student_event_calendar/widgets/cspc_spinkit_fading_circle.dart';
+import 'package:student_event_calendar/widgets/user_type_details_dialog.dart';
 
 class ClientScreenLayout extends StatefulWidget {
   const ClientScreenLayout({Key? key}) : super(key: key);
@@ -66,6 +69,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
       FirebaseAuth.instance.currentUser?.uid ?? '',
     );
     pendingCount = firestoreEventMethods.getPendingEventsCount();
+    checkUserProfileAndShowDialog();
   }
 
   @override
@@ -95,6 +99,34 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
       _page = page;
     });
   }
+
+  Future<void> checkUserProfileAndShowDialog() async {
+    String userType = await AuthMethods().getCurrentUserType();
+    model.User? currentUser = await AuthMethods().getCurrentUserDetails();
+
+    if (currentUser != null && (userType == 'Student' || userType == 'Officer')) {
+      model.Profile? profile = currentUser.profile;
+      if (profile == null ||
+          profile.program == null || profile.program!.isEmpty ||
+          profile.department == null || profile.department!.isEmpty ||
+          profile.year == null || profile.year!.isEmpty ||
+          profile.section == null || profile.section!.isEmpty ||
+          (userType == 'Officer' && (profile.officerPosition == null || profile.officerPosition!.isEmpty || profile.organization == null || profile.organization!.isEmpty))) {
+        // Show dialog to choose user type and fill out details
+        // ignore: use_build_context_synchronously
+        showDialog(
+          context: context,
+          barrierDismissible: false,
+          builder: (context) {
+            return UserTypeAndDetailsDialog(
+              profile: profile,
+            );
+          },
+        );
+      }
+    }
+  }
+
 
   @override
   Widget build(BuildContext context) {
