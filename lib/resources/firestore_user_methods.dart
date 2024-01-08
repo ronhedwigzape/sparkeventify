@@ -342,6 +342,28 @@ class FireStoreUserMethods {
     return res;
   }
 
+  Future<String> updateUserPassword({
+    required String uid,
+    required String newPassword,
+  }) async {
+    try {
+      User? user = FirebaseAuth.instance.currentUser;
+      if (user != null && user.uid == uid) {
+        // Update the password
+        await user.updatePassword(newPassword);
+        return "Success";
+      } else {
+        return "User not found or UID mismatch.";
+      }
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'weak-password') {
+        return "The password provided is too weak.";
+      } else {
+        return "An error occurred while updating the password: ${e.message}";
+      }
+    }
+  }
+
   /* Delete current user account */
   Future<String> deleteUser({
     required String uid,

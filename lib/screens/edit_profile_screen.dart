@@ -34,6 +34,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   final TextEditingController _sectionController = TextEditingController();
   final TextEditingController _organizationController = TextEditingController();
   final TextEditingController _officerPositionController = TextEditingController();
+  final TextEditingController _currentPasswordController = TextEditingController();
+  final TextEditingController _newPasswordController = TextEditingController();
+  final TextEditingController _confirmNewPasswordController = TextEditingController();
+
 
   late String selectedProgramAndDepartment = programsAndDepartments![0];
   late String selectedStaffPosition = staffPositions![0];
@@ -107,6 +111,36 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     if (!RegExp(r'^9[0-9]{9}$').hasMatch(phoneNumber)) {
       onUpdateFailure('Please enter your last 10 digits of the phone number.');
       return;
+    }
+
+    // Check if the new passwords match
+    if (_newPasswordController.text != _confirmNewPasswordController.text) {
+      onUpdateFailure('New passwords do not match.');
+      return;
+    }
+
+    // Check if the old password is correct by reauthenticating the user
+    bool reauthResult = await FireStoreUserMethods().reauthenticateUser(
+      widget.user.email!,
+      _currentPasswordController.text.trim(),
+    );
+
+    if (!reauthResult) {
+      onUpdateFailure('Current password is incorrect.');
+      return;
+    }
+
+    // If the old password is correct and new passwords match, update the password
+    if (reauthResult && _newPasswordController.text.isNotEmpty) {
+      String passwordUpdateResponse = await FireStoreUserMethods().updateUserPassword(
+        uid: widget.user.uid!,
+        newPassword: _newPasswordController.text.trim(),
+      );
+
+      if (passwordUpdateResponse != 'Success') {
+        onUpdateFailure(passwordUpdateResponse);
+        return;
+      }
     }
 
     // Prepend '+63' to the phone number
@@ -184,7 +218,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
 
   @override
     void dispose() {
-    super.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _firstNameController.dispose();
@@ -195,7 +228,10 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
     _sectionController.dispose();
     _organizationController.dispose();
     _officerPositionController.dispose();
-
+    _currentPasswordController.dispose();
+    _newPasswordController.dispose();
+    _confirmNewPasswordController.dispose();
+    super.dispose();
   }
   @override
   Widget build(BuildContext context) {
@@ -375,16 +411,33 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
               ],
             ),
             const SizedBox(height: 10.0),
-            // text field input for password
+            // Old Password TextFieldInput
+            TextFieldInput(
+              prefixIcon: const Icon(Icons.lock_outline),
+              textEditingController: _currentPasswordController,
+              labelText: 'Current Password*',
+              textInputType: TextInputType.visiblePassword,
+              isPass: true,
+            ),
+            const SizedBox(height: 10.0),
+            // New Password TextFieldInput
             TextFieldInput(
               prefixIcon: const Icon(Icons.lock),
-              textEditingController: _passwordController,
-              labelText: 'Password*',
+              textEditingController: _newPasswordController,
+              labelText: 'New Password*',
+              textInputType: TextInputType.visiblePassword,
+              isPass: true,
+            ),
+            const SizedBox(height: 10.0),
+            // Confirm New Password TextFieldInput
+            TextFieldInput(
+              prefixIcon: const Icon(Icons.lock),
+              textEditingController: _confirmNewPasswordController,
+              labelText: 'Confirm New Password*',
               textInputType: TextInputType.visiblePassword,
               isPass: true,
             ),
             const SizedBox(height: 12.0),
-            const SizedBox(height: 10.0),
             Center(
               child: InkWell(
                 onTap: () async {
