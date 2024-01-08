@@ -61,7 +61,7 @@ class _CSPCLogoWhiteState extends State<CSPCLogoWhite> {
     
     try {
       // Load the image data into a ByteData object
-      final byteData = await rootBundle.load(kIsWeb ? (darkMode ? schoolLogoWhite! : schoolLogoBlack!) : schoolLogoWhite!);
+      final byteData = await rootBundle.load(kIsWeb ? (darkMode ? schoolLogoWhite : schoolLogoBlack) : schoolLogoWhite);
       // Convert the ByteData to a Uint8List and return it
       return byteData.buffer.asUint8List();
     } catch (e, stacktrace) {

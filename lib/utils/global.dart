@@ -20,14 +20,15 @@ import '../resources/auth_methods.dart';
 
 final firestoreInstance = FirebaseFirestore.instance;
 
-int? webScreenSize; 
-String? schoolName; 
-String? schoolAddress; 
-String? schoolLogoWhite; 
-String? schoolLogoBlack;
-String? schoolLogo;
-String? schoolBackground;
-String? appName;
+// Constant variables for the app
+const webScreenSize = 600;
+const schoolName = 'Camarines Sur Polytechnic Colleges';
+const schoolAddress = 'Nabua, Camarines Sur';
+const schoolLogoWhite = 'assets/icon/monochrome_cspc_launcher_icon_white.png';
+const schoolLogoBlack = 'assets/icon/monochrome_cspc_launcher_icon_black.png';
+const schoolLogo = 'assets/images/cspc_logo.png';
+const schoolBackground = 'assets/images/cspc_background.png';
+const appName = 'Announce';
 List<String>? programsAndDepartments; 
 List<String>? programParticipants; 
 List<String>? departmentParticipants; 
@@ -43,14 +44,6 @@ Future<void> fetchAndSetConstants() async {
   DocumentSnapshot documentSnapshot = 
       await firestoreInstance.collection('global').doc('constants').get();
 
-  appName = documentSnapshot.get('appName') as String;
-  webScreenSize = documentSnapshot.get('webScreenSize') as int;
-  schoolName = documentSnapshot.get('schoolName') as String;
-  schoolAddress = documentSnapshot.get('schoolAddress') as String;
-  schoolLogoWhite = documentSnapshot.get('schoolLogoWhite') as String;
-  schoolLogoBlack = documentSnapshot.get('schoolLogoBlack') as String;
-  schoolLogo = documentSnapshot.get('schoolLogo') as String;
-  schoolBackground = documentSnapshot.get('schoolBackground') as String;
   programsAndDepartments = List<String>.from(documentSnapshot.get('programsAndDepartments'));
   programParticipants = List<String>.from(documentSnapshot.get('programParticipants'));
   departmentParticipants = List<String>.from(documentSnapshot.get('departmentParticipants'));
@@ -63,14 +56,6 @@ Future<void> fetchAndSetConstants() async {
 
 Stream<void> fetchAndSetConstantsStream() {
  return firestoreInstance.collection('global').doc('constants').snapshots().map((snapshot) {
-    appName = snapshot.get('appName') as String;
-    webScreenSize = snapshot.get('webScreenSize') as int;
-    schoolName = snapshot.get('schoolName') as String;
-    schoolAddress = snapshot.get('schoolAddress') as String;
-    schoolLogoWhite = snapshot.get('schoolLogoWhite') as String;
-    schoolLogoBlack = snapshot.get('schoolLogoBlack') as String;
-    schoolLogo = snapshot.get('schoolLogo') as String;
-    schoolBackground = snapshot.get('schoolBackground') as String;
     programsAndDepartments = List<String>.from(snapshot.get('programsAndDepartments'));
     programParticipants = List<String>.from(snapshot.get('programParticipants'));
     departmentParticipants = List<String>.from(snapshot.get('departmentParticipants'));

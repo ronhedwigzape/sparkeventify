@@ -365,8 +365,8 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
                           key: ValueKey(searchTermFilteredEvents[index].id),
                           margin: EdgeInsets.symmetric(
                               horizontal:
-                                  width > webScreenSize! ? width * 0.2 : 0,
-                              vertical: width > webScreenSize! ? 10 : 0),
+                                  width > webScreenSize ? width * 0.2 : 0,
+                              vertical: width > webScreenSize ? 10 : 0),
                           child: PostCard(
                               key: ValueKey(searchTermFilteredEvents[index].id),
                               snap: searchTermFilteredEvents[index]))),

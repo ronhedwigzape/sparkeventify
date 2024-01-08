@@ -391,7 +391,7 @@ class _AddPersonalEventState extends State<AddPersonalEvent> {
                     child: Container(
                       margin: EdgeInsets.symmetric(
                           horizontal: kIsWeb
-                              ? (width > webScreenSize! ? width * 0.2 : 0)
+                              ? (width > webScreenSize ? width * 0.2 : 0)
                               : 0),
                       child: Padding(
                         padding: const EdgeInsets.all(kIsWeb ? 8.0 : 2),

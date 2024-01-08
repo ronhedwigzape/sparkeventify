@@ -301,7 +301,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                   ),
                 ),
                 SizedBox(
-                  height: MediaQuery.of(context).size.height > webScreenSize! ? width * 0.33 : 0,
+                  height: MediaQuery.of(context).size.height > webScreenSize ? width * 0.33 : 0,
                   child: SingleChildScrollView(
                     child: Column(
                     children: snapshot.connectionState == ConnectionState.waiting
@@ -313,8 +313,8 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                     ]
                     : filteredUsers.map((user) => Container(  // Otherwise, display the list of users
                       margin: EdgeInsets.symmetric(
-                      horizontal: width > webScreenSize! ? width * 0.08 : 0,
-                      vertical: width > webScreenSize! ? 7 : 0),
+                      horizontal: width > webScreenSize ? width * 0.08 : 0,
+                      vertical: width > webScreenSize ? 7 : 0),
                         child: UsersCard(
                           user: user,
                           selectedUsers: selectedUsers,

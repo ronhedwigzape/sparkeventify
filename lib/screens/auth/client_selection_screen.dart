@@ -53,7 +53,7 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                     vertical: 8,
                   ),
                   child: Text(
-                    schoolName!,
+                    schoolName,
                     style:
                         TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0, color: darkModeOn ? lightColor : darkColor),
                   ),
@@ -62,7 +62,7 @@ class _ClientSelectionScreenState extends State<ClientSelectionScreen> {
                   padding: const EdgeInsets.symmetric(
                     vertical: 8,
                   ),
-                  child: Text(schoolAddress!, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
+                  child: Text(schoolAddress, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                 ),
               ],
             ),

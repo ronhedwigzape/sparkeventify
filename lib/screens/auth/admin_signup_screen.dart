@@ -119,7 +119,7 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
     return Scaffold(
       body: SafeArea(
           child: Container(
-        padding: MediaQuery.of(context).size.width > webScreenSize!
+        padding: MediaQuery.of(context).size.width > webScreenSize
             ?
             // Web screen
             EdgeInsets.symmetric(
@@ -146,17 +146,17 @@ class AdminSignupScreenState extends State<AdminSignupScreen> {
                   padding: const EdgeInsets.symmetric(
                     vertical: 8,
                   ),
-                  child: Text(
-                    schoolName!,
+                  child: const Text(
+                    schoolName,
                     style:
-                        const TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
+                        TextStyle(fontWeight: FontWeight.bold, fontSize: 16.0),
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(
                     vertical: 8,
                   ),
-                  child: Text(schoolAddress!),
+                  child: const Text(schoolAddress),
                 ),
               ],
             ),

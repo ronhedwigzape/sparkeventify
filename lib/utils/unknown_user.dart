@@ -37,7 +37,7 @@ class UnknownUser extends StatelessWidget {
     return Center(
       child: Scaffold(
           body: Container(
-        padding: MediaQuery.of(context).size.width > webScreenSize!
+        padding: MediaQuery.of(context).size.width > webScreenSize
             ?
             // Web screen
             EdgeInsets.symmetric(

@@ -106,8 +106,8 @@ Future<List<model.Notification>> fetchNotifications() async {
                   itemCount: snapshot.data!.length,
                   itemBuilder: (context, index) => Container(
                     margin: EdgeInsets.symmetric(
-                      horizontal: width > webScreenSize! ? width * 0.2 : 0,
-                      vertical: width > webScreenSize! ? 15 : 0),
+                      horizontal: width > webScreenSize ? width * 0.2 : 0,
+                      vertical: width > webScreenSize ? 15 : 0),
                     child: NotificationCard(snap: snapshot.data![index],
                     )
                   )

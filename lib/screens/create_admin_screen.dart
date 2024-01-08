@@ -115,7 +115,7 @@ class CreateAdminScreenState extends State<CreateAdminScreen> {
     return Scaffold(
       body: SafeArea(
           child: Container(
-        padding: MediaQuery.of(context).size.width > webScreenSize!
+        padding: MediaQuery.of(context).size.width > webScreenSize
             ?
             // Web screen
             EdgeInsets.symmetric(

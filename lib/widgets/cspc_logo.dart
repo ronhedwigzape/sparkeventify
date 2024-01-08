@@ -56,7 +56,7 @@ class _CSPCLogoState extends State<CSPCLogo> {
   Future<Uint8List> loadImage() async {
     try {
       // Load the image data into a ByteData object
-      final byteData = await rootBundle.load(schoolLogo!);
+      final byteData = await rootBundle.load(schoolLogo);
       // Convert the ByteData to a Uint8List and return it
       return byteData.buffer.asUint8List();
     } catch (e, stacktrace) {

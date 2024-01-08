@@ -191,7 +191,7 @@ class _LoginScreenState extends State<LoginScreen> {
               body: SafeArea(
                 child: Container(
                   height: MediaQuery.of(context).size.height,
-                  padding: MediaQuery.of(context).size.width > webScreenSize!
+                  padding: MediaQuery.of(context).size.width > webScreenSize
                       ? EdgeInsets.symmetric(
                           horizontal: MediaQuery.of(context).size.width / 3)
                       : const EdgeInsets.symmetric(horizontal: 32.0),
@@ -220,7 +220,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 vertical: 8,
                               ),
                               child: Text(
-                                schoolName ?? 'CSPC',
+                                schoolName,
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold,
                                     fontSize: 16.0,
@@ -232,7 +232,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 vertical: 8,
                               ),
                               child: Text(
-                                schoolAddress ?? 'Nabua',
+                                schoolAddress,
                                 style: TextStyle(
                                     color: darkModeOn ? lightColor : darkColor),
                               ),
