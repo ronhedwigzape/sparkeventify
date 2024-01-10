@@ -74,20 +74,20 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
             return Scaffold(
               appBar: AppBar(
                 automaticallyImplyLeading: false,
-                title: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                title: const Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
                   child: Row(
                     children: [
-                      const CSPCLogoWhite(
+                      CSPCLogoWhite(
                         height: 30.0,
                       ),
-                      const SizedBox(
+                      SizedBox(
                         width: 20.0,
                       ),
                       Expanded(
                         child: Text(
-                          appName ?? 'CSPC Announce',
-                          style: const TextStyle(
+                          appName,
+                          style: TextStyle(
                             color: lightModeSecondaryColor,
                             fontSize: 20.0,
                             fontWeight: FontWeight.bold,

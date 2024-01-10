@@ -707,5 +707,11 @@ class FireStoreUserMethods {
     });
   }
 
+  // Add this method to the FireStoreUserMethods class
+  Future<bool> isUserTrashed(String userId) async {
+    DocumentSnapshot trashedUserSnapshot = await _trashedUsersCollection.doc(userId).get();
+    return trashedUserSnapshot.exists;
+  }
+
 
 }

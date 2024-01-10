@@ -7,6 +7,7 @@ import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
+import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/services/firebase_notifications.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
@@ -105,6 +106,13 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
     model.User? currentUser = await AuthMethods().getCurrentUserDetails();
 
     if (currentUser != null && (userType == 'Student' || userType == 'Officer')) {
+      // Check if the user is trashed before proceeding
+      bool isUserTrashed = await FireStoreUserMethods().isUserTrashed(currentUser.uid!);
+      if (isUserTrashed) {
+        // User is trashed, do not show the dialog
+        return;
+      }
+
       model.Profile? profile = currentUser.profile;
       if (profile == null ||
           profile.program == null || profile.program!.isEmpty ||
