@@ -50,8 +50,8 @@ Future<void> fetchAndSetConstants() async {
   staffPositions = List<String>.from(documentSnapshot.get('staffPositions'));
 
   // Place a select option on programs and departments and staff positions
-  programsAndDepartments!.insert(0, 'Select your program and department');
-  staffPositions!.insert(0, 'Select your SASO position');
+  // programsAndDepartments!.insert(0, 'Select your program and department');
+  // staffPositions!.insert(0, 'Select your SASO position');
 }
 
 Stream<void> fetchAndSetConstantsStream() {
@@ -63,8 +63,8 @@ Stream<void> fetchAndSetConstantsStream() {
     staffPositions = List<String>.from(snapshot.get('staffPositions'));
 
     // Place a select option on programs and departments and staff positions
-    programsAndDepartments!.insert(0, 'Select your program and department');
-    staffPositions!.insert(0, 'Select your SASO position');
+    // programsAndDepartments!.insert(0, 'Select your program and department');
+    // staffPositions!.insert(0, 'Select your SASO position');
  });
 }
 

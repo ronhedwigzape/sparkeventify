@@ -30,11 +30,42 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
   final TextEditingController _retypePasswordController = TextEditingController();
   late String program = '';
   late String department = '';
+  String? selectedDepartment;
+  String? selectedProgram;
+  Map<String, List<String>> departmentProgramsMap = {};
 
   @override
   void initState() {
     super.initState();
-    fetchAndSetConstants();
+    initAsync();
+  }
+
+  void initAsync() async {
+    fetchAndSetConstantsStream();
+    if (programsAndDepartments != null && programsAndDepartments!.isNotEmpty) {
+      // Extract unique departments
+      final departments = programsAndDepartments!
+          .map((e) {
+            var parts = e.split(' - ');
+            return parts.length > 1 ? parts[1] : null;
+          })
+          .where((e) => e != null)
+          .toSet()
+          .toList();
+
+      setState(() {
+        // Initialize the selectedDepartment with the first department
+        selectedDepartment = departments.first;
+        // Populate the departmentProgramsMap
+        departmentProgramsMap.clear(); // Clear the map before populating
+        for (String item in programsAndDepartments!) {
+          var parts = item.split(' - ');
+          var program = '${parts[0]} - ${parts[2]}';
+          var department = parts[1];
+          departmentProgramsMap.putIfAbsent(department, () => []).add(program);
+        }
+      });
+    }
   }
 
   Future<void> signUpAsClient() async {
@@ -281,46 +312,71 @@ class _StudentSignupScreenState extends State<StudentSignupScreen> {
                   const SizedBox(height: 10.0),
                   Row(
                     children: [
-                      Flexible(
-                        child: FormField<String>(
-                          builder: (FormFieldState<String> state) {
-                            return InputDecorator(
-                              decoration: InputDecoration(
-                                prefixIcon: const Icon(Icons.school),
-                                labelText: 'Program and Department*',
-                                border: OutlineInputBorder(
-                                  borderSide: BorderSide(
-                                    color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
-                                  ),
-                                ),
-                              ),
-                              child: DropdownButtonHideUnderline(
-                                child: DropdownButton<String>(
-                                  isExpanded: true,
-                                  value: selectedProgramAndDepartment,
-                                  style: TextStyle(color: darkModeOn ? lightColor : darkColor),
-                                  onChanged: (String? newValue) {
-                                    setState(() {
-                                      selectedProgramAndDepartment = newValue ?? programsAndDepartments![0]; // handle null selection
-
-                                      // split the selected value:
-                                      List<String> splitValue = selectedProgramAndDepartment.split(' - ');
-                                      program = splitValue[0];
-                                      department = splitValue[1];
-                                    });
-                                  },
-                                  items: programsAndDepartments!.map<DropdownMenuItem<String>>((String value) {
-                                    return DropdownMenuItem<String>(
-                                      value: value.isEmpty ? null : value,
-                                      child: Text(value),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
-                            );
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderSide: Divider.createBorderSide(
+                                context,
+                                color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
+                            ),
+                            prefixIcon: const Icon(Icons.school),
+                            labelText: 'Department*',
+                          ),
+                          isExpanded: true,
+                          value: selectedDepartment,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedDepartment = newValue;
+                              department = selectedDepartment!;
+                              selectedProgram = null; // Reset the program when department changes
+                            });
                           },
+                          items: departmentProgramsMap.keys.map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList(),
+                          hint: const Text('Select Department'),
                         ),
                       ),
+                    ],
+                  ),
+                  const SizedBox(height: 10.0),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<String>(
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(
+                              borderSide: Divider.createBorderSide(
+                                context,
+                                color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
+                            ),
+                            prefixIcon: const Icon(Icons.school),
+                            labelText: 'Program*',
+                          ),
+                          isExpanded: true,
+                          value: selectedProgram,
+                          onChanged: selectedDepartment != null ? (String? newValue) {
+                            setState(() {
+                              selectedProgram = newValue;
+                              List<String> splitValue = selectedProgram!.split(' - ');
+                              program = splitValue[0];
+                            });
+                          } : null, // Disable if no department is selected
+                          items: selectedDepartment != null ? departmentProgramsMap[selectedDepartment]?.map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value),
+                            );
+                          }).toList() : [],
+                          hint: const Text('Select Program'),
+                          disabledHint: const Text('Please select a department first'),
+                        ),
+                      ),
+
                     ],
                   ),
                   const SizedBox(height: 10,),
