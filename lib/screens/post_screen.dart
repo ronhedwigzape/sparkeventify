@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
 import 'package:student_event_calendar/layouts/client_screen_layout.dart';
+import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
@@ -282,7 +284,53 @@ class _PostScreenState extends State<PostScreen> {
             // Check if the response is a success or a failure
             if (response == 'Success') {
               onPostSuccess(userType);
-            } else {
+            } else if (response == 'Conflicting event exists') {
+              // Fetch the conflicting event details
+              DateTime startDate = DateTime.parse(_startDateController.text);
+              DateTime endDate = DateTime.parse(_endDateController.text);
+              String venue = _eventVenueController.text;
+
+              QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('events')
+                .where('startDate', isEqualTo: startDate)
+                .where('endDate', isEqualTo: endDate)
+                .where('venue', isEqualTo: venue)
+                .get();
+
+              String conflictingEventDetails = "";
+              for (var doc in querySnapshot.docs) {
+                Event existingEvent = Event.fromSnap(doc);
+                conflictingEventDetails += "Title: ${existingEvent.title}\n"
+                                          "Date: ${DateFormat('yyyy-MM-dd').format(existingEvent.startDate)} to ${DateFormat('yyyy-MM-dd').format(existingEvent.endDate)}\n"
+                                          "Venue: ${existingEvent.venue}\n\n";
+              }
+
+              // Show the dialog with conflicting events details
+              // ignore: use_build_context_synchronously
+              showDialog(
+                context: context,
+                builder: (BuildContext context) {
+                  return AlertDialog(
+                    title: const Text("Schedule Conflict Detected"),
+                    content: SingleChildScrollView(
+                      child: ListBody(
+                        children: <Widget>[
+                          Text("Your event conflicts with the following event(s) at the same venue and date:\n\n$conflictingEventDetails"),
+                        ],
+                      ),
+                    ),
+                    actions: <Widget>[
+                      TextButton(
+                        child: const Text("OK"),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                        },
+                      ),
+                    ],
+                  );
+                },
+              );
+            }
+            else {
               onPostFailure(response);
             }
             return response;
