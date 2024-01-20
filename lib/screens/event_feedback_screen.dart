@@ -21,22 +21,6 @@ class _EventFeedbackScreenState extends State<EventFeedbackScreen> {
   String? programFilter;
   String? departmentFilter;
   List<DataRow> rows = [];
-  List<DataRow> filteredRows = [];
-
-  void filterRows() {
-    setState(() {
-      filteredRows = rows.where((row) {
-        final programCell = row.cells[1].child as Text;
-        final departmentCell = row.cells[2].child as Text;
-        final attendanceCell = row.cells[3].child as Text;
-        final satisfactionCell = row.cells[4].child as Text;
-        return (attendanceFilter == null || attendanceCell.data == attendanceFilter) &&
-            (satisfactionFilter == null || satisfactionCell.data == satisfactionFilter) &&
-            (programFilter == null || programCell.data == programFilter) &&
-            (departmentFilter == null || departmentCell.data == departmentFilter);
-      }).toList();
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -92,7 +76,6 @@ class _EventFeedbackScreenState extends State<EventFeedbackScreen> {
                     'Not Satisfied': notSatisfiedCount.toDouble(),
                   };
 
-                  filteredRows = List.from(rows);
 
                   return SingleChildScrollView(
                     child: Column(
@@ -123,68 +106,6 @@ class _EventFeedbackScreenState extends State<EventFeedbackScreen> {
                           showChartValuesOutside: false,
                           decimalPlaces: 1,
                         ),
-                      ),
-                      DropdownButton<String>(
-                        value: attendanceFilter,
-                        items: <String>[
-                          'All',
-                          'Attended',
-                          'Did not attend',
-                        ].map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            attendanceFilter =
-                                newValue == 'All' ? null : newValue;
-                            filterRows();
-                          });
-                        },
-                      ),
-                      DropdownButton<String>(
-                        value: satisfactionFilter,
-                        items: <String>[
-                          'All',
-                          'Satisfied',
-                          'Not satisfied',
-                        ].map<DropdownMenuItem<String>>((String value) {
-                          return DropdownMenuItem<String>(
-                            value: value,
-                            child: Text(value),
-                          );
-                        }).toList(),
-                        onChanged: (String? newValue) {
-                          setState(() {
-                            satisfactionFilter =
-                                newValue == 'All' ? null : newValue;
-                            filterRows();
-                          });
-                        },
-                      ),
-                      // Add similar DropdownButtons for programFilter and departmentFilter here
-                      DataTable(
-                        columns: const <DataColumn>[
-                          DataColumn(
-                            label: Text('Name'),
-                          ),
-                          DataColumn(
-                            label: Text('Program'),
-                          ),
-                          DataColumn(
-                            label: Text('Department'),
-                          ),
-                          DataColumn(
-                            label: Text('Attendance'),
-                          ),
-                          DataColumn(
-                            label: Text('Satisfaction'),
-                            numeric: true,
-                          ),
-                        ],
-                        rows: filteredRows,
                       )
                     ]),
                   );
