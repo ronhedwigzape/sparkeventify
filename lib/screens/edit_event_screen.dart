@@ -228,17 +228,16 @@ class EditEventScreenState extends State<EditEventScreen> {
     }
   }
 
-  setEventMoved(DateTime startDate, DateTime endDate, DateTime startTime, DateTime endTime) async {
+  setEventMoved(DateTime newStartDate, DateTime newEndDate, DateTime newStartTime, DateTime newEndTime) async {
     setState(() {
       _isLoadingMoved = true;
     });
     try {
       String response = await FireStoreEventMethods()
-          .updateEventStatus(widget.eventSnap.id, null, true, startDate, endDate, startTime, endTime);
+          .updateEventStatus(widget.eventSnap.id, null, true, newStartDate, newEndDate, newStartTime, newEndTime);
       if (kDebugMode) {
         print('Update Event Response Moved: $response');
       }
-      // Check if the response is a success or a failure
       if (response == 'Success') {
         onPostSuccess();
         setState(() {
@@ -247,19 +246,29 @@ class EditEventScreenState extends State<EditEventScreen> {
 
         String senderId = FirebaseAuth.instance.currentUser!.uid;
 
-        // Format the dates and times
-        String formattedStartDate = DateFormat('yyyy-MM-dd').format(startDate);
-        String formattedEndDate = DateFormat('yyyy-MM-dd').format(endDate);
-        String formattedStartTime = DateFormat('h:mm a').format(startTime);
-        String formattedEndTime = DateFormat('h:mm a').format(endTime);
+        // Format original event details
+        String originalStartDate = DateFormat('yyyy-MM-dd').format(widget.eventSnap.startDate);
+        String originalEndDate = DateFormat('yyyy-MM-dd').format(widget.eventSnap.endDate);
+        String originalStartTime = DateFormat('h:mm a').format(widget.eventSnap.startTime);
+        String originalEndTime = DateFormat('h:mm a').format(widget.eventSnap.endTime);
+
+        // Format new event details
+        String formattedNewStartDate = DateFormat('yyyy-MM-dd').format(newStartDate);
+        String formattedNewEndDate = DateFormat('yyyy-MM-dd').format(newEndDate);
+        String formattedNewStartTime = DateFormat('h:mm a').format(newStartTime);
+        String formattedNewEndTime = DateFormat('h:mm a').format(newEndTime);
+
+        // Construct the notification message
+        String notificationMessage = 'The event "${widget.eventSnap.title}" has been moved. '
+            'Original schedule: $originalStartDate at $originalStartTime to $originalEndDate at $originalEndTime. '
+            'New schedule: $formattedNewStartDate at $formattedNewStartTime to $formattedNewEndDate at $formattedNewEndTime.';
 
         // Send a notification to all participants
         if (widget.eventSnap.participants != null) {
           for (var participant in widget.eventSnap.participants!['department']) {
             for (var participantProgram in widget.eventSnap.participants!['program']) {
               await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
-                senderId, participant, participantProgram, 'Event Moved', 
-                'The event "${widget.eventSnap.title}" has been moved. It will now start on $formattedStartDate at $formattedStartTime and end on $formattedEndDate at $formattedEndTime.'
+                senderId, participant, participantProgram, 'Event Moved', notificationMessage
               );
             }
           }
