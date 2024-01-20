@@ -23,11 +23,37 @@ class ReportScreen extends StatefulWidget {
 class _ReportScreenState extends State<ReportScreen> {
   List<model.Event> filteredEvents = [];
   final GlobalKey<State<StatefulWidget>> _printKey = GlobalKey();
+  String? selectedVenue;
+  String? selectedDepartment;
+  List<String> venues = [];
+  List<String> departments = [];
 
   @override
   void initState() {
     super.initState();
-    filteredEvents = widget.events;
+    venues = ['All', ...widget.events.map((e) => e.venue ?? 'N/A').toSet().toList()];
+    departments = ['All', ...widget.events.expand((e) => e.participants?['department'] ?? []).cast<String>().toSet().toList()];
+
+    // Create a set of unique events based on a unique identifier
+    final uniqueEvents = <String, model.Event>{};
+    for (var event in widget.events) {
+      String uniqueId = '${event.title}-${event.startDate}-${event.venue}';
+      if (!uniqueEvents.containsKey(uniqueId)) {
+        uniqueEvents[uniqueId] = event;
+      }
+    }
+
+    filteredEvents = uniqueEvents.values.toList();
+  }
+
+  void filterEvents() {
+    setState(() {
+      filteredEvents = filteredEvents.where((event) {
+        bool venueMatch = selectedVenue == null || selectedVenue == 'All' || event.venue == selectedVenue;
+        bool departmentMatch = selectedDepartment == null || selectedDepartment == 'All' || event.participants?['department']?.contains(selectedDepartment);
+        return venueMatch && departmentMatch;
+      }).toList();
+    });
   }
 
   Future<void> selectDateRange() async {
@@ -178,6 +204,42 @@ class _ReportScreenState extends State<ReportScreen> {
       appBar: AppBar(
         title: Text('Report for ${widget.currentMonth}'),
         actions: [
+          // Venue Dropdown
+          DropdownButton<String>(
+            value: selectedVenue,
+            hint: const Text("Select Venue"),
+            items: venues.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                selectedVenue = newValue;
+              });
+              filterEvents();
+            },
+          ),
+          const SizedBox(width: 10,),
+          // Department Dropdown
+          DropdownButton<String>(
+            value: selectedDepartment,
+            hint: const Text("Select Participants"),
+            items: departments.map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                selectedDepartment = newValue;
+              });
+              filterEvents();
+            },
+          ),
+          const SizedBox(width: 10,),
           IconButton(
             onPressed: selectDateRange,
             icon: const Icon(Icons.date_range),
