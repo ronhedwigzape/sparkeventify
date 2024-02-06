@@ -43,71 +43,61 @@ class _EventFeedbackScreenState extends State<EventFeedbackScreen> {
                   return const Center(
                       child: Text('No feedbacks for this event.'));
                 } else {
-                  int satisfiedCount = 0;
-                  int notSatisfiedCount = 0;
-                  rows = [];
+                  List<EventFeedbacks> feedbacks = snapshot.data!;
+                  Map<int, int> satisfactionCounts = Map.fromIterable(List.generate(6, (i) => i), value: (_) =>  0);
 
-                  for (var feedbacks in snapshot.data!) {
-                    for (var feedback in feedbacks.evaluatorFeedbacks) {
-                      if (feedback.satisfactionStatus!) {
-                        satisfiedCount++;
-                      } else {
-                        notSatisfiedCount++;
-                      }
-
-                      rows.add(DataRow(
-                        cells: <DataCell>[
-                          DataCell(Text(feedback.userFullName!)),
-                          DataCell(Text(feedback.userProgram!)),
-                          DataCell(Text(feedback.userDepartment!)),
-                          DataCell(Text(feedback.attendanceStatus!
-                              ? 'Attended'
-                              : 'Did not attend')),
-                          DataCell(Text(feedback.satisfactionStatus!
-                              ? 'Satisfied'
-                              : 'Not satisfied')),
-                        ],
-                      ));
+                  for (var feedback in feedbacks) {
+                    for (var evaluatorFeedback in feedback.evaluatorFeedbacks) {
+                      int satisfactionLevel = evaluatorFeedback.satisfactionStatus ??  0;
+                      satisfactionCounts[satisfactionLevel] = satisfactionCounts[satisfactionLevel]! +  1;
                     }
                   }
 
-                  Map<String, double> dataMap = {
-                    'Satisfied': satisfiedCount.toDouble(),
-                    'Not Satisfied': notSatisfiedCount.toDouble(),
-                  };
+                  // Convert the satisfaction counts to a format suitable for the pie chart
+                  Map<String, double> dataMap = satisfactionCounts.entries.fold({}, (acc, entry) {
+                    acc['Level ${entry.key}'] = entry.value.toDouble();
+                    return acc;
+                  });
 
-
+                  // Render the pie chart with the updated dataMap
                   return SingleChildScrollView(
                     child: Column(
                       children: [
-                        const SizedBox(height: 20,),
-                      PieChart(
-                        dataMap: dataMap,
-                        animationDuration: const Duration(milliseconds: 800),
-                        chartLegendSpacing: 32,
-                        chartRadius: MediaQuery.of(context).size.width / 3.2,
-                        initialAngleInDegree: 0,
-                        chartType: ChartType.ring,
-                        ringStrokeWidth: 32,
-                        centerText: "Satisfaction",
-                        legendOptions: const LegendOptions(
-                          showLegendsInRow: false,
-                          legendPosition: LegendPosition.right,
-                          showLegends: true,
-                          legendShape: BoxShape.circle,
-                          legendTextStyle: TextStyle(
-                            fontWeight: FontWeight.bold,
+                        const SizedBox(height:  20),
+                        PieChart(
+                          dataMap: dataMap,
+                          animationDuration: const Duration(milliseconds:  800),
+                          chartLegendSpacing:  32,
+                          chartRadius: MediaQuery.of(context).size.width /  3.2,
+                          initialAngleInDegree:  0,
+                          centerText: "Satisfaction Levels",
+                          legendOptions: const LegendOptions(
+                            showLegendsInRow: true,
+                            legendPosition: LegendPosition.right,
+                            showLegends: true,
+                            legendShape: BoxShape.circle,
+                            legendTextStyle: TextStyle(fontWeight: FontWeight.bold),
                           ),
+                          ringStrokeWidth:  32,
+                          colorList: const [
+                            Colors.red,
+                            Colors.orange,
+                            Colors.yellow,
+                            Colors.lightGreen,
+                            Colors.green,
+                            Colors.blue,
+                          ],
+                          // Add a custom legend renderer if needed
+                          legendLabels: const {
+                            'Level   1': 'Level   1',
+                            'Level   2': 'Level   2',
+                            'Level   3': 'Level   3',
+                            'Level   4': 'Level   4',
+                            'Level   5': 'Level   5',
+                          },
                         ),
-                        chartValuesOptions: const ChartValuesOptions(
-                          showChartValueBackground: true,
-                          showChartValues: true,
-                          showChartValuesInPercentage: true,
-                          showChartValuesOutside: false,
-                          decimalPlaces: 1,
-                        ),
-                      )
-                    ]),
+                      ],
+                    ),
                   );
                 }
               }

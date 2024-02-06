@@ -315,9 +315,8 @@ class FirestoreFeedbackMethods {
   Future<Map<String, dynamic>> getEventFeedbackSummary(String eventId) async {
     List<EventFeedbacks> allFeedbacks = await getAllFeedbacks(eventId);
 
-    int totalEvaluators = 0;
-    int satisfiedEvaluators = 0;
-    int dissatisfiedEvaluators = 0;
+    int totalEvaluators =  0;
+    Map<int, int> satisfactionCounts = Map.fromIterable(List.generate(6, (i) => i), value: (_) =>  0);
     Map<String, int> programs = {};
     Map<String, int> departments = {};
 
@@ -325,37 +324,61 @@ class FirestoreFeedbackMethods {
       for (var evaluatorFeedback in feedback.evaluatorFeedbacks) {
         totalEvaluators++;
 
-        // Count satisfied and dissatisfied evaluators
-        if (evaluatorFeedback.satisfactionStatus!) {
-          satisfiedEvaluators++;
-        } else {
-          dissatisfiedEvaluators++;
-        }
+        // Increment the count for the corresponding satisfaction status
+        int satisfactionStatus = evaluatorFeedback.satisfactionStatus ??  0;
+        satisfactionCounts[satisfactionStatus] = satisfactionCounts[satisfactionStatus]! +  1;
 
         // Count programs
         if (programs.containsKey(evaluatorFeedback.userProgram)) {
-          programs[evaluatorFeedback.userProgram!] = programs[evaluatorFeedback.userProgram]! + 1;
+          programs[evaluatorFeedback.userProgram!] = programs[evaluatorFeedback.userProgram]! +  1;
         } else {
-          programs[evaluatorFeedback.userProgram!] = 1;
+          programs[evaluatorFeedback.userProgram!] =  1;
         }
 
         // Count departments
         if (departments.containsKey(evaluatorFeedback.userDepartment)) {
-          departments[evaluatorFeedback.userDepartment!] = departments[evaluatorFeedback.userDepartment]! + 1;
+          departments[evaluatorFeedback.userDepartment!] = departments[evaluatorFeedback.userDepartment]! +  1;
         } else {
-          departments[evaluatorFeedback.userDepartment!] = 1;
+          departments[evaluatorFeedback.userDepartment!] =  1;
         }
       }
     }
 
     return {
       'totalEvaluators': totalEvaluators,
-      'satisfiedEvaluators': satisfiedEvaluators,
-      'dissatisfiedEvaluators': dissatisfiedEvaluators,
+      'satisfactionCounts': satisfactionCounts,
       'programs': programs,
       'departments': departments,
     };
   }
+
+  Future<Map<String, Map<String, Map<String, bool>>>> getAttendanceForStudentsByProgramAndDepartment(String eventId) async {
+    // Initialize a map to hold the attendance status for each student, grouped by program and department
+    Map<String, Map<String, Map<String, bool>>> studentAttendance = {};
+
+    // Retrieve all feedbacks for the event
+    QuerySnapshot feedbackSnapshot = await _eventRef.doc(eventId).collection('feedbacks').get();
+
+    // Process each feedback to collect attendance status for students
+    for (var feedbackDoc in feedbackSnapshot.docs) {
+      EventFeedbacks feedback = EventFeedbacks.fromMap(feedbackDoc.data() as Map<String, dynamic>);
+      for (var evaluatorFeedback in feedback.evaluatorFeedbacks) {
+        // Use the program and department from the evaluator feedback to group the attendance status
+        String program = evaluatorFeedback.userProgram!;
+        String department = evaluatorFeedback.userDepartment!;
+
+        // Ensure the program and department groups exist in the map
+        studentAttendance.putIfAbsent(program, () => <String, Map<String, bool>>{});
+        studentAttendance[program]!.putIfAbsent(department, () => <String, bool>{});
+
+        // Record the attendance status for the student
+        studentAttendance[program]![department]![evaluatorFeedback.userUid!] = evaluatorFeedback.attendanceStatus!;
+      }
+    }
+
+    return studentAttendance;
+  }
+
 
   Stream<List<model.Event>> getEventsWithoutFeedback() async* {
     var controller = StreamController<List<model.Event>>();

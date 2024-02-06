@@ -60,12 +60,33 @@ class _FeedbackFormState extends State<FeedbackForm> {
       // Will be assigned with returned Widget id from this function
       eventFeedbackUid = await FirestoreFeedbackMethods().addEmptyFeedback(widget.eventId); 
 
+      int satisfactionStatusValue;
+      switch (_ratingController.text) {
+        case 'Excellent':
+          satisfactionStatusValue =  5;
+          break;
+        case 'Good':
+          satisfactionStatusValue =  4;
+          break;
+        case 'Neutral':
+          satisfactionStatusValue =  3;
+          break;
+        case 'Poor':
+          satisfactionStatusValue =  2;
+          break;
+        case 'Worst':
+          satisfactionStatusValue =  1;
+          break;
+        default:
+          satisfactionStatusValue =  1; // Default to worst if no match found
+      }
+
       EvaluatorFeedback evaluatorFeedback = EvaluatorFeedback(
         userUid: user.uid!,
         userFullName: user.profile?.fullName ?? '',
         userProgram: user.profile?.program ?? '',
         userDepartment: user.profile?.department ?? '',
-        satisfactionStatus: _ratingController.text.isNotEmpty ? (_ratingController.text == 'Satisfied' ? true : false) : false,
+        satisfactionStatus: satisfactionStatusValue,
         studentEvaluation: _feedbackController.text.isNotEmpty ? _feedbackController.text : 'No evaluation provided',
         attendanceStatus: true,
         isFeedbackDone: true,
@@ -86,12 +107,34 @@ class _FeedbackFormState extends State<FeedbackForm> {
     }
     // Else if feedback is present and has user
     else if (user != null) {
+
+      int satisfactionStatusValue;
+      switch (_ratingController.text) {
+        case 'Excellent':
+          satisfactionStatusValue =  5;
+          break;
+        case 'Good':
+          satisfactionStatusValue =  4;
+          break;
+        case 'Neutral':
+          satisfactionStatusValue =  3;
+          break;
+        case 'Poor':
+          satisfactionStatusValue =  2;
+          break;
+        case 'Worst':
+          satisfactionStatusValue =  1;
+          break;
+        default:
+          satisfactionStatusValue =  1; // Default to worst if no match found
+      }
+
       EvaluatorFeedback evaluatorFeedback = EvaluatorFeedback(
         userUid: user.uid!,
         userFullName: user.profile?.fullName ?? '',
         userProgram: user.profile?.program ?? '',
         userDepartment: user.profile?.department ?? '',
-        satisfactionStatus: _ratingController.text.isNotEmpty ? (_ratingController.text == 'Satisfied' ? true : false) : false,
+        satisfactionStatus: satisfactionStatusValue,
         studentEvaluation: _feedbackController.text.isNotEmpty ? _feedbackController.text : 'No evaluation provided',
         attendanceStatus: true,
         isFeedbackDone: true,

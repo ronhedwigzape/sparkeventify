@@ -3,7 +3,7 @@ class EvaluatorFeedback {
   String? userFullName;
   String? userProgram;
   String? userDepartment;
-  bool? satisfactionStatus;
+  int? satisfactionStatus;
   String? studentEvaluation;
   bool? attendanceStatus;
   bool? isFeedbackDone;
