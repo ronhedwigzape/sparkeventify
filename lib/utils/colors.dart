@@ -10,6 +10,8 @@ const lightModeSecondaryColor = Color.fromARGB(255, 126, 126, 126);
 const lightModeTertiaryColor = Color.fromARGB(255, 150, 150, 150);
 const lightModeIndigo = Color.fromARGB(255, 130, 144, 224);
 const lightModeGrassColor = Color.fromARGB(255, 0, 125, 31);
+const lightModeVioletColor = Color.fromARGB(255, 75, 0, 130);
+const lightModeYellowColor = Color.fromARGB(255, 255, 215, 0);
 
 // Dark mode colors
 const darkColor = Color.fromRGBO(38, 38, 38, 1);
@@ -21,6 +23,8 @@ const darkModePrimaryColor = Color.fromARGB(255, 83, 108, 255);
 const darkModeSecondaryColor = Color.fromARGB(255, 141, 141, 141);
 const darkModeTertiaryColor = Color.fromRGBO(119, 119, 119, 1.0);
 const darkModeGreyColor = Color.fromRGBO(255, 255, 255, 0.1);
+const darkModeVioletColor = Color.fromARGB(255, 138, 43, 226);
+const darkModeYellowColor = Color.fromARGB(255, 255, 223, 0);
 
 // Transparent colors
 const transparent = Colors.transparent;

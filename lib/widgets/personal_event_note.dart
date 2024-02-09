@@ -157,11 +157,11 @@ class _PersonalEventNoteState extends State<PersonalEventNote> {
                           padding: const EdgeInsets.all(2.0),
                           backgroundColor: widget.personalEvent!.type == 'Academic'
                               ? (darkModeOn
-                                  ? darkModeMaroonColor
-                                  : lightModeMaroonColor)
+                                  ? darkModeVioletColor
+                                  : lightModeVioletColor)
                               : (darkModeOn
-                                  ? darkModePrimaryColor
-                                  : lightModePrimaryColor),
+                                  ? darkModeYellowColor
+                                  : lightModeYellowColor),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(10.0),
                           ),
