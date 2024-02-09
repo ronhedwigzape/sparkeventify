@@ -716,25 +716,34 @@ class _PostScreenState extends State<PostScreen> {
                                                                   )),
                                                             ))),
                                                     // participants (Checkbox that adds to a local array of participants)
-                                                    kIsWeb ? Flexible(
-                                                      fit: FlexFit.loose,
-                                                      child: Row(
-                                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                                                        children: [
-                                                          Expanded(child: _buildParticipant('Program', programParticipants!)),
-                                                          Expanded(child: _buildParticipant('Department', departmentParticipants!)),
-                                                        ],
+                                                    kIsWeb ? Padding(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 20),
+                                                      child: Flexible(
+                                                        fit: FlexFit.loose,
+                                                        child: Padding(
+                                                          padding: const EdgeInsets.symmetric(horizontal: 50),
+                                                          child: Row(
+                                                            crossAxisAlignment: CrossAxisAlignment.start,
+                                                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                                            children: [
+                                                              Expanded(child: _buildParticipant('Program', programParticipants!)),
+                                                              Expanded(child: _buildParticipant('Department', departmentParticipants!)),
+                                                            ],
+                                                          ),
+                                                        ),
                                                       ),
-                                                    ) : Flexible(
-                                                      fit: FlexFit.loose,
-                                                      child: SingleChildScrollView(
-                                                        child: Column(
-                                                          mainAxisSize: MainAxisSize.min,
-                                                          children: [
-                                                            _buildParticipant('Program', programParticipants!),
-                                                            _buildParticipant('Department', departmentParticipants!),
-                                                          ],
+                                                    ) : Padding(
+                                                      padding: const EdgeInsets.symmetric(horizontal: 50),
+                                                      child: Flexible(
+                                                        fit: FlexFit.loose,
+                                                        child: SingleChildScrollView(
+                                                          child: Column(
+                                                            mainAxisSize: MainAxisSize.min,
+                                                            children: [
+                                                              _buildParticipant('Program', programParticipants!),
+                                                              _buildParticipant('Department', departmentParticipants!)
+                                                            ],
+                                                          ),
                                                         ),
                                                       ),
                                                     ),
