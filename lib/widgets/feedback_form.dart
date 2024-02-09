@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:student_event_calendar/models/evaluator_feedback.dart';
 import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
@@ -32,9 +33,24 @@ class _FeedbackFormState extends State<FeedbackForm> {
   void initState() {
     super.initState();
     event = FireStoreEventMethods().getEventById(widget.eventId);
+    _ratingController.text = 'Excellent';
+    loadRating();
   }
 
+  void loadRating() async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? savedRating = prefs.getString('rating');
+      if (savedRating != null) {
+        setState(() {
+          _ratingController.text = savedRating;
+        });
+      }
+    }
 
+    void saveRating(String rating) async {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('rating', rating);
+    }
 
   createFeedback(context, eventName) async {
     model.User? user = await FireStoreUserMethods().getCurrentUserData();
@@ -186,7 +202,6 @@ class _FeedbackFormState extends State<FeedbackForm> {
       }
     },
   );
-
   }
 
   Future openFeedbackForm() => showDialog(
@@ -282,51 +297,44 @@ class _FeedbackFormState extends State<FeedbackForm> {
                         content: Form(
                           key: _formKey,
                           child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
+                            mainAxisAlignment: MainAxisAlignment.start,
                             mainAxisSize: MainAxisSize.min,
                             children: <Widget>[
-                              DropdownButtonFormField<String>(
-                                style: TextStyle(color: darkModeOn ? lightColor : darkColor),
-                                decoration: InputDecoration(
-                                  border: OutlineInputBorder(
-                                    borderSide: Divider.createBorderSide(
-                                      context,
-                                      color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
-                                  ),
-                                  labelText: 'Rating*',
-                                ),
-                                value: _ratingController.text.isEmpty
-                                    ? null
-                                    : _ratingController.text,
-                                items: <String>['Satisfied', 'Dissatisfied']
+                              Text(
+                                'Rating*', 
+                                style: TextStyle(
+                                  color: darkModeOn ? white : black,
+                                  fontSize: 20
+                                ),),
+                              Column(
+                                children: <String>['Excellent', 'Good', 'Neutral', 'Poor', 'Worst']
                                     .map((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Row(
-                                      children: <Widget>[
-                                        Icon(value == 'Satisfied'
-                                            ? Icons.thumb_up
-                                            : Icons.thumb_down),
-                                        const SizedBox(width: 8),
-                                        Text(value),
-                                      ],
+                                  return ListTile(
+                                    title: Text(
+                                      value,
+                                      style: TextStyle(
+                                        color: _ratingController.text == value 
+                                            ? (darkModeOn ? Colors.white : Theme.of(context).primaryColor)
+                                            : null,
+                                      ),
+                                    ),
+                                    leading: Radio<String>(
+                                      value: value,
+                                      groupValue: _ratingController.text,
+                                      onChanged: (String? newValue) {
+                                        setState(() {
+                                          _ratingController.text = newValue!;
+                                        });
+                                        saveRating(newValue!);
+                                      },
+                                      activeColor: darkModeOn ? Colors.white : Theme.of(context).primaryColor,
                                     ),
                                   );
                                 }).toList(),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    _ratingController.text = newValue!;
-                                  });
-                                },
-                                validator: (value) {
-                                  if (value!.isEmpty) {
-                                    return 'Please select a rating';
-                                  }
-                                  return null;
-                                },
                               ),
                               const SizedBox(height: 10),
                               TextFormField(
+                                style: TextStyle(color: darkModeOn ? white : black),
                                 decoration: const InputDecoration(
                                     labelText: 'Your Comment*',
                                     alignLabelWithHint: true,

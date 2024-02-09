@@ -167,8 +167,9 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                         child: InkWell(
                           onTap: kIsWeb ? () {
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => EventFeedbackScreen(eventId: event.id)));
-                          } :() {},
+                                builder: (context) => EventFeedbackScreen(eventId: event.id)
+                            ));
+                          } : () {},
                           child: Card( 
                             elevation: 1,
                             shadowColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
