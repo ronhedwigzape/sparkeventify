@@ -46,8 +46,6 @@ class _FeedbackSummaryButtonState extends State<FeedbackSummaryButton> {
                       child: ListBody(
                         children: <Widget>[
                           Text('Total Evaluators: ${summary['totalEvaluators']}', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
-                          Text('Satisfied Evaluators: ${summary['satisfiedEvaluators']}', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
-                          Text('Dissatisfied Evaluators: ${summary['dissatisfiedEvaluators']}', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                           Text('Programs: ${summary['programs'].entries.map((e) => '${e.key}: ${e.value}').join(', ')}', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                           Text('Departments: ${summary['departments'].entries.map((e) => '${e.key}: ${e.value}').join(', ')}', style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                         ],
