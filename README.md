@@ -1,4 +1,4 @@
-# CSPC Announce
+# SparkEventify
 
 - ### A student event calendar app
 
