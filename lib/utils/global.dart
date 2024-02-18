@@ -28,7 +28,7 @@ const schoolLogoWhite = 'assets/icon/monochrome_cspc_launcher_icon_white.png';
 const schoolLogoBlack = 'assets/icon/monochrome_cspc_launcher_icon_black.png';
 const schoolLogo = 'assets/images/cspc_logo.png';
 const schoolBackground = 'assets/images/cspc_background.png';
-const appName = 'Announce';
+const appName = 'SparkEventify';
 List<String>? programsAndDepartments; 
 List<String>? programParticipants; 
 List<String>? departmentParticipants; 
