@@ -33,7 +33,6 @@ class _FeedbackFormState extends State<FeedbackForm> {
   void initState() {
     super.initState();
     event = FireStoreEventMethods().getEventById(widget.eventId);
-    _ratingController.text = 'Excellent';
     loadRating();
   }
 
@@ -205,218 +204,213 @@ class _FeedbackFormState extends State<FeedbackForm> {
   }
 
   Future openFeedbackForm() => showDialog(
-        context: context,
-        barrierDismissible: false,
-        builder: (BuildContext context) {
-          final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-          return FutureBuilder<Event>(
-            future: event,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return const Center(child: CSPCFadeLoader());
-              } else if (snapshot.hasError) {
-                return Text('Error: ${snapshot.error}');
-              } else {
-                return GestureDetector(
-                  onTap: () {
-                    FocusScopeNode currentFocus = FocusScope.of(context);
-                    if (!currentFocus.hasPrimaryFocus) {
-                      currentFocus.unfocus();
-                    }
-                  },
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: AlertDialog(
-                        title: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'Make Your Feedback for:',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 14,
-                                  color: darkModeOn
-                                    ? darkModeTertiaryColor
-                                    : lightModeTertiaryColor),
-                            ),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              snapshot.data!.title,
-                              style: TextStyle(
-                                color: darkModeOn ? lightColor : darkColor,
-                                fontWeight: FontWeight.w800,
-                              ),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              'Thank you for attending our event! We hope you had a great experience. Your feedback is important to us as it helps us improve future events. Please take a moment to complete this feedback form.',
-                              style: TextStyle(
-                                  color: darkModeOn
-                                      ? darkModeSecondaryColor
-                                      : lightModeSecondaryColor,
-                                  fontSize: 13),
-                            ),
-                            const SizedBox(
-                              height: 10,
-                            ),
-                            Text('Instructions:',
-                                style: TextStyle(fontSize: 13, color: darkModeOn ? lightColor : darkColor)),
-                            const SizedBox(
-                              height: 5,
-                            ),
-                            Text(
-                              '- Use the dropdown to select either "Satisfied" or "Dissatisfied" for each section.',
-                              style: TextStyle(
-                                  color: darkModeOn
-                                      ? darkModeTertiaryColor
-                                      : lightModeTertiaryColor,
-                                  fontSize: 12),
-                            ),
-                            Text(
-                              '- In the comment box, please provide specific details or suggestions to support your rating.',
-                              style: TextStyle(
-                                  color: darkModeOn
-                                      ? darkModeTertiaryColor
-                                      : lightModeTertiaryColor,
-                                  fontSize: 12),
-                            ),
-                            Text(
-                              '- Be honest and constructive in your feedback as it cannot be undone.',
-                              style: TextStyle(
-                                  color: darkModeOn
-                                      ? darkModeTertiaryColor
-                                      : lightModeTertiaryColor,
-                                  fontSize: 12),
-                            )
-                          ],
+    context: context,
+    barrierDismissible: false,
+    builder: (BuildContext context) {
+      final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
+      return FutureBuilder<Event>(
+        future: event,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CSPCFadeLoader());
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else {
+            return GestureDetector(
+              onTap: () {
+                FocusScopeNode currentFocus = FocusScope.of(context);
+                if (!currentFocus.hasPrimaryFocus) {
+                  currentFocus.unfocus();
+                }
+              },
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: AlertDialog(
+                    title: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Make Your Feedback for:',
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 14,
+                              color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor),
                         ),
-                        content: Form(
-                          key: _formKey,
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(
-                                'Rating*', 
-                                style: TextStyle(
-                                  color: darkModeOn ? white : black,
-                                  fontSize: 20
-                                ),),
-                              Column(
-                                children: <String>['Excellent', 'Good', 'Neutral', 'Poor', 'Worst']
-                                    .map((String value) {
-                                  return ListTile(
-                                    title: Text(
-                                      value,
-                                      style: TextStyle(
-                                        color: _ratingController.text == value 
-                                            ? (darkModeOn ? Colors.white : Theme.of(context).primaryColor)
-                                            : null,
-                                      ),
-                                    ),
-                                    leading: Radio<String>(
-                                      value: value,
-                                      groupValue: _ratingController.text,
-                                      onChanged: (String? newValue) {
-                                        setState(() {
-                                          _ratingController.text = newValue!;
-                                        });
-                                        saveRating(newValue!);
-                                      },
-                                      activeColor: darkModeOn ? Colors.white : Theme.of(context).primaryColor,
-                                    ),
-                                  );
-                                }).toList(),
-                              ),
-                              const SizedBox(height: 10),
-                              TextFormField(
-                                style: TextStyle(color: darkModeOn ? white : black),
-                                decoration: const InputDecoration(
-                                    labelText: 'Your Comment*',
-                                    alignLabelWithHint: true,
-                                    border: OutlineInputBorder()),
-                                keyboardType: TextInputType.multiline,
-                                controller: _feedbackController,
-                                minLines: 4,
-                                maxLines: null,
-                                validator: (value) {
-                                  if (value == null || value.isEmpty) {
-                                    return 'Please create your feedback.';
-                                  }
-                                  return null;
-                                },
-                              ),
-                            ],
+                        const SizedBox(height: 5),
+                        Text(
+                          snapshot.data!.title,
+                          style: TextStyle(
+                            color: darkModeOn ? lightColor : darkColor,
+                            fontWeight: FontWeight.w800,
                           ),
                         ),
-                        actions: <Widget>[
-                          TextButton(
-                            child: const Column(
-                              children: [
-                                Icon(Icons.check, color: darkModeGrassColor),
-                                SizedBox(width: 10),
-                                Text(
-                                  'Submit',
-                                  style: TextStyle(color: darkModeGrassColor),
-                                )
-                              ],
+                        const SizedBox(height: 10),
+                        Text(
+                          'Thank you for attending our event! We hope you had a great experience. Your feedback is crucial for us to improve future events. Please take a moment to complete this feedback form.',
+                          style: TextStyle(
+                              color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,
+                              fontSize: 13),
+                        ),
+                        const SizedBox(height: 10),
+                        Text('Instructions:',
+                            style: TextStyle(fontSize: 13, color: darkModeOn ? lightColor : darkColor)),
+                        const SizedBox(height: 5),
+                        Text(
+                          '- Please select a rating from the dropdown menu. Your options range from "Excellent" to "Worst".',
+                          style: TextStyle(
+                              color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
+                              fontSize: 12),
+                        ),
+                        Text(
+                          '- In the comment box below, please provide specific feedback or suggestions to support your rating.',
+                          style: TextStyle(
+                              color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
+                              fontSize: 12),
+                        ),
+                        Text(
+                          '- Your honest and constructive feedback is appreciated as it helps us to enhance the quality of future events.',
+                          style: TextStyle(
+                              color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
+                              fontSize: 12),
+                        )
+                      ],
+                    ),
+                    content: Form(
+                      key: _formKey,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
+                        children: <Widget>[
+                          Text(
+                            'Rating*',
+                            style: TextStyle(
+                              color: darkModeOn ? white : black,
+                              fontSize: 20
                             ),
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
-                                if (mounted) {
-                                  Future<bool> Function() isConnected = ConnectivityService().isConnected;
-                                  if (await isConnected()) {
-                                    // ignore: use_build_context_synchronously
-                                    await createFeedback(context, snapshot.data!.title);
-                                  } else {
-                                    // Show a message to the user
-                                    mounted ? ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
-                                        duration: const Duration(seconds: 5),
-                                      ),
-                                    ) : '';
-                                  }
-                                  mounted ? Navigator.of(context).pop() : '';
-                                }
-                              }
-                            },
                           ),
-                          TextButton(
-                            child: Column(
-                              children: [
-                                Icon(
-                                  Icons.close,
-                                  color: darkModeOn
-                                    ? darkModeMaroonColor
-                                    : lightModeMaroonColor,
+                          const SizedBox(height: 10),
+                          DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide(
+                                  color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
                                 ),
-                                const SizedBox(width: 10),
-                                Text(
-                                  'Close',
-                                  style: TextStyle(
-                                    color: darkModeOn
-                                      ? darkModeMaroonColor
-                                      : lightModeMaroonColor),
-                                )
-                              ],
+                              ),
+                              labelText: 'Rating*',
+                              labelStyle: TextStyle(color: darkModeOn ? lightColor : darkColor), 
                             ),
-                            onPressed: () {
-                              Navigator.pop(context);
+                            value: _ratingController.text.isEmpty ? null : _ratingController.text, 
+                            dropdownColor: darkModeOn ? Colors.grey[800] : Colors.white, 
+                            style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                            items: <String>['Excellent', 'Good', 'Neutral', 'Poor', 'Worst'].map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Text(
+                                  value,
+                                  style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                _ratingController.text = newValue!;
+                                if (kDebugMode) {
+                                  print("Selected: ${_ratingController.text}");
+                                }
+                              });
                             },
-                          )
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please select a rating';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 10),
+                          TextFormField(
+                            style: TextStyle(color: darkModeOn ? white : black),
+                            decoration: const InputDecoration(
+                                labelText: 'Your Comment*',
+                                alignLabelWithHint: true,
+                                border: OutlineInputBorder()),
+                            keyboardType: TextInputType.multiline,
+                            controller: _feedbackController,
+                            minLines: 4,
+                            maxLines: null,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please create your feedback.';
+                              }
+                              return null;
+                            },
+                          ),
                         ],
                       ),
                     ),
+                    actions: <Widget>[
+                    TextButton(
+                      child: const Column(
+                        children: [
+                          Icon(Icons.check, color: darkModeGrassColor),
+                          SizedBox(width: 10),
+                          Text(
+                            'Submit',
+                            style: TextStyle(color: darkModeGrassColor),
+                          )
+                        ],
+                      ),
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          if (mounted) {
+                            Future<bool> Function() isConnected = ConnectivityService().isConnected;
+                            if (await isConnected()) {
+                              // ignore: use_build_context_synchronously
+                              await createFeedback(context, snapshot.data!.title);
+                            } else {
+                              // Show a message to the user
+                              mounted ? ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
+                                  duration: const Duration(seconds: 5),
+                                ),
+                              ) : '';
+                            }
+                            mounted ? Navigator.of(context).pop() : '';
+                          }
+                        }
+                      },
+                    ),
+                    TextButton(
+                      child: Column(
+                        children: [
+                          Icon(
+                            Icons.close,
+                            color: darkModeOn
+                              ? darkModeMaroonColor
+                              : lightModeMaroonColor,
+                          ),
+                          const SizedBox(width: 10),
+                          Text(
+                            'Close',
+                            style: TextStyle(
+                              color: darkModeOn
+                                ? darkModeMaroonColor
+                                : lightModeMaroonColor),
+                          )
+                        ],
+                      ),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    )
+                    ],
                   ),
-                );
-              }
-            },
-          );
+                ),
+              ),
+            );
+          }
         },
       );
+    },
+  );
 }
