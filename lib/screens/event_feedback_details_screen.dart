@@ -30,7 +30,40 @@ class _EventFeedbackDetailsScreenState extends State<EventFeedbackDetailsScreen>
 
     // Assuming we need to process feedbacks to get satisfaction data
     var allFeedbacks = await FirestoreFeedbackMethods().getAllFeedbacks(widget.eventId);
+    
+    // Process the fetched feedback data
     processFeedbackData(allFeedbacks);
+
+    // Now, explicitly process the attendance data
+    processAttendanceData(attendanceData);
+  }
+
+  void processAttendanceData(Map<String, Map<String, Map<String, bool>>> attendanceData) {
+    int totalAttended = 0;
+    int totalNotAttended = 0;
+    Map<String, int> localProgramAttendance = {};
+    Map<String, int> localDepartmentAttendance = {};
+
+    attendanceData.forEach((program, deptData) {
+      deptData.forEach((department, studentData) {
+        studentData.forEach((studentId, attended) {
+          if (attended) {
+            totalAttended++;
+            localProgramAttendance.update(program, (val) => val + 1, ifAbsent: () => 1);
+            localDepartmentAttendance.update(department, (val) => val + 1, ifAbsent: () => 1);
+          } else {
+            totalNotAttended++;
+          }
+        });
+      });
+    });
+
+    setState(() {
+      programAttendance = localProgramAttendance;
+      departmentAttendance = localDepartmentAttendance;
+      attendanceSummary['Attended'] = totalAttended;
+      attendanceSummary['Not Attended'] = totalNotAttended;
+    });
   }
 
   void processFeedbackData(List<EventFeedbacks> allFeedbacks) {
@@ -66,36 +99,66 @@ class _EventFeedbackDetailsScreenState extends State<EventFeedbackDetailsScreen>
 @override
 Widget build(BuildContext context) {
   return Scaffold(
-    appBar: AppBar(title: const Text('Event Attendance & Satisfaction Summary')),
+    appBar: AppBar(title: const Center(child: Text('Event Attendance & Satisfaction Summary',
+     style: TextStyle(fontWeight: FontWeight.w900),))),
     body: SingleChildScrollView(
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 300.0, vertical: 16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Attendance Summary', style: Theme.of(context).textTheme.titleLarge),
-            SizedBox(height: 8),
-            Text('Attended: ${attendanceSummary['Attended'] ?? 0}'),
-            SizedBox(height: 4),
-            Text('Did Not Attend: ${attendanceSummary['Not Attended'] ?? 0}'),
-            Divider(),
-            Text('Program Attendance', style: Theme.of(context).textTheme.titleLarge),
+            Row(
+              children: [
+                const Icon(Icons.schedule),
+                const SizedBox(width: 5,),
+                Text('Attendance Summary', style: Theme.of(context).textTheme.titleLarge),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Text('Attended: ${attendanceSummary['Attended'] ?? 0}'),
+                const SizedBox(width: 10),
+                Text('Did Not Attend: ${attendanceSummary['Not Attended'] ?? 0}'),
+              ],
+            ),
+            
+            const Divider(),
+            Row(
+              children: [
+                const Icon(Icons.school),
+                const SizedBox(width: 5,),
+                Text('Program Attendance', style: Theme.of(context).textTheme.titleLarge),
+              ],
+            ),
             ...programAttendance.entries.map((entry) {
               return ListTile(
                 title: Text(entry.key), // Program name
                 trailing: Text('Attended: ${entry.value}'),
               );
             }).toList(),
-            Divider(),
-            Text('Department Attendance', style: Theme.of(context).textTheme.titleLarge),
+            const Divider(),
+            Row(
+              children: [
+                const Icon(Icons.school),
+                const SizedBox(width: 5,),
+                Text('Department Attendance', style: Theme.of(context).textTheme.titleLarge),
+              ],
+            ),
             ...departmentAttendance.entries.map((entry) {
               return ListTile(
                 title: Text(entry.key), // Department name
                 trailing: Text('Attended: ${entry.value}'),
               );
             }).toList(),
-            Divider(),
-            Text('Satisfaction Summary', style: Theme.of(context).textTheme.headline6),
+            const Divider(),
+            Row(
+              children: [
+                const Icon(Icons.rate_review),
+                const SizedBox(width: 5,),
+                Text('Satisfaction Summary', style: Theme.of(context).textTheme.headline6),
+              ],
+            ),
             ...List.generate(5, (index) {
               String levelText = ["Worst", "Poor", "Average", "Good", "Excellent"][index];
               return ListTile(
