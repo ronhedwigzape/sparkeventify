@@ -19,17 +19,17 @@ class _ManageConstantsScreenState extends State<ManageProgramDepartmentScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Program and Departments'),
+        title: const Text('Manage Program and Departments'),
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: globalMethods.getConstantsStream(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (!snapshot.hasData) {
-            return Center(child: Text('No data'));
+            return const Center(child: Text('No data'));
           }
 
           Map<String, dynamic> constants = snapshot.data!.data() as Map<String, dynamic>;
@@ -44,7 +44,7 @@ class _ManageConstantsScreenState extends State<ManageProgramDepartmentScreen> {
                 return ListTile(
                   title: Text(programAndDepartment),
                   trailing: IconButton(
-                    icon: Icon(Icons.delete),
+                    icon: const Icon(Icons.delete),
                     onPressed: () async {
                         bool success = await globalMethods.emptyProgramAndDepartment(
                         programAndDepartment.split(' - ')[0],
@@ -65,27 +65,23 @@ class _ManageConstantsScreenState extends State<ManageProgramDepartmentScreen> {
                       context: context,
                       builder: (context) {
                         return AlertDialog(
-                          title: Text('Update Program and Department'),
+                          title: const Text('Update Program and Department'),
                           content: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               TextField(
                                 controller: programController,
-                                decoration: InputDecoration(labelText: 'Program'),
+                                decoration: const InputDecoration(labelText: 'Program'),
                               ),
                               TextField(
                                 controller: departmentController,
-                                decoration: InputDecoration(labelText: 'Department'),
-                              ),
-                              TextField(
-                                controller: majorController,
-                                decoration: InputDecoration(labelText: 'Major'),
-                              ),
+                                decoration: const InputDecoration(labelText: 'Department'),
+                              )
                             ],
                           ),
                           actions: [
                             ElevatedButton(
-                              child: Text('UPDATE'),
+                              child: const Text('UPDATE'),
                               onPressed: () async {
                                 bool success = await globalMethods.updateProgramAndDepartment(
                                   programAndDepartment.split(' - ')[0],
@@ -105,7 +101,7 @@ class _ManageConstantsScreenState extends State<ManageProgramDepartmentScreen> {
                               },
                             ),
                             TextButton(
-                              child: Text('CANCEL'),
+                              child: const Text('CANCEL'),
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
@@ -122,7 +118,7 @@ class _ManageConstantsScreenState extends State<ManageProgramDepartmentScreen> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: () {
           programController.clear();
           departmentController.clear();
@@ -132,36 +128,35 @@ class _ManageConstantsScreenState extends State<ManageProgramDepartmentScreen> {
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: Text('Add Program and Department'),
+                title: const Text('Add Program and Department'),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextField(
                       controller: programController,
-                      decoration: InputDecoration(labelText: 'Program'),
+                      decoration: const InputDecoration(labelText: 'Program'),
                     ),
                     TextField(
                       controller: departmentController,
-                      decoration: InputDecoration(labelText: 'Department'),
-                    ),
-                    TextField(
-                      controller: majorController,
-                      decoration: InputDecoration(labelText: 'Major'),
-                    ),
+                      decoration: const InputDecoration(labelText: 'Department'),
+                    )
                   ],
                 ),
                 actions: [
                   ElevatedButton(
-                    child: Text('ADD'),
+                    child: const Text('ADD'),
                     onPressed: () async {
+                      // Add a new program and department
                       bool success = await globalMethods.insertProgramAndDepartment(
                         programController.text,
                         departmentController.text,
                         majorController.text,
                       );
+                      
                       mounted ? ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text(success ? 'Adding successful' : 'Adding failed')),
                       ) : '';
+
                       programController.clear();
                       departmentController.clear();
                       majorController.clear();
@@ -169,7 +164,7 @@ class _ManageConstantsScreenState extends State<ManageProgramDepartmentScreen> {
                     },
                   ),
                   TextButton(
-                    child: Text('CANCEL'),
+                    child: const Text('CANCEL'),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },
