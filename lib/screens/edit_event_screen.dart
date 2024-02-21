@@ -189,13 +189,22 @@ class EditEventScreenState extends State<EditEventScreen> {
         });
   }
 
-  setEventCancellation(DateTime startDate, DateTime endDate, DateTime startTime, DateTime endTime) async {
+  setEventCancellation(String userType, DateTime startDate, DateTime endDate, DateTime startTime, DateTime endTime) async {
     setState(() {
       _isLoadingCancel = true;
     });
     try {
       String response = await FireStoreEventMethods()
-          .updateEventStatus(widget.eventSnap.id, true, null, startDate, endDate, startTime, endTime);
+          .updateEventStatus(
+            widget.eventSnap.id, 
+            true, 
+            null, 
+            startDate, 
+            endDate,
+            startTime, 
+            endTime
+          );
+
       if (kDebugMode) {
         print('Update Event Response Cancelled: $response');
       }
@@ -228,13 +237,22 @@ class EditEventScreenState extends State<EditEventScreen> {
     }
   }
 
-  setEventMoved(DateTime newStartDate, DateTime newEndDate, DateTime newStartTime, DateTime newEndTime) async {
+  setEventMoved(String userType, DateTime newStartDate, DateTime newEndDate, DateTime newStartTime, DateTime newEndTime) async {
     setState(() {
       _isLoadingMoved = true;
     });
     try {
       String response = await FireStoreEventMethods()
-          .updateEventStatus(widget.eventSnap.id, null, true, newStartDate, newEndDate, newStartTime, newEndTime);
+          .updateEventStatus(
+            widget.eventSnap.id, 
+            null, 
+            true, 
+            newStartDate, 
+            newEndDate, 
+            newStartTime, 
+            newEndTime
+          );
+
       if (kDebugMode) {
         print('Update Event Response Moved: $response');
       }
@@ -283,7 +301,7 @@ class EditEventScreenState extends State<EditEventScreen> {
     }
   }
 
-  _update(String userType) async {
+  _update(String userType, bool isMoved, bool isCancelled) async {
     if (kDebugMode) {
       print('Post function started!');
     }
@@ -291,9 +309,6 @@ class EditEventScreenState extends State<EditEventScreen> {
     // Show a SnackBar with a loading message
     showSnackBar('Updating event...', context);
 
-    setState(() {
-      _isLoading = true;
-    });
     try {
       if (kDebugMode) {
         print('Trying to update event...');
@@ -374,6 +389,7 @@ class EditEventScreenState extends State<EditEventScreen> {
           startTime: startTime12,
           endTime: endTime12,
           type: _eventTypeController.text,
+          approvalStatus: (userType == 'Admin' || userType == 'Staff') ? 'approved' : 'pending',
           status: widget.eventSnap.status, // TODO: change this
           dateUpdated: DateTime.now(),
           datePublished: widget.eventSnap.datePublished,
@@ -434,13 +450,38 @@ class EditEventScreenState extends State<EditEventScreen> {
           try {
             await user.reauthenticateWithCredential(credential);
 
-            // Add the event to the database
+            // Update the event to the database
             response = await FireStoreEventMethods()
                 .updateEvent(widget.eventSnap.id, event, userType);
 
-            await FireStoreEventMethods().updateEventStatus(
-                widget.eventSnap.id, false, false, startDatePart, endDatePart, startTime12, endTime12);
+              // If the event status is moved 
+              if (isMoved) {
+                await setEventMoved(
+                  userType, 
+                  startDatePart, 
+                  endDatePart, 
+                  startTime12, 
+                  endTime12
+                );
+              } 
+              // If the event is cancelled
+              else if (isCancelled) {
+                await setEventCancellation(
+                  userType, 
+                  startDatePart, 
+                  endDatePart, 
+                  startTime12, 
+                  endTime12
+                );
+              } 
+              // If the event will be updated 
+              else {
+                setState(() => _isLoading = true);
+                await FireStoreEventMethods().updateEventStatus(
+                  widget.eventSnap.id, false, false, startDatePart, endDatePart, startTime12, endTime12);
+              }
 
+            // Print update status response
             if (kDebugMode) {
               print('Update Event Response: $response');
             }
@@ -458,14 +499,11 @@ class EditEventScreenState extends State<EditEventScreen> {
         }
 
         return response;
-
       } else {
         if (kDebugMode) {
           print('Complete all required parameters!');
         }
-        setState(() {
-          _isLoading = false;
-        });
+        setState(() => _isLoading = false);
         // Show a snackbar if the image and document are not loaded
         mounted
             ? showSnackBar('Please complete the required fields.*', context)
@@ -899,7 +937,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                                           onTap: () async {
                                             bool isConnected = await ConnectivityService().isConnected();
                                             if (isConnected) {
-                                              await _update(currentUser!.userType!);
+                                              await _update(currentUser!.userType!, false, false);
                                             } else {
                                               // Show a message to the user
                                               mounted ? Navigator.of(context).pop() : '';
@@ -963,23 +1001,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                                           onTap: () async {
                                             bool isConnected = await ConnectivityService().isConnected();
                                             if (isConnected) {
-                                              String pickedStartDate = _startDateController.text;
-                                              String pickedEndDate = _endDateController.text;
-                                              String pickedStartTime = _startTimeController.text;
-                                              String pickedEndTime = _endTimeController.text;
-                                              // Convert picked date (yyyy-mm-dd) to DateTime
-                                              DateTime startDate = DateTime.parse(pickedStartDate);
-                                              DateTime endDate = DateTime.parse(pickedEndDate);
-                                              // Get only the date part as a DateTime object
-                                              DateTime startDatePart =
-                                                  DateTime(startDate.year, startDate.month, startDate.day);
-                                              DateTime endDatePart =
-                                                  DateTime(endDate.year, endDate.month, endDate.day);
-                                              // Parse 12-hour format time string to DateTime
-                                              DateFormat time12Format = DateFormat('h:mm a');
-                                              DateTime startTime12 = time12Format.parse(pickedStartTime);
-                                              DateTime endTime12 = time12Format.parse(pickedEndTime);
-                                              await setEventCancellation(startDatePart, endDatePart, startTime12, endTime12);
+                                              await _update(currentUser!.userType!, false, true);
                                             } else {
                                               // Show a message to the user
                                               mounted ? Navigator.of(context).pop() : '';
@@ -1043,23 +1065,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                                           onTap: () async {
                                             bool isConnected = await ConnectivityService().isConnected();
                                             if (isConnected) {
-                                              String pickedStartDate = _startDateController.text;
-                                              String pickedEndDate = _endDateController.text;
-                                              String pickedStartTime = _startTimeController.text;
-                                              String pickedEndTime = _endTimeController.text;
-                                              // Convert picked date (yyyy-mm-dd) to DateTime
-                                              DateTime startDate = DateTime.parse(pickedStartDate);
-                                              DateTime endDate = DateTime.parse(pickedEndDate);
-                                              // Get only the date part as a DateTime object
-                                              DateTime startDatePart =
-                                                  DateTime(startDate.year, startDate.month, startDate.day);
-                                              DateTime endDatePart =
-                                                  DateTime(endDate.year, endDate.month, endDate.day);
-                                              // Parse 12-hour format time string to DateTime
-                                              DateFormat time12Format = DateFormat('h:mm a');
-                                              DateTime startTime12 = time12Format.parse(pickedStartTime);
-                                              DateTime endTime12 = time12Format.parse(pickedEndTime);
-                                              await setEventMoved(startDatePart, endDatePart, startTime12, endTime12);
+                                              await _update(currentUser!.userType!, true, false);
                                             } else {
                                               // Show a message to the user
                                               mounted ? Navigator.of(context).pop() : '';
