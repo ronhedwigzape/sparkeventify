@@ -1,14 +1,11 @@
 import 'dart:async';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_file_saver/flutter_file_saver.dart';
-import 'package:http/io_client.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:student_event_calendar/models/event.dart' as model;
 import 'package:pdf/widgets.dart' as pw;
-import 'package:universal_io/io.dart';
 
 class ReportScreen extends StatefulWidget {
   final List<model.Event> events;
@@ -71,20 +68,6 @@ class _ReportScreenState extends State<ReportScreen> {
           event.startDate.isAfter(startDate) && event.endDate.isBefore(endDate)
         ).toList();
       });
-    }
-  }
-
-  Future<pw.MemoryImage?> _fetchImage(String url) async {
-    try {
-      final httpClient = HttpClient();
-      final ioClient = IOClient(httpClient);
-      final response = await ioClient.get(Uri.parse(url));
-      return pw.MemoryImage(response.bodyBytes);
-    } catch (e) {
-      if (kDebugMode) {
-        print('Error fetching image $url: $e');
-      }
-      return null;
     }
   }
 
@@ -278,7 +261,7 @@ class _ReportScreenState extends State<ReportScreen> {
                   columns: const <DataColumn>[
                     DataColumn(label: Text('Event Date')),
                     DataColumn(label: Text('Event Title')),
-                    DataColumn(label: Text('Start Time')),
+                    DataColumn(label: Flexible(child: Text('Time'))),
                     DataColumn(label: Text('Venue')),
                     DataColumn(label: Text('Participants')),
                   ],
@@ -286,7 +269,7 @@ class _ReportScreenState extends State<ReportScreen> {
                     (event) => DataRow(
                       cells: <DataCell>[
                         DataCell(Text(DateFormat('yyyy-MM-dd').format(event.startDate), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color))),
-                        DataCell(Text(event.title, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color))),
+                        DataCell(Flexible(child: Text(event.title, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color)))),
                         DataCell(Text(DateFormat('hh:mm a').format(event.startTime), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color))),
                         DataCell(Text(event.venue ?? 'N/A', style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color))),
                         DataCell(
