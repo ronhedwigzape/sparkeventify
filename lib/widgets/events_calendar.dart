@@ -167,17 +167,17 @@ class EventsCalendarState extends State<EventsCalendar> {
                                     children: [
                                       ElevatedButton.icon(
                                         onPressed: () async {
-                                          List<Event> currentMonthEvents = [];
+                                          List<Event> allEvents = [];
                                           _events.forEach((eventDate, eventList) {
-                                            if (eventDate.month == _focusedDay.month) {
-                                              currentMonthEvents.addAll(eventList);
-                                            }
+                                            allEvents.addAll(eventList); // Add all events without filtering by month
                                           });
-                                          // If a.date is earlier than b.date, it will return a negative number, and a will be placed before b in the sorted list
-                                          currentMonthEvents.sort((a, b) => a.startDate.compareTo(b.startDate));
+                                          // Sort events by start date if needed
+                                          allEvents.sort((a, b) => a.startDate.compareTo(b.startDate));
+
+                                          // Navigate to ReportScreen with all events
                                           Navigator.push(
                                             context,
-                                            MaterialPageRoute(builder: (context) => ReportScreen(events: currentMonthEvents, currentMonth: currentMonth,)),
+                                            MaterialPageRoute(builder: (context) => ReportScreen(events: allEvents)),
                                           );
                                         },
                                         icon: const Icon(Icons.report, color: lightColor, size: 16,),

@@ -12,9 +12,8 @@ import 'package:universal_io/io.dart';
 
 class ReportScreen extends StatefulWidget {
   final List<model.Event> events;
-  final String currentMonth;
 
-  const ReportScreen({Key? key, required this.events, required this.currentMonth}) : super(key: key);
+  const ReportScreen({Key? key, required this.events}) : super(key: key);
 
   @override
   State<ReportScreen> createState() => _ReportScreenState();
@@ -158,9 +157,7 @@ class _ReportScreenState extends State<ReportScreen> {
             pw.Center(child: pw.Text('Camarines Sur Polytechnic Colleges', style: pw.TextStyle(font: font, fontSize: fontSize))),
             pw.SizedBox(height: 10.0),
             pw.Center(child: pw.Text('MONTHLY MONITORING SHEET OF STUDENTS’ ACTIVITY CONDUCTED', style: pw.TextStyle(font: font, fontSize: fontSize))),
-            pw.SizedBox(height: 10.0),
-            pw.Center(child: pw.Text(widget.currentMonth, style: pw.TextStyle(font: font, fontSize: fontSize))),
-            pw.SizedBox(height: 15.0),
+            pw.SizedBox(height: 10.0)
           ],
         ),
         build: (pw.Context context) => [
@@ -202,7 +199,7 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Report for ${widget.currentMonth}'),
+        title: Text('Reports'),
         actions: [
           // Venue Dropdown
           DropdownButton<String>(
@@ -265,12 +262,6 @@ class _ReportScreenState extends State<ReportScreen> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text('MONTHLY MONITORING SHEET OF STUDENTS’ ACTIVITY CONDUCTED'),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(widget.currentMonth)
                   ],
                 ),
                 const SizedBox(height: 20,),
