@@ -44,9 +44,10 @@ class _ReportScreenState extends State<ReportScreen> {
 
   void filterEvents() {
     setState(() {
-      filteredEvents = filteredEvents.where((event) {
+      filteredEvents = widget.events.where((event) {
         bool venueMatch = selectedVenue == null || selectedVenue == 'All' || event.venue == selectedVenue;
-        bool departmentMatch = selectedDepartment == null || selectedDepartment == 'All' || event.participants?['department']?.contains(selectedDepartment);
+        // Explicitly check for null before using the list in a condition
+        bool departmentMatch = selectedDepartment == null || selectedDepartment == 'All' || (event.participants?['department'] != null && event.participants!['department'].contains(selectedDepartment));
         return venueMatch && departmentMatch;
       }).toList();
     });
@@ -182,7 +183,7 @@ class _ReportScreenState extends State<ReportScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Reports'),
+        title: const Text('Reports'),
         actions: [
           // Venue Dropdown
           DropdownButton<String>(
