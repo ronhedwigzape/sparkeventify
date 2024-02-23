@@ -604,11 +604,25 @@ class EditEventScreenState extends State<EditEventScreen> {
                                           ),
                                           const SizedBox(width: 10.0),
                                           Flexible(
-                                            child: TextFieldInput(
-                                              labelText: 'Venue*',
-                                              textEditingController: _eventVenueController,
-                                              textInputType: TextInputType.text,
-                                            )
+                                            child: DropdownButtonFormField<String>(
+                                              decoration: const InputDecoration(
+                                                labelText: 'Venue*',
+                                                border: OutlineInputBorder(),
+                                              ),
+                                              value: widget.eventSnap.venue, // Set the initial value
+                                              items: ['Auditorium', 'Gymnasium'].map((String venue) {
+                                                return DropdownMenuItem<String>(
+                                                  value: venue,
+                                                  child: Text(venue),
+                                                );
+                                              }).toList(),
+                                              onChanged: (String? newValue) {
+                                                // Update the state with the new selected value
+                                                setState(() {
+                                                  _eventVenueController.text = newValue!;
+                                                });
+                                              },
+                                            ),
                                           )
                                         ]),
                                       ),

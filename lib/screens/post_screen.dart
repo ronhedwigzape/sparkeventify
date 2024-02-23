@@ -6,7 +6,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/layouts/admin_screen_layout.dart';
 import 'package:student_event_calendar/layouts/client_screen_layout.dart';
-import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
@@ -168,201 +167,186 @@ class _PostScreenState extends State<PostScreen> {
         });
   }
 
+  // Add this method to check for event conflicts
+  Future<bool> _checkForEventConflict() async {
+    final startDate = DateTime.parse(_startDateController.text);
+    final endDate = DateTime.parse(_endDateController.text);
+    // Adjust the query as per your Firestore structure and fields
+    final querySnapshot = await FirebaseFirestore.instance.collection('events')
+        .where('title', isEqualTo: _eventTitleController.text)
+        .where('venue', isEqualTo: _eventVenueController.text)
+        .where('startDate', isEqualTo: startDate)
+        .where('endDate', isEqualTo: endDate)
+        .limit(1)
+        .get();
+
+    // Return true if there are any documents found, implying a conflict
+    return querySnapshot.docs.isNotEmpty;
+  }
+
+  // Streamlined _post method
   _post(String userType) async {
+    startLoading(); // Simplify starting the loading state
+
+    // Check for event conflict before proceeding
+    if (await _checkForEventConflict()) {
+      stopLoading(); // Simplify stopping the loading state
+      _showConflictDialog();
+      return;
+    }
+
+    // Debug log
     if (kDebugMode) {
       print('Post function started!');
     }
 
-    // Show a SnackBar with a loading message
+    // ignore: use_build_context_synchronously
     showSnackBar('Creating event...', context);
 
-    setState(() {
-      _isLoading = true;
-    });
+    // Validate required fields
+    if (!_validateRequiredFields()) {
+      // ignore: use_build_context_synchronously
+      showSnackBar('Please complete the required fields.*', context);
+      stopLoading(); // Stop loading if validation fails
+      return;
+    }
+
+    // Attempt to add event
     try {
-      if (kDebugMode) {
-        print('Trying to add event...');
+      String? password = await _promptForPassword();
+      if (password == null) {
+        stopLoading(); // User cancelled the password dialog
+        return;
       }
-      // Check if all required parameters are not null
-      if (_eventTypeController.text.isNotEmpty &&
-          _eventTitleController.text.isNotEmpty &&
-          _startDateController.text.isNotEmpty &&
-          _endDateController.text.isNotEmpty &&
-          _startTimeController.text.isNotEmpty &&
-          _endTimeController.text.isNotEmpty &&
-          _eventDescriptionsController.text.isNotEmpty &&
-          _eventVenueController.text.isNotEmpty &&
-          selectedParticipants.isNotEmpty) {
-        // Get the date and time from the text controllers
-        String pickedStartDate = _startDateController.text;
-        String pickedEndDate = _endDateController.text;
-        String pickedStartTime = _startTimeController.text;
-        String pickedEndTime = _endTimeController.text;
-        // Convert picked date (yyyy-mm-dd) to DateTime
-        DateTime startDate = DateTime.parse(pickedStartDate);
-        DateTime endDate = DateTime.parse(pickedEndDate);
-        // Get only the date part as a DateTime object
-        DateTime startDatePart = DateTime(startDate.year, startDate.month, startDate.day);
-        DateTime endDatePart = DateTime(endDate.year, endDate.month, endDate.day);
-        // Parse 12-hour format time string to DateTime
-        DateFormat time12Format = DateFormat('h:mm a');
-        DateTime startTime12 = time12Format.parse(pickedStartTime);
-        DateTime endTime12 = time12Format.parse(pickedEndTime);
 
-        // Show a dialog to enter the user's password
-        String? password = await showDialog<String>(
-          barrierDismissible: false,
-          context: context,
-          builder: (BuildContext context) {
-            final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-            String? password;
-            return AlertDialog(
-              title: Text(
-                'Enter your password',
-                style: TextStyle(color: darkModeOn ? lightColor : darkColor),
-              ),
-              content: TextField(
-                obscureText: true,
-                decoration: const InputDecoration(
-                  hintText: 'Password',
-                ),
-                onChanged: (value) => password = value,
-              ),
-              actions: <Widget>[
-                TextButton(
-                  child: const Text('Cancel'),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    setState(() {
-                      _isLoading = false;
-                    });
-                  },
-                ),
-                TextButton(
-                  child: const Text('OK'),
-                  onPressed: () {
-                    Navigator.of(context).pop(password);
-                  },
-                ),
-              ],
-            );
-          },
-        );
-
-        // If the password is not null, re-authenticate the user
-        if (password != null) {
-          User? user = FirebaseAuth.instance.currentUser;
-          AuthCredential credential = EmailAuthProvider.credential(
-            email: user!.email!,
-            password: password,
-          );
-
-          // Re-authenticate the user
-          try {
-            await user.reauthenticateWithCredential(credential);
-
-            // Add the event to the database
-            String response = await FireStoreEventMethods().postEvent(
-                _eventTitleController.text,
-                _imageFile,
-                _eventDescriptionsController.text,
-                FirebaseAuth.instance.currentUser!.uid,
-                _documentFile,
-                startDatePart,
-                endDatePart,
-                startTime12,
-                endTime12,
-                selectedParticipants,
-                _eventVenueController.text,
-                _eventTypeController.text,
-                'Upcoming',
-                userType
-              );
-            if (kDebugMode) {
-              print('Add Event Response: $response');
-            }
-            // Check if the response is a success or a failure
-            if (response == 'Success') {
-              onPostSuccess(userType);
-            } else if (response == 'Conflicting event exists') {
-              // Fetch the conflicting event details
-              DateTime startDate = DateTime.parse(_startDateController.text);
-              DateTime endDate = DateTime.parse(_endDateController.text);
-              String venue = _eventVenueController.text;
-
-              QuerySnapshot querySnapshot = await FirebaseFirestore.instance.collection('events')
-                .where('startDate', isEqualTo: startDate)
-                .where('endDate', isEqualTo: endDate)
-                .where('venue', isEqualTo: venue)
-                .get();
-
-              String conflictingEventDetails = "";
-              for (var doc in querySnapshot.docs) {
-                Event existingEvent = Event.fromSnap(doc);
-                conflictingEventDetails += "Title: ${existingEvent.title}\n"
-                                          "Date: ${DateFormat('yyyy-MM-dd').format(existingEvent.startDate!)} to ${DateFormat('yyyy-MM-dd').format(existingEvent.endDate!)}\n"
-                                          "Venue: ${existingEvent.venue}\n\n";
-              }
-
-              // Show the dialog with conflicting events details
-              // ignore: use_build_context_synchronously
-              showDialog(
-                context: context,
-                builder: (BuildContext context) {
-                  return AlertDialog(
-                    title: const Text("Schedule Conflict Detected"),
-                    content: SingleChildScrollView(
-                      child: ListBody(
-                        children: <Widget>[
-                          Text("Your event conflicts with the following event(s) at the same venue and date:\n\n$conflictingEventDetails"),
-                        ],
-                      ),
-                    ),
-                    actions: <Widget>[
-                      TextButton(
-                        child: const Text("OK"),
-                        onPressed: () {
-                          Navigator.of(context).pop();
-                        },
-                      ),
-                    ],
-                  );
-                },
-              );
-            }
-            else {
-              onPostFailure(response);
-            }
-            return response;
-          } catch (e) {
-            // If the re-authentication fails, show an error message
-            // ignore: use_build_context_synchronously
-            showSnackBar('Incorrect password. Please try again.', context);
-          }
-        }
-      } else {
-        if (kDebugMode) {
-          print('Complete all required parameters!');
-        }
-        setState(() {
-          _isLoading = false;
-        });
-        // Show a snackbar if the image and document are not loaded
-        mounted
-            ? showSnackBar('Please complete the required fields.*', context)
-            : '';
-      }
+      // Re-authenticate and post event
+      String response = await _attemptPostEvent(password, userType);
+      _handlePostResponse(response, userType);
     } catch (err) {
       if (kDebugMode) {
         print('Error caught: $err');
       }
-      setState(() {
-        _isLoading = false;
-      });
-      return err.toString();
+      // ignore: use_build_context_synchronously
+      showSnackBar('An error occurred. Please try again.', context);
+      stopLoading();
     }
   }
 
+  // Helper methods to reduce redundancy and improve readability
+  void startLoading() => setState(() => _isLoading = true);
+  void stopLoading() => setState(() => _isLoading = false);
+
+  bool _validateRequiredFields() {
+    return _eventTypeController.text.isNotEmpty &&
+        _eventTitleController.text.isNotEmpty &&
+        _startDateController.text.isNotEmpty &&
+        _endDateController.text.isNotEmpty &&
+        _startTimeController.text.isNotEmpty &&
+        _endTimeController.text.isNotEmpty &&
+        _eventDescriptionsController.text.isNotEmpty &&
+        _eventVenueController.text.isNotEmpty &&
+        selectedParticipants.isNotEmpty;
+  }
+
+  Future<String?> _promptForPassword() async {
+    return await showDialog<String>(
+      barrierDismissible: false,
+      context: context,
+      builder: (BuildContext context) {
+        final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
+        String? password;
+        return AlertDialog(
+          title: Text('Enter your password', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
+          content: TextField(
+            obscureText: true,
+            decoration: const InputDecoration(hintText: 'Password'),
+            onChanged: (value) => password = value,
+          ),
+          actions: <Widget>[
+            TextButton(child: const Text('Cancel'), onPressed: () => Navigator.of(context).pop()),
+            TextButton(child: const Text('OK'), onPressed: () => Navigator.of(context).pop(password)),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<String> _attemptPostEvent(String password, String userType) async {
+    User? user = FirebaseAuth.instance.currentUser;
+    if (user != null && user.email != null) {
+      try {
+        // Re-authenticate the user
+        AuthCredential credential = EmailAuthProvider.credential(email: user.email!, password: password);
+        await user.reauthenticateWithCredential(credential);
+
+        // Prepare event data
+        DateTime startDate = DateTime.parse(_startDateController.text);
+        DateTime endDate = DateTime.parse(_endDateController.text);
+        DateFormat timeFormat = DateFormat('h:mm a');
+        DateTime startTime = timeFormat.parse(_startTimeController.text);
+        DateTime endTime = timeFormat.parse(_endTimeController.text);
+
+        // Convert the startTime and endTime to a DateTime object with correct date
+        DateTime startDateWithTime = DateTime(startDate.year, startDate.month, startDate.day, startTime.hour, startTime.minute);
+        DateTime endDateWithTime = DateTime(endDate.year, endDate.month, endDate.day, endTime.hour, endTime.minute);
+
+        // Post the event
+        String response = await FireStoreEventMethods().postEvent(
+          _eventTitleController.text,
+          _imageFile,
+          _eventDescriptionsController.text,
+          user.uid,
+          _documentFile,
+          startDate,
+          endDate,
+          startDateWithTime,
+          endDateWithTime,
+          selectedParticipants,
+          _eventVenueController.text,
+          _eventTypeController.text,
+          "Upcoming", // Assuming "Upcoming" is a default status for new events
+          userType,
+        );
+
+        return response; // "Success" or specific error message
+      } catch (e) {
+        // If re-authentication fails or other errors occur
+        return e.toString();
+      }
+    } else {
+      return 'User not logged in or email not found.';
+    }
+  }
+
+
+  void _handlePostResponse(String response, String userType) {
+    if (response == 'Success') {
+      onPostSuccess(userType);
+    } else {
+      onPostFailure(response); // Assuming this handles 'Failure' and other responses
+    }
+  }
+
+  // Show conflict dialog
+  void _showConflictDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Event Conflict Detected'),
+          content: const Text('An event with the same title, venue, date, and time already exists. Please modify your event details.'),
+          actions: <Widget>[
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
   void onPostSuccess(String userType) {
     setState(() {
@@ -593,6 +577,7 @@ class _PostScreenState extends State<PostScreen> {
                                             child: Row(children: [
                                               Flexible(
                                                 child: TextFieldInput(
+                                                  prefixIcon: const Icon(Icons.event),
                                                   textEditingController: _eventTitleController,
                                                   labelText: 'Title*',
                                                   textInputType: TextInputType.text,
@@ -600,12 +585,34 @@ class _PostScreenState extends State<PostScreen> {
                                               ),
                                               const SizedBox(width: 10.0),
                                               Flexible(
-                                                child: TextFieldInput(
-                                                  textEditingController: _eventVenueController,
-                                                  labelText: 'Venue*',
-                                                  textInputType: TextInputType.text,
-                                                )
-                                              )
+                                                child: DropdownButtonFormField<String>(
+                                                  decoration: InputDecoration(
+                                                    prefixIcon: const Icon(Icons.place), // Icon for the dropdown
+                                                    labelText: 'Venue*',
+                                                    border: OutlineInputBorder(
+                                                      borderSide: Divider.createBorderSide(
+                                                        context,
+                                                        color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  value: _eventVenueController.text.isEmpty ? null : _eventVenueController.text,
+                                                  items: <String>['Auditorium', 'Gymnasium'].map((String value) {
+                                                    return DropdownMenuItem<String>(
+                                                      value: value,
+                                                      child: Text(
+                                                        value,
+                                                        style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                                                      ),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (String? newValue) {
+                                                    setState(() {
+                                                      _eventVenueController.text = newValue!;
+                                                    });
+                                                  },
+                                                ),
+                                              ),
                                             ]),
                                           ): Flexible(
                                             fit: FlexFit.loose,
@@ -614,6 +621,7 @@ class _PostScreenState extends State<PostScreen> {
                                               children: [
                                               Expanded(
                                                 child: TextFieldInput(
+                                                  prefixIcon: const Icon(Icons.event),
                                                   textEditingController: _eventTitleController,
                                                   labelText: 'Title*',
                                                   textInputType: TextInputType.text,
@@ -628,13 +636,36 @@ class _PostScreenState extends State<PostScreen> {
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 Expanded(
-                                                flex: 2,
-                                                child: TextFieldInput(
-                                                  textEditingController: _eventVenueController,
-                                                  labelText: 'Venue*',
-                                                  textInputType: TextInputType.text,
-                                                )
-                                              )],
+                                                  flex: 2,
+                                                  child: DropdownButtonFormField<String>(
+                                                    decoration: InputDecoration(
+                                                      prefixIcon: const Icon(Icons.place),
+                                                      labelText: 'Venue*',
+                                                      border: OutlineInputBorder(
+                                                        borderSide: Divider.createBorderSide(
+                                                          context,
+                                                          color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
+                                                        ),
+                                                      ),
+                                                    ),
+                                                    value: _eventVenueController.text.isEmpty ? null : _eventVenueController.text,
+                                                    items: <String>['Auditorium', 'Gymnasium'].map((String value) {
+                                                      return DropdownMenuItem<String>(
+                                                        value: value,
+                                                        child: Text(
+                                                          value,
+                                                          style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                                                        ),
+                                                      );
+                                                    }).toList(),
+                                                    onChanged: (String? newValue) {
+                                                      setState(() {
+                                                        _eventVenueController.text = newValue!;
+                                                      });
+                                                    },
+                                                  ),
+                                                ),
+                                              ],
                                             ),
                                           ) : const SizedBox.shrink(),
                                           const SizedBox(height: 10.0),
@@ -643,6 +674,7 @@ class _PostScreenState extends State<PostScreen> {
                                               style: TextStyle(color: darkModeOn ? lightColor : darkColor),
                                               controller: _eventDescriptionsController,
                                               decoration: InputDecoration(
+                                                  prefixIcon: const Icon(Icons.description),
                                                   labelText: 'Description*',
                                                   alignLabelWithHint: true,
                                                   border: outlineBorder,
@@ -661,6 +693,7 @@ class _PostScreenState extends State<PostScreen> {
                                             child: Row(children: [
                                               Flexible(
                                                 child: TextFieldInput(
+                                                  prefixIcon: const Icon(Icons.date_range),
                                                   startTextEditingController: _startDateController,
                                                   endTextEditingController: _endDateController,
                                                   isDateRange: true,
@@ -675,6 +708,7 @@ class _PostScreenState extends State<PostScreen> {
                                             child: Row(children: [
                                               Flexible(
                                                 child: TextFieldInput(
+                                                  prefixIcon: const Icon(Icons.timer),
                                                   startTextEditingController: _startTimeController,
                                                   endTextEditingController: _endTimeController,
                                                   isTimeRange: true,

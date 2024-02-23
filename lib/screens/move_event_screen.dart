@@ -327,11 +327,6 @@ class MoveEventScreenState extends State<MoveEventScreen> {
   Widget build(BuildContext context) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
     final width = MediaQuery.of(context).size.width;
-
-    final outlineBorder = OutlineInputBorder(
-      borderSide: Divider.createBorderSide(context,
-          color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor),
-    );
     return FutureBuilder<model.User?>(
       future: currentUser,
       builder: (context, AsyncSnapshot<model.User?> snapshot) {

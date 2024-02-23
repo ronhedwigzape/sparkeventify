@@ -87,7 +87,7 @@ class UpcomingEventsState extends State<UpcomingEvents> {
                   ),
                   ...(upcomingEvents.isEmpty) ? [
                     Padding(
-                      padding: EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.all(8.0),
                       child: Text(
                         'No upcoming events for now..', 
                         textAlign: TextAlign.center,
