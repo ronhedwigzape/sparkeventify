@@ -60,7 +60,7 @@ class _ManageEventsScreenState extends State<ManageEventsScreen> {
   List<Event> filterEvents(List<Event> events, String searchTerm) {
     return events
         .where((event) =>
-            event.title.toLowerCase().contains(searchTerm.toLowerCase()))
+            event.title!.toLowerCase().contains(searchTerm.toLowerCase()))
         .toList();
   }
 

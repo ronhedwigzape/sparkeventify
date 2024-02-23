@@ -238,7 +238,7 @@ class _FeedbackFormState extends State<FeedbackForm> {
                         ),
                         const SizedBox(height: 5),
                         Text(
-                          snapshot.data!.title,
+                          snapshot.data!.title!,
                           style: TextStyle(
                             color: darkModeOn ? lightColor : darkColor,
                             fontWeight: FontWeight.w800,

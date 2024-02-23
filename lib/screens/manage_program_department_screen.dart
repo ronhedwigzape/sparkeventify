@@ -43,19 +43,6 @@ class _ManageConstantsScreenState extends State<ManageProgramDepartmentScreen> {
                 String programAndDepartment = programsAndDepartments[index];
                 return ListTile(
                   title: Text(programAndDepartment),
-                  trailing: IconButton(
-                    icon: const Icon(Icons.delete),
-                    onPressed: () async {
-                        bool success = await globalMethods.emptyProgramAndDepartment(
-                        programAndDepartment.split(' - ')[0],
-                        programAndDepartment.split(' - ')[1],
-                        programAndDepartment.split(' - ')[2],
-                      );
-                      mounted ? ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(success ? 'Delete successful' : 'Delete failed')),
-                      ) : '';
-                    },
-                  ),
                   onTap: () {
                     programController.text = programAndDepartment.split(' - ')[0];
                     departmentController.text = programAndDepartment.split(' - ')[1];

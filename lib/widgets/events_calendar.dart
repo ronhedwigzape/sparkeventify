@@ -172,7 +172,7 @@ class EventsCalendarState extends State<EventsCalendar> {
                                             allEvents.addAll(eventList); // Add all events without filtering by month
                                           });
                                           // Sort events by start date if needed
-                                          allEvents.sort((a, b) => a.startDate.compareTo(b.startDate));
+                                          allEvents.sort((a, b) => a.startDate!.compareTo(b.startDate!));
 
                                           // Navigate to ReportScreen with all events
                                           Navigator.push(
@@ -507,30 +507,31 @@ class EventsCalendarState extends State<EventsCalendar> {
                                             bottom: 1,
                                             child: Row(
                                               children: events.expand<Widget>((event) {
-                                                return (event as Event).participants?['department'].map<Widget>((dept) {
+                                                // Ensure the participants and department are not null
+                                                var departments = (event as Event).participants?['department'] as List<dynamic>?;
+                                                if (departments == null) return [];
+                                                return departments.map<Widget>((dept) {
                                                   return Padding(
-                                                    padding: const EdgeInsets.symmetric(horizontal: 1.0),
-                                                    child: Padding(
-                                                      padding: const EdgeInsets.symmetric(vertical: 2.0),
+                                                      padding: const EdgeInsets.symmetric(horizontal: 1.0),
                                                       child: Chip(
                                                         label: Text(
                                                           dept,
                                                           style: const TextStyle(
                                                             fontSize: 8,
-                                                            color: white,
+                                                            color: Colors.white,
                                                           ),
                                                         ),
                                                         backgroundColor: eventColors[event.status],
                                                         padding: const EdgeInsets.all(0),
-                                                        labelPadding: EdgeInsets.symmetric(horizontal: 2),
+                                                        labelPadding: const EdgeInsets.symmetric(horizontal: 2),
                                                       ),
-                                                    ),
-                                                  );
-                                                }).toList() ?? [];
+                                                    );
+                                                }).toList();
                                               }).toList(),
                                             ),
                                           );
-                                        },
+                                        }
+
                                       ) : CalendarBuilders(
                                         defaultBuilder: (context, dateTime, focusedDay) {
                                           DateTime adjustedDay = DateTime(dateTime.year,

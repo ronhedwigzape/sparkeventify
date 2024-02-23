@@ -23,10 +23,10 @@ final firestoreInstance = FirebaseFirestore.instance;
 // Constant variables for the app
 const webScreenSize = 600;
 const schoolName = 'Camarines Sur Polytechnic Colleges';
-const schoolAddress = 'Nabua, Camarines Sur';
+const schoolAddress = 'SparkEventify';
 const schoolLogoWhite = 'assets/icon/monochrome_cspc_launcher_icon_white.png';
 const schoolLogoBlack = 'assets/icon/monochrome_cspc_launcher_icon_black.png';
-const schoolLogo = 'assets/images/cspc_logo.png';
+const schoolLogo = 'assets/icon/app_icon.png';
 const schoolBackground = 'assets/images/cspc_background.png';
 const appName = 'SparkEventify';
 List<String>? programsAndDepartments; 

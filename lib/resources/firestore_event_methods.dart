@@ -43,8 +43,8 @@ class FireStoreEventMethods {
           
       for (var doc in querySnapshot.docs) {
         Event existingEvent = await Event.fromSnap(doc);
-        if (existingEvent.startTime.isAtSameMomentAs(startTime) &&
-            existingEvent.endTime.isAtSameMomentAs(endTime)) {
+        if (existingEvent.startTime!.isAtSameMomentAs(startTime) &&
+            existingEvent.endTime!.isAtSameMomentAs(endTime)) {
           return 'Conflicting event exists';
         }
       }
@@ -144,7 +144,7 @@ class FireStoreEventMethods {
 
     try {
       // Fetch the details of the officer who created the event
-      model.User officer = await FireStoreUserMethods().getUserById(event.createdBy);
+      model.User officer = await FireStoreUserMethods().getUserById(event.createdBy!);
 
       // If the user is an officer, make the event pending again
       if (userType == 'Officer') {
@@ -294,7 +294,7 @@ class FireStoreEventMethods {
         for (var department in event.participants!['department']!) {
           for (var program in event.participants!['program']!) {
             await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
-              event.createdBy, 
+              event.createdBy!, 
               department, 
               program, 
               'Event Removed', 
@@ -330,9 +330,9 @@ class FireStoreEventMethods {
           Event event = await Event.fromSnap(doc);
 
           // Get the start and end dates of the event and adjust the time to the start and end of the day respectively.
-          DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+          DateTime startDate = DateTime(event.startDate!.year, event.startDate!.month, event.startDate!.day, 0, 0, 0)
               .toLocal();
-          DateTime endDate = DateTime(event.endDate.year, event.endDate.month, event.endDate.day, 23, 59, 59)
+          DateTime endDate = DateTime(event.endDate!.year, event.endDate!.month, event.endDate!.day, 23, 59, 59)
               .toLocal();
 
           // Loop through each day between the start and end dates.
@@ -375,9 +375,9 @@ class FireStoreEventMethods {
           // Check if the event's department matches the provided department.
           if (event.participants != null && event.participants!['department'].contains(department)) {
             // Get the start and end dates of the event and adjust the time to the start and end of the day respectively.
-            DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+            DateTime startDate = DateTime(event.startDate!.year, event.startDate!.month, event.startDate!.day, 0, 0, 0)
                 .toLocal();
-            DateTime endDate = DateTime(event.endDate.year, event.endDate.month, event.endDate.day, 23, 59, 59)
+            DateTime endDate = DateTime(event.endDate!.year, event.endDate!.month, event.endDate!.day, 23, 59, 59)
                 .toLocal();
 
             // Loop through each day between the start and end dates.
@@ -422,9 +422,9 @@ class FireStoreEventMethods {
           // Check if the event's department and program matches the provided department and program.
           if (event.participants != null && event.participants!['department'].contains(department) && event.participants!['program'].contains(program)) {
             // Get the start and end dates of the event and adjust the time to the start and end of the day respectively.
-            DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+            DateTime startDate = DateTime(event.startDate!.year, event.startDate!.month, event.startDate!.day, 0, 0, 0)
                 .toLocal();
-            DateTime endDate = DateTime(event.endDate.year, event.endDate.month, event.endDate.day, 23, 59, 59)
+            DateTime endDate = DateTime(event.endDate!.year, event.endDate!.month, event.endDate!.day, 23, 59, 59)
                 .toLocal();
 
             // Loop through each day between the start and end dates.
@@ -578,7 +578,7 @@ class FireStoreEventMethods {
       Event event = await Event.fromSnap(doc);
 
       // Fetch the details of the officer who created the event
-      model.User officer = await FireStoreUserMethods().getUserById(event.createdBy);
+      model.User officer = await FireStoreUserMethods().getUserById(event.createdBy!);
 
       // Fetch current user's details
       String currentUserId = FirebaseAuth.instance.currentUser!.uid;
@@ -615,11 +615,11 @@ class FireStoreEventMethods {
             for (var department in event.participants!['department']!) {
               for (var program in event.participants!['program']!) {
                 await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
-                  event.createdBy, 
+                  event.createdBy!, 
                   department, 
                   program, 
                   'Event Updated', 
-                  'The event "${event.title}" has been updated and approved by ${currentUser.profile!.fullName}, $approvedByPosition. It will start on ${DateFormat('yyyy-MM-dd').format(event.startDate)} at ${DateFormat('h:mm a').format(event.startTime)} and end on ${DateFormat('yyyy-MM-dd').format(event.endDate)} at ${DateFormat('h:mm a').format(event.endTime)}. Description: ${event.description}. Venue: ${event.venue}.'
+                  'The event "${event.title}" has been updated and approved by ${currentUser.profile!.fullName}, $approvedByPosition. It will start on ${DateFormat('yyyy-MM-dd').format(event.startDate!)} at ${DateFormat('h:mm a').format(event.startTime!)} and end on ${DateFormat('yyyy-MM-dd').format(event.endDate!)} at ${DateFormat('h:mm a').format(event.endTime!)}. Description: ${event.description}. Venue: ${event.venue}.'
                 );
               }
             }
@@ -638,11 +638,11 @@ class FireStoreEventMethods {
             for (var department in event.participants!['department']!) {
               for (var program in event.participants!['program']!) {
                 await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
-                  event.createdBy, 
+                  event.createdBy!, 
                   department, 
                   program, 
                   'New Event', 
-                  'A new event "${event.title}" has been posted and approved by ${currentUser.profile!.fullName}, $approvedByPosition. It will start on ${DateFormat('yyyy-MM-dd').format(event.startDate)} at ${DateFormat('h:mm a').format(event.startTime)} and end on ${DateFormat('yyyy-MM-dd').format(event.endDate)} at ${DateFormat('h:mm a').format(event.endTime)}. Description: ${event.description}. Venue: ${event.venue}.'
+                  'A new event "${event.title}" has been posted and approved by ${currentUser.profile!.fullName}, $approvedByPosition. It will start on ${DateFormat('yyyy-MM-dd').format(event.startDate!)} at ${DateFormat('h:mm a').format(event.startTime!)} and end on ${DateFormat('yyyy-MM-dd').format(event.endDate!)} at ${DateFormat('h:mm a').format(event.endTime!)}. Description: ${event.description}. Venue: ${event.venue}.'
                 );
               }
             }
@@ -700,7 +700,7 @@ class FireStoreEventMethods {
       if (snapshot.docs.isNotEmpty) {
         for (var doc in snapshot.docs) {
           Event event = await Event.fromSnap(doc);
-          DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+          DateTime startDate = DateTime(event.startDate!.year, event.startDate!.month, event.startDate!.day, 0, 0, 0)
               .toLocal();
           if (events.containsKey(startDate)) {
             events[startDate]!.add(event);
@@ -726,7 +726,7 @@ class FireStoreEventMethods {
       if (snapshot.docs.isNotEmpty) {
         for (var doc in snapshot.docs) {
           Event event = await Event.fromSnap(doc);
-          DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+          DateTime startDate = DateTime(event.startDate!.year, event.startDate!.month, event.startDate!.day, 0, 0, 0)
               .toLocal();
           if (events.containsKey(startDate)) {
             events[startDate]!.add(event);
@@ -754,7 +754,7 @@ class FireStoreEventMethods {
       if (snapshot.docs.isNotEmpty) {
         for (var doc in snapshot.docs) {
           Event event = await Event.fromSnap(doc);
-          DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+          DateTime startDate = DateTime(event.startDate!.year, event.startDate!.month, event.startDate!.day, 0, 0, 0)
               .toLocal();
           if (events.containsKey(startDate)) {
             events[startDate]!.add(event);
@@ -782,7 +782,7 @@ class FireStoreEventMethods {
       if (snapshot.docs.isNotEmpty) {
         for (var doc in snapshot.docs) {
           Event event = await Event.fromSnap(doc);
-          DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+          DateTime startDate = DateTime(event.startDate!.year, event.startDate!.month, event.startDate!.day, 0, 0, 0)
               .toLocal();
           if (events.containsKey(startDate)) {
             events[startDate]!.add(event);

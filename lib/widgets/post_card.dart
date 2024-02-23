@@ -10,7 +10,9 @@ import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/screens/edit_event_screen.dart';
+import 'package:student_event_calendar/screens/move_event_screen.dart';
 import 'package:student_event_calendar/services/connectivity_service.dart';
+import 'package:student_event_calendar/services/firebase_notifications.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/widgets/cspc_spinner.dart';
 import 'package:timezone/timezone.dart' as tz;
@@ -25,11 +27,14 @@ class PostCard extends StatefulWidget {
 
 class _PostCardState extends State<PostCard> {
   late Stream<model.User> userDetails;
+  bool isLoadingCancel = false;
+  final FirebaseNotificationService _firebaseNotificationService = FirebaseNotificationService();
+
 
   @override
   void initState() {
     super.initState();
-    userDetails = FireStoreUserMethods().getUserByEventsCreatedByStream(widget.snap.createdBy);
+    userDetails = FireStoreUserMethods().getUserByEventsCreatedByStream(widget.snap.createdBy!);
   }
 
   String formatParticipants(Map<String, dynamic>? participants) {
@@ -41,6 +46,78 @@ class _PostCardState extends State<PostCard> {
       formattedList.add(formattedString);
     });
     return formattedList.join('\n');
+  }
+
+  Future<void> setEventCancellation(Event event, String userType, DateTime startDate, DateTime endDate, DateTime startTime, DateTime endTime) async {
+    if (!mounted || isLoadingCancel) return; // Guard clause to avoid re-entry or state updates when widget is not mounted
+
+    setState(() {
+      isLoadingCancel = true;
+    });
+
+    try {
+      String response = await FireStoreEventMethods().updateEventStatus(
+        event.id!,
+        true,
+        null,
+        startDate,
+        endDate,
+        startTime,
+        endTime
+      );
+
+      print('Update Event Response Cancelled: $response'); // Using print as a fallback if kDebugMode is not available
+      
+      if (response == 'Success') {
+        onCancelSuccess(); // Consider implementing this to show success feedback to the user
+
+        String senderId = FirebaseAuth.instance.currentUser!.uid;
+
+        // Send notification to all participants
+        if (event.participants != null) {
+          for (var department in event.participants!['department'] ?? []) {
+            for (var program in event.participants!['program'] ?? []) {
+              await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
+                senderId, department, program, 'Event Cancelled', 'The event "${event.title}" has been cancelled.'
+              );
+            }
+          }
+        }
+      } else {
+        onCancelFailure(response); // Consider implementing this to show error feedback to the user
+      }
+    } catch (e) {
+      print(e); // Consider showing an error message to the user
+      onCancelFailure('An error occurred while cancelling the event.'); // Provide a generic error message
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoadingCancel = false;
+        });
+      }
+    }
+  }
+
+  void onCancelSuccess() async {
+    setState(() {
+      isLoadingCancel = false;
+    });
+    if ((await AuthMethods().getCurrentUserType()) == 'Officer') {
+      if (mounted) {
+        showSnackBar('Update sent for approval successfully!', context);
+      }
+    } else {
+      if (mounted) {
+        showSnackBar('Event cancelled successfully!', context);
+      }
+    }
+  }
+
+  void onCancelFailure(String message) {
+    setState(() {
+      isLoadingCancel = false;
+    });
+    showSnackBar(message, context);
   }
 
   void showSnackBar(String message, BuildContext context) {
@@ -72,7 +149,7 @@ class _PostCardState extends State<PostCard> {
             final localTime = tz.TZDateTime.from(datePublished, manila);
 
             // For Staff and Officer View Only
-            return FirebaseAuth.instance.currentUser?.uid == widget.snap.createdBy && (authorType == 'Staff' || authorType == 'Officer') 
+            return FirebaseAuth.instance.currentUser?.uid == widget.snap.createdBy && (authorType == 'Staff' || authorType == 'Officer') || widget.snap.status != 'Past'
             ? Container(
               decoration: BoxDecoration(border: Border.all(color: darkModeOn ? secondaryDarkColor : lightColor), color: darkModeOn ? darkColor : lightColor),
               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -174,7 +251,7 @@ class _PostCardState extends State<PostCard> {
                                     bool isConnected = await ConnectivityService().isConnected();
                                     if (isConnected) {
                                       mounted ? Navigator.of(context).pop() : '';
-                                      await FireStoreEventMethods().trashEvent(widget.snap.id);
+                                      await FireStoreEventMethods().trashEvent(widget.snap.id!);
                                     } else {
                                       // Show a message to the user
                                       mounted ? Navigator.of(context).pop() : '';
@@ -240,7 +317,7 @@ class _PostCardState extends State<PostCard> {
                   ],
                 ),
                 Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     Expanded(
                       child: Padding(
@@ -256,15 +333,70 @@ class _PostCardState extends State<PostCard> {
                             );
                           },
                           icon: const Icon(Icons.edit_calendar, size: 20, color: lightColor,),
-                          label: Text('Edit ${widget.snap.title}', 
+                          label: Text('Update ${widget.snap.title}', 
                           overflow: TextOverflow.ellipsis,
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.w700,
                             color: lightColor),),
                             style: ButtonStyle(
-                              alignment: Alignment.centerLeft, 
                               backgroundColor: MaterialStateProperty.all<Color>(darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                              foregroundColor: MaterialStateProperty.all<Color>(lightColor)
+                            ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: ElevatedButton.icon(
+                          onPressed: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => MoveEventScreen(
+                                  eventSnap: widget.snap,
+                                ),
+                              ),
+                            );
+                          },
+                          icon: const Icon(Icons.edit_calendar, size: 20, color: lightColor,),
+                          label: Text('Move ${widget.snap.title}', 
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: lightColor),),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),
+                              foregroundColor: MaterialStateProperty.all<Color>(lightColor)
+                            ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: ElevatedButton.icon(
+                          onPressed: () async {
+                            // cancel event
+                            setEventCancellation(
+                              widget.snap, 
+                              await AuthMethods().getCurrentUserType(), 
+                              widget.snap.startDate!, 
+                              widget.snap.endDate!, 
+                              widget.snap.startTime!, 
+                              widget.snap.endTime!
+                            );
+                          },
+                          icon: const Icon(Icons.edit_calendar, size: 20, color: lightColor,),
+                          label: Text('Cancel ${widget.snap.title}', 
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: lightColor),),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
                               foregroundColor: MaterialStateProperty.all<Color>(lightColor)
                             ),
                         ),
@@ -274,61 +406,63 @@ class _PostCardState extends State<PostCard> {
                 ),
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Container(
-                          width: double.infinity,
-                          padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
-                          child: Column(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.location_pin,
-                                      color: darkModeOn
-                                          ? darkModeSecondaryColor
-                                          : lightModeSecondaryColor,
-                                      size: kIsWeb ? 21 : 18,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Flexible(child: Text(widget.snap.venue ?? '', textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: kIsWeb ? 14 : 11, color: darkModeOn ? lightColor : darkColor),)),
-                                  ],
-                                ), 
-                                const SizedBox(height: 10,),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.group,
-                                      color: darkModeOn
-                                          ? darkModeSecondaryColor
-                                          : lightModeSecondaryColor,
-                                      size: kIsWeb ? 21 : 18,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Flexible(child: Text(formatParticipants(widget.snap.participants), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: kIsWeb ? 14 : 11, color: darkModeOn ? lightColor : darkColor),)),
-                                  ],
-                                ), 
-                                const SizedBox(height: 10,),
-                                Row(
-                                  children: [
-                                    Icon(
-                                      Icons.description,
-                                      color: darkModeOn
-                                          ? darkModeSecondaryColor
-                                          : lightModeSecondaryColor,
-                                      size: kIsWeb ? 21 : 18,
-                                    ),
-                                    const SizedBox(width: 5),
-                                    Flexible(child: Text(widget.snap.description, textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: kIsWeb ? 14 : 11, color: darkModeOn ? lightColor : darkColor),)),
-                                  ],
-                                ),    
-                                                            
-                            ]),
-                        ),
-                      ]),
+                  child: SingleChildScrollView(
+                    child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.fromLTRB(0, 0, 0, 10),
+                            child: Column(
+                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.location_pin,
+                                        color: darkModeOn
+                                            ? darkModeSecondaryColor
+                                            : lightModeSecondaryColor,
+                                        size: kIsWeb ? 21 : 18,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Flexible(child: Text(widget.snap.venue ?? '', textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: kIsWeb ? 14 : 11, color: darkModeOn ? lightColor : darkColor),)),
+                                    ],
+                                  ), 
+                                  const SizedBox(height: 10,),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.group,
+                                        color: darkModeOn
+                                            ? darkModeSecondaryColor
+                                            : lightModeSecondaryColor,
+                                        size: kIsWeb ? 21 : 18,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Flexible(child: Text(formatParticipants(widget.snap.participants), textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: kIsWeb ? 14 : 11, color: darkModeOn ? lightColor : darkColor),)),
+                                    ],
+                                  ), 
+                                  const SizedBox(height: 10,),
+                                  Row(
+                                    children: [
+                                      Icon(
+                                        Icons.description,
+                                        color: darkModeOn
+                                            ? darkModeSecondaryColor
+                                            : lightModeSecondaryColor,
+                                        size: kIsWeb ? 21 : 18,
+                                      ),
+                                      const SizedBox(width: 5),
+                                      Flexible(child: Text(widget.snap.description!, textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: kIsWeb ? 14 : 11, color: darkModeOn ? lightColor : darkColor),)),
+                                    ],
+                                  ),    
+                                                              
+                              ]),
+                          ),
+                        ]),
+                  ),
                 )
               ]),
             ) :
@@ -340,7 +474,7 @@ class _PostCardState extends State<PostCard> {
             String? userType = user?.userType;
 
             // For Admin View Only
-            return FirebaseAuth.instance.currentUser?.uid == userUid && userType == 'Admin' ?
+            return FirebaseAuth.instance.currentUser?.uid == userUid && userType == 'Admin' || widget.snap.status != 'Past' ?
             Container(
               decoration: BoxDecoration(border: Border.all(color: darkModeOn ? secondaryDarkColor : lightColor), color: darkModeOn ? darkColor : lightColor),
               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -442,7 +576,7 @@ class _PostCardState extends State<PostCard> {
                                     bool isConnected = await ConnectivityService().isConnected();
                                     if (isConnected) {
                                       mounted ? Navigator.of(context).pop() : '';
-                                      await FireStoreEventMethods().trashEvent(widget.snap.id);
+                                      await FireStoreEventMethods().trashEvent(widget.snap.id!);
                                     } else {
                                       // Show a message to the user
                                       mounted ? Navigator.of(context).pop() : '';
@@ -586,7 +720,7 @@ class _PostCardState extends State<PostCard> {
                                       size: kIsWeb ? 21 : 18,
                                     ),
                                     const SizedBox(width: 5),
-                                    Flexible(child: Text(widget.snap.description, textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: kIsWeb ? 14 : 11, color: darkModeOn ? lightColor : darkColor,),)),
+                                    Flexible(child: Text(widget.snap.description!, textAlign: TextAlign.start, overflow: TextOverflow.ellipsis, style: TextStyle(fontSize: kIsWeb ? 14 : 11, color: darkModeOn ? lightColor : darkColor,),)),
                                   ],
                                 ),    
                                                             

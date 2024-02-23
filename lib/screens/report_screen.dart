@@ -66,7 +66,7 @@ class _ReportScreenState extends State<ReportScreen> {
 
       setState(() {
         filteredEvents = widget.events.where((event) =>
-          event.startDate.isAfter(startDate) && event.endDate.isBefore(endDate)
+          event.startDate!.isAfter(startDate) && event.endDate!.isBefore(endDate)
         ).toList();
       });
     }
@@ -95,9 +95,9 @@ class _ReportScreenState extends State<ReportScreen> {
 
     List<pw.TableRow> createEventRows(Set<model.Event> uniqueEvents) {
       return uniqueEvents.map((event) {
-        final eventDate = event.startDate.isAtSameMomentAs(event.endDate)
-          ? DateFormat('yyyy-MM-dd').format(event.startDate)
-          : '${DateFormat('yyyy-MM-dd').format(event.startDate)} to ${DateFormat('yyyy-MM-dd').format(event.endDate)}';
+        final eventDate = event.startDate!.isAtSameMomentAs(event.endDate!)
+          ? DateFormat('yyyy-MM-dd').format(event.startDate!)
+          : '${DateFormat('yyyy-MM-dd').format(event.startDate!)} to ${DateFormat('yyyy-MM-dd').format(event.endDate!)}';
         return pw.TableRow(
           children: [
             pw.Padding(
@@ -106,15 +106,15 @@ class _ReportScreenState extends State<ReportScreen> {
             ),
             pw.Padding(
               padding: cellPadding,
-              child: pw.Text(event.title, style: pw.TextStyle(font: font, fontSize: fontSize)),
+              child: pw.Text(event.title!, style: pw.TextStyle(font: font, fontSize: fontSize)),
             ),
             pw.Padding(
               padding: cellPadding, 
-              child: pw.Text(DateFormat('hh:mm a').format(event.startTime), style: pw.TextStyle(font: font, fontSize: fontSize)),
+              child: pw.Text(DateFormat('hh:mm a').format(event.startTime!), style: pw.TextStyle(font: font, fontSize: fontSize)),
             ),
             pw.Padding(
               padding: cellPadding, 
-              child: pw.Text(DateFormat('hh:mm a').format(event.endTime), style: pw.TextStyle(font: font, fontSize: fontSize)),
+              child: pw.Text(DateFormat('hh:mm a').format(event.endTime!), style: pw.TextStyle(font: font, fontSize: fontSize)),
             ),
             pw.Padding(
               padding: cellPadding, 
@@ -269,9 +269,9 @@ class _ReportScreenState extends State<ReportScreen> {
                   rows: filteredEvents.map(
                     (event) => DataRow(
                       cells: <DataCell>[
-                        DataCell(Text(DateFormat('yyyy-MM-dd').format(event.startDate), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color))),
-                        DataCell(Flexible(child: Text(event.title, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color)))),
-                        DataCell(Text(DateFormat('hh:mm a').format(event.startTime), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color))),
+                        DataCell(Text(DateFormat('yyyy-MM-dd').format(event.startDate!), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color))),
+                        DataCell(Flexible(child: Text(event.title!, style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color)))),
+                        DataCell(Text(DateFormat('hh:mm a').format(event.startTime!), style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color))),
                         DataCell(Text(event.venue ?? 'N/A', style: TextStyle(color: Theme.of(context).textTheme.bodyLarge!.color))),
                         DataCell(
                           SizedBox(

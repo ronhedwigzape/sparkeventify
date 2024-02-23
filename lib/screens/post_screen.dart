@@ -300,7 +300,7 @@ class _PostScreenState extends State<PostScreen> {
               for (var doc in querySnapshot.docs) {
                 Event existingEvent = Event.fromSnap(doc);
                 conflictingEventDetails += "Title: ${existingEvent.title}\n"
-                                          "Date: ${DateFormat('yyyy-MM-dd').format(existingEvent.startDate)} to ${DateFormat('yyyy-MM-dd').format(existingEvent.endDate)}\n"
+                                          "Date: ${DateFormat('yyyy-MM-dd').format(existingEvent.startDate!)} to ${DateFormat('yyyy-MM-dd').format(existingEvent.endDate!)}\n"
                                           "Venue: ${existingEvent.venue}\n\n";
               }
 

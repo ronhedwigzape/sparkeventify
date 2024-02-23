@@ -1,20 +1,20 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class Event {
-  String id;
-  String title;
-  DateTime startDate;
-  DateTime endDate;
-  DateTime startTime;
-  DateTime endTime;
-  String description;
-  String createdBy;
+  String? id;
+  String? title;
+  DateTime? startDate;
+  DateTime? endDate;
+  DateTime? startTime;
+  DateTime? endTime;
+  String? description;
+  String? createdBy;
   String? image;
   String? document;
   Map<String, dynamic>? participants;
   String? venue;
-  String type;
-  String status;
+  String? type;
+  String? status;
   DateTime? dateUpdated;
   DateTime? datePublished;
   bool? hasFeedback;
@@ -23,20 +23,20 @@ class Event {
   String? approvedByPosition;
 
   Event({
-    required this.id,
-    required this.title,
-    required this.startDate,
-    required this.endDate,
-    required this.startTime,
-    required this.endTime,
-    required this.description,
-    required this.createdBy,
+    this.id,
+    this.title,
+    this.startDate,
+    this.endDate,
+    this.startTime,
+    this.endTime,
+    this.description,
+    this.createdBy,
     this.image,
     this.document,
     this.participants,
     this.venue,
-    required this.type,
-    required this.status,
+    this.type,
+    this.status,
     this.dateUpdated,
     this.datePublished,
     this.hasFeedback = false,

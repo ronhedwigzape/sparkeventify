@@ -63,7 +63,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
           pastEvents.addAll(events);  // Add all events of days in past
         } else if (eventDate.day == now.day) {
           for (var event in events) {
-            if (event.endDate.isBefore(now)) {
+            if (event.endDate!.isBefore(now)) {
               pastEvents.add(event);  // Add events that ended today
             }
           }
@@ -71,7 +71,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
       });
 
       // Sort past events by date
-      pastEvents.sort((a, b) => b.startDate.compareTo(a.startDate));
+      pastEvents.sort((a, b) => b.startDate!.compareTo(a.startDate!));
 
       // Update the state with the sorted List
       setState(() {});
@@ -144,13 +144,13 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                     });
                                                     
                                     if (selectedEvent != null) {
-                                      FirestoreFeedbackMethods().addEmptyFeedback(selectedEvent!.id);
+                                      FirestoreFeedbackMethods().addEmptyFeedback(selectedEvent!.id!);
                                     }
                                   },
                                   items: events.map<DropdownMenuItem<Event>>((Event event) {
                                     return DropdownMenuItem<Event>(
                                       value: event,
-                                      child: Text(event.title, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
+                                      child: Text(event.title!, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
                                     );
                                   }).toList(),
                                 ),
@@ -161,13 +161,13 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                       },
                     ) : const SizedBox.shrink(),
                     ...pastEvents.map((event) {
-                      DateTime endDate = event.endDate.isAfter(now) ? now.subtract(const Duration(days: 1)) : event.endDate;
+                      DateTime endDate = event.endDate!.isAfter(now) ? now.subtract(const Duration(days: 1)) : event.endDate!;
                       return Padding(
                         padding: const EdgeInsets.symmetric(vertical: 3.0),
                         child: InkWell(
                           onTap: kIsWeb ? () {
                             Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => EventFeedbackScreen(eventId: event.id)
+                                builder: (context) => EventFeedbackScreen(eventId: event.id!)
                             ));
                           } : () {},
                           child: Card( 
@@ -234,21 +234,21 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                             child: Column(
                                               crossAxisAlignment: CrossAxisAlignment.start,
                                               children: [
-                                                Text(event.title, style: const TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis,),
+                                                Text(event.title!, style: const TextStyle(fontSize: 16, color: white, fontWeight: FontWeight.w900), overflow: TextOverflow.ellipsis,),
                                                 Text(
-                                                    (event.startDate.day == endDate.day
-                                                      ? '${DateFormat('MMM dd, yyyy').format(event.startDate)}\n'
-                                                      : '${DateFormat('MMM dd, yyyy').format(event.startDate)} - ${DateFormat('MMM dd, yyyy').format(endDate)}\n')
-                                                      + (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
-                                                      ? DateFormat.jm().format(event.startTime)
-                                                      : '${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
+                                                    (event.startDate!.day == endDate.day
+                                                      ? '${DateFormat('MMM dd, yyyy').format(event.startDate!)}\n'
+                                                      : '${DateFormat('MMM dd, yyyy').format(event.startDate!)} - ${DateFormat('MMM dd, yyyy').format(endDate)}\n')
+                                                      + (event.startTime!.hour == event.endTime!.hour && event.startTime!.minute == event.endTime!.minute
+                                                      ? DateFormat.jm().format(event.startTime!)
+                                                      : '${DateFormat.jm().format(event.startTime!)} - ${DateFormat.jm().format(event.endTime!)}'),
                                                   style: const TextStyle(
                                                       height: 1.5,
                                                       color: white,
                                                       fontSize: 10,
                                                   ),
                                                 ),
-                                                !kIsWeb ? FeedbackForm(eventId: event.id) : FeedbackSummaryButton(eventId: event.id)
+                                                !kIsWeb ? FeedbackForm(eventId: event.id!) : FeedbackSummaryButton(eventId: event.id!)
                                               ],                        
                                             ),
                                           ),
@@ -257,7 +257,7 @@ class FeedbackScreenState extends State<FeedbackScreen> {
                                       // remove all event feedback
                                       kIsWeb ? TextButton.icon(
                                         onPressed: () async {
-                                          await FirestoreFeedbackMethods().removeAllEventFeedbacks(event.id);
+                                          await FirestoreFeedbackMethods().removeAllEventFeedbacks(event.id!);
                                         },
                                         icon: Icon(Icons.delete_forever_rounded, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor,), 
                                         label: Text('Remove All Feedback', style: TextStyle(color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),)) : const SizedBox.shrink(),

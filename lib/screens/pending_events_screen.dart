@@ -37,7 +37,7 @@ class PendingEventsScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               Event event = events[index];
               return StreamBuilder(
-                stream: _fireStoreUserMethods.getUserByEventsCreatedByStream(event.createdBy),
+                stream: _fireStoreUserMethods.getUserByEventsCreatedByStream(event.createdBy!),
                 builder: (BuildContext context, AsyncSnapshot snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -59,13 +59,13 @@ class PendingEventsScreen extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => EventImageScreen(imageUrl: displayEvent.image!, title: displayEvent.title),
+                                  builder: (context) => EventImageScreen(imageUrl: displayEvent.image!, title: displayEvent.title!),
                                 ),
                               );
                             },
                           ),
                         ListTile(
-                          title: Text(displayEvent.title, style: const TextStyle(fontSize: 20),),
+                          title: Text(displayEvent.title!, style: const TextStyle(fontSize: 20),),
                           subtitle: Text('Created by: ${user.profile.fullName}\nUser type: ${user.userType}\nStart date: ${displayEvent.startDate}\nEnd date: ${displayEvent.endDate}\nStart time: ${displayEvent.startTime}\nEnd time: ${displayEvent.endTime}\nDescription: ${displayEvent.description}\nVenue: ${displayEvent.venue}\nType: ${displayEvent.type}\nStatus: ${displayEvent.status}\nHas feedback: ${displayEvent.hasFeedback}\nApproval status: ${displayEvent.approvalStatus}'),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
@@ -89,7 +89,7 @@ class PendingEventsScreen extends StatelessWidget {
                                           TextButton(
                                             child: const Text('Approve'),
                                             onPressed: () async {
-                                              bool success = await _fireStoreEventMethods.approveOrRejectEvent(event.id, true);
+                                              bool success = await _fireStoreEventMethods.approveOrRejectEvent(event.id!, true);
                                                // ignore: use_build_context_synchronously
                                                if (Navigator.canPop(context)) {
                                                   // ignore: use_build_context_synchronously
@@ -111,7 +111,7 @@ class PendingEventsScreen extends StatelessWidget {
                                 },
                               ),
                               IconButton(
-                                icon: Icon(Icons.close, color: Colors.red),
+                                icon: const Icon(Icons.close, color: Colors.red),
                                 onPressed: () {
                                   showDialog(
                                     context: context,
@@ -121,19 +121,19 @@ class PendingEventsScreen extends StatelessWidget {
                                         content: Text('Are you sure you want to reject this event? The event will also be deleted after rejection.', style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
                                         actions: <Widget>[
                                           TextButton(
-                                            child: Text('Cancel'),
+                                            child: const Text('Cancel'),
                                             onPressed: () {
                                               Navigator.of(context).pop();
                                             },
                                           ),
                                           TextButton(
-                                            child: Text('Reject'),
+                                            child: const Text('Reject'),
                                             onPressed: () async {
-                                              bool success = await _fireStoreEventMethods.approveOrRejectEvent(event.id, false);
+                                              bool success = await _fireStoreEventMethods.approveOrRejectEvent(event.id!, false);
                                               Navigator.of(context).pop();
                                               if (success) {
                                                 ScaffoldMessenger.of(context).showSnackBar(
-                                                  SnackBar(content: Text('Event rejected')),
+                                                  const SnackBar(content: Text('Event rejected')),
                                                 );
                                               }
                                             },

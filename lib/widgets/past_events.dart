@@ -44,7 +44,7 @@ class PastEventsState extends State<PastEvents> {
                     pastEvents.addAll(events);  // Add all events of days in past
                   } else if (eventDate.day == now.day) {
                     for (var event in events) {
-                      if (event.endDate.isBefore(now)) {
+                      if (event.endDate!.isBefore(now)) {
                         pastEvents.add(event);  // Add events that ended today
                       }
                     }
@@ -55,7 +55,7 @@ class PastEventsState extends State<PastEvents> {
                 List<Event> pastEventsList = pastEvents.toList();
 
                 // Sort past events by date
-                pastEventsList.sort((a, b) => b.startDate.compareTo(a.startDate));
+                pastEventsList.sort((a, b) => b.startDate!.compareTo(a.startDate!));
 
                 return ListView(
                   shrinkWrap: true,
@@ -68,17 +68,17 @@ class PastEventsState extends State<PastEvents> {
                       textAlign: TextAlign.center,
                     ),
                     ...pastEventsList.map((event) {
-                      DateTime endDate = event.endDate.isAfter(now) ? now.subtract(const Duration(days: 1)) : event.endDate;
+                      DateTime endDate = event.endDate!.isAfter(now) ? now.subtract(const Duration(days: 1)) : event.endDate!;
                       return Card( // Wrap ListTile with a Card
                         child: ListTile(
-                          title: Center(child: Text(event.title, style: const TextStyle(fontSize: 16),)),
+                          title: Center(child: Text(event.title!, style: const TextStyle(fontSize: 16),)),
                           subtitle: Text(
-                            (event.startDate.day == endDate.day
-                                ? '${DateFormat('MMM dd, yyyy').format(event.startDate)}\n'
-                                : '${DateFormat('MMM dd, yyyy').format(event.startDate)} - ${DateFormat('MMM dd, yyyy').format(endDate)}\n')
-                                + (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
-                                ? DateFormat.jm().format(event.startTime)
-                                : '${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
+                            (event.startDate!.day == endDate.day
+                                ? '${DateFormat('MMM dd, yyyy').format(event.startDate!)}\n'
+                                : '${DateFormat('MMM dd, yyyy').format(event.startDate!)} - ${DateFormat('MMM dd, yyyy').format(endDate)}\n')
+                                + (event.startTime!.hour == event.endTime!.hour && event.startTime!.minute == event.endTime!.minute
+                                ? DateFormat.jm().format(event.startTime!)
+                                : '${DateFormat.jm().format(event.startTime!)} - ${DateFormat.jm().format(event.endTime!)}'),
                             textAlign: TextAlign.center,
                             style: const TextStyle(
                                 height: 2,

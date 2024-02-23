@@ -28,7 +28,7 @@ class _TrashedEventsScreenState extends State<TrashedEventsScreen> {
               child: const Text('Restore'),
               onPressed: () async {
                 Navigator.of(context).pop(); // Close the dialog
-                String response = await firestoreEventMethods.restoreEvent(event.id);
+                String response = await firestoreEventMethods.restoreEvent(event.id!);
                 // ignore: use_build_context_synchronously
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(response)),
@@ -46,18 +46,18 @@ class _TrashedEventsScreenState extends State<TrashedEventsScreen> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Remove Event Permanently'),
+          title: const Text('Remove Event Permanently'),
           content: Text('Are you sure you want to permanently remove "${event.title}"? This action cannot be undone.'),
           actions: [
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () => Navigator.of(context).pop(),
             ),
             ElevatedButton(
-              child: Text('Remove'),
+              child: const Text('Remove'),
               onPressed: () async {
                 Navigator.of(context).pop(); // Close the dialog
-                String response = await firestoreEventMethods.removeEventPermanently(event.id);
+                String response = await firestoreEventMethods.removeEventPermanently(event.id!);
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(content: Text(response)),
                 );
@@ -93,7 +93,7 @@ class _TrashedEventsScreenState extends State<TrashedEventsScreen> {
             itemBuilder: (context, index) {
               Event event = trashedEvents[index];
               return ListTile(
-                title: Text(event.title),
+                title: Text(event.title!),
                 subtitle: Text('Deleted on: ${event.dateUpdated}'),
                 trailing: Row(
                   mainAxisSize: MainAxisSize.min,

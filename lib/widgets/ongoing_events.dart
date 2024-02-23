@@ -37,19 +37,19 @@ class OngoingEventsState extends State<OngoingEvents> {
       widget._events.forEach((eventDate, events) {
         for (var event in events) {
           DateTime startDate = DateTime(
-            event.startDate.year,
-            event.startDate.month,
-            event.startDate.day,
-            event.startTime.hour,
-            event.startTime.minute
+            event.startDate!.year,
+            event.startDate!.month,
+            event.startDate!.day,
+            event.startTime!.hour,
+            event.startTime!.minute
           );
 
           DateTime endDate = DateTime(
-            event.endDate.year,
-            event.endDate.month,
-            event.endDate.day,
-            event.endTime.hour,
-            event.endTime.minute
+            event.endDate!.year,
+            event.endDate!.month,
+            event.endDate!.day,
+            event.endTime!.hour,
+            event.endTime!.minute
           );
 
           if ((now.isAfter(startDate) || now.isAtSameMomentAs(startDate)) && (now.isBefore(endDate) || now.isAtSameMomentAs(endDate))) {
@@ -121,7 +121,7 @@ class OngoingEventsState extends State<OngoingEvents> {
                       ),
                     )]
                   : ongoingEvents.map((event) {
-                    DateTime startDate = event.startDate.isBefore(now) ? now.add(const Duration(days: 1)) : event.startDate;
+                    DateTime startDate = event.startDate!.isBefore(now) ? now.add(const Duration(days: 1)) : event.startDate!;
                     return Card(
                       elevation: 0,
                       color: darkModeOn ? darkColor : lightColor,
@@ -165,7 +165,7 @@ class OngoingEventsState extends State<OngoingEvents> {
                             
                             // Event Title
                             Text(
-                              event.title,
+                              event.title!,
                               style: TextStyle(
                                 fontSize: 20,
                                 fontWeight: FontWeight.bold,
@@ -179,12 +179,12 @@ class OngoingEventsState extends State<OngoingEvents> {
                               padding: const EdgeInsets.only(top: 8.0),
                               child: Flexible(
                                 child: Text(
-                                  (startDate.day == event.endDate.day
+                                  (startDate.day == event.endDate!.day
                                       ? 'Remaining Date: ${DateFormat('MMM dd, yyyy').format(startDate)}'
-                                      : 'Remaining Dates: ${DateFormat('MMM dd, yyyy').format(startDate)} - ${DateFormat('MMM dd, yyyy').format(event.endDate)}') +
-                                      (event.startTime.hour == event.endTime.hour && event.startTime.minute == event.endTime.minute
-                                          ? '\nTime: ${DateFormat.jm().format(event.startTime)}'
-                                          : '\nTime: ${DateFormat.jm().format(event.startTime)} - ${DateFormat.jm().format(event.endTime)}'),
+                                      : 'Remaining Dates: ${DateFormat('MMM dd, yyyy').format(startDate)} - ${DateFormat('MMM dd, yyyy').format(event.endDate!)}') +
+                                      (event.startTime!.hour == event.endTime!.hour && event.startTime!.minute == event.endTime!.minute
+                                          ? '\nTime: ${DateFormat.jm().format(event.startTime!)}'
+                                          : '\nTime: ${DateFormat.jm().format(event.startTime!)} - ${DateFormat.jm().format(event.endTime!)}'),
                                   style: TextStyle(
                                     color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor,
                                     fontSize: 15,

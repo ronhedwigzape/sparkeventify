@@ -103,7 +103,7 @@ class EventDialogState extends State<EventDialog> {
                           children: [
                             Expanded(
                               child: Text(
-                                event.title,
+                                event.title!,
                                 style: TextStyle(
                                     color: darkModeOn ? lightColor : darkColor,
                                     fontWeight: FontWeight.bold,
@@ -114,14 +114,14 @@ class EventDialogState extends State<EventDialog> {
                             Column(
                               children: [
                                 Text(
-                                  DateFormat.jm().format(event.startTime),
+                                  DateFormat.jm().format(event.startTime!),
                                   style: TextStyle(
                                       color:
                                           darkModeOn ? lightColor : darkColor,
                                       fontSize: kIsWeb ? 18 : 13),
                                 ),
                                 Text(
-                                  DateFormat.jm().format(event.endTime),
+                                  DateFormat.jm().format(event.endTime!),
                                   style: TextStyle(
                                       color:
                                           darkModeOn ? lightColor : darkColor,
@@ -138,7 +138,7 @@ class EventDialogState extends State<EventDialog> {
                               child: StreamBuilder<model.User>(
                                 stream: FireStoreUserMethods()
                                     .getUserDetailsByEventsCreatedBy(
-                                        event.createdBy),
+                                        event.createdBy!),
                                 builder: (BuildContext context,
                                     AsyncSnapshot<model.User> snapshot) {
                                   if (snapshot.connectionState ==
@@ -220,13 +220,13 @@ class EventDialogState extends State<EventDialog> {
                                         Stream<String> stream =
                                             FireStoreEventMethods()
                                                 .updateEventStatusByStream(
-                                                    event.id,
+                                                    event.id!,
                                                     false,
                                                     false,
-                                                    event.startDate,
-                                                    event.endDate,
-                                                    event.startTime,
-                                                    event.endTime);
+                                                    event.startDate!,
+                                                    event.endDate!,
+                                                    event.startTime!,
+                                                    event.endTime!);
                                         stream.listen(
                                           (status) {
                                             setState(() {
@@ -243,7 +243,7 @@ class EventDialogState extends State<EventDialog> {
                                     : () {},
                                 child: Chip(
                                   label: Text(
-                                    event.status,
+                                    event.status!,
                                     style: const TextStyle(
                                         color: lightColor,
                                         fontSize: kIsWeb ? 12 : 8),
@@ -319,7 +319,7 @@ class EventDialogState extends State<EventDialog> {
                                         if (isConnected) {
                                           downloadAndOpenFile(
                                               event.document ?? '',
-                                              event.title);
+                                              event.title!);
                                           _showOpenDocumentMessage();
                                         } else {
                                           // Show a message to the user
@@ -386,7 +386,7 @@ class EventDialogState extends State<EventDialog> {
                               mainAxisAlignment: MainAxisAlignment.start,
                               children: [
                                 Text(
-                                  event.type,
+                                  event.type!,
                                   style: TextStyle(
                                     color: darkModeOn
                                         ? darkModeSecondaryColor
@@ -425,7 +425,7 @@ class EventDialogState extends State<EventDialog> {
                               height: 5,
                             ),
                             Text(
-                              event.description,
+                              event.description!,
                               style: TextStyle(
                                 color: darkModeOn
                                     ? darkModeSecondaryColor

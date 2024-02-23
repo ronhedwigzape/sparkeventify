@@ -237,9 +237,9 @@ class FirestoreFeedbackMethods {
           model.Event event = await model.Event.fromSnap(doc);
 
           // Get the start and end dates of the event and adjust the time to the start and end of the day respectively.
-          DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+          DateTime startDate = DateTime(event.startDate!.year, event.startDate!.month, event.startDate!.day, 0, 0, 0)
               .toLocal();
-          DateTime endDate = DateTime(event.endDate.year, event.endDate.month, event.endDate.day, 23, 59, 59)
+          DateTime endDate = DateTime(event.endDate!.year, event.endDate!.month, event.endDate!.day, 23, 59, 59)
               .toLocal();
 
           // Loop through each day between the start and end dates.
@@ -282,9 +282,9 @@ class FirestoreFeedbackMethods {
           // Check if the event's department matches the provided department.
           if (event.participants != null && event.participants!['department'].contains(department)) {
             // Get the start and end dates of the event and adjust the time to the start and end of the day respectively.
-            DateTime startDate = DateTime(event.startDate.year, event.startDate.month, event.startDate.day, 0, 0, 0)
+            DateTime startDate = DateTime(event.startDate!.year, event.startDate!.month, event.startDate!.day, 0, 0, 0)
                 .toLocal();
-            DateTime endDate = DateTime(event.endDate.year, event.endDate.month, event.endDate.day, 23, 59, 59)
+            DateTime endDate = DateTime(event.endDate!.year, event.endDate!.month, event.endDate!.day, 23, 59, 59)
                 .toLocal();
 
             // Loop through each day between the start and end dates.

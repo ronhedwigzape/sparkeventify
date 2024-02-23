@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/event.dart';
 import 'package:student_event_calendar/models/user.dart' as model;
@@ -9,7 +8,6 @@ import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_event_methods.dart';
 import 'package:student_event_calendar/resources/storage_methods.dart';
 import 'package:student_event_calendar/services/connectivity_service.dart';
-import 'package:student_event_calendar/services/firebase_notifications.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_event_calendar/utils/file_pickers.dart';
@@ -31,20 +29,13 @@ class EditEventScreenState extends State<EditEventScreen> {
   final _eventTitleController = TextEditingController();
   final _eventDescriptionsController = TextEditingController();
   final _eventVenueController = TextEditingController();
-  final _startDateController = TextEditingController();
-  final _endDateController = TextEditingController();
-  final _startTimeController = TextEditingController();
-  final _endTimeController = TextEditingController();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
-  final FirebaseNotificationService _firebaseNotificationService = FirebaseNotificationService();
 
   Future<model.User?> currentUser = AuthMethods().getCurrentUserDetails();
   Uint8List? _documentFile;
   Uint8List? _imageFile;
   bool _isLoading = false;
-  bool _isLoadingCancel = false;
-  bool _isLoadingMoved = false;
 
   Map<String, dynamic> selectedParticipants = {
     'program': [],
@@ -55,18 +46,10 @@ class EditEventScreenState extends State<EditEventScreen> {
   void initState() {
     super.initState();
     fetchAndSetConstants();
-    _eventTypeController.text = widget.eventSnap.type;
-    _eventTitleController.text = widget.eventSnap.title;
-    _eventDescriptionsController.text = widget.eventSnap.description;
+    _eventTypeController.text = widget.eventSnap.type!;
+    _eventTitleController.text = widget.eventSnap.title!;
+    _eventDescriptionsController.text = widget.eventSnap.description!;
     _eventVenueController.text = widget.eventSnap.venue!;
-    _startDateController.text =
-        DateFormat('yyyy-MM-dd').format(widget.eventSnap.startDate);
-    _endDateController.text =
-        DateFormat('yyyy-MM-dd').format(widget.eventSnap.endDate);
-    _startTimeController.text =
-        DateFormat('h:mm a').format(widget.eventSnap.startTime);
-    _endTimeController.text =
-        DateFormat('h:mm a').format(widget.eventSnap.endTime);
     selectedParticipants['program'] = widget.eventSnap.participants!['program'];
     selectedParticipants['department'] = widget.eventSnap.participants!['department'];
   }
@@ -189,118 +172,6 @@ class EditEventScreenState extends State<EditEventScreen> {
         });
   }
 
-  setEventCancellation(String userType, DateTime startDate, DateTime endDate, DateTime startTime, DateTime endTime) async {
-    setState(() {
-      _isLoadingCancel = true;
-    });
-    try {
-      String response = await FireStoreEventMethods()
-          .updateEventStatus(
-            widget.eventSnap.id, 
-            true, 
-            null, 
-            startDate, 
-            endDate,
-            startTime, 
-            endTime
-          );
-
-      if (kDebugMode) {
-        print('Update Event Response Cancelled: $response');
-      }
-      // Check if the response is a success or a failure
-      if (response == 'Success') {
-        onPostSuccess();
-        setState(() {
-          _isLoadingCancel = false;
-        });
-
-        String senderId = FirebaseAuth.instance.currentUser!.uid;
-
-        // Send a notification to all participants
-        if (widget.eventSnap.participants != null) {
-          for (var participant in widget.eventSnap.participants!['department']) {
-            for (var participantProgram in widget.eventSnap.participants!['program']) {
-              await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
-                senderId, participant, participantProgram, 'Event Cancelled', 'The event "${widget.eventSnap.title}" has been cancelled.'
-              );
-            }
-          }
-        }
-      } else {
-        onPostFailure(response);
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-  }
-
-  setEventMoved(String userType, DateTime newStartDate, DateTime newEndDate, DateTime newStartTime, DateTime newEndTime) async {
-    setState(() {
-      _isLoadingMoved = true;
-    });
-    try {
-      String response = await FireStoreEventMethods()
-          .updateEventStatus(
-            widget.eventSnap.id, 
-            null, 
-            true, 
-            newStartDate, 
-            newEndDate, 
-            newStartTime, 
-            newEndTime
-          );
-
-      if (kDebugMode) {
-        print('Update Event Response Moved: $response');
-      }
-      if (response == 'Success') {
-        onPostSuccess();
-        setState(() {
-          _isLoadingMoved = false;
-        });
-
-        String senderId = FirebaseAuth.instance.currentUser!.uid;
-
-        // Format original event details
-        String originalStartDate = DateFormat('yyyy-MM-dd').format(widget.eventSnap.startDate);
-        String originalEndDate = DateFormat('yyyy-MM-dd').format(widget.eventSnap.endDate);
-        String originalStartTime = DateFormat('h:mm a').format(widget.eventSnap.startTime);
-        String originalEndTime = DateFormat('h:mm a').format(widget.eventSnap.endTime);
-
-        // Format new event details
-        String formattedNewStartDate = DateFormat('yyyy-MM-dd').format(newStartDate);
-        String formattedNewEndDate = DateFormat('yyyy-MM-dd').format(newEndDate);
-        String formattedNewStartTime = DateFormat('h:mm a').format(newStartTime);
-        String formattedNewEndTime = DateFormat('h:mm a').format(newEndTime);
-
-        // Construct the notification message
-        String notificationMessage = 'The event "${widget.eventSnap.title}" has been moved. '
-            'Original schedule: $originalStartDate at $originalStartTime to $originalEndDate at $originalEndTime. '
-            'New schedule: $formattedNewStartDate at $formattedNewStartTime to $formattedNewEndDate at $formattedNewEndTime.';
-
-        // Send a notification to all participants
-        if (widget.eventSnap.participants != null) {
-          for (var participant in widget.eventSnap.participants!['department']) {
-            for (var participantProgram in widget.eventSnap.participants!['program']) {
-              await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
-                senderId, participant, participantProgram, 'Event Moved', notificationMessage
-              );
-            }
-          }
-        }
-      } else {
-        onPostFailure(response);
-      }
-    } catch (e) {
-      if (kDebugMode) {
-        print(e);
-      }
-    }
-  }
-
   _update(String userType, bool isMoved, bool isCancelled) async {
     if (kDebugMode) {
       print('Post function started!');
@@ -316,31 +187,10 @@ class EditEventScreenState extends State<EditEventScreen> {
       // Check if all required parameters are not null
       if (_eventTypeController.text.isNotEmpty &&
           _eventTitleController.text.isNotEmpty &&
-          _startDateController.text.isNotEmpty &&
-          _endDateController.text.isNotEmpty &&
-          _startTimeController.text.isNotEmpty &&
-          _endTimeController.text.isNotEmpty &&
           _eventDescriptionsController.text.isNotEmpty &&
           _eventVenueController.text.isNotEmpty &&
           selectedParticipants.isNotEmpty) {
-        // Get the date and time from the text controllers
-        String pickedStartDate = _startDateController.text;
-        String pickedEndDate = _endDateController.text;
-        String pickedStartTime = _startTimeController.text;
-        String pickedEndTime = _endTimeController.text;
-        // Convert picked date (yyyy-mm-dd) to DateTime
-        DateTime startDate = DateTime.parse(pickedStartDate);
-        DateTime endDate = DateTime.parse(pickedEndDate);
-        // Get only the date part as a DateTime object
-        DateTime startDatePart =
-            DateTime(startDate.year, startDate.month, startDate.day);
-        DateTime endDatePart =
-            DateTime(endDate.year, endDate.month, endDate.day);
-        // Parse 12-hour format time string to DateTime
-        DateFormat time12Format = DateFormat('h:mm a');
-        DateTime startTime12 = time12Format.parse(pickedStartTime);
-        DateTime endTime12 = time12Format.parse(pickedEndTime);
-
+      
         // If the image is not null, upload it to storage and get the URL
         String imageUrl = widget.eventSnap.image!;
         if (_imageFile != null && imageUrl.isEmpty) {
@@ -384,10 +234,10 @@ class EditEventScreenState extends State<EditEventScreen> {
           document: documentUrl,
           participants: selectedParticipants,
           venue: _eventVenueController.text,
-          startDate: startDatePart,
-          endDate: endDatePart,
-          startTime: startTime12,
-          endTime: endTime12,
+          startDate: widget.eventSnap.startDate,
+          endDate: widget.eventSnap.endDate,
+          startTime: widget.eventSnap.startTime,
+          endTime: widget.eventSnap.endTime,
           type: _eventTypeController.text,
           approvalStatus: (userType == 'Admin' || userType == 'Staff') ? 'approved' : 'pending',
           status: widget.eventSnap.status, // TODO: change this
@@ -452,34 +302,9 @@ class EditEventScreenState extends State<EditEventScreen> {
 
             // Update the event to the database
             response = await FireStoreEventMethods()
-                .updateEvent(widget.eventSnap.id, event, userType);
+                .updateEvent(widget.eventSnap.id!, event, userType);
 
-              // If the event status is moved 
-              if (isMoved) {
-                await setEventMoved(
-                  userType, 
-                  startDatePart, 
-                  endDatePart, 
-                  startTime12, 
-                  endTime12
-                );
-              } 
-              // If the event is cancelled
-              else if (isCancelled) {
-                await setEventCancellation(
-                  userType, 
-                  startDatePart, 
-                  endDatePart, 
-                  startTime12, 
-                  endTime12
-                );
-              } 
-              // If the event will be updated 
-              else {
                 setState(() => _isLoading = true);
-                await FireStoreEventMethods().updateEventStatus(
-                  widget.eventSnap.id, false, false, startDatePart, endDatePart, startTime12, endTime12);
-              }
 
             // Print update status response
             if (kDebugMode) {
@@ -553,10 +378,6 @@ class EditEventScreenState extends State<EditEventScreen> {
       _eventTitleController.clear();
       _eventDescriptionsController.clear();
       _eventVenueController.clear();
-      _startDateController.clear();
-      _endDateController.clear();
-      _startTimeController.clear();
-      _endTimeController.clear();
       selectedParticipants.forEach((key, value) {
         selectedParticipants[key] = [];
       });
@@ -571,10 +392,6 @@ class EditEventScreenState extends State<EditEventScreen> {
     _eventTitleController.dispose();
     _eventDescriptionsController.dispose();
     _eventVenueController.dispose();
-    _startDateController.dispose();
-    _endDateController.dispose();
-    _startTimeController.dispose();
-    _endTimeController.dispose();
 
   }
 
@@ -819,36 +636,6 @@ class EditEventScreenState extends State<EditEventScreen> {
                                       ),
                                       const SizedBox(height: 10.0),
                                       Flexible(
-                                        child: Row(children: [
-                                          Flexible(
-                                            child: TextFieldInput(
-                                              startTextEditingController:
-                                                  _startDateController,
-                                              endTextEditingController:
-                                                  _endDateController,
-                                              isDateRange: true,
-                                              labelText: 'Event Date',
-                                              textInputType:
-                                                  TextInputType.datetime,
-                                            ),
-                                          ),
-                                          const SizedBox(width: 10.0),
-                                          Flexible(
-                                            child: TextFieldInput(
-                                              startTextEditingController:
-                                                  _startTimeController,
-                                              endTextEditingController:
-                                                  _endTimeController,
-                                              isTimeRange: true,
-                                              labelText: 'Event Time',
-                                              textInputType:
-                                                  TextInputType.datetime,
-                                            ),
-                                          )
-                                        ]),
-                                      ),
-                                      const SizedBox(height: 10.0),
-                                      Flexible(
                                         child: Padding(
                                           padding: const EdgeInsets.all(20.0),
                                           child: SingleChildScrollView(
@@ -993,134 +780,6 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                         ),
                                                     ],
                                                   )),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10.0),
-                                       Center(
-                                        child: InkWell(
-                                          onTap: () async {
-                                            bool isConnected = await ConnectivityService().isConnected();
-                                            if (isConnected) {
-                                              await _update(currentUser!.userType!, false, true);
-                                            } else {
-                                              // Show a message to the user
-                                              mounted ? Navigator.of(context).pop() : '';
-                                              mounted ? ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
-                                                  duration: const Duration(seconds: 5),
-                                                ),
-                                              ) : '';
-                                            }
-                                          },
-                                          child: Container(
-                                              width: double.infinity,
-                                              alignment: Alignment.center,
-                                              padding:
-                                                  const EdgeInsets.symmetric(
-                                                      vertical: 16.0),
-                                              decoration: ShapeDecoration(
-                                                shape:
-                                                    const RoundedRectangleBorder(
-                                                  borderRadius:
-                                                      BorderRadius.all(
-                                                          Radius.circular(5.0)),
-                                                ),
-                                                color: darkModeOn
-                                                    ? darkModeMaroonColor
-                                                    : lightModeMaroonColor,
-                                              ),
-                                              child: _isLoadingCancel
-                                                ? Center(
-                                                    child:
-                                                        CircularProgressIndicator(
-                                                    valueColor:
-                                                        AlwaysStoppedAnimation<
-                                                                Color>(
-                                                            darkModeOn ? darkColor : lightColor),
-                                                  ))
-                                                : Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                Icon(
-                                                  Icons.update,
-                                                  color: darkModeOn ? darkColor : lightColor,
-                                                ),
-                                                const SizedBox(width: 10.0),
-                                                Text(
-                                                    'Mark this ${widget.eventSnap.type == 'Academic' ? 'announcement' : 'event'} cancelled',
-                                                    style: TextStyle(
-                                                      color: darkModeOn ? darkColor : lightColor,
-                                                      fontWeight:
-                                                          FontWeight.bold,
-                                                    ),
-                                                  ),
-                                                ],
-                                              )),
-                                        ),
-                                      ),
-                                      const SizedBox(height: 10.0),
-                                       Center(
-                                        child: InkWell(
-                                          onTap: () async {
-                                            bool isConnected = await ConnectivityService().isConnected();
-                                            if (isConnected) {
-                                              await _update(currentUser!.userType!, true, false);
-                                            } else {
-                                              // Show a message to the user
-                                              mounted ? Navigator.of(context).pop() : '';
-                                              mounted ? ScaffoldMessenger.of(context).showSnackBar(
-                                                SnackBar(
-                                                  content: Row(children: [Icon(Icons.wifi_off, color: darkModeOn ? black : white),const SizedBox(width: 10,),const Flexible(child: Text('No internet connection. Please check your connection and try again.')),],),
-                                                  duration: const Duration(seconds: 5),
-                                                ),
-                                              ) : '';
-                                            }
-                                          },
-                                          child: Container(
-                                            width: double.infinity,
-                                            alignment: Alignment.center,
-                                            padding:
-                                              const EdgeInsets.symmetric(
-                                                  vertical: 16.0),
-                                            decoration: ShapeDecoration(
-                                              shape:
-                                                  const RoundedRectangleBorder(
-                                                borderRadius:
-                                                    BorderRadius.all(
-                                                        Radius.circular(5.0)),
-                                              ),
-                                              color: darkModeOn
-                                                  ? darkModeGrassColor
-                                                  : lightModeGrassColor,
-                                            ),
-                                            child: _isLoadingMoved
-                                            ? Center(
-                                                child:
-                                                    CircularProgressIndicator(
-                                                valueColor:
-                                                    AlwaysStoppedAnimation<
-                                                            Color>(
-                                                        darkModeOn ? darkColor : lightColor),
-                                              ))
-                                            : Row(
-                                              mainAxisAlignment: MainAxisAlignment.center,
-                                              children: [
-                                              Icon(
-                                                Icons.update,
-                                                color: darkModeOn ? darkColor : lightColor,
-                                              ),
-                                              const SizedBox(width: 10.0),
-                                              Text(
-                                                  'Mark this ${widget.eventSnap.type == 'Academic' ? 'announcement' : 'event'} moved',
-                                                  style: TextStyle(
-                                                    color: darkModeOn ? darkColor : lightColor,
-                                                    fontWeight:
-                                                        FontWeight.bold,
-                                                  ),
-                                                ),
-                                              ],
-                                            )),
                                         ),
                                       ),
                                     ],

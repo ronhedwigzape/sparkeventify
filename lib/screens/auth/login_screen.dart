@@ -234,6 +234,8 @@ class _LoginScreenState extends State<LoginScreen> {
                               child: Text(
                                 schoolAddress,
                                 style: TextStyle(
+                                    fontSize: 26,
+                                    fontWeight: FontWeight.w900,
                                     color: darkModeOn ? lightColor : darkColor),
                               ),
                             ),
