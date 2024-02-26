@@ -149,7 +149,7 @@ class _PostCardState extends State<PostCard> {
             final localTime = tz.TZDateTime.from(datePublished, manila);
 
             // For Staff and Officer View Only
-            return FirebaseAuth.instance.currentUser?.uid == widget.snap.createdBy && (authorType == 'Staff' || authorType == 'Officer') || widget.snap.status != 'Past'
+            return FirebaseAuth.instance.currentUser?.uid == widget.snap.createdBy && (authorType == 'Staff' || authorType == 'Officer')
             ? Container(
               decoration: BoxDecoration(border: Border.all(color: darkModeOn ? secondaryDarkColor : lightColor), color: darkModeOn ? darkColor : lightColor),
               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -323,7 +323,7 @@ class _PostCardState extends State<PostCard> {
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: ElevatedButton.icon(
-                          onPressed: () {
+                          onPressed: widget.snap.status != 'Past' ? () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) => EditEventScreen(
@@ -331,7 +331,7 @@ class _PostCardState extends State<PostCard> {
                                 ),
                               ),
                             );
-                          },
+                          } : null,
                           icon: const Icon(Icons.edit_calendar, size: 20, color: lightColor,),
                           label: Text('Update ${widget.snap.title}', 
                           overflow: TextOverflow.ellipsis,
@@ -340,7 +340,11 @@ class _PostCardState extends State<PostCard> {
                             fontWeight: FontWeight.w700,
                             color: lightColor),),
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                darkModeOn ? 
+                                (widget.snap.status != 'Past' ? darkModePrimaryColor : Colors.grey[400]!) : 
+                                (widget.snap.status != 'Past' ? lightModePrimaryColor : Colors.grey[400]!)
+                                ), 
                               foregroundColor: MaterialStateProperty.all<Color>(lightColor)
                             ),
                         ),
@@ -350,7 +354,7 @@ class _PostCardState extends State<PostCard> {
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: ElevatedButton.icon(
-                          onPressed: () {
+                          onPressed: widget.snap.status != 'Past' ? () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) => MoveEventScreen(
@@ -358,7 +362,7 @@ class _PostCardState extends State<PostCard> {
                                 ),
                               ),
                             );
-                          },
+                          } : null,
                           icon: const Icon(Icons.edit_calendar, size: 20, color: lightColor,),
                           label: Text('Move ${widget.snap.title}', 
                           overflow: TextOverflow.ellipsis,
@@ -367,7 +371,11 @@ class _PostCardState extends State<PostCard> {
                             fontWeight: FontWeight.w700,
                             color: lightColor),),
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                darkModeOn ? 
+                                (widget.snap.status != 'Past' ? darkModeSecondaryColor : Colors.grey[400]!) : 
+                                (widget.snap.status != 'Past' ? lightModeSecondaryColor : Colors.grey[400]!) 
+                              ),
                               foregroundColor: MaterialStateProperty.all<Color>(lightColor)
                             ),
                         ),
@@ -377,7 +385,7 @@ class _PostCardState extends State<PostCard> {
                       child: Padding(
                         padding: const EdgeInsets.all(5.0),
                         child: ElevatedButton.icon(
-                          onPressed: () async {
+                          onPressed: widget.snap.status != 'Past' ? () async {
                             // cancel event
                             setEventCancellation(
                               widget.snap, 
@@ -387,7 +395,7 @@ class _PostCardState extends State<PostCard> {
                               widget.snap.startTime!, 
                               widget.snap.endTime!
                             );
-                          },
+                          } : null,
                           icon: const Icon(Icons.edit_calendar, size: 20, color: lightColor,),
                           label: Text('Cancel ${widget.snap.title}', 
                           overflow: TextOverflow.ellipsis,
@@ -396,7 +404,11 @@ class _PostCardState extends State<PostCard> {
                             fontWeight: FontWeight.w700,
                             color: lightColor),),
                             style: ButtonStyle(
-                              backgroundColor: MaterialStateProperty.all<Color>(darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                darkModeOn ? 
+                                  (widget.snap.status != 'Past' ? darkModeMaroonColor : Colors.grey[400]!) : 
+                                  (widget.snap.status != 'Past' ? lightModeMaroonColor : Colors.grey[400]!)
+                                ),
                               foregroundColor: MaterialStateProperty.all<Color>(lightColor)
                             ),
                         ),
@@ -474,7 +486,7 @@ class _PostCardState extends State<PostCard> {
             String? userType = user?.userType;
 
             // For Admin View Only
-            return FirebaseAuth.instance.currentUser?.uid == userUid && userType == 'Admin' || widget.snap.status != 'Past' ?
+            return FirebaseAuth.instance.currentUser?.uid == userUid && userType == 'Admin' ?
             Container(
               decoration: BoxDecoration(border: Border.all(color: darkModeOn ? secondaryDarkColor : lightColor), color: darkModeOn ? darkColor : lightColor),
               padding: const EdgeInsets.symmetric(vertical: 10),
@@ -542,7 +554,32 @@ class _PostCardState extends State<PostCard> {
                           ),
                         ),
                       ),
-                        IconButton(
+                      Chip(
+                        label: Text(
+                          widget.snap.status!,
+                          style: const TextStyle(
+                            color: lightColor
+                          ),
+                        ),
+                        backgroundColor: widget.snap.status == 'Cancelled'
+                        ? (darkModeOn
+                            ? darkModeMaroonColor
+                            : lightModeMaroonColor)
+                        : widget.snap.status == 'Upcoming'
+                            ? (darkModeOn
+                                ? darkModePrimaryColor
+                                : lightModePrimaryColor)
+                            : widget.snap.status == 'Moved'
+                                ? (darkModeOn
+                                    ? darkModeSecondaryColor
+                                    : lightModeSecondaryColor)
+                                : widget.snap.status == 'Past'
+                                    ? black
+                                    : (darkModeOn
+                                        ? darkModeGrassColor
+                                        : lightModeGrassColor),
+                      ),
+                      IconButton(
                       onPressed: () {
                         showDialog(
                           context: context,
@@ -642,13 +679,14 @@ class _PostCardState extends State<PostCard> {
                   ],
                 ),
              
-                 Row(
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    Flexible(
+                    Expanded(
                       child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: TextButton.icon(
-                          onPressed: () {
+                        padding: const EdgeInsets.all(5.0),
+                        child: ElevatedButton.icon(
+                          onPressed: widget.snap.status != 'Past' ? () {
                             Navigator.of(context).push(
                               MaterialPageRoute(
                                 builder: (context) => EditEventScreen(
@@ -656,14 +694,85 @@ class _PostCardState extends State<PostCard> {
                                 ),
                               ),
                             );
-                          },
-                          icon: Icon(Icons.edit_calendar, size: 24, color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,),
-                          label: Text('Edit ${widget.snap.title}', 
-                            style: TextStyle(
-                              fontWeight: FontWeight.w700,
-                              fontSize: 16,
-                              color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
-                              overflow: TextOverflow.ellipsis,  
+                          } : null,
+                          icon: const Icon(Icons.edit_calendar, size: 20, color: lightColor,),
+                          label: Text('Update ${widget.snap.title}', 
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: lightColor),),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                darkModeOn ? 
+                                (widget.snap.status != 'Past' ? darkModePrimaryColor : Colors.grey[400]!) : 
+                                (widget.snap.status != 'Past' ? lightModePrimaryColor : Colors.grey[400]!)
+                                ), 
+                              foregroundColor: MaterialStateProperty.all<Color>(lightColor)
+                            ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: ElevatedButton.icon(
+                          onPressed: widget.snap.status != 'Past' ? () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (context) => MoveEventScreen(
+                                  eventSnap: widget.snap,
+                                ),
+                              ),
+                            );
+                          } : null,
+                          icon: const Icon(Icons.edit_calendar, size: 20, color: lightColor,),
+                          label: Text('Move ${widget.snap.title}', 
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: lightColor),),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                darkModeOn ? 
+                                (widget.snap.status != 'Past' ? darkModeSecondaryColor : Colors.grey[400]!) : 
+                                (widget.snap.status != 'Past' ? lightModeSecondaryColor : Colors.grey[400]!) 
+                              ),
+                              foregroundColor: MaterialStateProperty.all<Color>(lightColor)
+                            ),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: ElevatedButton.icon(
+                          onPressed: widget.snap.status != 'Past' ? () async {
+                            // cancel event
+                            setEventCancellation(
+                              widget.snap, 
+                              await AuthMethods().getCurrentUserType(), 
+                              widget.snap.startDate!, 
+                              widget.snap.endDate!, 
+                              widget.snap.startTime!, 
+                              widget.snap.endTime!
+                            );
+                          } : null,
+                          icon: const Icon(Icons.edit_calendar, size: 20, color: lightColor,),
+                          label: Text('Cancel ${widget.snap.title}', 
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w700,
+                            color: lightColor),),
+                            style: ButtonStyle(
+                              backgroundColor: MaterialStateProperty.all<Color>(
+                                darkModeOn ? 
+                                  (widget.snap.status != 'Past' ? darkModeMaroonColor : Colors.grey[400]!) : 
+                                  (widget.snap.status != 'Past' ? lightModeMaroonColor : Colors.grey[400]!)
+                                ),
+                              foregroundColor: MaterialStateProperty.all<Color>(lightColor)
                             ),
                         ),
                       ),
