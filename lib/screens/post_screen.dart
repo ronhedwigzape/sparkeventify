@@ -31,6 +31,7 @@ class _PostScreenState extends State<PostScreen> {
   final _eventTitleController = TextEditingController();
   final _eventDescriptionsController = TextEditingController();
   final _eventVenueController = TextEditingController();
+  final _eventVenueOthersController = TextEditingController();
   final _startDateController = TextEditingController();
   final _endDateController = TextEditingController();
   final _startTimeController = TextEditingController();
@@ -302,7 +303,7 @@ class _PostScreenState extends State<PostScreen> {
           startDateWithTime,
           endDateWithTime,
           selectedParticipants,
-          _eventVenueController.text,
+          _eventVenueController.text != 'Others..' ? _eventVenueController.text : _eventVenueOthersController.text,
           _eventTypeController.text,
           "Upcoming", // Assuming "Upcoming" is a default status for new events
           userType,
@@ -410,6 +411,7 @@ class _PostScreenState extends State<PostScreen> {
     _endDateController.dispose();
     _startTimeController.dispose();
     _endTimeController.dispose();
+    _eventVenueOthersController.dispose();
   }
 
   @override
@@ -585,32 +587,44 @@ class _PostScreenState extends State<PostScreen> {
                                               ),
                                               const SizedBox(width: 10.0),
                                               Flexible(
-                                                child: DropdownButtonFormField<String>(
-                                                  decoration: InputDecoration(
-                                                    prefixIcon: const Icon(Icons.place), // Icon for the dropdown
-                                                    labelText: 'Venue*',
-                                                    border: OutlineInputBorder(
-                                                      borderSide: Divider.createBorderSide(
-                                                        context,
-                                                        color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
+                                                child: Column(
+                                                  children: [
+                                                    DropdownButtonFormField<String>(
+                                                      decoration: InputDecoration(
+                                                        labelText: 'Venue*',
+                                                        border: OutlineInputBorder(
+                                                          borderSide: Divider.createBorderSide(
+                                                            context,
+                                                          color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,
+                                                          )
+                                                        ),
                                                       ),
+                                                      value: _eventVenueController.text.isEmpty ? null : _eventVenueController.text, 
+                                                      items: [
+                                                        'Auditorium',
+                                                        'Gymnasium',
+                                                        'Pearl Function Hall',
+                                                        'Graduate School Function Hall',
+                                                        'Others..',
+                                                      ].map((String venue) {
+                                                        return DropdownMenuItem<String>(
+                                                          value: venue,
+                                                          child: Text(venue),
+                                                        );
+                                                      }).toList(),
+                                                      onChanged: (String? newValue) {
+                                                        setState(() {
+                                                          _eventVenueController.text = newValue!;
+                                                        });
+                                                      },
                                                     ),
-                                                  ),
-                                                  value: _eventVenueController.text.isEmpty ? null : _eventVenueController.text,
-                                                  items: <String>['Auditorium', 'Gymnasium'].map((String value) {
-                                                    return DropdownMenuItem<String>(
-                                                      value: value,
-                                                      child: Text(
-                                                        value,
-                                                        style: TextStyle(color: darkModeOn ? lightColor : darkColor),
+                                                    if (_eventVenueController.text == 'Others..')
+                                                      TextFieldInput(
+                                                        textEditingController: _eventVenueOthersController,
+                                                        labelText: 'Please specify',
+                                                        textInputType: TextInputType.text,
                                                       ),
-                                                    );
-                                                  }).toList(),
-                                                  onChanged: (String? newValue) {
-                                                    setState(() {
-                                                      _eventVenueController.text = newValue!;
-                                                    });
-                                                  },
+                                                  ],
                                                 ),
                                               ),
                                             ]),

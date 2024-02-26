@@ -29,6 +29,7 @@ class EditEventScreenState extends State<EditEventScreen> {
   final _eventTitleController = TextEditingController();
   final _eventDescriptionsController = TextEditingController();
   final _eventVenueController = TextEditingController();
+  final _eventVenueOthersController = TextEditingController();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey =
       GlobalKey<ScaffoldMessengerState>();
 
@@ -233,7 +234,7 @@ class EditEventScreenState extends State<EditEventScreen> {
           createdBy: widget.eventSnap.createdBy,
           document: documentUrl,
           participants: selectedParticipants,
-          venue: _eventVenueController.text,
+          venue: _eventVenueController.text != 'Others..' ? _eventVenueController.text : _eventVenueOthersController.text,
           startDate: widget.eventSnap.startDate,
           endDate: widget.eventSnap.endDate,
           startTime: widget.eventSnap.startTime,
@@ -392,6 +393,7 @@ class EditEventScreenState extends State<EditEventScreen> {
     _eventTitleController.dispose();
     _eventDescriptionsController.dispose();
     _eventVenueController.dispose();
+    _eventVenueOthersController.dispose();
 
   }
 
@@ -603,29 +605,40 @@ class EditEventScreenState extends State<EditEventScreen> {
                                             ),
                                           ),
                                           const SizedBox(width: 10.0),
-                                          Flexible(
-                                            child: DropdownButtonFormField<String>(
-                                              decoration: const InputDecoration(
-                                                labelText: 'Venue*',
-                                                border: OutlineInputBorder(),
+                                          Column(
+                                            children: [
+                                              DropdownButtonFormField<String>(
+                                                decoration: const InputDecoration(
+                                                  labelText: 'Venue*',
+                                                  border: OutlineInputBorder(),
+                                                ),
+                                                value: widget.eventSnap.venue, 
+                                                items: [
+                                                  'Auditorium',
+                                                  'Gymnasium',
+                                                  'Pearl Function Hall',
+                                                  'Graduate School Function Hall',
+                                                  'Others..',
+                                                ].map((String venue) {
+                                                  return DropdownMenuItem<String>(
+                                                    value: venue,
+                                                    child: Text(venue),
+                                                  );
+                                                }).toList(),
+                                                onChanged: (String? newValue) {
+                                                  setState(() {
+                                                    _eventVenueController.text = newValue!;
+                                                  });
+                                                },
                                               ),
-                                              value: widget.eventSnap.venue, // Set the initial value
-                                              items: ['Auditorium', 'Gymnasium'].map((String venue) {
-                                                return DropdownMenuItem<String>(
-                                                  value: venue,
-                                                  child: Text(venue),
-                                                );
-                                              }).toList(),
-                                              onChanged: (String? newValue) {
-                                                // Update the state with the new selected value
-                                                setState(() {
-                                                  _eventVenueController.text = newValue!;
-                                                });
-                                              },
-                                            ),
-                                          )
-                                        ]),
-                                      ),
+                                              if (_eventVenueController.text == 'Others..')
+                                                TextFieldInput(
+                                                  textEditingController: _eventVenueOthersController,
+                                                  labelText: 'Please specify',
+                                                  textInputType: TextInputType.text,
+                                                ),
+                                            ],
+                                          ),
                                       const SizedBox(height: 10.0),
                                       Flexible(
                                         child: TextFormField(
@@ -799,7 +812,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                                     ],
                                   ),
                                 ),
-                              ),
+                              ]),
                             ),
                           ),
                         ),
@@ -807,7 +820,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                     ),
                   ),
                 )
-              : const SizedBox();
+                  )): const SizedBox();
         }
       },
     );
