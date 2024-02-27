@@ -595,7 +595,8 @@ class EditEventScreenState extends State<EditEventScreen> {
                                       ),
                                       const SizedBox(height: 10.0),
                                       Flexible(
-                                        child: Row(children: [
+                                        child: Row(
+                                          children: [
                                           Flexible(
                                             child: TextFieldInput(
                                               textEditingController:
@@ -605,40 +606,46 @@ class EditEventScreenState extends State<EditEventScreen> {
                                             ),
                                           ),
                                           const SizedBox(width: 10.0),
-                                          Column(
-                                            children: [
-                                              DropdownButtonFormField<String>(
-                                                decoration: const InputDecoration(
-                                                  labelText: 'Venue*',
-                                                  border: OutlineInputBorder(),
+                                          Flexible(
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                DropdownButtonFormField<String>(
+                                                  decoration: const InputDecoration(
+                                                    labelText: 'Venue*',
+                                                    border: OutlineInputBorder(),
+                                                  ),
+                                                  value: widget.eventSnap.venue, 
+                                                  items: [
+                                                    'Auditorium',
+                                                    'Gymnasium',
+                                                    'Pearl Function Hall',
+                                                    'Graduate School Function Hall',
+                                                    'Others..',
+                                                  ].map((String venue) {
+                                                    return DropdownMenuItem<String>(
+                                                      value: venue,
+                                                      child: Text(venue),
+                                                    );
+                                                  }).toList(),
+                                                  onChanged: (String? newValue) {
+                                                    setState(() {
+                                                      _eventVenueController.text = newValue!;
+                                                    });
+                                                  },
                                                 ),
-                                                value: widget.eventSnap.venue, 
-                                                items: [
-                                                  'Auditorium',
-                                                  'Gymnasium',
-                                                  'Pearl Function Hall',
-                                                  'Graduate School Function Hall',
-                                                  'Others..',
-                                                ].map((String venue) {
-                                                  return DropdownMenuItem<String>(
-                                                    value: venue,
-                                                    child: Text(venue),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (String? newValue) {
-                                                  setState(() {
-                                                    _eventVenueController.text = newValue!;
-                                                  });
-                                                },
-                                              ),
-                                              if (_eventVenueController.text == 'Others..')
-                                                TextFieldInput(
-                                                  textEditingController: _eventVenueOthersController,
-                                                  labelText: 'Please specify',
-                                                  textInputType: TextInputType.text,
-                                                ),
-                                            ],
+                                                if (_eventVenueController.text == 'Others..')
+                                                const SizedBox(height: 10.0),
+                                                if (_eventVenueController.text == 'Others..')
+                                                  TextFieldInput(
+                                                    textEditingController: _eventVenueOthersController,
+                                                    labelText: 'Please specify',
+                                                    textInputType: TextInputType.text,
+                                                  ),
+                                              ],
+                                            ),
                                           ),
+                                        ])),
                                       const SizedBox(height: 10.0),
                                       Flexible(
                                         child: TextFormField(
@@ -809,18 +816,16 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                   )),
                                         ),
                                       ),
-                                    ],
-                                  ),
+                                  ]),
                                 ),
-                              ]),
+                              ),
                             ),
                           ),
                         ),
                       ),
                     ),
                   ),
-                )
-                  )): const SizedBox();
+                ) : const SizedBox();
         }
       },
     );

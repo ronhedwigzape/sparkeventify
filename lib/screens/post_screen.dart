@@ -619,6 +619,8 @@ class _PostScreenState extends State<PostScreen> {
                                                       },
                                                     ),
                                                     if (_eventVenueController.text == 'Others..')
+                                                      const SizedBox(height: 10.0),
+                                                    if (_eventVenueController.text == 'Others..')
                                                       TextFieldInput(
                                                         textEditingController: _eventVenueOthersController,
                                                         labelText: 'Please specify',

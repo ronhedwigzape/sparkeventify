@@ -142,8 +142,6 @@ class MoveEventScreenState extends State<MoveEventScreen> {
         DateTime startTime12 = time12Format.parse(pickedStartTime);
         DateTime endTime12 = time12Format.parse(pickedEndTime);
 
-      
-
         Event event = Event(
           id: widget.eventSnap.id,
           title: widget.eventSnap.title,
