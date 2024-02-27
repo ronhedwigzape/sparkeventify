@@ -36,8 +36,11 @@ class FireStoreEventMethods {
     try {
       // Check for conflicting events
       QuerySnapshot querySnapshot = await _eventsCollection
+          .where('title', isEqualTo: title)
           .where('startDate', isEqualTo: startDate)
           .where('endDate', isEqualTo: endDate)
+          .where('startTime', isEqualTo: startTime)
+          .where('endTime', isEqualTo: endTime)
           .where('venue', isEqualTo: venue)
           .get();
           
