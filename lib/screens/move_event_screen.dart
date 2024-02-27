@@ -49,20 +49,20 @@ class MoveEventScreenState extends State<MoveEventScreen> {
         DateFormat('h:mm a').format(widget.eventSnap.endTime!);
   }
 
-  setEventMoved(String userType, DateTime newStartDate, DateTime newEndDate, DateTime newStartTime, DateTime newEndTime) async {
+  setEventMoved(String userType, Event event) async {
     setState(() {
       _isLoadingMoved = true;
     });
     try {
       String response = await FireStoreEventMethods()
           .updateEventStatus(
-            widget.eventSnap.id!, 
-            null, 
-            true, 
-            newStartDate, 
-            newEndDate, 
-            newStartTime, 
-            newEndTime
+            widget.eventSnap.id!,
+            null,
+            true,
+            event.startDate!,
+            event.endDate!,
+            event.startTime!,
+            event.endTime!
           );
 
       if (kDebugMode) {
@@ -76,29 +76,23 @@ class MoveEventScreenState extends State<MoveEventScreen> {
 
         String senderId = FirebaseAuth.instance.currentUser!.uid;
 
-        // Format original event details
-        String originalStartDate = DateFormat('yyyy-MM-dd').format(widget.eventSnap.startDate!);
-        String originalEndDate = DateFormat('yyyy-MM-dd').format(widget.eventSnap.endDate!);
-        String originalStartTime = DateFormat('h:mm a').format(widget.eventSnap.startTime!);
-        String originalEndTime = DateFormat('h:mm a').format(widget.eventSnap.endTime!);
-
-        // Format new event details
-        String formattedNewStartDate = DateFormat('yyyy-MM-dd').format(newStartDate);
-        String formattedNewEndDate = DateFormat('yyyy-MM-dd').format(newEndDate);
-        String formattedNewStartTime = DateFormat('h:mm a').format(newStartTime);
-        String formattedNewEndTime = DateFormat('h:mm a').format(newEndTime);
-
-        // Construct the notification message
-        String notificationMessage = 'The event "${widget.eventSnap.title}" has been moved. '
-            'Original schedule: $originalStartDate at $originalStartTime to $originalEndDate at $originalEndTime. '
-            'New schedule: $formattedNewStartDate at $formattedNewStartTime to $formattedNewEndDate at $formattedNewEndTime.';
+        // Construct the notification message with all details
+        String notificationMessage = 'The event "${event.title}" has been rescheduled.\n\n'
+          'New Start Date: ${DateFormat('EEEE, MMMM d, yyyy').format(event.startDate!)}\n'
+          'New End Date: ${DateFormat('EEEE, MMMM d, yyyy').format(event.endDate!)}\n'
+          'Start Time: ${DateFormat('h:mm a').format(event.startTime!)}\n'
+          'End Time: ${DateFormat('h:mm a').format(event.endTime!)}\n'
+          'Venue: ${event.venue ?? "to be announced"}\n'
+          'Event Type: ${event.type ?? "not specified"}\n'
+          'Details: ${event.description ?? "Please check the event details for more information."}\n\n'
+          'Please update your calendars accordingly and stay tuned for further updates. We apologize for any inconvenience this may cause and look forward to your participation.';
 
         // Send a notification to all participants
-        if (widget.eventSnap.participants != null) {
-          for (var participant in widget.eventSnap.participants!['department']) {
-            for (var participantProgram in widget.eventSnap.participants!['program']) {
+        if (event.participants != null) {
+          for (var participant in event.participants!['department']) {
+            for (var participantProgram in event.participants!['program']) {
               await _firebaseNotificationService.sendNotificationToUsersInDepartmentAndProgram(
-                senderId, participant, participantProgram, 'Event Moved', notificationMessage
+                senderId, participant, participantProgram, 'Event Rescheduled', notificationMessage
               );
             }
           }
@@ -233,10 +227,7 @@ class MoveEventScreenState extends State<MoveEventScreen> {
               if (isMoved) {
                 await setEventMoved(
                   userType, 
-                  startDatePart, 
-                  endDatePart, 
-                  startTime12, 
-                  endTime12
+                  event
                 );
               }
 
