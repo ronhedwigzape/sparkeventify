@@ -100,6 +100,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
     try {
       String response = await FireStoreUserMethods().updateUserProfile(
         uid: widget.user.uid!,
+        username: '',
         userType: userTypeController.text,
         email: widget.user.email,
         password: widget.user.password,
@@ -189,38 +190,39 @@ class _EditUserDialogState extends State<EditUserDialog> {
                             ],
                           ),
                           const SizedBox(height: 15),
-                          // DropdownButtonFormField<String>(
-                          //   decoration: InputDecoration(
-                          //     prefixIcon: const Icon(Icons.account_box),
-                          //     labelText: 'User Type',
-                          //     border: OutlineInputBorder(
-                          //     borderSide: Divider.createBorderSide(
-                          //       context,
-                          //       color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
-                          //   ),
-                          //   ),
-                          //   value: userTypeController.text.isEmpty ? widget.user.userType : userTypeController.text,
-                          //   items: <String>[
-                          //     'Student',
-                          //     'Officer',
-                          //     'Staff'
-                          //   ].map((String value) {
-                          //     return DropdownMenuItem<String>(
-                          //       value: value,
-                          //       child: Row(
-                          //         mainAxisSize: MainAxisSize.min,
-                          //         children: [
-                          //           Text(value),
-                          //         ],
-                          //       ),
-                          //     );
-                          //   }).toList(),
-                          //   onChanged: (String? newValue) {
-                          //     setState(() {
-                          //       userTypeController.text = newValue!;
-                          //     });
-                          //   },
-                          // ),
+                          widget.user.userType == 'Student' || 
+                          widget.user.userType == 'Officer' ? 
+                          DropdownButtonFormField<String>(
+                            decoration: InputDecoration(
+                              prefixIcon: const Icon(Icons.account_box),
+                              labelText: 'User Type',
+                              border: OutlineInputBorder(
+                              borderSide: Divider.createBorderSide(
+                                context,
+                                color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
+                            ),
+                            ),
+                            value: userTypeController.text.isEmpty ? widget.user.userType : userTypeController.text,
+                            items: <String>[
+                              'Student',
+                              'Officer',
+                            ].map((String value) {
+                              return DropdownMenuItem<String>(
+                                value: value,
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(value),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                            onChanged: (String? newValue) {
+                              setState(() {
+                                userTypeController.text = newValue!;
+                              });
+                            },
+                          ) : const SizedBox.shrink(),
                           const SizedBox(height: 10),
                           TextFieldInput(
                             labelText: 'First Name',
