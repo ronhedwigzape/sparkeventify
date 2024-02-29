@@ -7,20 +7,21 @@ class User {
   String? username;
   String? password;
   String? email;
+  bool? disabled;
   Map<String, String>? deviceTokens;
   Profile? profile;
   final bool signedInWithGoogle;
 
-  User({
-    this.uid,
-    this.userType,
-    this.username,
-    this.password,
-    this.email,
-    this.deviceTokens,
-    this.profile, 
-    this.signedInWithGoogle = false
-  });
+  User(
+      {this.uid,
+      this.userType,
+      this.username,
+      this.password,
+      this.email,
+      this.disabled,
+      this.deviceTokens,
+      this.profile,
+      this.signedInWithGoogle = false});
 
   // Convert User object to JSON
   Map<String, dynamic> toJson() => {
@@ -29,6 +30,7 @@ class User {
         'username': username,
         'password': password,
         'email': email,
+        'disabled': disabled,
         'deviceTokens': deviceTokens,
         'profile': profile?.toJson(),
         'signedInWithGoogle': signedInWithGoogle,
@@ -45,6 +47,7 @@ class User {
       username: snapshot['username'],
       password: snapshot['password'],
       email: snapshot['email'],
+      disabled: snapshot['disabled'],
       deviceTokens: Map<String, String>.from(snapshot['deviceTokens']),
       profile: Profile.fromMap(profileSnap),
       signedInWithGoogle: snapshot['signedInWithGoogle'] ?? false,

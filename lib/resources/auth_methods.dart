@@ -219,6 +219,16 @@ class AuthMethods {
         return null;  // Return null or some error message
       }
 
+      // Check if the user is disabled
+      DocumentSnapshot userSnapshot = await _firestore.collection('users').doc(userCredential.user!.uid).get();
+      if (userSnapshot.exists && userSnapshot.data() != null) {
+        Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+        if (userData['disabled'] == true) {
+          await _auth.signOut(); // Sign out immediately if disabled
+          return null; // Indicate the user is disabled and cannot proceed
+        }
+      }
+
       DocumentReference docRef = _firestore.collection('users').doc(userCredential.user!.uid);
       DocumentSnapshot docSnap = await docRef.get();
       if (docSnap.exists) {
@@ -316,4 +326,33 @@ class AuthMethods {
     }
     
   }
+
+  // Function to disable a user's login capability
+  Future<String> disableUser(String uid) async {
+    try {
+      // Set the 'disabled' field to true for the user document in Firestore
+      await _firestore.collection('users').doc(uid).update({'disabled': true});
+      return "User disabled successfully.";
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      return "Failed to disable user: ${e.toString()}";
+    }
+  }
+
+  // Function to enable a user's login capability
+  Future<String> enableUser(String uid) async {
+    try {
+      // Set the 'disabled' field to false for the user document in Firestore
+      await _firestore.collection('users').doc(uid).update({'disabled': false});
+      return "User enabled successfully.";
+    } catch (e) {
+      if (kDebugMode) {
+        print(e.toString());
+      }
+      return "Failed to enable user: ${e.toString()}";
+    }
+  }
+
 }

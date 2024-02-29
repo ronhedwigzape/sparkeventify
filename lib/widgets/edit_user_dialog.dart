@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:student_event_calendar/models/profile.dart' as model;
 import 'package:student_event_calendar/models/user.dart' as model;
 import 'package:student_event_calendar/providers/darkmode_provider.dart';
+import 'package:student_event_calendar/resources/auth_methods.dart';
 import 'package:student_event_calendar/resources/firestore_user_methods.dart';
 import 'package:student_event_calendar/utils/colors.dart';
 import 'package:student_event_calendar/utils/global.dart';
@@ -28,8 +29,10 @@ class _EditUserDialogState extends State<EditUserDialog> {
   final TextEditingController yearController = TextEditingController();
   final TextEditingController sectionController = TextEditingController();
   final TextEditingController organizationController = TextEditingController();
-  final TextEditingController officerPositionController = TextEditingController();
+  final TextEditingController officerPositionController =
+      TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  final AuthMethods _authMethods = AuthMethods();
 
   late String selectedProgramAndDepartment = programsAndDepartments![0];
   late String selectedStaffPosition = staffPositions![0];
@@ -39,25 +42,27 @@ class _EditUserDialogState extends State<EditUserDialog> {
   late String staffPosition;
   late String staffType;
   late String staffDescription;
+  late bool isUserDisabled;
 
   @override
   void initState() {
     super.initState();
     userTypeController.text = widget.user.userType!;
+    isUserDisabled = widget.user.disabled!;
     firstNameController.text = widget.user.profile!.firstName ?? '';
-    middleInitialController.text = widget.user.profile!.middleInitial?? '';
-    lastNameController.text = widget.user.profile!.lastName?? '';
-    phoneNumberController.text = widget.user.profile!.phoneNumber?? '';
-    department = widget.user.profile!.department?? '';
-    program = widget.user.profile!.program?? '';
-    yearController.text = widget.user.profile!.year?? '';
-    sectionController.text = widget.user.profile!.section?? '';
-    officerPositionController.text = widget.user.profile!.officerPosition?? '';
-    organizationController.text = widget.user.profile!.organization?? '';
+    middleInitialController.text = widget.user.profile!.middleInitial ?? '';
+    lastNameController.text = widget.user.profile!.lastName ?? '';
+    phoneNumberController.text = widget.user.profile!.phoneNumber ?? '';
+    department = widget.user.profile!.department ?? '';
+    program = widget.user.profile!.program ?? '';
+    yearController.text = widget.user.profile!.year ?? '';
+    sectionController.text = widget.user.profile!.section ?? '';
+    officerPositionController.text = widget.user.profile!.officerPosition ?? '';
+    organizationController.text = widget.user.profile!.organization ?? '';
     profileImage = widget.user.profile!.profileImage ?? '';
-    staffPosition = widget.user.profile!.staffPosition?? '';
-    staffType = widget.user.profile!.staffType?? '';
-    staffDescription = widget.user.profile!.staffDescription?? '';
+    staffPosition = widget.user.profile!.staffPosition ?? '';
+    staffType = widget.user.profile!.staffType ?? '';
+    staffDescription = widget.user.profile!.staffDescription ?? '';
 
     // Set the default value for the dropdown
     for (String programAndDepartment in programsAndDepartments!) {
@@ -70,7 +75,9 @@ class _EditUserDialogState extends State<EditUserDialog> {
 
     for (String staff in staffPositions!) {
       List<String> splitValue = staff.split(' - ');
-      if (splitValue[0] == staffPosition && splitValue[1] == staffType && splitValue[2] == staffDescription) {
+      if (splitValue[0] == staffPosition &&
+          splitValue[1] == staffType &&
+          splitValue[2] == staffDescription) {
         selectedStaffPosition = staff;
         break;
       }
@@ -89,23 +96,30 @@ class _EditUserDialogState extends State<EditUserDialog> {
         department: widget.user.userType != 'Staff' ? department : '',
         program: widget.user.userType != 'Staff' ? program : '',
         year: widget.user.userType != 'Staff' ? yearController.text.trim() : '',
-        section: widget.user.userType != 'Staff' ? sectionController.text.trim().toUpperCase() : '',
-        officerPosition: widget.user.userType == 'Officer' ? officerPositionController.text.trim() : '',
-        staffPosition: widget.user.userType == 'Staff' ?  staffPosition : '',
+        section: widget.user.userType != 'Staff'
+            ? sectionController.text.trim().toUpperCase()
+            : '',
+        officerPosition: widget.user.userType == 'Officer'
+            ? officerPositionController.text.trim()
+            : '',
+        staffPosition: widget.user.userType == 'Staff' ? staffPosition : '',
         staffType: widget.user.userType == 'Staff' ? staffType : '',
-        staffDescription: widget.user.userType == 'Staff' ? staffDescription : '',
-        organization: widget.user.userType == 'Officer' ? organizationController.text.trim() : '',
+        staffDescription:
+            widget.user.userType == 'Staff' ? staffDescription : '',
+        organization: widget.user.userType == 'Officer'
+            ? organizationController.text.trim()
+            : '',
         profileImage: profileImage);
 
     try {
       String response = await FireStoreUserMethods().updateUserProfile(
-        uid: widget.user.uid!,
-        username: '',
-        userType: userTypeController.text,
-        email: widget.user.email,
-        password: widget.user.password,
-        deviceTokens: widget.user.deviceTokens,
-        profile: profile);
+          uid: widget.user.uid!,
+          username: '',
+          userType: userTypeController.text,
+          email: widget.user.email,
+          password: widget.user.password,
+          deviceTokens: widget.user.deviceTokens,
+          profile: profile);
 
       if (response == 'Success') {
         onUpdateSuccess();
@@ -151,243 +165,366 @@ class _EditUserDialogState extends State<EditUserDialog> {
     return TextButton.icon(
       onPressed: () {
         showDialog(
-          context: context,
-          builder: (context) => Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: AlertDialog(
-              title: Row(
-                children: [
-                  const Icon(Icons.person),
-                  const SizedBox(width: 10),
-                  Text('Edit ${widget.user.profile!.firstName}\'s profile', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
-                ],
-              ),
-              insetPadding: const EdgeInsets.symmetric(vertical: 80),
-              content: Form(
-                key: _formKey,
-                child: SingleChildScrollView(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                    child: Form(
-                      child: Column(
-                        children: [
-                          Text('Note: You can only edit the user\'s profile image in the user\'s profile page. ', 
-                          style: TextStyle(
-                            color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor),),
-                          const SizedBox(height: 20),
-                          Row(
-                            children: [
-                              Flexible(
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                  const Icon(Icons.email),
-                                  const SizedBox(width: 10),
-                                  Text(widget.user.email ?? 'No email found', style: TextStyle(color: darkModeOn ? lightColor : darkColor,))
-                                ]),
-                              ),
-                              PasswordWidget(password: widget.user.password ?? 'No password found')
-                            ],
-                          ),
-                          const SizedBox(height: 15),
-                          widget.user.userType == 'Student' || 
-                          widget.user.userType == 'Officer' ? 
-                          DropdownButtonFormField<String>(
-                            decoration: InputDecoration(
-                              prefixIcon: const Icon(Icons.account_box),
-                              labelText: 'User Type',
-                              border: OutlineInputBorder(
-                              borderSide: Divider.createBorderSide(
-                                context,
-                                color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
-                            ),
-                            ),
-                            value: userTypeController.text.isEmpty ? widget.user.userType : userTypeController.text,
-                            items: <String>[
-                              'Student',
-                              'Officer',
-                            ].map((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Row(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(value),
-                                  ],
-                                ),
-                              );
-                            }).toList(),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                userTypeController.text = newValue!;
-                              });
-                            },
-                          ) : const SizedBox.shrink(),
-                          const SizedBox(height: 10),
-                          TextFieldInput(
-                            labelText: 'First Name',
-                            textEditingController: firstNameController,
-                            textInputType: TextInputType.text,
-                            prefixIcon: const Icon(Icons.person),
-                          ),
-                          const SizedBox(height: 10),
-                          TextFieldInput(
-                            labelText: 'Middle Initial',
-                            textEditingController: middleInitialController,
-                            textInputType: TextInputType.text,
-                            prefixIcon: const Icon(Icons.person),
-                          ),
-                          const SizedBox(height: 10),
-                          TextFieldInput(
-                            labelText: 'Last Name',
-                            textEditingController: lastNameController,
-                            textInputType: TextInputType.text,
-                            prefixIcon: const Icon(Icons.person),
-                          ),
-                          const SizedBox(height: 10),
-                          TextFieldInput(
-                            labelText: 'Phone Number',
-                            textEditingController: phoneNumberController,
-                            textInputType: TextInputType.text,
-                            prefixIcon: const Icon(Icons.phone),
-                          ),
-                          widget.user.userType != 'Staff' ? const SizedBox(height: 10) : const SizedBox.shrink(),
-                          widget.user.userType != 'Staff' ? 
-                          DropdownButtonFormField<String>(
-                          value: selectedProgramAndDepartment,
-                          style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
-                          decoration: InputDecoration(
-                            focusColor: darkModeOn ? lightColor : darkColor,
-                            prefixIcon: const Icon(Icons.school),
-                            labelText: 'Program and Department*',
-                            border: OutlineInputBorder(
-                              borderSide: Divider.createBorderSide(
-                                context,
-                                color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
-                            ),
-                          ),
-                          onChanged: (String? newValue) {
-                            setState(() {
-                              selectedProgramAndDepartment = newValue ?? programsAndDepartments![0]; // Handle null selection
-
-                              // Split the selected value:
-                              List<String> splitValue = selectedProgramAndDepartment.split(' - ');
-                              program = splitValue[0];
-                              department = splitValue[1];
-                            });
-                          },
-                          items: programsAndDepartments!.map<DropdownMenuItem<String>>((String value) {
-                            return DropdownMenuItem<String>(
-                              value: value.isEmpty ? null : value,
-                              child: Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
-                            );
-                          }).toList(),
-                        ) : const SizedBox.shrink(),
-                          widget.user.userType != 'Staff' ? const SizedBox(height: 10) : const SizedBox.shrink(),
-                          widget.user.userType != 'Staff' ? TextFieldInput(
-                            labelText: 'Year',
-                            textEditingController: yearController,
-                            textInputType: TextInputType.text,
-                            prefixIcon: const Icon(Icons.school),
-                          ) : const SizedBox.shrink(),
-                          widget.user.userType != 'Staff' ? const SizedBox(height: 10) : const SizedBox.shrink(),
-                          widget.user.userType != 'Staff' ? TextFieldInput(
-                            labelText: 'Section',
-                            textEditingController: sectionController,
-                            textInputType: TextInputType.text,
-                            prefixIcon: const Icon(Icons.school),
-                          ) : const SizedBox.shrink(),
-                          widget.user.userType != 'Student' ? const SizedBox(height: 10) : const SizedBox.shrink(),
-                          widget.user.userType == 'Officer' ? TextFieldInput(
-                            labelText: 'Officer Position',
-                            textEditingController: officerPositionController,
-                            textInputType: TextInputType.text,
-                            prefixIcon: const Icon(Icons.star_border),
-                          ) : const SizedBox.shrink(),
-                          widget.user.userType == 'Staff' ? 
-                          DropdownButtonFormField<String>(
-                            value: selectedStaffPosition,
-                            style: TextStyle(color: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor),
-                            decoration: InputDecoration(
-                              focusColor: darkModeOn ? lightColor : darkColor,
-                              prefixIcon: const Icon(Icons.school),
-                              labelText: 'Staff Positions*',
-                              border: OutlineInputBorder(
-                                borderSide: Divider.createBorderSide(
-                                  context,
-                                  color: darkModeOn ? darkModeTertiaryColor : lightModeTertiaryColor,)
-                              ),
-                            ),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectedStaffPosition = newValue ?? staffPositions![0]; // Handle null selection
-
-                                // Split the selected value:
-                                List<String> splitValue = selectedStaffPosition.split(' - ');
-                                staffPosition = splitValue[0];
-                                staffType = splitValue[1];
-                                staffDescription = splitValue[2];
-                              });
-                            },
-                            items: staffPositions!.map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value.isEmpty ? null : value,
-                                child: Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
-                              );
-                            }).toList(),
-                          ) : const SizedBox.shrink(),
-                          const SizedBox(height: 10),
-                          widget.user.userType == 'Officer' ? TextFieldInput(
-                            labelText: 'Organization',
-                            textEditingController: organizationController,
-                            textInputType: TextInputType.text,
-                            prefixIcon: const Icon(Icons.group),
-                          ) : const SizedBox.shrink(),
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(0, 10, 0, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            context: context,
+            builder: (context) => Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                  child: AlertDialog(
+                    title: Row(
+                      children: [
+                        const Icon(Icons.person),
+                        const SizedBox(width: 10),
+                        Text(
+                            'Edit ${widget.user.profile!.firstName}\'s profile',
+                            style: TextStyle(
+                              color: darkModeOn ? lightColor : darkColor,
+                            )),
+                      ],
+                    ),
+                    insetPadding: const EdgeInsets.symmetric(vertical: 80),
+                    content: Form(
+                      key: _formKey,
+                      child: SingleChildScrollView(
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 10, vertical: 10),
+                          child: Form(
+                            child: Column(
                               children: [
-                                Flexible(
-                                  child: TextButton.icon(
-                                    onPressed: () {
-                                      Navigator.pop(context);
-                                    },
-                                    icon: Icon(Icons.cancel, color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),
-                                    label: Text('Cancel',
-                                    style: TextStyle(
-                                      color: darkModeOn ? darkModeMaroonColor : lightModeMaroonColor),)),
+                                Text(
+                                  'Note: You can only edit the user\'s profile image in the user\'s profile page. ',
+                                  style: TextStyle(
+                                      color: darkModeOn
+                                          ? darkModeSecondaryColor
+                                          : lightModeSecondaryColor),
                                 ),
-                                Flexible(
-                                  child: TextButton.icon(
-                                  onPressed: () async {
-                                     try {
-                                      await updateUserDetails();
-                                    } catch (e) {
-                                      if (kDebugMode) {
-                                        print('Failed to update user details: $e');
-                                      }
+                                const SizedBox(height: 20),
+                                SwitchListTile(
+                                  title: const Text('Disable User Account'),
+                                  value: isUserDisabled,
+                                  onChanged: (bool value) async {
+                                    setState(() {
+                                      isUserDisabled = value;
+                                    });
+                                    if (isUserDisabled) {
+                                      String disableUser = await _authMethods
+                                          .disableUser(widget.user.uid!);
+                                      Navigator.pop(context);
+                                      showSnackBar(disableUser, context);
+                                    } else {
+                                      String enableUser = await _authMethods
+                                          .enableUser(widget.user.uid!);
+                                      Navigator.pop(context);
+                                      showSnackBar(enableUser, context);
                                     }
                                   },
-                                  icon: Icon(Icons.update, color: darkModeOn ? darkModeGrassColor : lightModeGrassColor),
-                                  label: Text('Update', 
-                                  style: TextStyle(
-                                    color: darkModeOn ? darkModeGrassColor : lightModeGrassColor,
-                                    fontWeight: FontWeight.bold),)),
+                                ),
+                                Row(
+                                  children: [
+                                    Flexible(
+                                      child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            const Icon(Icons.email),
+                                            const SizedBox(width: 10),
+                                            Text(
+                                                widget.user.email ??
+                                                    'No email found',
+                                                style: TextStyle(
+                                                  color: darkModeOn
+                                                      ? lightColor
+                                                      : darkColor,
+                                                ))
+                                          ]),
+                                    ),
+                                    PasswordWidget(
+                                        password: widget.user.password ??
+                                            'No password found')
+                                  ],
+                                ),
+                                const SizedBox(height: 15),
+                                widget.user.userType == 'Student' ||
+                                        widget.user.userType == 'Officer'
+                                    ? DropdownButtonFormField<String>(
+                                        decoration: InputDecoration(
+                                          prefixIcon:
+                                              const Icon(Icons.account_box),
+                                          labelText: 'User Type',
+                                          border: OutlineInputBorder(
+                                              borderSide:
+                                                  Divider.createBorderSide(
+                                            context,
+                                            color: darkModeOn
+                                                ? darkModeTertiaryColor
+                                                : lightModeTertiaryColor,
+                                          )),
+                                        ),
+                                        value: userTypeController.text.isEmpty
+                                            ? widget.user.userType
+                                            : userTypeController.text,
+                                        items: <String>[
+                                          'Student',
+                                          'Officer',
+                                        ].map((String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(value),
+                                              ],
+                                            ),
+                                          );
+                                        }).toList(),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            userTypeController.text = newValue!;
+                                          });
+                                        },
+                                      )
+                                    : const SizedBox.shrink(),
+                                const SizedBox(height: 10),
+                                TextFieldInput(
+                                  labelText: 'First Name',
+                                  textEditingController: firstNameController,
+                                  textInputType: TextInputType.text,
+                                  prefixIcon: const Icon(Icons.person),
+                                ),
+                                const SizedBox(height: 10),
+                                TextFieldInput(
+                                  labelText: 'Middle Initial',
+                                  textEditingController:
+                                      middleInitialController,
+                                  textInputType: TextInputType.text,
+                                  prefixIcon: const Icon(Icons.person),
+                                ),
+                                const SizedBox(height: 10),
+                                TextFieldInput(
+                                  labelText: 'Last Name',
+                                  textEditingController: lastNameController,
+                                  textInputType: TextInputType.text,
+                                  prefixIcon: const Icon(Icons.person),
+                                ),
+                                const SizedBox(height: 10),
+                                TextFieldInput(
+                                  labelText: 'Phone Number',
+                                  textEditingController: phoneNumberController,
+                                  textInputType: TextInputType.text,
+                                  prefixIcon: const Icon(Icons.phone),
+                                ),
+                                widget.user.userType != 'Staff'
+                                    ? const SizedBox(height: 10)
+                                    : const SizedBox.shrink(),
+                                widget.user.userType != 'Staff'
+                                    ? DropdownButtonFormField<String>(
+                                        value: selectedProgramAndDepartment,
+                                        style: TextStyle(
+                                            color: darkModeOn
+                                                ? darkModePrimaryColor
+                                                : lightModePrimaryColor),
+                                        decoration: InputDecoration(
+                                          focusColor: darkModeOn
+                                              ? lightColor
+                                              : darkColor,
+                                          prefixIcon: const Icon(Icons.school),
+                                          labelText: 'Program and Department*',
+                                          border: OutlineInputBorder(
+                                              borderSide:
+                                                  Divider.createBorderSide(
+                                            context,
+                                            color: darkModeOn
+                                                ? darkModeTertiaryColor
+                                                : lightModeTertiaryColor,
+                                          )),
+                                        ),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            selectedProgramAndDepartment =
+                                                newValue ??
+                                                    programsAndDepartments![
+                                                        0]; // Handle null selection
+
+                                            // Split the selected value:
+                                            List<String> splitValue =
+                                                selectedProgramAndDepartment
+                                                    .split(' - ');
+                                            program = splitValue[0];
+                                            department = splitValue[1];
+                                          });
+                                        },
+                                        items: programsAndDepartments!
+                                            .map<DropdownMenuItem<String>>(
+                                                (String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value.isEmpty ? null : value,
+                                            child: Text(value,
+                                                style: TextStyle(
+                                                  color: darkModeOn
+                                                      ? lightColor
+                                                      : darkColor,
+                                                )),
+                                          );
+                                        }).toList(),
+                                      )
+                                    : const SizedBox.shrink(),
+                                widget.user.userType != 'Staff'
+                                    ? const SizedBox(height: 10)
+                                    : const SizedBox.shrink(),
+                                widget.user.userType != 'Staff'
+                                    ? TextFieldInput(
+                                        labelText: 'Year',
+                                        textEditingController: yearController,
+                                        textInputType: TextInputType.text,
+                                        prefixIcon: const Icon(Icons.school),
+                                      )
+                                    : const SizedBox.shrink(),
+                                widget.user.userType != 'Staff'
+                                    ? const SizedBox(height: 10)
+                                    : const SizedBox.shrink(),
+                                widget.user.userType != 'Staff'
+                                    ? TextFieldInput(
+                                        labelText: 'Section',
+                                        textEditingController:
+                                            sectionController,
+                                        textInputType: TextInputType.text,
+                                        prefixIcon: const Icon(Icons.school),
+                                      )
+                                    : const SizedBox.shrink(),
+                                widget.user.userType != 'Student'
+                                    ? const SizedBox(height: 10)
+                                    : const SizedBox.shrink(),
+                                widget.user.userType == 'Officer'
+                                    ? TextFieldInput(
+                                        labelText: 'Officer Position',
+                                        textEditingController:
+                                            officerPositionController,
+                                        textInputType: TextInputType.text,
+                                        prefixIcon:
+                                            const Icon(Icons.star_border),
+                                      )
+                                    : const SizedBox.shrink(),
+                                widget.user.userType == 'Staff'
+                                    ? DropdownButtonFormField<String>(
+                                        value: selectedStaffPosition,
+                                        style: TextStyle(
+                                            color: darkModeOn
+                                                ? darkModePrimaryColor
+                                                : lightModePrimaryColor),
+                                        decoration: InputDecoration(
+                                          focusColor: darkModeOn
+                                              ? lightColor
+                                              : darkColor,
+                                          prefixIcon: const Icon(Icons.school),
+                                          labelText: 'Staff Positions*',
+                                          border: OutlineInputBorder(
+                                              borderSide:
+                                                  Divider.createBorderSide(
+                                            context,
+                                            color: darkModeOn
+                                                ? darkModeTertiaryColor
+                                                : lightModeTertiaryColor,
+                                          )),
+                                        ),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            selectedStaffPosition = newValue ??
+                                                staffPositions![
+                                                    0]; // Handle null selection
+
+                                            // Split the selected value:
+                                            List<String> splitValue =
+                                                selectedStaffPosition
+                                                    .split(' - ');
+                                            staffPosition = splitValue[0];
+                                            staffType = splitValue[1];
+                                            staffDescription = splitValue[2];
+                                          });
+                                        },
+                                        items: staffPositions!
+                                            .map<DropdownMenuItem<String>>(
+                                                (String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value.isEmpty ? null : value,
+                                            child: Text(value,
+                                                style: TextStyle(
+                                                  color: darkModeOn
+                                                      ? lightColor
+                                                      : darkColor,
+                                                )),
+                                          );
+                                        }).toList(),
+                                      )
+                                    : const SizedBox.shrink(),
+                                const SizedBox(height: 10),
+                                widget.user.userType == 'Officer'
+                                    ? TextFieldInput(
+                                        labelText: 'Organization',
+                                        textEditingController:
+                                            organizationController,
+                                        textInputType: TextInputType.text,
+                                        prefixIcon: const Icon(Icons.group),
+                                      )
+                                    : const SizedBox.shrink(),
+                                Padding(
+                                  padding:
+                                      const EdgeInsets.fromLTRB(0, 10, 0, 0),
+                                  child: Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
+                                    children: [
+                                      Flexible(
+                                        child: TextButton.icon(
+                                            onPressed: () {
+                                              Navigator.pop(context);
+                                            },
+                                            icon: Icon(Icons.cancel,
+                                                color: darkModeOn
+                                                    ? darkModeMaroonColor
+                                                    : lightModeMaroonColor),
+                                            label: Text(
+                                              'Cancel',
+                                              style: TextStyle(
+                                                  color: darkModeOn
+                                                      ? darkModeMaroonColor
+                                                      : lightModeMaroonColor),
+                                            )),
+                                      ),
+                                      Flexible(
+                                        child: TextButton.icon(
+                                            onPressed: () async {
+                                              try {
+                                                await updateUserDetails();
+                                              } catch (e) {
+                                                if (kDebugMode) {
+                                                  print(
+                                                      'Failed to update user details: $e');
+                                                }
+                                              }
+                                            },
+                                            icon: Icon(Icons.update,
+                                                color: darkModeOn
+                                                    ? darkModeGrassColor
+                                                    : lightModeGrassColor),
+                                            label: Text(
+                                              'Update',
+                                              style: TextStyle(
+                                                  color: darkModeOn
+                                                      ? darkModeGrassColor
+                                                      : lightModeGrassColor,
+                                                  fontWeight: FontWeight.bold),
+                                            )),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ],
                             ),
                           ),
-                          
-                        ],
+                        ),
                       ),
                     ),
                   ),
-                ), 
-              ),
-            ),
-          )
-        );
+                ));
       },
       icon: Icon(
         Icons.edit,

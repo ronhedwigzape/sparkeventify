@@ -108,7 +108,7 @@ class _ClientScreenLayoutState extends State<ClientScreenLayout> {
     if (currentUser != null && (userType == 'Student' || userType == 'Officer')) {
       // Check if the user is trashed before proceeding
       bool isUserTrashed = await FireStoreUserMethods().isUserTrashed(currentUser.uid!);
-      if (isUserTrashed) {
+      if (isUserTrashed || currentUser.disabled == true) {
         // User is trashed, do not show the dialog
         return;
       }
