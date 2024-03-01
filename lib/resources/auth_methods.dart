@@ -154,7 +154,7 @@ class AuthMethods {
           if (userData.containsKey('disabled') && userData['disabled'] == true) {
             // Sign out the user immediately if the account is disabled
             await _auth.signOut();
-            return 'Your account has been disabled. Please contact support for further assistance.';
+            return 'Your account has been disabled.';
           }
         }
 
@@ -163,7 +163,7 @@ class AuthMethods {
         if (trashedUserSnapshot.exists) {
           // User is trashed, do not proceed with sign-in
           await _auth.signOut();
-          return 'Your account has been disabled. Please contact support for further assistance.';
+          return 'Your account has been disabled.';
         }
 
         // Initialize deviceToken with empty map
