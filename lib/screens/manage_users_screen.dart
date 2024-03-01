@@ -24,6 +24,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
   String dropdownDepartment = 'All';
   String dropdownProgram = 'All';
   String dropdownSection = 'All';
+  String dropdownDisabledStatus = 'All';
   List<String> selectedUsers = [];
   List<model.User> allUsers = [];
   List<model.User> filteredUsers = [];
@@ -107,7 +108,14 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
         allUsers = snapshot.data!.docs.map((doc) => model.User.fromSnap(doc)).toList();
 
         filteredUsers = allUsers.where((user) {
-          return user.userType != 'Admin' &&
+          bool matchesDisabledStatus = true;
+          if (dropdownDisabledStatus == 'Enabled') {
+            matchesDisabledStatus = !(user.disabled ?? false); 
+          } else if (dropdownDisabledStatus == 'Disabled') {
+            matchesDisabledStatus = user.disabled ?? false;
+          }
+
+          return matchesDisabledStatus && user.userType != 'Admin' &&
               (dropdownUserType == 'All' || user.userType == dropdownUserType) &&
               (dropdownYear == 'All' || (user.profile?.year ?? 'All') == dropdownYear) &&
               (dropdownDepartment == 'All' || (user.profile?.department ?? 'All') == dropdownDepartment) &&
@@ -115,6 +123,7 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
               (dropdownSection == 'All' || (user.profile?.section ?? 'All') == dropdownSection) &&
               (searchQuery.isEmpty || (user.profile?.fullName != null && user.profile!.fullName!.toLowerCase().startsWith(searchQuery.toLowerCase())));
         }).toList();
+
 
         return Padding(
           padding: const EdgeInsets.fromLTRB(13, 15, 13, 0),
@@ -273,6 +282,21 @@ class _ManageUsersScreenState extends State<ManageUsersScreen> {
                               }).toList(),
                             );
                           },
+                        ),
+                        DropdownButton<String>(
+                          value: dropdownDisabledStatus,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              dropdownDisabledStatus = newValue!;
+                            });
+                          },
+                          items: <String>['All', 'Enabled', 'Disabled']
+                              .map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
+                            );
+                          }).toList(),
                         ),
                         NotificationButton(selectedUsers: selectedUsers, clearSelectedUsers: clearSelectedUsers),
                         Checkbox(
