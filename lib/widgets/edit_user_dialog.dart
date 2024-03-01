@@ -88,38 +88,33 @@ class _EditUserDialogState extends State<EditUserDialog> {
     String fullname = '${firstNameController.text} ${lastNameController.text}';
 
     model.Profile profile = model.Profile(
-        fullName: fullname,
-        firstName: firstNameController.text.trim(),
-        middleInitial: middleInitialController.text.trim(),
-        lastName: lastNameController.text.trim(),
-        phoneNumber: phoneNumberController.text.trim(),
-        department: widget.user.userType != 'Staff' ? department : '',
-        program: widget.user.userType != 'Staff' ? program : '',
-        year: widget.user.userType != 'Staff' ? yearController.text.trim() : '',
-        section: widget.user.userType != 'Staff'
-            ? sectionController.text.trim().toUpperCase()
-            : '',
-        officerPosition: widget.user.userType == 'Officer'
-            ? officerPositionController.text.trim()
-            : '',
-        staffPosition: widget.user.userType == 'Staff' ? staffPosition : '',
-        staffType: widget.user.userType == 'Staff' ? staffType : '',
-        staffDescription:
-            widget.user.userType == 'Staff' ? staffDescription : '',
-        organization: widget.user.userType == 'Officer'
-            ? organizationController.text.trim()
-            : '',
-        profileImage: profileImage);
+      fullName: fullname,
+      firstName: firstNameController.text.trim() ?? '',
+      middleInitial: middleInitialController.text.trim() ?? '',
+      lastName: lastNameController.text.trim() ?? '',
+      phoneNumber: phoneNumberController.text.trim() ?? '',
+      department: widget.user.userType != 'Staff' ? department ?? '' : '',
+      program: widget.user.userType != 'Staff' ? program ?? '' : '',
+      year: widget.user.userType != 'Staff' ? yearController.text.trim() ?? '' : '',
+      section: widget.user.userType != 'Staff' ? sectionController.text.trim().toUpperCase() ?? '' : '',
+      officerPosition: widget.user.userType == 'Officer' ? officerPositionController.text.trim() ?? '' : '',
+      staffPosition: widget.user.userType == 'Staff' ? staffPosition ?? '' : '',
+      staffType: widget.user.userType == 'Staff' ? staffType ?? '' : '',
+      staffDescription: widget.user.userType == 'Staff' ? staffDescription ?? '' : '',
+      organization: widget.user.userType == 'Officer' ? organizationController.text.trim() ?? '' : '',
+      profileImage: profileImage ?? '',
+  );
 
     try {
       String response = await FireStoreUserMethods().updateUserProfile(
-          uid: widget.user.uid!,
-          username: '',
-          userType: userTypeController.text,
-          email: widget.user.email,
-          password: widget.user.password,
-          deviceTokens: widget.user.deviceTokens,
-          profile: profile);
+        uid: widget.user.uid!,
+        username: '', 
+        userType: userTypeController.text ?? 'Guest', // Default to 'Guest' or any appropriate value
+        email: widget.user.email ?? '',
+        password: widget.user.password ?? '',
+        deviceTokens: widget.user.deviceTokens ?? {},
+        profile: profile,
+      );
 
       if (response == 'Success') {
         onUpdateSuccess();
