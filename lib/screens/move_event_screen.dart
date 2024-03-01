@@ -77,7 +77,7 @@ class MoveEventScreenState extends State<MoveEventScreen> {
         String senderId = FirebaseAuth.instance.currentUser!.uid;
 
         // Construct the notification message with all details
-        String notificationMessage = 'The event of "${event.title}" scheduled on ${widget.eventSnap.startDate} has been rescheduled.\n\n'
+        String notificationMessage = 'The event of "${event.title}" scheduled on ${DateFormat('EEEE, MMMM d, yyyy').format(widget.eventSnap.startDate!)} has been rescheduled.\n\n'
           'Start Date: ${DateFormat('EEEE, MMMM d, yyyy').format(event.startDate!)}\n'
           'End Date: ${DateFormat('EEEE, MMMM d, yyyy').format(event.endDate!)}\n'
           'Start Time: ${DateFormat('h:mm a').format(event.startTime!)}\n'
