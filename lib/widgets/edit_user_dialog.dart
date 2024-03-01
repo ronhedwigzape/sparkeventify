@@ -110,6 +110,7 @@ class _EditUserDialogState extends State<EditUserDialog> {
         uid: widget.user.uid!,
         username: '', 
         userType: userTypeController.text ?? 'Guest', // Default to 'Guest' or any appropriate value
+        disabled: false,
         email: widget.user.email ?? '',
         password: widget.user.password ?? '',
         deviceTokens: widget.user.deviceTokens ?? {},

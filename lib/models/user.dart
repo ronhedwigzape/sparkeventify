@@ -12,16 +12,17 @@ class User {
   Profile? profile;
   final bool signedInWithGoogle;
 
-  User(
-      {this.uid,
-      this.userType,
-      this.username,
-      this.password,
-      this.email,
-      this.disabled,
-      this.deviceTokens,
-      this.profile,
-      this.signedInWithGoogle = false});
+ User({
+    this.uid,
+    this.userType,
+    this.username,
+    this.password,
+    this.email,
+    this.disabled = false,
+    Map<String, String>? deviceTokens,
+    this.profile,
+    this.signedInWithGoogle = false,
+  }) : deviceTokens = deviceTokens ?? {};
 
   // Convert User object to JSON
   Map<String, dynamic> toJson() => {

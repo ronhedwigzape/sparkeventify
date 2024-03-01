@@ -420,6 +420,7 @@ class FireStoreUserMethods {
     String? username,
     required String userType,
     String? email,
+    bool? disabled,
     String? password,
     Map<String, String>? deviceTokens,
     model.Profile? profile
@@ -448,6 +449,7 @@ class FireStoreUserMethods {
           username: username,
           userType: userType,
           email: email,
+          disabled: disabled,
           password: password,
           profile: profile,
           deviceTokens: deviceTokens,
