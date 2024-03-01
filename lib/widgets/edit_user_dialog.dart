@@ -117,6 +117,8 @@ class _EditUserDialogState extends State<EditUserDialog> {
         profile: profile,
       );
 
+      if (!mounted) return; 
+
       if (response == 'Success') {
         onUpdateSuccess();
       } else {
@@ -133,26 +135,13 @@ class _EditUserDialogState extends State<EditUserDialog> {
   }
 
   void onUpdateFailure(String message) {
+    Navigator.pop(context);
     showSnackBar(message, context);
   }
 
   void showSnackBar(String message, BuildContext context) {
     final snackBar = SnackBar(content: Text(message));
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
-  }
-
-  @override
-  void dispose() {
-    userTypeController.dispose();
-    firstNameController.dispose();
-    middleInitialController.dispose();
-    lastNameController.dispose();
-    phoneNumberController.dispose();
-    yearController.dispose();
-    sectionController.dispose();
-    officerPositionController.dispose();
-    organizationController.dispose();
-    super.dispose();
   }
 
   @override
@@ -308,10 +297,10 @@ class _EditUserDialogState extends State<EditUserDialog> {
                                   textInputType: TextInputType.text,
                                   prefixIcon: const Icon(Icons.phone),
                                 ),
-                                widget.user.userType != 'Staff'
+                                widget.user.userType != 'Staff' || userTypeController.text != 'Staff'
                                     ? const SizedBox(height: 10)
                                     : const SizedBox.shrink(),
-                                widget.user.userType != 'Staff'
+                                widget.user.userType != 'Staff' || userTypeController.text != 'Staff'
                                     ? DropdownButtonFormField<String>(
                                         value: selectedProgramAndDepartment,
                                         style: TextStyle(
@@ -363,10 +352,10 @@ class _EditUserDialogState extends State<EditUserDialog> {
                                         }).toList(),
                                       )
                                     : const SizedBox.shrink(),
-                                widget.user.userType != 'Staff'
+                                widget.user.userType != 'Staff' || userTypeController.text != 'Staff'
                                     ? const SizedBox(height: 10)
                                     : const SizedBox.shrink(),
-                                widget.user.userType != 'Staff'
+                                widget.user.userType != 'Staff' || userTypeController.text != 'Staff'
                                     ? TextFieldInput(
                                         labelText: 'Year',
                                         textEditingController: yearController,
@@ -374,10 +363,10 @@ class _EditUserDialogState extends State<EditUserDialog> {
                                         prefixIcon: const Icon(Icons.school),
                                       )
                                     : const SizedBox.shrink(),
-                                widget.user.userType != 'Staff'
+                                widget.user.userType != 'Staff' || userTypeController.text != 'Staff'
                                     ? const SizedBox(height: 10)
                                     : const SizedBox.shrink(),
-                                widget.user.userType != 'Staff'
+                                widget.user.userType != 'Staff' || userTypeController.text != 'Staff'
                                     ? TextFieldInput(
                                         labelText: 'Section',
                                         textEditingController:
@@ -535,5 +524,19 @@ class _EditUserDialogState extends State<EditUserDialog> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    userTypeController.dispose();
+    firstNameController.dispose();
+    middleInitialController.dispose();
+    lastNameController.dispose();
+    phoneNumberController.dispose();
+    yearController.dispose();
+    sectionController.dispose();
+    officerPositionController.dispose();
+    organizationController.dispose();
+    super.dispose();
   }
 }
