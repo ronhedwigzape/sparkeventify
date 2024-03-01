@@ -117,30 +117,32 @@ class _NotificationCardState extends State<NotificationCard> {
                       child: Text(
                           'Notification from ${senderData?.profile?.fullName}', style: TextStyle(color: darkModeOn ? lightColor : darkColor)))
                 ]),
-                content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const SizedBox(height: 10),
-                      const Text(
-                        'Title',
-                        style: TextStyle(color: darkModeSecondaryColor),
-                      ),
-                      const SizedBox(height: 5),
-                      Flexible(child: Text('${widget.snap.title}', style: TextStyle(color: darkModeOn ? lightColor : darkColor))),
-                      const SizedBox(height: 15),
-                      const Text(
-                        'Message',
-                        style: TextStyle(color: darkModeSecondaryColor),
-                      ),
-                      const SizedBox(height: 5),
-                      Flexible(child: Text('${widget.snap.message}', style: TextStyle(color: darkModeOn ? lightColor : darkColor))),
-                      const SizedBox(height: 20),
-                      Text(
-                        'Received: ${DateFormat.yMMMd().format(localTime)} ${DateFormat.jm().format(localTime)}',
-                        style: const TextStyle(color: darkModeTertiaryColor),
-                      ),
-                    ]),
+                content: SingleChildScrollView(
+                  child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Title',
+                          style: TextStyle(color: darkModeSecondaryColor),
+                        ),
+                        const SizedBox(height: 5),
+                        Flexible(child: Text('${widget.snap.title}', style: TextStyle(color: darkModeOn ? lightColor : darkColor))),
+                        const SizedBox(height: 15),
+                        const Text(
+                          'Message',
+                          style: TextStyle(color: darkModeSecondaryColor),
+                        ),
+                        const SizedBox(height: 5),
+                        Flexible(child: Text('${widget.snap.message}', style: TextStyle(color: darkModeOn ? lightColor : darkColor))),
+                        const SizedBox(height: 20),
+                        Text(
+                          'Received: ${DateFormat.yMMMd().format(localTime)} ${DateFormat.jm().format(localTime)}',
+                          style: const TextStyle(color: darkModeTertiaryColor),
+                        ),
+                      ]),
+                ),
                 actions: [
                   TextButton(
                     onPressed: () {
