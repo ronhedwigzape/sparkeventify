@@ -184,8 +184,12 @@ class _UsersCardState extends State<UsersCard> {
                                          children: [
                                             Text('Officer Position:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
                                             const SizedBox(width: 10.0,),
-                                            Text(currentProfile.officerPosition ?? 'N/A', 
-                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Flexible(
+                                              child: Text(
+                                                currentProfile.officerPosition ?? 'N/A',
+                                                overflow: TextOverflow.ellipsis, 
+                                              style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            ),
                                          ],
                                        ),
                                     ],
@@ -193,26 +197,38 @@ class _UsersCardState extends State<UsersCard> {
                                      ...[
                                       Row(
                                          children: [
-                                            Flexible(child: Text('SASO Staff Position:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,))),
+                                            Text('SASO Staff Position:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
                                             const SizedBox(width: 10.0,),
-                                            Text(currentProfile.staffPosition ?? 'N/A', 
-                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Flexible(
+                                              child: Text(
+                                                currentProfile.staffPosition ?? 'N/A', 
+                                                overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            ),
                                          ],
                                        ),
                                        Row(
                                          children: [
-                                            Flexible(child: Text('Staff Type:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,))),
+                                            Text('Staff Type:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
                                             const SizedBox(width: 10.0,),
-                                            Text(currentProfile.staffType ?? 'N/A', 
-                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Flexible(
+                                              child: Text(
+                                                currentProfile.staffType ?? 'N/A', 
+                                                overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            ),
                                          ],
                                        ),
                                        Row(
                                          children: [
-                                            Flexible(child: Text('Staff Description:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,))),
+                                            Text('Staff Description:', style: TextStyle(color: darkModeOn ? lightColor : darkColor,)),
                                             const SizedBox(width: 10.0,),
-                                            Text(currentProfile.staffDescription ?? 'N/A', 
-                                            style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            Flexible(
+                                              child: Text(
+                                                currentProfile.staffDescription ?? 'N/A', 
+                                                overflow: TextOverflow.ellipsis,
+                                              style: TextStyle(color: darkModeOn ? darkModeSecondaryColor : lightModeSecondaryColor)),
+                                            ),
                                          ],
                                        ),
                                      ],
