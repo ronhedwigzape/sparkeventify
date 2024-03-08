@@ -236,11 +236,12 @@ class GlobalMethods {
     }
   }
 
-  // Insert Organization
-  Future<bool> insertOrganization(String organization) async {
+  // Insert Organization with Proponent
+  Future<bool> insertOrganization(String organization, String proponent) async {
     try {
+      String organizationWithProponent = '$organization - $proponent';
       await firestoreInstance.collection('global').doc('constants').update({
-        'organizations': FieldValue.arrayUnion([organization]),
+        'organizations': FieldValue.arrayUnion([organizationWithProponent]),
       });
       return true;
     } catch (e) {
@@ -249,14 +250,16 @@ class GlobalMethods {
     }
   }
 
-  // Update Organization
-  Future<bool> updateOrganization(String oldOrganization, String newOrganization) async {
+  // Update Organization with Proponent
+  Future<bool> updateOrganization(String oldOrganization, String oldProponent, String newOrganization, String newProponent) async {
     try {
+      String oldOrganizationWithProponent = '$oldOrganization - $oldProponent';
+      String newOrganizationWithProponent = '$newOrganization - $newProponent';
       await firestoreInstance.collection('global').doc('constants').update({
-        'organizations': FieldValue.arrayRemove([oldOrganization]),
+        'organizations': FieldValue.arrayRemove([oldOrganizationWithProponent]),
       });
       await firestoreInstance.collection('global').doc('constants').update({
-        'organizations': FieldValue.arrayUnion([newOrganization]),
+        'organizations': FieldValue.arrayUnion([newOrganizationWithProponent]),
       });
       return true;
     } catch (e) {
@@ -265,11 +268,12 @@ class GlobalMethods {
     }
   }
 
-  // Delete Organization
-  Future<bool> deleteOrganization(String organization) async {
+  // Delete Organization with Proponent
+  Future<bool> deleteOrganization(String organization, String proponent) async {
     try {
+      String organizationWithProponent = '$organization - $proponent';
       await firestoreInstance.collection('global').doc('constants').update({
-        'organizations': FieldValue.arrayRemove([organization]),
+        'organizations': FieldValue.arrayRemove([organizationWithProponent]),
       });
       return true;
     } catch (e) {

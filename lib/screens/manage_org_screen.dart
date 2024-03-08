@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_event_calendar/resources/global_methods.dart';
+import 'package:student_event_calendar/widgets/text_field_input.dart';
 
 class ManageOrganizationScreen extends StatefulWidget {
-  const ManageOrganizationScreen({super.key});
+  const ManageOrganizationScreen({Key? key}) : super(key: key);
 
   @override
   State<ManageOrganizationScreen> createState() => _ManageOrganizationScreenState();
@@ -12,6 +13,26 @@ class ManageOrganizationScreen extends StatefulWidget {
 class _ManageOrganizationScreenState extends State<ManageOrganizationScreen> {
   final GlobalMethods globalMethods = GlobalMethods();
   final TextEditingController organizationController = TextEditingController();
+  final TextEditingController proponentController = TextEditingController();
+  String? editingOrganization; // Used to store the organization name when editing
+  String? editingProponent; // Used to store the proponent name when editing
+
+  void clearControllers() {
+    organizationController.clear();
+    proponentController.clear();
+    editingOrganization = null;
+    editingProponent = null;
+  }
+
+  void setControllersForEdit(String organizationWithProponent) {
+    var parts = organizationWithProponent.split(' - ');
+    if (parts.length == 2) {
+      editingOrganization = parts[0];
+      editingProponent = parts[1];
+      organizationController.text = editingOrganization!;
+      proponentController.text = editingProponent!;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +47,7 @@ class _ManageOrganizationScreenState extends State<ManageOrganizationScreen> {
             return const Center(child: CircularProgressIndicator());
           }
 
-          if (!snapshot.hasData) {
+          if (!snapshot.hasData || snapshot.data?.data() == null) {
             return const Center(child: Text('No data'));
           }
 
@@ -38,50 +59,72 @@ class _ManageOrganizationScreenState extends State<ManageOrganizationScreen> {
             child: ListView.builder(
               itemCount: organizations.length,
               itemBuilder: (context, index) {
-                String organization = organizations[index];
+                String organizationWithProponent = organizations[index];
+                var parts = organizationWithProponent.split(' - ');
+                String organization = parts[0];
+                String proponent = parts.length > 1 ? parts[1] : '';
+
                 return ListTile(
-                  title: Text(organization),
+                  title: Text(organizationWithProponent),
                   trailing: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
                         icon: const Icon(Icons.edit),
                         onPressed: () {
-                          organizationController.text = organization;
+                          setControllersForEdit(organizationWithProponent);
                           showDialog(
                             context: context,
                             builder: (context) {
                               return AlertDialog(
                                 title: const Text('Update Organization'),
-                                content: TextField(
-                                  controller: organizationController,
-                                  decoration: const InputDecoration(labelText: 'Organization Name'),
+                                content: Column(
+                                  mainAxisSize: MainAxisSize.min, // To prevent AlertDialog from taking full height
+                                  children: [
+                                    TextFieldInput(
+                                      textEditingController: organizationController,
+                                      labelText: 'Organization Name',
+                                      textInputType: TextInputType.text,
+                                    ),
+                                    const SizedBox(height: 10,),
+                                    TextFieldInput(
+                                      textEditingController: proponentController,
+                                      labelText: 'Proponent',
+                                      textInputType: TextInputType.text,
+                                    ),
+                                  ],
                                 ),
                                 actions: [
                                   ElevatedButton(
                                     child: const Text('UPDATE'),
                                     onPressed: () async {
-                                      bool success = await globalMethods.updateOrganization(
-                                        organization,
-                                        organizationController.text,
-                                      );
-                                      if (success) {
-                                        Navigator.of(context).pop();
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Update successful')),
+                                      if (editingOrganization != null && editingProponent != null) {
+                                        bool success = await globalMethods.updateOrganization(
+                                          editingOrganization!,
+                                          editingProponent!,
+                                          organizationController.text,
+                                          proponentController.text,
                                         );
-                                      } else {
-                                        Navigator.of(context).pop();
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          const SnackBar(content: Text('Update failed')),
-                                        );
+                                        if (success) {
+                                          clearControllers();
+                                          Navigator.of(context).pop();
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(content: Text('Update successful')),
+                                          );
+                                        } else {
+                                          clearControllers();
+                                          Navigator.of(context).pop();
+                                          ScaffoldMessenger.of(context).showSnackBar(
+                                            const SnackBar(content: Text('Update failed')),
+                                          );
+                                        }
                                       }
                                     },
                                   ),
                                   TextButton(
                                     child: const Text('CANCEL'),
                                     onPressed: () {
-                                      organizationController.clear();
+                                      clearControllers();
                                       Navigator.of(context).pop();
                                     },
                                   ),
@@ -94,7 +137,7 @@ class _ManageOrganizationScreenState extends State<ManageOrganizationScreen> {
                       IconButton(
                         icon: const Icon(Icons.delete),
                         onPressed: () async {
-                          bool success = await globalMethods.deleteOrganization(organization);
+                          bool success = await globalMethods.deleteOrganization(organization, proponent);
                           if (success) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Organization deleted')),
@@ -117,37 +160,47 @@ class _ManageOrganizationScreenState extends State<ManageOrganizationScreen> {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.add),
         onPressed: () {
-          organizationController.clear();
+          clearControllers();
           showDialog(
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: const Text('Add Organization'),
-                content: TextField(
-                  controller: organizationController,
-                  decoration: const InputDecoration(labelText: 'Organization Name'),
+                title: const Text('Add Organization/Proponent'),
+                content: Column(
+                  mainAxisSize: MainAxisSize.min, // To prevent AlertDialog from taking full height
+                  children: [
+                    TextFieldInput(
+                      textEditingController: organizationController,
+                      labelText: 'Organization Name',
+                      textInputType: TextInputType.text,
+                    ),
+                    const SizedBox(height: 10,),
+                    TextFieldInput(
+                      textEditingController: proponentController,
+                      labelText: 'Proponent',
+                      textInputType: TextInputType.text,
+                    ),
+                  ],
                 ),
                 actions: [
                   ElevatedButton(
                     child: const Text('ADD'),
                     onPressed: () async {
-                      if (organizationController.text.isNotEmpty) {
-                        bool success = await globalMethods.insertOrganization(organizationController.text);
-                        if (success) {
-                          Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Organization added')),
-                          );
-                        } else {
-                          Navigator.of(context).pop();
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text('Adding failed')),
-                          );
-                        }
-                        organizationController.clear();
-                      } else {
+                      bool success = await globalMethods.insertOrganization(
+                        organizationController.text,
+                        proponentController.text,
+                      );
+                      if (success) {
+                        clearControllers();
+                        Navigator.of(context).pop();
                         ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Please fill in the organization name')),
+                          const SnackBar(content: Text('Organization added')),
+                        );
+                      } else {
+                        clearControllers();
+                        Navigator.of(context).pop();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text('Adding failed')),
                         );
                       }
                     },
@@ -155,7 +208,7 @@ class _ManageOrganizationScreenState extends State<ManageOrganizationScreen> {
                   TextButton(
                     child: const Text('CANCEL'),
                     onPressed: () {
-                      organizationController.clear();
+                      clearControllers();
                       Navigator.of(context).pop();
                     },
                   ),
