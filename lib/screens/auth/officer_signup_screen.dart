@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:student_event_calendar/resources/global_methods.dart';
 import 'package:student_event_calendar/screens/auth/login_screen.dart';
 import 'package:student_event_calendar/layouts/client_screen_layout.dart';
 import 'package:student_event_calendar/models/profile.dart' as model;
@@ -35,6 +36,8 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
   String? selectedDepartment;
   String? selectedProgram;
   Map<String, List<String>> departmentProgramsMap = {};
+  List<String> availableOrganizations = [];
+  String? selectedOrganization;
 
   @override
   void initState() {
@@ -68,6 +71,16 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
         }
       });
     }
+
+    // Assuming GlobalMethods is accessible via Provider or directly
+    var globalMethods = GlobalMethods(); // Or however you access GlobalMethods in your app
+    List<String> orgs = await globalMethods.getOrganizations();
+    setState(() {
+      availableOrganizations = orgs;
+      if (orgs.isNotEmpty) {
+        selectedOrganization = orgs[0]; // Default to the first organization if list is not empty
+      }
+    });
   }
 
   Future<void> signUpAsClient() async {
@@ -79,7 +92,7 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
         _yearController.text.trim().isEmpty ||
         _sectionController.text.trim().isEmpty ||
         _passwordController.text.trim().isEmpty ||
-        _organizationController.text.trim().isEmpty ||
+        selectedOrganization!.isEmpty ||
         _positionController.text.trim().isEmpty ||
         program.trim().isEmpty ||
         department.trim().isEmpty
@@ -126,7 +139,7 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
       program: program,
       year: _yearController.text.trim(),
       section: _sectionController.text.trim().toUpperCase(),
-      organization: _organizationController.text.trim(),
+      organization: selectedOrganization,
       officerPosition: _positionController.text.trim(),
     );
 
@@ -435,11 +448,30 @@ class _OfficerSignupScreenState extends State<OfficerSignupScreen> {
                       ),
                       const SizedBox(height: 10.0),
                       // text field input for organization
-                      TextFieldInput(
-                        prefixIcon: const Icon(Icons.group),
-                        textEditingController: _organizationController,
-                        labelText: 'Organization (e.g. JPCS Chapter)*',
-                        textInputType: TextInputType.text,
+                      Flexible(
+                        child: DropdownButtonFormField<String>(
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            prefixIcon: Icon(Icons.group),
+                            labelText: 'Organization*',
+                          ),
+                          value: selectedOrganization,
+                          onChanged: (String? newValue) {
+                            setState(() {
+                              selectedOrganization = newValue;
+                            });
+                          },
+                          items: availableOrganizations.map<DropdownMenuItem<String>>((String value) {
+                            return DropdownMenuItem<String>(
+                              value: value,
+                              child: Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 2.0),
+                                child: Text(value, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
+                              ),
+                            );
+                          }).toList(),
+                          hint: const Text('Select Organization'),
+                        ),
                       ),
                       const SizedBox(height: 10.0),
                       // text field input for organization position

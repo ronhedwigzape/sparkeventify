@@ -19,17 +19,17 @@ class _ManageStaffPositionsScreenState extends State<ManageStaffPositionsScreen>
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Manage Staff Positions'),
+        title: const Text('Manage Staff Positions'),
       ),
       body: StreamBuilder<DocumentSnapshot>(
         stream: globalMethods.getConstantsStream(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator());
           }
 
           if (!snapshot.hasData) {
-            return Center(child: Text('No data'));
+            return const Center(child: Text('No data'));
           }
 
           Map<String, dynamic> constants = snapshot.data!.data() as Map<String, dynamic>;
@@ -42,7 +42,7 @@ class _ManageStaffPositionsScreenState extends State<ManageStaffPositionsScreen>
               return ListTile(
                 title: Text(staffPosition),
                 trailing: IconButton(
-                  icon: Icon(Icons.delete),
+                  icon: const Icon(Icons.delete),
                   onPressed: () async {
                     bool success = await globalMethods.emptyStaffPosition(staffPosition);
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -59,27 +59,27 @@ class _ManageStaffPositionsScreenState extends State<ManageStaffPositionsScreen>
                     context: context,
                     builder: (context) {
                       return AlertDialog(
-                        title: Text('Update Staff Position'),
+                        title: const Text('Update Staff Position'),
                         content: Column(
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             TextField(
                               controller: positionController,
-                              decoration: InputDecoration(labelText: 'Position'),
+                              decoration: const InputDecoration(labelText: 'Position'),
                             ),
                             TextField(
                               controller: descriptionController,
-                              decoration: InputDecoration(labelText: 'Description'),
+                              decoration: const InputDecoration(labelText: 'Description'),
                             ),
                             TextField(
                               controller: typeController,
-                              decoration: InputDecoration(labelText: 'Type'),
+                              decoration: const InputDecoration(labelText: 'Type'),
                             ),
                           ],
                         ),
                         actions: [
                           ElevatedButton(
-                            child: Text('UPDATE'),
+                            child: const Text('UPDATE'),
                             onPressed: () async {
                               bool success = await globalMethods.updateStaffPosition(
                                 staffPosition,
@@ -97,7 +97,7 @@ class _ManageStaffPositionsScreenState extends State<ManageStaffPositionsScreen>
                             },
                           ),
                           TextButton(
-                            child: Text('CANCEL'),
+                            child: const Text('CANCEL'),
                             onPressed: () {
                               Navigator.of(context).pop();
                             },
@@ -113,7 +113,7 @@ class _ManageStaffPositionsScreenState extends State<ManageStaffPositionsScreen>
         },
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: const Icon(Icons.add),
         onPressed: () {
           positionController.clear();
           descriptionController.clear();
@@ -123,27 +123,27 @@ class _ManageStaffPositionsScreenState extends State<ManageStaffPositionsScreen>
             context: context,
             builder: (context) {
               return AlertDialog(
-                title: Text('Add Staff Position'),
+                title: const Text('Add Staff Position'),
                 content: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     TextField(
                       controller: positionController,
-                      decoration: InputDecoration(labelText: 'Position'),
+                      decoration: const InputDecoration(labelText: 'Position'),
                     ),
                     TextField(
                       controller: descriptionController,
-                      decoration: InputDecoration(labelText: 'Description'),
+                      decoration: const InputDecoration(labelText: 'Description'),
                     ),
                     TextField(
                       controller: typeController,
-                      decoration: InputDecoration(labelText: 'Type'),
+                      decoration: const InputDecoration(labelText: 'Type'),
                     ),
                   ],
                 ),
                 actions: [
                   ElevatedButton(
-                    child: Text('ADD'),
+                    child: const Text('ADD'),
                     onPressed: () async {
                       bool success = await globalMethods.insertStaffPosition(
                         positionController.text,
@@ -160,7 +160,7 @@ class _ManageStaffPositionsScreenState extends State<ManageStaffPositionsScreen>
                     },
                   ),
                   TextButton(
-                    child: Text('CANCEL'),
+                    child: const Text('CANCEL'),
                     onPressed: () {
                       Navigator.of(context).pop();
                     },

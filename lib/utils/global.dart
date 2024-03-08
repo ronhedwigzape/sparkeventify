@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:student_event_calendar/screens/admin_dashboard_screen.dart';
 import 'package:student_event_calendar/screens/create_admin_screen.dart';
 import 'package:student_event_calendar/screens/feedback_screen.dart';
+import 'package:student_event_calendar/screens/manage_org_screen.dart';
 import 'package:student_event_calendar/screens/manage_program_department_screen.dart';
 import 'package:student_event_calendar/screens/manage_events_screen.dart';
 import 'package:student_event_calendar/screens/manage_staff_positions.dart';
@@ -133,6 +134,7 @@ Future<List<Widget>> homeScreenItems() async {
     return [
       const AdminDashboardScreen(),
       const ManageProgramDepartmentScreen(),
+      const ManageOrganizationScreen(),
       const ManageStaffPositionsScreen(),
       const CreateAdminScreen(),
       const TrashedEventsScreen(),

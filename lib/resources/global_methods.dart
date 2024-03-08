@@ -42,6 +42,12 @@ class GlobalMethods {
     return List<String>.from(documentSnapshot.get('staffPositions'));
   }
 
+  // Get all available programs
+  Future<List<String>> getOrganizations() async {
+    DocumentSnapshot documentSnapshot = await getConstants();
+    return List<String>.from(documentSnapshot.get('organizations'));
+  }
+
   // Insert app constants
   Future<void> insertConstants({
     int? webScreenSize,
@@ -223,6 +229,48 @@ class GlobalMethods {
         'staffPositions': FieldValue.arrayRemove([staffPosition]),
       });
 
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  // Insert Organization
+  Future<bool> insertOrganization(String organization) async {
+    try {
+      await firestoreInstance.collection('global').doc('constants').update({
+        'organizations': FieldValue.arrayUnion([organization]),
+      });
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  // Update Organization
+  Future<bool> updateOrganization(String oldOrganization, String newOrganization) async {
+    try {
+      await firestoreInstance.collection('global').doc('constants').update({
+        'organizations': FieldValue.arrayRemove([oldOrganization]),
+      });
+      await firestoreInstance.collection('global').doc('constants').update({
+        'organizations': FieldValue.arrayUnion([newOrganization]),
+      });
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  // Delete Organization
+  Future<bool> deleteOrganization(String organization) async {
+    try {
+      await firestoreInstance.collection('global').doc('constants').update({
+        'organizations': FieldValue.arrayRemove([organization]),
+      });
       return true;
     } catch (e) {
       print(e);
