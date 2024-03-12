@@ -65,6 +65,7 @@ Stream<void> fetchAndSetConstantsStream() {
     departmentParticipants = List<String>.from(snapshot.get('departmentParticipants'));
     programDepartmentMap = Map<String, String>.from(snapshot.get('programDepartmentMap'));
     staffPositions = List<String>.from(snapshot.get('staffPositions'));
+    organizations = List<String>.from(snapshot.get('organizations'));
 
     // Place a select option on programs and departments and staff positions
     // programsAndDepartments!.insert(0, 'Select your program and department');

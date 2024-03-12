@@ -778,7 +778,7 @@ class _PostScreenState extends State<PostScreen> {
                                                             children: [
                                                               Expanded(child: _buildParticipant('Program', programParticipants!)),
                                                               Expanded(child: _buildParticipant('Department', departmentParticipants!)),
-                                                              Expanded(child: _buildParticipant('Organizations/Proponent', organizations!)),
+                                                              Expanded(child: _buildParticipant('Organizations', organizations!)),
                                                             ],
                                                           ),
                                                         ),

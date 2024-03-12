@@ -744,7 +744,7 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                                     departmentParticipants!)),
                                                             Expanded(
                                                                 child: _buildParticipant(
-                                                                    'Organizations/Proponent',
+                                                                    'Organizations',
                                                                     organizations!)),
                                                           ],
                                                         ),
