@@ -21,6 +21,7 @@ class Event {
   String approvalStatus;
   String? approvedBy;
   String? approvedByPosition;
+  String? organizationInvolved;
 
   Event({
     this.id,
@@ -43,6 +44,7 @@ class Event {
     this.approvalStatus = 'pending',
     this.approvedBy = "",
     this.approvedByPosition = "",
+    this.organizationInvolved = "",
   });
 
   // Convert Event object to JSON
@@ -67,6 +69,7 @@ class Event {
     'approvalStatus': approvalStatus,
     'approvedBy': approvedBy,
     'approvedByPosition': approvedByPosition,
+    'organizationInvolved': organizationInvolved,
   };
 
   // Create Event object from a map
@@ -92,6 +95,7 @@ class Event {
       approvalStatus: json['approvalStatus'],
       approvedBy: json['approvedBy'],
       approvedByPosition: json['approvedByPosition'],
+      organizationInvolved: json['organizationInvolved'],
     );
   }
 
@@ -119,6 +123,7 @@ class Event {
       approvalStatus: snapshot['approvalStatus'],
       approvedBy: snapshot['approvedBy'],
       approvedByPosition: snapshot['approvedByPosition'],
+      organizationInvolved: snapshot['organizationInvolved'],
     );
   }
 
@@ -145,6 +150,7 @@ class Event {
       approvalStatus: snapshot['approvalStatus'],
       approvedBy: snapshot['approvedBy'],
       approvedByPosition: snapshot['approvedByPosition'],
+      organizationInvolved: snapshot['organizationInvolved'],
     );
   }
 }

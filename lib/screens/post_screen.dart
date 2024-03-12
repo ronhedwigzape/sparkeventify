@@ -771,19 +771,20 @@ class _PostScreenState extends State<PostScreen> {
                                                       child: Flexible(
                                                         fit: FlexFit.loose,
                                                         child: Padding(
-                                                          padding: const EdgeInsets.symmetric(horizontal: 50),
+                                                          padding: const EdgeInsets.symmetric(horizontal: 20),
                                                           child: Row(
                                                             crossAxisAlignment: CrossAxisAlignment.start,
                                                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                                                             children: [
                                                               Expanded(child: _buildParticipant('Program', programParticipants!)),
                                                               Expanded(child: _buildParticipant('Department', departmentParticipants!)),
+                                                              Expanded(child: _buildParticipant('Organizations/Proponent', organizations!)),
                                                             ],
                                                           ),
                                                         ),
                                                       ),
                                                     ) : Padding(
-                                                      padding: const EdgeInsets.symmetric(horizontal: 50),
+                                                      padding: const EdgeInsets.symmetric(horizontal: 20),
                                                       child: Flexible(
                                                         fit: FlexFit.loose,
                                                         child: SingleChildScrollView(
@@ -791,7 +792,8 @@ class _PostScreenState extends State<PostScreen> {
                                                             mainAxisSize: MainAxisSize.min,
                                                             children: [
                                                               _buildParticipant('Program', programParticipants!),
-                                                              _buildParticipant('Department', departmentParticipants!)
+                                                              _buildParticipant('Department', departmentParticipants!),
+                                                              _buildParticipant('Organizations', organizations!)
                                                             ],
                                                           ),
                                                         ),
@@ -876,7 +878,36 @@ class _PostScreenState extends State<PostScreen> {
 
   _buildParticipant(String type, List<String> participants) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-    return kIsWeb ? Column(
+
+    // Function to toggle participant selection
+    void toggleParticipantSelection(String participant, bool? value) {
+      print("Toggling selection for $type: $participant -> $value");
+      final typeKey = type.toLowerCase();
+      final dept = programDepartmentMap[participant];
+
+      if (value == true) {
+        selectedParticipants[typeKey]?.add(participant);
+        if (typeKey == 'program' && dept != null && !selectedParticipants['department']!.contains(dept)) {
+          selectedParticipants['department']?.add(dept);
+        }
+      } else {
+        selectedParticipants[typeKey]?.remove(participant);
+        if (typeKey == 'program' && dept != null && selectedParticipants['program']!.where((p) => programDepartmentMap[p] == dept).isEmpty) {
+          selectedParticipants['department']?.remove(dept);
+        }
+      }
+
+      if (typeKey == 'department') {
+        final associatedPrograms = programDepartmentMap.entries.where((entry) => entry.value == participant).map((entry) => entry.key);
+        if (value == true) {
+          associatedPrograms.forEach((program) => selectedParticipants['program']?.add(program));
+        } else {
+          associatedPrograms.forEach((program) => selectedParticipants['program']?.remove(program));
+        }
+      }
+    }
+
+    return Column(
       children: <Widget>[
         Padding(
           padding: const EdgeInsets.all(8.0),
@@ -884,116 +915,28 @@ class _PostScreenState extends State<PostScreen> {
             type,
             style: TextStyle(fontSize: kIsWeb ? 20 : 12, fontWeight: FontWeight.bold, color: darkModeOn ? lightColor : darkColor,),
           ),
-        ), ...participants.map(
-              (participant) => CheckboxListTile(
-            activeColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
-            checkColor: darkModeOn ? darkColor : lightColor,
-            title: Text(participant, style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
-            value: selectedParticipants[type.toLowerCase()]?.contains(participant),
-            onChanged: (bool? value) {
-              setState(() {
-                String? dept = programDepartmentMap[participant];
-                if (value!) {
-                  selectedParticipants[type.toLowerCase()]?.add(participant);
-                  if (type.toLowerCase() == 'program'
-                      && !selectedParticipants['department']!.contains(dept)) {
-                    selectedParticipants['department']?.add(dept!);
-                  }
-                } else {
-                  selectedParticipants[type.toLowerCase()]?.remove(participant);
-                  if (type.toLowerCase() == 'program'
-                      && selectedParticipants['program']!
-                        .where((program) => programDepartmentMap[program] == dept)
-                        .isEmpty) {
-                    selectedParticipants['department']?.remove(dept);
-                  }
-                }
-                if (type.toLowerCase() == 'department') {
-                  var associatedPrograms = programDepartmentMap.entries
-                      .where((entry) => entry.value == participant)
-                      .map((entry) => entry.key)
-                      .toList();
-                  if (value) {
-                    for (var program in associatedPrograms) {
-                      if (!selectedParticipants['program']!.contains(program)) {
-                        selectedParticipants['program']?.add(program);
-                      }
-                    }
-                  } else {
-                    for (var program in associatedPrograms) {
-                      if (selectedParticipants['program']!.contains(program)) {
-                        selectedParticipants['program']?.remove(program);
-                      }
-                    }
-                  }
-                }
-              });
-            },
-          ),
-        ).toList(),
-      ],
-    ) : Column(
-      children: <Widget>[
-        Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text(
-            type,
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: darkModeOn ? lightColor : darkColor,),
-          ),
         ),
-        ListView(
-          shrinkWrap: true,
-          physics: const NeverScrollableScrollPhysics(),
-          children: participants.map(
-                (participant) => CheckboxListTile(
+        ...participants
+          .where((participant) => participant.isNotEmpty)
+          .map((participant) {
+            final isSelected = selectedParticipants[type.toLowerCase()]?.contains(participant) ?? false;
+
+            return CheckboxListTile(
               activeColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
               checkColor: darkModeOn ? darkColor : lightColor,
-              title: Text(participant, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
-              value: selectedParticipants[type.toLowerCase()]?.contains(participant),
+              title: Text(participant, style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
+              value: isSelected,
               onChanged: (bool? value) {
                 setState(() {
-                  String? dept = programDepartmentMap[participant];
-                  if (value!) {
-                    selectedParticipants[type.toLowerCase()]?.add(participant);
-                    if (type.toLowerCase() == 'program'
-                        && !selectedParticipants['department']!.contains(dept)) {
-                      selectedParticipants['department']?.add(dept!);
-                    }
-                  } else {
-                    selectedParticipants[type.toLowerCase()]?.remove(participant);
-                    if (type.toLowerCase() == 'program'
-                        && selectedParticipants['program']!
-                          .where((program) => programDepartmentMap[program] == dept)
-                          .isEmpty) {
-                      selectedParticipants['department']?.remove(dept);
-                    }
-                  }
-                  if (type.toLowerCase() == 'department') {
-                    var associatedPrograms = programDepartmentMap.entries
-                        .where((entry) => entry.value == participant)
-                        .map((entry) => entry.key)
-                        .toList();
-                    if (value) {
-                      for (var program in associatedPrograms) {
-                        if (!selectedParticipants['program']!.contains(program)) {
-                          selectedParticipants['program']?.add(program);
-                        }
-                      }
-                    } else {
-                      for (var program in associatedPrograms) {
-                        if (selectedParticipants['program']!.contains(program)) {
-                          selectedParticipants['program']?.remove(program);
-                        }
-                      }
-                    }
-                  }
+                  toggleParticipantSelection(participant, value);
                 });
               },
-            ),
-          ).toList(),
-        ),
+            );
+          }
+        ).toList(),
       ],
     );
   }
+
 }
 

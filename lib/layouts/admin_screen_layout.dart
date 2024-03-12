@@ -139,14 +139,13 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                   userType == 'Admin' 
                     ? buildAppBarButton(icon: Icons.feedback, label: "Feedbacks", pageIndex: 4, onTap: () => navigationTapped(4))
                     : const SizedBox.shrink(),
+
+
                   userType == 'SuperAdmin' 
                     ? const SizedBox(width: 5.0) 
                     : const SizedBox.shrink(),
                   userType == 'SuperAdmin'
-                    ? buildAppBarButton(icon: Icons.school, label: "Programs & Departments", pageIndex: 1, onTap: () => navigationTapped(1))
-                    : const SizedBox.shrink(),
-                  userType == 'SuperAdmin'
-                    ? buildAppBarButton(icon: Icons.school, label: "Organizations/Proponents", pageIndex: 2, onTap: () => navigationTapped(2))
+                    ? buildAppBarButton(icon: Icons.school, label: "Programs, Departments, & Organizations", pageIndex: 1, onTap: () => navigationTapped(1))
                     : const SizedBox.shrink(),
                   userType == 'SuperAdmin' 
                     ? const SizedBox(width: 5.0) 
@@ -173,13 +172,15 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                     ? buildAppBarButton(icon: Icons.person_remove, label: "Users", pageIndex: 6, onTap: () => navigationTapped(6))
                     : const SizedBox.shrink(),
                   const SizedBox(width: 5.0),
+
+
                   userType == 'Admin' || userType == 'SuperAdmin'
-                    ? buildAppBarButton(icon: Icons.settings, label: "Settings", pageIndex: userType == 'Admin' ? 6 : 7, onTap: () => navigationTapped(userType == 'Admin' ? 6 : 7))
+                    ? buildAppBarButton(icon: Icons.settings, label: "Settings", pageIndex: userType == 'Admin' ? 5 : 7, onTap: () => navigationTapped(userType == 'Admin' ? 5 : 7))
                     : const SizedBox.shrink(),
                     const SizedBox(width: 5.0),
                   userType == 'Admin' 
                     ? IconButton(
-                        onPressed: () => navigationTapped(7),
+                        onPressed: () => navigationTapped(6),
                         icon: Stack(
                           children: <Widget>[
                             Icon(
@@ -228,7 +229,7 @@ class _AdminScreenLayoutState extends State<AdminScreenLayout> {
                   : const SizedBox.shrink(),
                   userType == 'Admin'
                   ? IconButton(
-                    onPressed: () => navigationTapped(8),
+                    onPressed: () => navigationTapped(7),
                     icon: Stack(
                       children: <Widget>[
                         Icon(

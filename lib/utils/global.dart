@@ -34,11 +34,13 @@ List<String>? programsAndDepartments;
 List<String>? programParticipants; 
 List<String>? departmentParticipants; 
 List<String>? staffPositions;
+List<String>? organizations;
 
 // Placeholder for selected participants
 Map<String, List<String>> selectedParticipants = {
   'program': [],
-  'department': []
+  'department': [],
+  'organizations': []
 };
 
 Future<void> fetchAndSetConstants() async {
@@ -49,6 +51,7 @@ Future<void> fetchAndSetConstants() async {
   programParticipants = List<String>.from(documentSnapshot.get('programParticipants'));
   departmentParticipants = List<String>.from(documentSnapshot.get('departmentParticipants'));
   staffPositions = List<String>.from(documentSnapshot.get('staffPositions'));
+  organizations = List<String>.from(documentSnapshot.get('organizations'));
 
   // Place a select option on programs and departments and staff positions
   // programsAndDepartments!.insert(0, 'Select your program and department');

@@ -60,9 +60,9 @@ class _ManageOrganizationScreenState extends State<ManageOrganizationScreen> {
               itemCount: organizations.length,
               itemBuilder: (context, index) {
                 String organizationWithProponent = organizations[index];
-                var parts = organizationWithProponent.split(' - ');
-                String organization = parts[0];
-                String proponent = parts.length > 1 ? parts[1] : '';
+                // var parts = organizationWithProponent.split(' - ');
+                // String organization = parts[0];
+                // String proponent = parts.length > 1 ? parts[1] : '';
 
                 return ListTile(
                   title: Text(organizationWithProponent),
@@ -102,8 +102,8 @@ class _ManageOrganizationScreenState extends State<ManageOrganizationScreen> {
                                         bool success = await globalMethods.updateOrganization(
                                           editingOrganization!,
                                           editingProponent!,
-                                          organizationController.text,
-                                          proponentController.text,
+                                          // organizationController.text,
+                                          // proponentController.text,
                                         );
                                         if (success) {
                                           clearControllers();
@@ -137,16 +137,16 @@ class _ManageOrganizationScreenState extends State<ManageOrganizationScreen> {
                       IconButton(
                         icon: const Icon(Icons.delete),
                         onPressed: () async {
-                          bool success = await globalMethods.deleteOrganization(organization, proponent);
-                          if (success) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Organization deleted')),
-                            );
-                          } else {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Delete failed')),
-                            );
-                          }
+                          // bool success = await globalMethods.deleteOrganization(organization, proponent);
+                          // if (success) {
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //     const SnackBar(content: Text('Organization deleted')),
+                          //   );
+                          // } else {
+                          //   ScaffoldMessenger.of(context).showSnackBar(
+                          //     const SnackBar(content: Text('Delete failed')),
+                          //   );
+                          // }
                         },
                       ),
                     ],
@@ -188,7 +188,7 @@ class _ManageOrganizationScreenState extends State<ManageOrganizationScreen> {
                     onPressed: () async {
                       bool success = await globalMethods.insertOrganization(
                         organizationController.text,
-                        proponentController.text,
+                        // proponentController.text,
                       );
                       if (success) {
                         clearControllers();

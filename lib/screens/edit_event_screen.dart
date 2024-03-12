@@ -40,17 +40,36 @@ class EditEventScreenState extends State<EditEventScreen> {
 
   Map<String, dynamic> selectedParticipants = {
     'program': [],
-    'department': []
+    'department': [],
+    'organizations': [],
   };
+
+  // Predefined venues list without "Others.."
+    final List<String> predefinedVenues = [
+      'Auditorium',
+      'Gymnasium',
+      'Pearl Function Hall',
+      'Graduate School Function Hall'
+    ];
 
   @override
   void initState() {
     super.initState();
     fetchAndSetConstants();
+
     _eventTypeController.text = widget.eventSnap.type!;
     _eventTitleController.text = widget.eventSnap.title!;
     _eventDescriptionsController.text = widget.eventSnap.description!;
-    _eventVenueController.text = widget.eventSnap.venue!;
+
+    // Check if the venue is in the predefined list
+    if (predefinedVenues.contains(widget.eventSnap.venue)) {
+      _eventVenueController.text = widget.eventSnap.venue!;
+    } else {
+      // If not, set _eventVenueController to "Others.." and store the actual venue in _eventVenueOthersController
+      _eventVenueController.text = 'Others..';
+      _eventVenueOthersController.text = widget.eventSnap.venue!;
+    }
+
     selectedParticipants['program'] = widget.eventSnap.participants!['program'];
     selectedParticipants['department'] = widget.eventSnap.participants!['department'];
   }
@@ -615,12 +634,10 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                     labelText: 'Venue*',
                                                     border: OutlineInputBorder(),
                                                   ),
-                                                  value: widget.eventSnap.venue, 
+                                                  // Ensures that if the venue is not in the predefined list, "Others.." is used as the value
+                                                  value: predefinedVenues.contains(widget.eventSnap.venue) ? widget.eventSnap.venue : 'Others..',
                                                   items: [
-                                                    'Auditorium',
-                                                    'Gymnasium',
-                                                    'Pearl Function Hall',
-                                                    'Graduate School Function Hall',
+                                                    ...predefinedVenues,
                                                     'Others..',
                                                   ].map((String venue) {
                                                     return DropdownMenuItem<String>(
@@ -630,6 +647,10 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                   }).toList(),
                                                   onChanged: (String? newValue) {
                                                     setState(() {
+                                                      if(newValue == 'Others..') {
+                                                        // If "Others.." is selected, clear the _eventVenueController to enforce manual entry
+                                                        _eventVenueOthersController.text = widget.eventSnap.venue!;
+                                                      }
                                                       _eventVenueController.text = newValue!;
                                                     });
                                                   },
@@ -721,6 +742,10 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                                 child: _buildParticipant(
                                                                     'Department',
                                                                     departmentParticipants!)),
+                                                            Expanded(
+                                                                child: _buildParticipant(
+                                                                    'Organizations/Proponent',
+                                                                    organizations!)),
                                                           ],
                                                         ),
                                                       )
@@ -739,6 +764,9 @@ class EditEventScreenState extends State<EditEventScreen> {
                                                               _buildParticipant(
                                                                   'Department',
                                                                   departmentParticipants!),
+                                                              _buildParticipant(
+                                                                  'Organizations',
+                                                                  organizations!),
                                                             ],
                                                           ),
                                                         ),
@@ -833,154 +861,63 @@ class EditEventScreenState extends State<EditEventScreen> {
 
   _buildParticipant(String type, List<String> participants) {
     final darkModeOn = Provider.of<DarkModeProvider>(context).darkMode;
-    return kIsWeb
-        ? Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  type,
-                  style: TextStyle(
-                      fontSize: kIsWeb ? 20 : 12, fontWeight: FontWeight.bold, color: darkModeOn ? lightColor : darkColor),
-                ),
-              ),
-              ...participants
-                  .map(
-                    (participant) => CheckboxListTile(
-                      activeColor: darkModeOn
-                          ? darkModePrimaryColor
-                          : lightModePrimaryColor,
-                      checkColor: darkModeOn ? darkColor : lightColor,
-                      title: Text(participant, style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
-                      value: selectedParticipants[type.toLowerCase()]
-                          ?.contains(participant) ?? [],
-                      onChanged: (bool? value) {
-                        setState(() {
-                          String? dept = programDepartmentMap[participant];
-                          if (value!) {
-                            selectedParticipants[type.toLowerCase()]
-                                ?.add(participant);
-                            if (type.toLowerCase() == 'program' &&
-                                !selectedParticipants['department']!
-                                    .contains(dept)) {
-                              selectedParticipants['department']?.add(dept!);
-                            }
-                          } else {
-                            selectedParticipants[type.toLowerCase()]
-                                ?.remove(participant);
-                            if (type.toLowerCase() == 'program' &&
-                                selectedParticipants['program']!
-                                    .where((program) =>
-                                        programDepartmentMap[program] == dept)
-                                    .isEmpty) {
-                              selectedParticipants['department']?.remove(dept);
-                            }
-                          }
-                          if (type.toLowerCase() == 'department') {
-                            var associatedPrograms = programDepartmentMap.entries
-                                .where((entry) => entry.value == participant)
-                                .map((entry) => entry.key)
-                                .toList();
-                            if (value) {
-                              for (var program in associatedPrograms) {
-                                if (!selectedParticipants['program']!
-                                    .contains(program)) {
-                                  selectedParticipants['program']?.add(program);
-                                }
-                              }
-                            } else {
-                              for (var program in associatedPrograms) {
-                                if (selectedParticipants['program']!
-                                    .contains(program)) {
-                                  selectedParticipants['program']
-                                      ?.remove(program);
-                                }
-                              }
-                            }
-                          }
-                        });
-                      },
-                    ),
-                  )
-                  .toList(),
-            ],
-          )
-        : Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  type,
-                  style: TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold, color: darkModeOn ? lightColor : darkColor),
-                ),
-              ),
-              ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: participants
-                    .map(
-                      (participant) => CheckboxListTile(
-                        activeColor: darkModeOn
-                            ? darkModePrimaryColor
-                            : lightModePrimaryColor,
-                        checkColor: darkModeOn ? darkColor : lightColor,
-                        title: Text(participant, style: TextStyle(color: darkModeOn ? lightColor : darkColor),),
-                        value: selectedParticipants[type.toLowerCase()]
-                            ?.contains(participant) ?? [],
-                        onChanged: (bool? value) {
-                          setState(() {
-                            String? dept = programDepartmentMap[participant];
-                            if (value!) {
-                              selectedParticipants[type.toLowerCase()]
-                                  ?.add(participant);
-                              if (type.toLowerCase() == 'program' &&
-                                  !selectedParticipants['department']!
-                                      .contains(dept)) {
-                                selectedParticipants['department']?.add(dept!);
-                              }
-                            } else {
-                              selectedParticipants[type.toLowerCase()]
-                                  ?.remove(participant);
-                              if (type.toLowerCase() == 'program' &&
-                                  selectedParticipants['program']!
-                                      .where((program) =>
-                                          programDepartmentMap[program] == dept)
-                                      .isEmpty) {
-                                selectedParticipants['department']
-                                    ?.remove(dept);
-                              }
-                            }
-                            if (type.toLowerCase() == 'department') {
-                              var associatedPrograms = programDepartmentMap
-                                  .entries
-                                  .where((entry) => entry.value == participant)
-                                  .map((entry) => entry.key)
-                                  .toList();
-                              if (value) {
-                                for (var program in associatedPrograms) {
-                                  if (!selectedParticipants['program']!
-                                      .contains(program)) {
-                                    selectedParticipants['program']?.add(program);
-                                  }
-                                }
-                              } else {
-                                for (var program in associatedPrograms) {
-                                  if (selectedParticipants['program']!
-                                      .contains(program)) {
-                                    selectedParticipants['program']
-                                        ?.remove(program);
-                                  }
-                                }
-                              }
-                            }
-                          });
-                        },
-                      ),
-                    )
-                    .toList(),
-              ),
-            ],
-          );
+
+    // Function to toggle participant selection
+    void toggleParticipantSelection(String participant, bool? value) {
+      print("Toggling selection for $type: $participant -> $value");
+      final typeKey = type.toLowerCase();
+      final dept = programDepartmentMap[participant];
+
+      if (value == true) {
+        selectedParticipants[typeKey]?.add(participant);
+        if (typeKey == 'program' && dept != null && !selectedParticipants['department']!.contains(dept)) {
+          selectedParticipants['department']?.add(dept);
+        }
+      } else {
+        selectedParticipants[typeKey]?.remove(participant);
+        if (typeKey == 'program' && dept != null && selectedParticipants['program']!.where((p) => programDepartmentMap[p] == dept).isEmpty) {
+          selectedParticipants['department']?.remove(dept);
+        }
+      }
+
+      if (typeKey == 'department') {
+        final associatedPrograms = programDepartmentMap.entries.where((entry) => entry.value == participant).map((entry) => entry.key);
+        if (value == true) {
+          associatedPrograms.forEach((program) => selectedParticipants['program']?.add(program));
+        } else {
+          associatedPrograms.forEach((program) => selectedParticipants['program']?.remove(program));
+        }
+      }
+    }
+
+    return Column(
+      children: <Widget>[
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text(
+            type,
+            style: TextStyle(fontSize: kIsWeb ? 20 : 12, fontWeight: FontWeight.bold, color: darkModeOn ? lightColor : darkColor),
+          ),
+        ),
+        ...participants
+            .where((participant) => participant.isNotEmpty) // Filter out empty string participants
+            .map((participant) {
+              final isSelected = selectedParticipants[type.toLowerCase()]?.contains(participant) ?? false;
+
+              return CheckboxListTile(
+                activeColor: darkModeOn ? darkModePrimaryColor : lightModePrimaryColor,
+                checkColor: darkModeOn ? darkColor : lightColor,
+                title: Text(participant, style: TextStyle(color: darkModeOn ? lightColor : darkColor)),
+                value: isSelected,
+                onChanged: (bool? value) {
+                  setState(() {
+                    toggleParticipantSelection(participant, value);
+                  });
+                },
+              );
+            }).toList(),
+      ],
+    );
   }
+
 }
