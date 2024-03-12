@@ -456,6 +456,10 @@ class GlobalMethods {
           'programDepartmentWithOrganization': programDepartmentWithOrganization,
         });
 
+        // await deleteOrganization(organizationWithProponent)
+
+        await emptyProgramAndDepartment(program, department);
+
         return true;
       } else {
         print("Document does not exist.");
