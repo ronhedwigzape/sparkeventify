@@ -156,7 +156,7 @@ Widget build(BuildContext context) {
               children: [
                 const Icon(Icons.rate_review),
                 const SizedBox(width: 5,),
-                Text('Satisfaction Summary', style: Theme.of(context).textTheme.headline6),
+                Text('Satisfaction Summary', style: Theme.of(context).textTheme.headlineLarge),
               ],
             ),
             ...List.generate(5, (index) {
